@@ -4,3 +4,10 @@ pom.xml.releaseBackup
 pom.xml.versionsBackup
 pom.xml.next
 release.properties
+
+# IntelliJ files
+.idea
+*.iml
+
+# Mac OS files
+.DS_Store
