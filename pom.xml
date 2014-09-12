@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.openmrs.module</groupId>
+	<artifactId>fhir</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>FHIR Module</name>
+	<description>Helps to start writing OpenMRS modules</description>
+	<url>https://wiki.openmrs.org/display/docs/FHIR+Module+Module</url>
+	
+	<developers>
+		<developer>
+			<name>snkasthu</name>
+		</developer>
+	</developers>
+	
+	<organization>
+		<name>OpenMRS</name>
+		<url>http://openmrs.org</url>
+	</organization>
+
+	<scm>
+		<connection>scm:svn:https://svn.openmrs.org/openmrs-modules/fhir/trunk/</connection>
+		<developerConnection>scm:svn:https://svn.openmrs.org/openmrs-modules/fhir/trunk/</developerConnection>
+		<url>https://svn.openmrs.org/openmrs-modules/fhir/trunk/</url>
+	</scm>
+
+	<modules>
+		<module>api</module>
+		<module>omod</module>
+	</modules>
+	
+	<properties>
+		<openMRSVersion>1.9.8</openMRSVersion>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+
+            <dependency>
+                <groupId>org.thymeleaf</groupId>
+                <artifactId>thymeleaf</artifactId>
+                <version>2.1.3.RELEASE</version>
+                <exclusions>
+                    <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!--<dependency>
+                <groupId>com.phloc</groupId>
+                <artifactId>phloc-schematron-validator</artifactId>
+                <version>2.7.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>xerces</groupId>
+                        <artifactId>xerces</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>Saxon-HE</groupId>
+                        <artifactId>Saxon-HE</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency> -->
+
+			<!--
+			Libraries to add as dependencies with compile or runtime scope:
+			Find matching dependencies in the maven central repository.
+			<dependency>
+				<groupId>org.other.library</groupId>
+				<artifactId>library-name</artifactId>
+				<version>library.version</version>
+				<scope>compile</scope>
+			</dependency>
+			-->
+
+          <!--  <dependency>
+                <groupId>org.thymeleaf</groupId>
+                <artifactId>thymeleaf</artifactId>
+                <version>2.0.13</version>
+            </dependency>
+            <dependency>
+                <groupId>org.thymeleaf</groupId>
+                <artifactId>thymeleaf-spring3</artifactId>
+                <version>2.0.13</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
+                <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.6.1</version>
+            </dependency> -->
+
+            <dependency>
+                <groupId>ca.uhn.hapi.fhir</groupId>
+                <artifactId>hapi-fhir-base</artifactId>
+                <version>0.6-SNAPSHOT</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+
+
+			<!-- Begin OpenMRS core -->
+
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>webservices.rest-omod-1.8</artifactId>
+                <version>2.0</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>webservices.rest-omod-common</artifactId>
+                <version>2.0</version>
+                <classifier>tests</classifier>
+                <scope>test</scope>
+            </dependency>
+			
+			<dependency>
+				<groupId>org.openmrs.api</groupId>
+				<artifactId>openmrs-api</artifactId>
+				<version>${openMRSVersion}</version>
+				<type>jar</type>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.openmrs.web</groupId>
+				<artifactId>openmrs-web</artifactId>
+				<version>${openMRSVersion}</version>
+				<type>jar</type>
+				<scope>provided</scope>
+			</dependency>
+						
+			<dependency>
+				<groupId>org.openmrs.api</groupId>
+				<artifactId>openmrs-api</artifactId>
+				<version>${openMRSVersion}</version>
+				<type>test-jar</type>
+				<scope>test</scope>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.openmrs.web</groupId>
+				<artifactId>openmrs-web</artifactId>
+				<version>${openMRSVersion}</version>
+				<type>test-jar</type>
+				<scope>test</scope>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.openmrs.test</groupId>
+				<artifactId>openmrs-test</artifactId>
+				<version>${openMRSVersion}</version>
+				<type>pom</type>
+				<scope>test</scope>
+			</dependency>
+						
+			<!-- End OpenMRS core -->
+
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<configuration>
+						<target>1.6</target>
+						<source>1.6</source>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.openmrs.maven.plugins</groupId>
+					<artifactId>maven-openmrs-plugin</artifactId>
+					<version>1.0.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>2.4</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>openmrs-repo</id>
+			<name>OpenMRS Nexus Repository</name>
+			<url>http://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
+		</repository>
+        <repository>
+            <id>oss-snapshots</id>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>openmrs-repo</id>
+			<name>OpenMRS Nexus Repository</name>
+			<url>http://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
+</project>
