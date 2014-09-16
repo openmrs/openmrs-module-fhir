@@ -1,8 +1,5 @@
 package org.openmrs.module.fhir.util;
 
-/**
- * Created by snkasthu on 9/9/14.
- */
 
 public final class Constants {
 

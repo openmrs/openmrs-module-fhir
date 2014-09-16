@@ -1,0 +1,423 @@
+ERROR - ModuleFactory.startModules(287) |2014-09-13 10:03:41,194| Module FHIR Module cannot be started because it requires the following module(s): org.openmrs.module.webservices.rest 2.0 Please install and start these modules first.
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,298| In method AlertService.saveAlert. Arguments: Alert=Alert: #null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,309| Exiting method saveAlert
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,371| In method UserService.savePrivilege. Arguments: Privilege=Manage Location Tags, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,372| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,387| In method UserService.savePrivilege. Arguments: Privilege=View Visit Attribute Types, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,388| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,405| In method UserService.savePrivilege. Arguments: Privilege=View Encounter Roles, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,408| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,428| In method UserService.savePrivilege. Arguments: Privilege=Remove Problems, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,430| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,445| In method UserService.savePrivilege. Arguments: Privilege=View Providers, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,447| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,459| In method UserService.savePrivilege. Arguments: Privilege=Manage Encounter Roles, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,460| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,476| In method UserService.savePrivilege. Arguments: Privilege=Add Visits, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,478| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,499| In method UserService.savePrivilege. Arguments: Privilege=Edit Problems, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,500| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,517| In method UserService.savePrivilege. Arguments: Privilege=Manage Concept Name tags, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,519| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,538| In method UserService.savePrivilege. Arguments: Privilege=View HL7 Inbound Exception, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,539| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,556| In method UserService.savePrivilege. Arguments: Privilege=Delete HL7 Inbound Queue, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,558| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,569| In method UserService.savePrivilege. Arguments: Privilege=Add HL7 Inbound Exception, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,570| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,588| In method UserService.savePrivilege. Arguments: Privilege=Delete HL7 Inbound Archive, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,590| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,603| In method UserService.savePrivilege. Arguments: Privilege=Delete HL7 Inbound Exception, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,604| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,628| In method UserService.savePrivilege. Arguments: Privilege=Add HL7 Inbound Queue, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,631| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,647| In method UserService.savePrivilege. Arguments: Privilege=Manage Visit Attribute Types, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,649| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,661| In method UserService.savePrivilege. Arguments: Privilege=Delete Visits, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,663| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,674| In method UserService.savePrivilege. Arguments: Privilege=Manage Location Attribute Types, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,675| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,694| In method UserService.savePrivilege. Arguments: Privilege=View Visit Types, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,696| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,710| In method UserService.savePrivilege. Arguments: Privilege=View Database Changes, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,711| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,726| In method UserService.savePrivilege. Arguments: Privilege=Manage Implementation Id, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,727| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,746| In method UserService.savePrivilege. Arguments: Privilege=Manage Providers, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,748| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,763| In method UserService.savePrivilege. Arguments: Privilege=Manage HL7 Messages, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,765| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,782| In method UserService.savePrivilege. Arguments: Privilege=Add HL7 Source, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,784| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,802| In method UserService.savePrivilege. Arguments: Privilege=Get Order Frequencies, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,804| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,820| In method UserService.savePrivilege. Arguments: Privilege=View HL7 Source, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,821| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,834| In method UserService.savePrivilege. Arguments: Privilege=Edit Visits, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,835| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,852| In method UserService.savePrivilege. Arguments: Privilege=View Concept Reference Terms, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,853| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,868| In method UserService.savePrivilege. Arguments: Privilege=Manage Concept Reference Terms, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,869| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,885| In method UserService.savePrivilege. Arguments: Privilege=Patient Dashboard - View Visits Section, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,886| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,899| In method UserService.savePrivilege. Arguments: Privilege=Update HL7 Inbound Archive, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,901| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,913| In method UserService.savePrivilege. Arguments: Privilege=Edit Allergies, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,915| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,926| In method UserService.savePrivilege. Arguments: Privilege=Add Problems, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,927| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,947| In method UserService.savePrivilege. Arguments: Privilege=View Concept Map Types, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,948| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,963| In method UserService.savePrivilege. Arguments: Privilege=View HL7 Inbound Archive, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,964| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,979| In method UserService.savePrivilege. Arguments: Privilege=Manage Order Frequencies, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:41,981| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:41,998| In method UserService.savePrivilege. Arguments: Privilege=Configure Visits, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,000| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,023| In method UserService.savePrivilege. Arguments: Privilege=View HL7 Inbound Queue, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,024| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,048| In method UserService.savePrivilege. Arguments: Privilege=Update HL7 Inbound Exception, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,051| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,071| In method UserService.savePrivilege. Arguments: Privilege=Manage Concept Map Types, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,072| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,089| In method UserService.savePrivilege. Arguments: Privilege=Manage Address Templates, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,091| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,113| In method UserService.savePrivilege. Arguments: Privilege=Update HL7 Inbound Queue, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,114| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,130| In method UserService.savePrivilege. Arguments: Privilege=Add HL7 Inbound Archive, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,132| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,157| In method UserService.savePrivilege. Arguments: Privilege=Assign System Developer Role, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,159| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,177| In method UserService.savePrivilege. Arguments: Privilege=Manage Visit Types, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,178| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,194| In method UserService.savePrivilege. Arguments: Privilege=Add Allergies, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,196| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,213| In method UserService.savePrivilege. Arguments: Privilege=Get Care Settings, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,214| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,229| In method UserService.savePrivilege. Arguments: Privilege=Manage Concept Stop Words, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,230| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,245| In method UserService.savePrivilege. Arguments: Privilege=Remove Allergies, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,247| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,270| In method UserService.savePrivilege. Arguments: Privilege=View Location Attribute Types, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,272| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,294| In method UserService.savePrivilege. Arguments: Privilege=View Visits, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,296| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,317| In method UserService.savePrivilege. Arguments: Privilege=Update HL7 Source, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,318| Exiting method savePrivilege
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,352| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: use_patient_attribute.healthCenter value: false, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,368| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,392| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: use_patient_attribute.mothersName value: false, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,403| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,426| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: new_patient_form.showRelationships value: false, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,436| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,455| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: dashboard.overview.showConcepts value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,472| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,490| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: dashboard.encounters.showEmptyFields value: true, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,501| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,525| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: dashboard.encounters.usePages value: smart, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,538| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,556| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: dashboard.encounters.showViewLink value: true, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,569| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,590| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: dashboard.encounters.showEditLink value: true, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,601| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,630| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: dashboard.header.programs_to_show value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,643| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,662| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: dashboard.header.workflows_to_show value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,675| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,700| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: dashboard.relationships.show_types value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,713| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,730| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: FormEntry.enableDashboardTab value: true, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,740| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,758| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: FormEntry.enableOnEncounterTab value: false, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,770| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,793| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: dashboard.regimen.displayDrugSetIds value: ANTIRETROVIRAL DRUGS,TUBERCULOSIS TREATMENT DRUGS, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,808| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,831| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: dashboard.regimen.displayFrequencies value: 7 days/week,6 days/week,5 days/week,4 days/week,3 days/week,2 days/week,1 days/week, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,847| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,869| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: graph.color.absolute value: rgb(20,20,20), 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,888| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,908| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: graph.color.normal value: rgb(255,126,0), 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,920| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,939| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: graph.color.critical value: rgb(200,0,0), 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,952| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:42,973| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: location.field.style value: default, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:42,992| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,016| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: dashboard.regimen.standardRegimens value: <list>  <regimenSuggestion>    <drugComponents>      <drugSuggestion>        <drugId>2</drugId>        <dose>1</dose>        <units>tab(s)</units>        <frequency>2/day x 7 days/week</frequency>        <instructions></instructions>      </drugSuggestion>    </drugComponents>    <displayName>3TC + d4T(30) + NVP (Triomune-30)</displayName>    <codeName>standardTri30</codeName>    <canReplace>ANTIRETROVIRAL DRUGS</canReplace>  </regimenSuggestion>  <regimenSuggestion>    <drugComponents>      <drugSuggestion>        <drugId>3</drugId>        <dose>1</dose>        <units>tab(s)</units>        <frequency>2/day x 7 days/week</frequency>        <instructions></instructions>      </drugSuggestion>    </drugComponents>    <displayName>3TC + d4T(40) + NVP (Triomune-40)</displayName>    <codeName>standardTri40</codeName>    <canReplace>ANTIRETROVIRAL DRUGS</canReplace>  </regimenSuggestion>  <regimenSuggestion>    <drugComponents>      <drugSuggestion>        <drugId>39</drugId>        <dose>1</dose>        <units>tab(s)</units>        <frequency>2/day x 7 days/week</frequency>        <instructions></instructions>      </drugSuggestion>      <drugSuggestion>        <drugId>22</drugId>        <dose>200</dose>        <units>mg</units>        <frequency>2/day x 7 days/week</frequency>        <instructions></instructions>      </drugSuggestion>    </drugComponents>    <displayName>AZT + 3TC + NVP</displayName>    <codeName>standardAztNvp</codeName>    <canReplace>ANTIRETROVIRAL DRUGS</canReplace>  </regimenSuggestion>  <regimenSuggestion>    <drugComponents>      <drugSuggestion reference="../../../regimenSuggestion[3]/drugComponents/drugSuggestion"/>      <drugSuggestion>        <drugId>11</drugId>        <dose>600</dose>        <units>mg</units>        <frequency>1/day x 7 days/week</frequency>        <instructions></instructions>      </drugSuggestion>    </drugComponents>    <displayName>AZT + 3TC + EFV(600)</displayName>    <codeName>standardAztEfv</codeName>    <canReplace>ANTIRETROVIRAL DRUGS</canReplace>  </regimenSuggestion>  <regimenSuggestion>    <drugComponents>      <drugSuggestion>        <drugId>5</drugId>        <dose>30</dose>        <units>mg</units>        <frequency>2/day x 7 days/week</frequency>        <instructions></instructions>      </drugSuggestion>      <drugSuggestion>        <drugId>42</drugId>        <dose>150</dose>        		<units>mg</units>        <frequency>2/day x 7 days/week</frequency>        <instructions></instructions>      </drugSuggestion>      <drugSuggestion reference="../../../regimenSuggestion[4]/drugComponents/drugSuggestion[2]"/>    </drugComponents>    <displayName>d4T(30) + 3TC + EFV(600)</displayName>    <codeName>standardD4t30Efv</codeName>    <canReplace>ANTIRETROVIRAL DRUGS</canReplace>  </regimenSuggestion>  <regimenSuggestion>    <drugComponents>      <drugSuggestion>        <drugId>6</drugId>        <dose>40</dose>        <units>mg</units>        <frequency>2/day x 7 days/week</frequency>        <instructions></instructions>      </drugSuggestion>      <drugSuggestion reference="../../../regimenSuggestion[5]/drugComponents/drugSuggestion[2]"/>      <drugSuggestion reference="../../../regimenSuggestion[4]/drugComponents/drugSuggestion[2]"/>    </drugComponents>    <displayName>d4T(40) + 3TC + EFV(600)</displayName>    <codeName>standardD4t40Efv</codeName>    <canReplace>ANTIRETROVIRAL DRUGS</canReplace>  </regimenSuggestion></list>, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,028| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,055| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: concept.weight value: 5089, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,071| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,089| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: concept.height value: 5090, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,107| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,128| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: concept.cd4_count value: 5497, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,140| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,159| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: concept.causeOfDeath value: 5002, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,176| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,197| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: concept.none value: 1107, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,209| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,231| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: concept.otherNonCoded value: 5622, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,247| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,268| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: concept.patientDied value: 1742, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,281| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,299| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: concept.reasonExitedCare value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,317| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,342| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: concept.reasonOrderStopped value: 1812, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,356| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,373| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: mail.transport_protocol value: smtp, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,386| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,410| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: mail.smtp_host value: localhost, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,422| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,444| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: mail.smtp_port value: 25, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,460| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,476| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: mail.from value: info@openmrs.org, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,489| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,509| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: mail.debug value: false, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,521| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,541| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: mail.smtp_auth value: false, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,563| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,584| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: mail.user value: test, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,596| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,623| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: mail.password value: test, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,643| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,667| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: mail.default_content_type value: text/plain, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,683| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,701| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: module_repository_folder value: modules, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,719| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,742| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: layout.address.format value: <org.openmrs.layout.web.address.AddressTemplate>
+    <nameMappings class="properties">
+      <property name="postalCode" value="Location.postalCode"/>
+      <property name="longitude" value="Location.longitude"/>
+      <property name="address2" value="Location.address2"/>
+      <property name="address1" value="Location.address1"/>
+      <property name="startDate" value="PersonAddress.startDate"/>
+      <property name="country" value="Location.country"/>
+      <property name="endDate" value="personAddress.endDate"/>
+      <property name="stateProvince" value="Location.stateProvince"/>
+      <property name="latitude" value="Location.latitude"/>
+      <property name="cityVillage" value="Location.cityVillage"/>
+    </nameMappings>
+    <sizeMappings class="properties">
+      <property name="postalCode" value="10"/>
+      <property name="longitude" value="10"/>
+      <property name="address2" value="40"/>
+      <property name="address1" value="40"/>
+      <property name="startDate" value="10"/>
+      <property name="country" value="10"/>
+      <property name="endDate" value="10"/>
+      <property name="stateProvince" value="10"/>
+      <property name="latitude" value="10"/>
+      <property name="cityVillage" value="10"/>
+    </sizeMappings>
+    <lineByLineFormat>
+      <string>address1</string>
+      <string>address2</string>
+      <string>cityVillage stateProvince country postalCode</string>
+      <string>latitude longitude</string>
+      <string>startDate endDate</string>
+    </lineByLineFormat>
+  </org.openmrs.layout.web.address.AddressTemplate>, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,759| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,786| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: layout.name.format value: short, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,804| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,827| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: scheduler.username value: admin, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,841| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,860| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: scheduler.password value: test, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,874| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,898| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: concepts.locked value: false, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,917| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,938| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: patient.listingAttributeTypes value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,950| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:43,967| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: patient.viewingAttributeTypes value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:43,985| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,004| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: patient.headerAttributeTypes value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,016| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,037| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: user.listingAttributeTypes value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,056| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,082| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: user.viewingAttributeTypes value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,100| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,119| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: user.headerAttributeTypes value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,139| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,165| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: patient.identifierRegex value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,183| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,206| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: patient.identifierPrefix value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,219| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,242| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: patient.identifierSuffix value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,257| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,285| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: patient.identifierSearchPattern value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,301| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,325| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: patient.nameValidationRegex value: ^[a-zA-Z \-]+$, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,345| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,366| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: person.searchMaxResults value: 1000, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,386| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,410| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: gzip.enabled value: false, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,426| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,454| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: report.xmlMacros value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,471| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,499| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: concept.medicalRecordObservations value: 1238, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,518| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,545| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: concept.problemList value: 1284, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,563| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,582| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: log.level value: org.openmrs.api:info, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,599| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,621| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: log.location value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,635| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,655| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: log.layout value: %p - %C{1}.%M(%L) |%d{ISO8601}| %m%n, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,670| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,696| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: patient.defaultPatientIdentifierValidator value: org.openmrs.patient.impl.LuhnIdentifierValidator, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,715| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,744| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: patient_identifier.importantTypes value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,761| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,781| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: obs.complex_obs_dir value: complex_obs, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,797| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,817| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: encounterForm.obsSortOrder value: number, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,832| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,854| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: locale.allowed.list value: en, es, fr, it, pt, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,869| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,889| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: newPatientForm.relationships value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,903| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,932| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: minSearchCharacters value: 3, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,954| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:44,977| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: default_locale value: en_GB, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:44,991| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:45,018| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: security.passwordCannotMatchUsername value: true, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:45,036| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:45,055| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: security.passwordCustomRegex value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:45,072| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:45,098| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: security.passwordMinimumLength value: 8, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:45,115| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:45,146| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: security.passwordRequiresDigit value: true, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:45,162| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:45,183| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: security.passwordRequiresNonDigit value: true, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:45,197| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:45,223| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: security.passwordRequiresUpperAndLowerCase value: true, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:45,246| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:45,274| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: hl7_processor.ignore_missing_patient_non_local value: false, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:45,289| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:45,309| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: dashboard.showPatientName value: false, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:45,325| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:45,358| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: default_theme value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:45,378| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:45,402| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: hl7_archive.dir value: hl7_archives, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:45,424| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:45,446| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: reportProblem.url value: http://errors.openmrs.org/scrap, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:45,462| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:45,482| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: searchWidget.batchSize value: 200, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:45,499| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:45,520| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: searchWidget.runInSerialMode value: false, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:45,541| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:45,570| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: searchWidget.searchDelayInterval value: 400, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:45,589| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:45,613| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: default_location value: Unknown Location, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:45,634| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:45,672| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: patientSearch.matchMode value: START, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:45,694| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:45,728| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: concept_map_type_management.enable value: false, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:45,750| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:45,788| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: visits.enabled value: true, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:45,809| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:45,839| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: visits.assignmentHandler value: org.openmrs.api.handler.ExistingVisitAssignmentHandler, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:45,861| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:45,895| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: application.name value: OpenMRS, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:45,920| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:45,962| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: visits.encounterTypeToVisitTypeMapping value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:45,984| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:46,046| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: EncounterType.encounterTypes.locked value: false, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:46,068| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:46,100| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: dashboard.encounters.providerDisplayRoles value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:46,124| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:46,155| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: searchWidget.maximumResults value: 2000, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:46,173| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:46,201| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: dashboard.encounters.maximumNumberToShow value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:46,220| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:46,249| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: visits.autoCloseVisitType value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:46,268| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:46,294| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: concept.defaultConceptMapType value: NARROWER-THAN, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:46,314| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:46,343| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: conceptDrug.dosageForm.conceptClasses value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:46,364| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:46,390| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: conceptDrug.route.conceptClasses value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:46,408| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:46,430| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: concept.caseSensitiveNamesInConceptNameTable value: true, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:46,450| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:46,482| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: user.requireEmailAsUsername value: false, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:46,503| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:46,534| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: order.nextOrderNumberSeed value: 1, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:46,558| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:46,587| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: order.orderNumberGeneratorBeanId value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:46,610| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:46,640| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: order.drugRoutesConceptUuid value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:46,661| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:46,692| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: order.drugDosingUnitsConceptUuid value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:46,712| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:46,735| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: order.drugDispensingUnitsConceptUuid value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:46,758| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:46,787| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: order.durationUnitsConceptUuid value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:46,811| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:46,838| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: order.testSpecimenSourcesConceptUuid value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:46,859| Exiting method saveGlobalProperty
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:46,883| In method AdministrationService.saveGlobalProperty. Arguments: GlobalProperty=property: provider.unknownProviderUuid value: null, 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:46,901| Exiting method saveGlobalProperty
+WARN - OpenmrsUtil.getRuntimePropertiesFilePathName(2524) |2014-09-13 10:03:46,916| Unable to find a runtime properties file at /Users/snkasthu/SourceCode/hapi-fhir/12092014/openmrs-module-fhir/openmrs-project/server/openmrs-runtime.properties
+INFO - LoggingAdvice.invoke(117) |2014-09-13 10:03:46,972| In method AdministrationService.purgeGlobalProperty. Arguments: GlobalProperty=property: concept.IndexUpdateTask.lastConceptUpdated value: , 
+INFO - LoggingAdvice.invoke(154) |2014-09-13 10:03:46,974| Exiting method purgeGlobalProperty
+WARN - TimerSchedulerTask.saveLastExecutionTime(77) |2014-09-13 10:03:46,995| Unable to save the last execution time for task. Task.taskDefinition is null in class org.openmrs.scheduler.tasks.TaskThreadedInitializationWrapper
+INFO - HibernateUserDAO.changePassword(312) |2014-09-13 10:03:47,034| updating password for 
+ERROR - CommonsLoggingOutput.error(75) |2014-09-13 10:03:50,641| Parameter mismatch parsing signatures section in dwr.xml on line: DWREncounterService.findEncounters(String phrase, Integer patientId, boolean includeVoided)
+WARN - CommonsLoggingOutput.warn(59) |2014-09-13 10:03:50,641| Setting extra type info to overloaded methods may fail with <parameter .../>
+WARN - CommonsLoggingOutput.warn(59) |2014-09-13 10:03:50,642| Setting extra type info to overloaded methods may fail with <parameter .../>
+ERROR - CommonsLoggingOutput.error(75) |2014-09-13 10:03:50,642| Parameter mismatch parsing signatures section in dwr.xml on line: DWREncounterService.findBatchOfEncounters(String phrase, Integer patientId, boolean includeVoided, Integer start, Integer length)
+INFO - HibernateContextDAO.authenticate(181) |2014-09-13 10:18:39,155| Failed login attempt (login=admin) - Invalid username and/or password: admin
+INFO - HibernateContextDAO.authenticate(181) |2014-09-13 10:18:44,823| Failed login attempt (login=admin) - Invalid username and/or password: admin
+INFO - HibernateContextDAO.authenticate(181) |2014-09-13 10:18:51,597| Failed login attempt (login=admin) - Invalid username and/or password: admin
+INFO - HibernateContextDAO.authenticate(181) |2014-09-13 10:20:14,737| Failed login attempt (login=admin) - Invalid username and/or password: admin
+INFO - HibernateContextDAO.authenticate(181) |2014-09-13 10:20:38,510| Failed login attempt (login=admin) - Invalid username and/or password: admin
+INFO - HibernateContextDAO.showUsageStatistics(335) |2014-09-13 10:23:15,324| QUERY: select salt from users where user_id = ?
+INFO - HibernateContextDAO.showUsageStatistics(337) |2014-09-13 10:23:15,324| Cache Hit Count : 0
+INFO - HibernateContextDAO.showUsageStatistics(338) |2014-09-13 10:23:15,325| Cache Miss Count: 0
+INFO - HibernateContextDAO.showUsageStatistics(339) |2014-09-13 10:23:15,325| Cache Put Count : 0
+INFO - HibernateContextDAO.showUsageStatistics(340) |2014-09-13 10:23:15,325| Execution Count : 6
+INFO - HibernateContextDAO.showUsageStatistics(341) |2014-09-13 10:23:15,325| Average time    : 0
+INFO - HibernateContextDAO.showUsageStatistics(342) |2014-09-13 10:23:15,325| Row Count       : 6
+INFO - HibernateContextDAO.showUsageStatistics(335) |2014-09-13 10:23:15,325| QUERY: select distinct user from User as user inner join user.person.names as name inner join user.roles as role where user.retired = false  and  role in (:roleList)
+INFO - HibernateContextDAO.showUsageStatistics(337) |2014-09-13 10:23:15,326| Cache Hit Count : 0
+INFO - HibernateContextDAO.showUsageStatistics(338) |2014-09-13 10:23:15,326| Cache Miss Count: 0
+INFO - HibernateContextDAO.showUsageStatistics(339) |2014-09-13 10:23:15,326| Cache Put Count : 0
+INFO - HibernateContextDAO.showUsageStatistics(340) |2014-09-13 10:23:15,326| Execution Count : 1
+INFO - HibernateContextDAO.showUsageStatistics(341) |2014-09-13 10:23:15,326| Average time    : 16
+INFO - HibernateContextDAO.showUsageStatistics(342) |2014-09-13 10:23:15,326| Row Count       : 1
+INFO - HibernateContextDAO.showUsageStatistics(335) |2014-09-13 10:23:15,327| QUERY: from User u where (u.username = ? or u.systemId = ? or u.systemId = ?) and u.retired = '0'
+INFO - HibernateContextDAO.showUsageStatistics(337) |2014-09-13 10:23:15,327| Cache Hit Count : 0
+INFO - HibernateContextDAO.showUsageStatistics(338) |2014-09-13 10:23:15,327| Cache Miss Count: 0
+INFO - HibernateContextDAO.showUsageStatistics(339) |2014-09-13 10:23:15,327| Cache Put Count : 0
+INFO - HibernateContextDAO.showUsageStatistics(340) |2014-09-13 10:23:15,327| Execution Count : 6
+INFO - HibernateContextDAO.showUsageStatistics(341) |2014-09-13 10:23:15,327| Average time    : 6
+INFO - HibernateContextDAO.showUsageStatistics(342) |2014-09-13 10:23:15,328| Row Count       : 6
+INFO - HibernateContextDAO.showUsageStatistics(335) |2014-09-13 10:23:15,328| QUERY: select password from users where user_id = ?
+INFO - HibernateContextDAO.showUsageStatistics(337) |2014-09-13 10:23:15,328| Cache Hit Count : 0
+INFO - HibernateContextDAO.showUsageStatistics(338) |2014-09-13 10:23:15,328| Cache Miss Count: 0
+INFO - HibernateContextDAO.showUsageStatistics(339) |2014-09-13 10:23:15,328| Cache Put Count : 0
+INFO - HibernateContextDAO.showUsageStatistics(340) |2014-09-13 10:23:15,328| Execution Count : 6
+INFO - HibernateContextDAO.showUsageStatistics(341) |2014-09-13 10:23:15,329| Average time    : 0
+INFO - HibernateContextDAO.showUsageStatistics(342) |2014-09-13 10:23:15,329| Row Count       : 6
+INFO - HibernateContextDAO.showUsageStatistics(335) |2014-09-13 10:23:15,329| QUERY: from Role r order by r.role
+INFO - HibernateContextDAO.showUsageStatistics(337) |2014-09-13 10:23:15,329| Cache Hit Count : 0
+INFO - HibernateContextDAO.showUsageStatistics(338) |2014-09-13 10:23:15,329| Cache Miss Count: 0
+INFO - HibernateContextDAO.showUsageStatistics(339) |2014-09-13 10:23:15,329| Cache Put Count : 0
+INFO - HibernateContextDAO.showUsageStatistics(340) |2014-09-13 10:23:15,330| Execution Count : 1
+INFO - HibernateContextDAO.showUsageStatistics(341) |2014-09-13 10:23:15,330| Average time    : 3
+INFO - HibernateContextDAO.showUsageStatistics(342) |2014-09-13 10:23:15,330| Row Count       : 4
+INFO - HibernateContextDAO.showUsageStatistics(335) |2014-09-13 10:23:15,330| QUERY: from Privilege p order by p.privilege
+INFO - HibernateContextDAO.showUsageStatistics(337) |2014-09-13 10:23:15,330| Cache Hit Count : 0
+INFO - HibernateContextDAO.showUsageStatistics(338) |2014-09-13 10:23:15,330| Cache Miss Count: 0
+INFO - HibernateContextDAO.showUsageStatistics(339) |2014-09-13 10:23:15,331| Cache Put Count : 0
+INFO - HibernateContextDAO.showUsageStatistics(340) |2014-09-13 10:23:15,331| Execution Count : 1
+INFO - HibernateContextDAO.showUsageStatistics(341) |2014-09-13 10:23:15,331| Average time    : 11
+INFO - HibernateContextDAO.showUsageStatistics(342) |2014-09-13 10:23:15,331| Row Count       : 106
+INFO - HibernateContextDAO.showUsageStatistics(335) |2014-09-13 10:23:15,331| QUERY: from User u where u.uuid = :uuid
+INFO - HibernateContextDAO.showUsageStatistics(337) |2014-09-13 10:23:15,331| Cache Hit Count : 0
+INFO - HibernateContextDAO.showUsageStatistics(338) |2014-09-13 10:23:15,332| Cache Miss Count: 0
+INFO - HibernateContextDAO.showUsageStatistics(339) |2014-09-13 10:23:15,332| Cache Put Count : 0
+INFO - HibernateContextDAO.showUsageStatistics(340) |2014-09-13 10:23:15,332| Execution Count : 684
+INFO - HibernateContextDAO.showUsageStatistics(341) |2014-09-13 10:23:15,332| Average time    : 0
+INFO - HibernateContextDAO.showUsageStatistics(342) |2014-09-13 10:23:15,332| Row Count       : 684
+INFO - AbstractSessionFactoryBean.destroy(246) |2014-09-13 10:23:15,362| Closing Hibernate SessionFactory

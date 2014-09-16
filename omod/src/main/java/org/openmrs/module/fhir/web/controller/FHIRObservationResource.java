@@ -17,10 +17,12 @@ package org.openmrs.module.fhir.web.controller;
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
+import ca.uhn.fhir.model.dstu.resource.Observation;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.*;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.util.FHIRObsUtil;
 import org.openmrs.module.fhir.util.FHIRPatientUtil;
 import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.RequestContext;
@@ -73,6 +75,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * {@link org.openmrs.module.webservices.rest.web.annotation.Resource} for Obs, supporting standard CRUD operations
@@ -80,41 +84,65 @@ import java.util.Set;
 @Resource(name = RestConstants.VERSION_1 + "/fhirobservation", supportedClass = Obs.class, supportedOpenmrsVersions = {"1.8.*", "1.9.*", "1.10.*"})
 public class FHIRObservationResource extends DelegatingCrudResource {
 
-    @Override
+    //@Override
     public Object retrieve(String uuid, RequestContext context) throws ResponseException {
-        String contentType = context.getRequest().getContentType();
-        Object delegate = getByUniqueId(uuid, contentType);
-        if (delegate == null)
-            throw new ObjectNotFoundException();
 
-        /*SimpleObject ret = asRepresentation(delegate, context.getRepresentation());
-        if (hasTypesDefined())
-            ret.add(RestConstants.PROPERTY_FOR_TYPE, getTypeName(delegate));*/
-        return delegate;
-    }
+        if(!uuid.equals("search")) {
+            String resource = context.getRequest().getParameter("Patient");
+            String name = context.getRequest().getParameter("name");
 
-    /**
-     * @see org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResource#delete(java.lang.Object,
-     *      java.lang.String, org.openmrs.module.webservices.rest.web.RequestContext)
-     */
-   // @Override
-    protected void delete(Obs delegate, String reason, RequestContext context) throws ResponseException {
-        if (delegate.isVoided()) {
-            // DELETE is idempotent, so we return success here
-            return;
+            String contentType = context.getRequest().getContentType();
+            Object delegate = getByUniqueId(uuid, contentType);
+            if (delegate == null)
+                throw new ObjectNotFoundException();
+
+            return delegate;
+        }else{
+
+            String patientUUid = context.getRequest().getParameter("subject:Patient");
+            String[] concepts = context.getRequest().getParameter("name").split(",");
+
+
+            System.out.println(patientUUid);
+
+            Patient patient = Context.getPatientService().getPatientByUuid(patientUUid);
+            System.out.println(patient);
+
+            List<Concept> conceptList = new ArrayList<Concept>();
+            for (String s : concepts) {
+                Concept concept = Context.getConceptService().getConceptByMapping(s, "LOINC");
+                conceptList.add(concept);
+
+            }
+
+            List<Obs> totalObsList = new ArrayList<Obs>();
+
+            System.out.println(conceptList);
+
+
+            for (Concept concept : conceptList) {
+                List<Obs> obsList = Context.getObsService().getObservationsByPersonAndConcept(patient, concept);
+                totalObsList.addAll(obsList);
+            }
+
+            String resultString = FHIRObsUtil.generateBundle(totalObsList);
+
+            return resultString;
+
         }
-        Context.getObsService().voidObs(delegate, reason);
+
     }
+
 
     /**
      * @see org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResource#getByUniqueId(java.lang.String)
      */
-   // @Override
+    // @Override
     public String getByUniqueId(String uniqueId, String contentType) {
         Obs obs = Context.getObsService().getObsByUuid(uniqueId);
-        System.out.println(FHIRPatientUtil.generateObs(obs,contentType));
+        Observation observation = FHIRObsUtil.generateObs(obs);
 
-        return FHIRPatientUtil.generateObs(obs,contentType);
+        return FHIRObsUtil.parseObservation(observation, contentType);
     }
 
     @Override
@@ -129,6 +157,16 @@ public class FHIRObservationResource extends DelegatingCrudResource {
     }
 
     @Override
+    public Object newDelegate() {
+        return null;
+    }
+
+    @Override
+    public Object save(Object o) {
+        return null;
+    }
+
+    @Override
     public void purge(Object o, RequestContext requestContext) throws ResponseException {
 
     }
@@ -138,51 +176,6 @@ public class FHIRObservationResource extends DelegatingCrudResource {
      */
     @Override
     public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
-        if (rep instanceof DefaultRepresentation) {
-            // TODO how to handle valueCodedName?
-            DelegatingResourceDescription description = new DelegatingResourceDescription();
-            description.addProperty("uuid");
-            description.addProperty("display", findMethod("getDisplayString"));
-            description.addProperty("concept", Representation.REF);
-            description.addProperty("person", Representation.REF);
-            description.addProperty("obsDatetime");
-            description.addProperty("accessionNumber");
-            description.addProperty("obsGroup", Representation.REF);
-            description.addProperty("valueCodedName", Representation.REF);
-            description.addProperty("groupMembers");
-            description.addProperty("comment");
-            description.addProperty("location", Representation.REF);
-            description.addProperty("order", Representation.REF);
-            description.addProperty("encounter", Representation.REF);
-            description.addProperty("voided");
-            description.addProperty("value");
-            description.addProperty("valueModifier");
-            description.addSelfLink();
-            description.addLink("full", ".?v=" + RestConstants.REPRESENTATION_FULL);
-            return description;
-        } else if (rep instanceof FullRepresentation) {
-            // TODO how to handle valueCodedName?
-            DelegatingResourceDescription description = new DelegatingResourceDescription();
-            description.addProperty("uuid");
-            description.addProperty("display", findMethod("getDisplayString"));
-            description.addProperty("concept");
-            description.addProperty("person", Representation.REF);
-            description.addProperty("obsDatetime");
-            description.addProperty("accessionNumber");
-            description.addProperty("obsGroup");
-            description.addProperty("valueCodedName");
-            description.addProperty("groupMembers", Representation.FULL);
-            description.addProperty("comment");
-            description.addProperty("location");
-            description.addProperty("order");
-            description.addProperty("encounter");
-            description.addProperty("voided");
-            description.addProperty("auditInfo", findMethod("getAuditInfo"));
-            description.addProperty("value");
-            description.addProperty("valueModifier");
-            description.addSelfLink();
-            return description;
-        }
         return null;
     }
 
@@ -192,182 +185,7 @@ public class FHIRObservationResource extends DelegatingCrudResource {
     @Override
     public DelegatingResourceDescription getCreatableProperties() {
         DelegatingResourceDescription description = new DelegatingResourceDescription();
-
-        description.addRequiredProperty("person");
-        description.addRequiredProperty("obsDatetime");
-        description.addRequiredProperty("concept");
-
-        description.addProperty("location");
-        description.addProperty("order");
-        description.addProperty("encounter");
-        description.addProperty("accessionNumber");
-        description.addProperty("groupMembers");
-        description.addProperty("valueCodedName");
-        description.addProperty("comment");
-        description.addProperty("value");
-        description.addProperty("valueModifier");
-
         return description;
-    }
-
-    /**
-     * @see org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResource#newDelegate()
-     */
-    @Override
-    public Obs newDelegate() {
-        return new Obs();
-    }
-
-    @Override
-    public Object save(Object o) {
-        return null;
-    }
-
-    /**
-     * @see org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResource#purge(java.lang.Object,
-     *      org.openmrs.module.webservices.rest.web.RequestContext)
-     */
-   // @Override
-    public void purge(Obs delegate, RequestContext context) throws ResponseException {
-        Context.getObsService().purgeObs(delegate);
-
-    }
-
-    /**
-     * @see org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceHandler#save(java.lang.Object)
-     */
-   // @Override
-    public Obs save(Obs delegate) {
-        return Context.getObsService().saveObs(delegate, "REST web service");
-    }
-
-    /**
-     * Display string for Obs
-     *
-     * @param obs
-     * @return String ConceptName = value
-     */
-    public String getDisplayString(Obs obs) {
-        if (obs.getConcept() == null)
-            return "";
-
-        return obs.getConcept().getName() + ": " + obs.getValueAsString(Context.getLocale());
-    }
-
-    /**
-     * Retrives the Obs Value as string
-     *
-     * @param obs
-     * @return
-     */
-    @PropertyGetter("value")
-    public static Object getValue(Obs obs) throws ConversionException {
-        if (obs.isObsGrouping())
-            return null;
-
-        if (obs.getValueDatetime() != null)
-            return ConversionUtil.convert(obs.getValueDatetime(), Date.class);
-
-        if (obs.getValueCoded() != null)
-            return obs.getValueCoded();
-
-        if (obs.getValueComplex() != null)
-            return obs.getValueComplex();
-
-        if (obs.getValueDrug() != null)
-            return obs.getValueDrug();
-
-        if (obs.getValueText() != null)
-            return obs.getValueText();
-
-        if (obs.getValueNumeric() != null)
-            return obs.getValueNumeric();
-
-        return null;
-    }
-
-    /**
-     * Sets the members of an obs group
-     *
-     * @param obsGroup the obs group whose members to set
-     * @param members the members to set
-     */
-    @PropertySetter("groupMembers")
-    public static void setGroupMembers(Obs obsGroup, Set<Obs> members) {
-        for (Obs member : members) {
-            member.setObsGroup(obsGroup);
-            member.setGroupMembers(Collections.<Obs>emptySet());
-        }
-        obsGroup.setGroupMembers(members);
-    }
-
-    /**
-     * Checks if there are more than one obs in GroupMembers and converts into a DEFAULT
-     * representation
-     *
-     * @param obs
-     * @return Object
-     * @throws ConversionException
-     */
-    @PropertyGetter("groupMembers")
-    public static Object getGroupMembers(Obs obs) throws ConversionException {
-        if (obs.getGroupMembers() != null && obs.getGroupMembers().size() > 0) {
-            return obs.getGroupMembers();
-        }
-        return null;
-    }
-
-    /**
-     * Annotated setter for Concept
-     *
-     * @param obs
-     * @param value
-     */
-    @PropertySetter("concept")
-    public static void setConcept(Obs obs, Object value) {
-        obs.setConcept(Context.getConceptService().getConceptByUuid((String) value));
-    }
-
-    /**
-     * Annotated setter for ConceptValue
-     *
-     * @param obs
-     * @param value
-     * @throws java.text.ParseException
-     * @throws ConversionException
-     */
-    @PropertySetter("value")
-    public static void setValue(Obs obs, Object value) throws ParseException, ConversionException {
-        if (value != null) {
-            if (obs.getConcept().getDatatype().isCoded()) {
-                // setValueAsString is not implemented for coded obs (in core)
-                Concept valueCoded = (Concept) ConversionUtil.convert(value, Concept.class);
-                obs.setValueCoded(valueCoded);
-            } else {
-                if (obs.getConcept().isNumeric()) {
-                    //get the actual persistent object rather than the hibernate proxy
-                    ConceptNumeric concept = Context.getConceptService().getConceptNumeric(obs.getConcept().getId());
-                    String units = concept.getUnits();
-                    if (StringUtils.isNotBlank(units)) {
-                        String originalValue = value.toString().trim();
-                        if (originalValue.endsWith(units))
-                            value = originalValue.substring(0, originalValue.indexOf(units)).trim();
-                        else {
-                            //check that that this value has no invalid units
-                            try {
-                                Double.parseDouble(originalValue);
-                            }
-                            catch (NumberFormatException e) {
-                                throw new APIException(originalValue + " has invalid units", e);
-                            }
-                        }
-                    }
-                }
-
-                obs.setValueAsString(value.toString());
-            }
-        } else
-            throw new APIException("The value for an observation cannot be null");
     }
 
     /**
@@ -378,29 +196,33 @@ public class FHIRObservationResource extends DelegatingCrudResource {
      * @param context
      * @see org.openmrs.module.webservices.rest.web.resource.impl.DelegatingCrudResource#doSearch(org.openmrs.module.webservices.rest.web.RequestContext)
      */
-    @Override
-    protected PageableResult doSearch(RequestContext context) {
-        String patientUuid = context.getRequest().getParameter("patient");
-        if (patientUuid != null) {
-            Patient patient = ((PatientResource1_8) Context.getService(RestService.class).getResourceBySupportedClass(
-                    Patient.class)).getByUniqueId(patientUuid);
-            if (patient == null)
-                return new EmptySearchResult();
-            List<Obs> obs = Context.getObsService().getObservationsByPerson(patient);
-            return new NeedsPaging<Obs>(obs, context);
+    protected Result doSearch(RequestContext context) {
+
+        String patientUUid = context.getRequest().getParameter("subject:Patient");
+        String[] concepts = context.getRequest().getParameter("name").split(",");
+
+        Patient patient = Context.getPatientService().getPatientByUuid(patientUUid);
+
+        List<Concept> conceptList = new ArrayList<Concept>();
+        for (String s : concepts) {
+            Concept concept = Context.getConceptService().getConceptByMapping(s, "LOINC");
+            conceptList.add(concept);
+
         }
 
-        String encounterUuid = context.getRequest().getParameter("encounter");
-        if (encounterUuid != null) {
-            Encounter enc = ((EncounterResource1_8) Context.getService(RestService.class).getResourceBySupportedClass(
-                    Encounter.class)).getByUniqueId(encounterUuid);
-            if (enc == null)
-                return new EmptySearchResult();
-            List<Obs> obs = new ArrayList<Obs>(enc.getAllObs());
-            return new NeedsPaging<Obs>(obs, context);
+        List<Obs> totalObsList = new ArrayList<Obs>();
+
+        for (Concept concept : conceptList) {
+            List<Obs> obsList = Context.getObsService().getObservationsByPersonAndConcept(patient, concept);
+            totalObsList.addAll(obsList);
         }
 
-        return new NeedsPaging<Obs>(Context.getObsService().getObservations(context.getParameter("q")), context);
+        String resultString = FHIRObsUtil.generateBundle(totalObsList);
+
+        Result result = new Result();
+        result.toSimpleObject().add("response", resultString);
+
+        return result;
     }
 
 }

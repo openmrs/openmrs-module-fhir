@@ -21,16 +21,21 @@ import org.openmrs.*;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
+import java.util.List;
+
 
 public class  FHIRServiceTest extends BaseModuleContextSensitiveTest {
 
     protected static final String ENC_INITIAL_DATA_XML = "org/openmrs/api/include/EncounterServiceTest-initialData.xml";
     protected static final String PAT_INITIAL_DATA_XML = "org/openmrs/api/include/PatientServiceTest-findPatients.xml";
+    protected static final String CON_INITIAL_DATA_XML = "org/openmrs/api/include/ConceptServiceTest-initialConcepts.xml";
+
 
     @Before
     public void runBeforeEachTest() throws Exception {
         executeDataSet(ENC_INITIAL_DATA_XML);
         executeDataSet(PAT_INITIAL_DATA_XML);
+        executeDataSet(CON_INITIAL_DATA_XML);
 
     }
 
@@ -58,7 +63,20 @@ public class  FHIRServiceTest extends BaseModuleContextSensitiveTest {
 
         concept.addConceptMapping(map);
         obs.setConcept(concept);
-        FHIRPatientUtil.generateObs(obs);
+       //  FHIRPatientUtil.generateObs(obs);
     }
+
+    //@Test
+    public void generateBundle() {
+
+        List<Obs> obsList = Context.getObsService().getObservationsByPerson(Context.getPatientService().getPatient(3));
+        obsList.size();
+
+        FHIRPatientUtilAPI.generateBundle(obsList, "");
+
+
+    }
+
+
 
 }
