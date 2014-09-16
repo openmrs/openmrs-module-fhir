@@ -29,5 +29,16 @@
 
     <context:component-scan base-package="org.openmrs.module.fhir.web.controller" />
 
+    <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+
+            <value>
+                /rest/**=unknownResourceController
+            </value>
+        </property>
+    </bean>
+
+
+
 
 </beans>

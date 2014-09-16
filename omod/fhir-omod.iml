@@ -28,10 +28,11 @@
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.3.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.3.2" level="project" />
     <orderEntry type="module" module-name="fhir-api" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.openmrs.module:webservices.rest-omod:2.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.openmrs.module:webservices.rest-omod-common:2.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.openmrs.module:webservices.rest-omod:2.6-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.openmrs.module:webservices.rest-omod-common:2.6-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.openmrs.module:webservices.rest-omod-1.8:2.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.openmrs.module:webservices.rest-omod-1.9:2.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.openmrs.module:webservices.rest-omod-1.9:2.6-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.openmrs.module:webservices.rest-omod-1.10:2.6-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.openmrs.api:openmrs-api:1.9.8" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-collections:commons-collections:3.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-beanutils:commons-beanutils:1.7.0" level="project" />
