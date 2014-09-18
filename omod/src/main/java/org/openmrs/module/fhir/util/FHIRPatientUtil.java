@@ -32,7 +32,7 @@ public class FHIRPatientUtil {
 
 
             for (PatientIdentifier identifier : omrsPatient.getIdentifiers()) {
-                String uri = "http://" + Context.getAdministrationService().getSystemVariables().get("OPENMRS_HOSTNAME") + "/ws/rest/v1/patientidentifiertype/" + identifier.getIdentifierType().getUuid();
+                String uri = Context.getAdministrationService().getGlobalProperty("webservices.rest.uriPrefix") + "/ws/rest/v1/patientidentifiertype/" + identifier.getIdentifierType().getUuid();
                 if (identifier.isPreferred()) {
 
                     patient.addIdentifier().setUse(IdentifierUseEnum.USUAL).setSystem(uri).setValue(identifier.getIdentifier()).setLabel(identifier.getIdentifierType().getName());

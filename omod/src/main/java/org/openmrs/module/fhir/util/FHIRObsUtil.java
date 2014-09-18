@@ -43,7 +43,7 @@ public class FHIRObsUtil {
         nameDisplay += "(" + Context.getPatientService().getPatientByUuid(obs.getPerson().getUuid()).getPatientIdentifier().getIdentifier() + ")";
 
         patientReference.setDisplay(nameDisplay);
-        String patientUri = "http://" + Context.getAdministrationService().getSystemVariables().get("OPENMRS_HOSTNAME") + "/ws/rest/v1/fhirpatient/" + obs.getPerson().getUuid();
+        String patientUri = Context.getAdministrationService().getGlobalProperty("webservices.rest.uriPrefix")+ "/ws/rest/v1/fhirpatient/" + obs.getPerson().getUuid();
 
         IdDt patientRef = new IdDt();
         patientRef.setValue(patientUri);
@@ -61,7 +61,7 @@ public class FHIRObsUtil {
                 ResourceReferenceDt providerReference = new ResourceReferenceDt();
                 providerReference.setDisplay(provider.getProvider().getName() + "(" + provider.getProvider().getProviderId() + ")");
                 IdDt providerRef = new IdDt();
-                String providerUri = "http://" + Context.getAdministrationService().getSystemVariables().get("OPENMRS_HOSTNAME") + "/ws/rest/v1/fhirprovider/" + provider.getUuid();
+                String providerUri = Context.getAdministrationService().getSystemVariables().get("OPENMRS_HOSTNAME") + "/ws/rest/v1/fhirprovider/" + provider.getUuid();
 
                 providerRef.setValue(providerUri);
                 providerReference.setReference(providerRef);
@@ -175,7 +175,7 @@ public class FHIRObsUtil {
                 if (map.getSource().getName().equals("CIEL"))
                     values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(Constants.ciel));
                 else{
-                    String uri = "http://" + Context.getAdministrationService().getSystemVariables().get("OPENMRS_HOSTNAME") + "/ws/rest/v1/fhirconceptsource/" + map.getSource().getUuid();
+                    String uri = Context.getAdministrationService().getGlobalProperty("webservices.rest.uriPrefix") + "/ws/rest/v1/fhirconceptsource/" + map.getSource().getUuid();
                     dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(uri));
 
                 }
@@ -247,7 +247,7 @@ public class FHIRObsUtil {
             BundleEntry bundleEntry = new BundleEntry();
 
             IdDt entryId = new IdDt();
-            entryId.setValue("http://" + Context.getAdministrationService().getSystemVariables().get("OPENMRS_HOSTNAME") + "/ws/rest/v1/fhirobservation/" + obs.getUuid());
+            entryId.setValue(Context.getAdministrationService().getGlobalProperty("webservices.rest.uriPrefix") + "/ws/fhir/Observation/" + obs.getUuid());
 
             bundleEntry.setId(entryId);
 
