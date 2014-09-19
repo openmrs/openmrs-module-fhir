@@ -3,15 +3,13 @@ package org.openmrs.module.fhir.util;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.Bundle;
 import ca.uhn.fhir.model.api.BundleEntry;
+import ca.uhn.fhir.model.api.IDatatype;
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu.composite.*;
 import ca.uhn.fhir.model.dstu.resource.Observation;
 import ca.uhn.fhir.model.dstu.valueset.ObservationReliabilityEnum;
 import ca.uhn.fhir.model.dstu.valueset.ObservationStatusEnum;
-import ca.uhn.fhir.model.primitive.DateTimeDt;
-import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.model.primitive.InstantDt;
-import ca.uhn.fhir.model.primitive.StringDt;
+import ca.uhn.fhir.model.primitive.*;
 import ca.uhn.fhir.narrative.DefaultThymeleafNarrativeGenerator;
 import ca.uhn.fhir.parser.IParser;
 import org.openmrs.*;
@@ -102,6 +100,8 @@ public class FHIRObsUtil {
             q.setValue(obs.getValueNumeric());
             q.setSystem("http://unitsofmeasure.org");
             q.setUnits(cn.getUnits());
+            q.setCode(cn.getUnits());
+
 
             observation.setValue(q);
 
@@ -190,6 +190,10 @@ public class FHIRObsUtil {
 
         observation.setStatus(ObservationStatusEnum.FINAL);
         observation.setReliability(ObservationReliabilityEnum.OK);
+
+        DateTimeDt dateApplies = new DateTimeDt();
+        dateApplies.setValue(obs.getObsDatetime());
+        observation.setApplies(dateApplies);
 
         return observation;
 

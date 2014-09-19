@@ -31,6 +31,7 @@ public class  FHIRManageController {
 	
 	@RequestMapping(value = "/module/fhir/manage", method = RequestMethod.GET)
 	public void manage(ModelMap model) {
+        Context.authenticate("admin", "test");
 		model.addAttribute("user", Context.getAuthenticatedUser());
 	}
 }

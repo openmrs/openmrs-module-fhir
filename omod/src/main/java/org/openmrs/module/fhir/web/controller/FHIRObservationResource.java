@@ -81,13 +81,13 @@ import java.util.regex.Pattern;
 /**
  * {@link org.openmrs.module.webservices.rest.web.annotation.Resource} for Obs, supporting standard CRUD operations
  */
-@Resource(name = RestConstants.VERSION_1 + "/fhirobservation", supportedClass = Obs.class, supportedOpenmrsVersions = {"1.8.*", "1.9.*", "1.10.*"})
+@Resource(name = RestConstants.VERSION_1 +  "/Observation", supportedClass = Obs.class, supportedOpenmrsVersions = {"1.8.*", "1.9.*", "1.10.*"})
 public class FHIRObservationResource extends DelegatingCrudResource {
 
     //@Override
     public Object retrieve(String uuid, RequestContext context) throws ResponseException {
 
-        if(!uuid.equals("search")) {
+        if(!uuid.equals("_search")) {
             String resource = context.getRequest().getParameter("Patient");
             String name = context.getRequest().getParameter("name");
 
