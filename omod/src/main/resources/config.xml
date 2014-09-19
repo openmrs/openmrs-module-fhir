@@ -16,7 +16,7 @@
 	<!-- / Module Properties -->
 
     <require_modules>
-        <require_module version="2.0">org.openmrs.module.webservices.rest</require_module>
+       <require_module version="2.0">org.openmrs.module.webservices.rest</require_module>
     </require_modules>
 	
 	<!-- Module Activator -->
@@ -51,6 +51,16 @@
 		<file>messages_es.properties</file>
 	</messages>
 	<!-- /Internationalization -->
+
+
+    <filter>
+        <filter-name>FHIR Authorization</filter-name>
+        <filter-class>org.openmrs.module.fhir.web.controller.AuthorizationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>FHIR Authorization</filter-name>
+        <url-pattern>/ws/fhir/*</url-pattern>
+    </filter-mapping>
 
 </module>
 

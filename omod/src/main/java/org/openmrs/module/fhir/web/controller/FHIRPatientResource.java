@@ -43,7 +43,7 @@ import java.util.*;
 /**
  * {@link org.openmrs.module.webservices.rest.web.annotation.Resource} for Patients, supporting standard CRUD operations
  */
-@Resource(name = RestConstants.VERSION_1 + "/fhirpatient", supportedClass = Patient.class, supportedOpenmrsVersions = {"1.8.*", "1.9.*", "1.10.*"})
+@Resource(name = RestConstants.VERSION_1 + "/Patient", supportedClass = Patient.class, supportedOpenmrsVersions = {"1.8.*", "1.9.*", "1.10.*"})
 public class FHIRPatientResource extends DelegatingCrudResource {
 
     @Override
