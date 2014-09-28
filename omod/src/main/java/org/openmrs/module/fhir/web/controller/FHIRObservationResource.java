@@ -5,6 +5,7 @@ import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.ObsService;
 import org.openmrs.module.fhir.api.impl.ObsServiceImpl;
 import org.openmrs.module.fhir.api.impl.PatientServiceImpl;
 import org.openmrs.module.fhir.api.util.FHIRObsUtil;
@@ -113,7 +114,7 @@ public class FHIRObservationResource {
 
     public String getByUniqueId(String uniqueId, String contentType) {
         Obs obs = Context.getObsService().getObsByUuid(uniqueId);
-        Observation fhirObs = Context.getService(ObsServiceImpl.class).getObs(uniqueId);
+        Observation fhirObs = Context.getService(ObsService.class).getObs(uniqueId);
 
         return FHIRObsUtil.parseObservation(fhirObs, contentType);
     }
