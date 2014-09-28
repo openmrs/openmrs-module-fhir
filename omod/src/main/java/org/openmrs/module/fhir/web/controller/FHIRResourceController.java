@@ -13,24 +13,6 @@
  */
 package org.openmrs.module.fhir.web.controller;
 
-import org.openmrs.module.webservices.rest.SimpleObject;
-import org.openmrs.module.webservices.rest.web.RequestContext;
-import org.openmrs.module.webservices.rest.web.RestConstants;
-import org.openmrs.module.webservices.rest.web.RestUtil;
-import org.openmrs.module.webservices.rest.web.api.RestService;
-import org.openmrs.module.webservices.rest.web.representation.Representation;
-import org.openmrs.module.webservices.rest.web.resource.api.Creatable;
-import org.openmrs.module.webservices.rest.web.resource.api.CrudResource;
-import org.openmrs.module.webservices.rest.web.resource.api.Deletable;
-import org.openmrs.module.webservices.rest.web.resource.api.Listable;
-import org.openmrs.module.webservices.rest.web.resource.api.Purgeable;
-import org.openmrs.module.webservices.rest.web.resource.api.Retrievable;
-import org.openmrs.module.webservices.rest.web.resource.api.SearchHandler;
-import org.openmrs.module.webservices.rest.web.resource.api.Searchable;
-import org.openmrs.module.webservices.rest.web.resource.api.Updatable;
-import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
-import org.openmrs.module.webservices.rest.web.response.ResponseException;
-import org.openmrs.module.webservices.rest.web.v1_0.controller.MainResourceController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,149 +26,50 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
 
-/**
- * Base controller that handles exceptions (via {@link org.openmrs.module.webservices.rest.web.v1_0.controller.BaseRestController}) and also standard CRUD
- * operations based on a {@link CrudResource}.
- */
 @Controller
 @RequestMapping(value = "/fhir/")
-public class FHIRResourceController extends MainResourceController {
-	
-	@Autowired
-	RestService restService;
-	
-	/**
-	 * @param uuid
-	 * @param request
-	 * @return
-	 * @throws ResponseException
-	 */
+public class FHIRResourceController  {
+
+    @RequestMapping(value = "/{resource}", method = RequestMethod.GET)
+    @ResponseBody
+    public Object search(@PathVariable("resource") String resource,
+                         @RequestParam(value = "name") String name,
+                         HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        String result = null;
+
+        if(resource.equals("Observation")){
+            FHIRObservationResource observationResource = new FHIRObservationResource();
+            result = observationResource.doSearch(request);
+        }
+
+        System.out.println(result);
+        return result;
+    }
+
+
 	@RequestMapping(value = "/{resource}/{uuid}", method = RequestMethod.GET)
 	@ResponseBody
 	public Object retrieve(@PathVariable("resource") String resource, @PathVariable("uuid") String uuid,
-	        HttpServletRequest request, HttpServletResponse response) throws ResponseException {
-		RequestContext context = RestUtil.getRequestContext(request, response);
-		Retrievable res = (Retrievable) restService.getResourceByName(buildResourceName(resource));
-		return res.retrieve(uuid, context);
-	}
-	
-	/**
-	 * @param post
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "/{resource}", method = RequestMethod.POST)
-	@ResponseBody
-	public Object create(@PathVariable("resource") String resource, @RequestBody SimpleObject post,
-	        HttpServletRequest request, HttpServletResponse response) throws ResponseException {
-		RequestContext context = RestUtil.getRequestContext(request, response);
-		Creatable res = (Creatable) restService.getResourceByName(buildResourceName(resource));
-		Object created = res.create(post, context);
-		return RestUtil.created(response, created);
-	}
-	
-	/**
-	 * @param uuid
-	 * @param post
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "/{resource}/{uuid}", method = RequestMethod.POST)
-	@ResponseBody
-	public Object update(@PathVariable("resource") String resource, @PathVariable("uuid") String uuid,
-	        @RequestBody SimpleObject post, HttpServletRequest request, HttpServletResponse response)
-	        throws ResponseException {
-		RequestContext context = RestUtil.getRequestContext(request, response);
-		Updatable res = (Updatable) restService.getResourceByName(buildResourceName(resource));
-		Object updated = res.update(uuid, post, context);
-		return RestUtil.updated(response, updated);
+                           @RequestParam(value = "name", required = false) String name,
+	        HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        String result = null;
+        System.out.println(" id " + uuid);
+
+        if(resource.equals("Patient")){
+            FHIRPatientResource patientResource = new FHIRPatientResource();
+            result = patientResource.getByUniqueId(uuid, request.getContentType());
+        }
+
+        if(resource.equals("Observation")){
+            FHIRObservationResource observationResource = new FHIRObservationResource();
+            result = observationResource.getByUniqueId(uuid, request.getContentType());
+        }
+
+        System.out.println(result);
+		return result;
 	}
 
- /**
-     * It should be overridden if you want to expose resources under a different URL than /rest/v1.
-     *
-     * @return the namespace
-     */
-     /*  @Override
-    public String getNamespace() {
-        return "";
-    }
-    */
-	
-	/**
-	 * @param uuid
-	 * @param reason
-	 * @param request
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "/{resource}/{uuid}", method = RequestMethod.DELETE, params = "!purge")
-	@ResponseBody
-	public Object delete(@PathVariable("resource") String resource, @PathVariable("uuid") String uuid,
-	        @RequestParam(value = "reason", defaultValue = "web service call") String reason, HttpServletRequest request,
-	        HttpServletResponse response) throws ResponseException {
-		RequestContext context = RestUtil.getRequestContext(request, response);
-		Deletable res = (Deletable) restService.getResourceByName(buildResourceName(resource));
-		res.delete(uuid, reason, context);
-		return RestUtil.noContent(response);
-	}
-	
-	/**
-	 * @param uuid
-	 * @param request
-	 * @param response
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "/{resource}/{uuid}", method = RequestMethod.DELETE, params = "purge")
-	@ResponseBody
-	public Object purge(@PathVariable("resource") String resource, @PathVariable("uuid") String uuid,
-	        HttpServletRequest request, HttpServletResponse response) throws ResponseException {
-		RequestContext context = RestUtil.getRequestContext(request, response);
-		Purgeable res = (Purgeable) restService.getResourceByName(buildResourceName(resource));
-		res.purge(uuid, context);
-		return RestUtil.noContent(response);
-	}
-	
-	/**
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws ResponseException
-	 */
-	/*@SuppressWarnings("rawtypes")
-	@RequestMapping(value = "/{resource}", method = RequestMethod.GET)
-	@ResponseBody
-	public SimpleObject get(@PathVariable("resource") String resource, HttpServletRequest request,
-	        HttpServletResponse response) throws ResponseException {
-		Searchable res = (Searchable) restService.getResourceByName(buildResourceName(resource));
-		
-		RequestContext context = RestUtil.getRequestContext(request, response, Representation.REF);
-		
-		@SuppressWarnings("unchecked")
-		SearchHandler searchHandler = restService.getSearchHandler(buildResourceName(resource), request.getParameterMap());
-		if (searchHandler != null) {
-			return searchHandler.search(context).toSimpleObject();
-		}
-		
-		Enumeration parameters = request.getParameterNames();
-		while (parameters.hasMoreElements()) {
-			if (!RestConstants.SPECIAL_REQUEST_PARAMETERS.contains(parameters.nextElement())) {
-				if (res instanceof Searchable) {
-					return ((Searchable) res).search(context);
-				} else {
-					throw new ResourceDoesNotSupportOperationException(res.getClass().getSimpleName() + " is not searchable");
-				}
-			}
-		}
-		
-		if (res instanceof Listable) {
-			return ((Listable) res).getAll(context);
-		} else {
-			throw new ResourceDoesNotSupportOperationException(res.getClass().getSimpleName() + " is not listable");
-		}
-	}*/
-	
+
 }

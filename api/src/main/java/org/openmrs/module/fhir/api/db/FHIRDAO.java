@@ -13,10 +13,8 @@
  */
 package org.openmrs.module.fhir.api.db;
 
-import org.openmrs.module.fhir.api.FHIRService;
-
 /**
- *  Database methods for {@link FHIRService}.
+ *  Database methods for {@link org.openmrs.module.fhir.api.PatientService}.
  */
 public interface FHIRDAO {
 	

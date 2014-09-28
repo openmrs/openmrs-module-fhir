@@ -16,7 +16,7 @@
 	<!-- / Module Properties -->
 
     <require_modules>
-       <require_module version="2.0">org.openmrs.module.webservices.rest</require_module>
+       <!-- <require_module version="2.0">org.openmrs.module.webservices.rest</require_module> -->
     </require_modules>
 	
 	<!-- Module Activator -->

@@ -18,7 +18,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.webservices.rest.web.RestUtil;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -41,8 +40,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.webservices.rest.web.RestConstants;
-import org.openmrs.module.webservices.rest.web.RestUtil;
 
 /**
  * Filter intended for all /ws/rest calls that allows the user to authenticate via Basic
@@ -81,7 +78,7 @@ public class AuthorizationFilter implements Filter {
             ServletException {
 
         // check the IP address first.  If its not valid, return a 403
-        if (!RestUtil.isIpAllowed(request.getRemoteAddr())) {
+        if (false) {
             // the ip address is not valid, set a 403 http error code
             HttpServletResponse httpresponse = (HttpServletResponse) response;
             httpresponse.sendError(HttpServletResponse.SC_FORBIDDEN, "IP address '" + request.getRemoteAddr()

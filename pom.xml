@@ -124,7 +124,7 @@
 
 			<!-- Begin OpenMRS core -->
 
-           <dependency>
+          <!-- <dependency>
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>webservices.rest-omod-1.8</artifactId>
                 <version>2.0</version>
@@ -137,7 +137,7 @@
                 <version>2.0</version>
                 <classifier>tests</classifier>
                 <scope>test</scope>
-            </dependency>
+            </dependency> -->
 			
 			<dependency>
 				<groupId>org.openmrs.api</groupId>

@@ -1,5 +1,17 @@
 package org.openmrs.module.fhir.web.controller;
 
+import ca.uhn.fhir.model.dstu.resource.Observation;
+import org.openmrs.Concept;
+import org.openmrs.Obs;
+import org.openmrs.Patient;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.impl.ObsServiceImpl;
+import org.openmrs.module.fhir.api.impl.PatientServiceImpl;
+import org.openmrs.module.fhir.api.util.FHIRObsUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by snkasthu on 9/9/14.
  */
@@ -22,23 +34,8 @@ import org.apache.commons.lang.StringUtils;
 import org.openmrs.*;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.util.FHIRObsUtil;
-import org.openmrs.module.fhir.util.FHIRPatientUtil;
-import org.openmrs.module.webservices.rest.web.ConversionUtil;
-import org.openmrs.module.webservices.rest.web.RequestContext;
-import org.openmrs.module.webservices.rest.web.RestConstants;
-import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
-import org.openmrs.module.webservices.rest.web.annotation.PropertySetter;
-import org.openmrs.module.webservices.rest.web.annotation.Resource;
-import org.openmrs.module.webservices.rest.web.api.RestService;
-import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
-import org.openmrs.module.webservices.rest.web.representation.FullRepresentation;
-import org.openmrs.module.webservices.rest.web.representation.Representation;
-import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
-import org.openmrs.module.webservices.rest.web.resource.impl.*;
-import org.openmrs.module.webservices.rest.web.response.*;
-import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_8.EncounterResource1_8;
-import org.openmrs.module.webservices.rest.web.v1_0.resource.openmrs1_8.PatientResource1_8;
+import org.openmrs.module.fhir.api.util.FHIRObsUtil;
+import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 
 import java.text.ParseException;
 import java.util.*;
@@ -51,24 +48,8 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.webservices.rest.web.ConversionUtil;
-import org.openmrs.module.webservices.rest.web.RequestContext;
-import org.openmrs.module.webservices.rest.web.RestConstants;
-import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
-import org.openmrs.module.webservices.rest.web.annotation.PropertySetter;
-import org.openmrs.module.webservices.rest.web.annotation.Resource;
-import org.openmrs.module.webservices.rest.web.api.RestService;
-import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
-import org.openmrs.module.webservices.rest.web.representation.FullRepresentation;
-import org.openmrs.module.webservices.rest.web.representation.Representation;
-import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
-import org.openmrs.module.webservices.rest.web.resource.impl.DataDelegatingCrudResource;
-import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
-import org.openmrs.module.webservices.rest.web.resource.impl.EmptySearchResult;
-import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
-import org.openmrs.module.webservices.rest.web.response.ConversionException;
-import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -78,29 +59,25 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * {@link org.openmrs.module.webservices.rest.web.annotation.Resource} for Obs, supporting standard CRUD operations
- */
-@Resource(name = RestConstants.VERSION_1 +  "/Observation", supportedClass = Obs.class, supportedOpenmrsVersions = {"1.8.*", "1.9.*", "1.10.*"})
-public class FHIRObservationResource extends DelegatingCrudResource {
 
-    //@Override
-    public Object retrieve(String uuid, RequestContext context) throws ResponseException {
+public class FHIRObservationResource {
+
+    public Object retrieve(String uuid, HttpServletRequest request) throws Exception {
 
         if(!uuid.equals("_search")) {
-            String resource = context.getRequest().getParameter("Patient");
-            String name = context.getRequest().getParameter("name");
+            String resource = request.getParameter("Patient");
+            String name = request.getParameter("name");
 
-            String contentType = context.getRequest().getContentType();
+            String contentType = request.getContentType();
             Object delegate = getByUniqueId(uuid, contentType);
             if (delegate == null)
-                throw new ObjectNotFoundException();
+                throw new Exception();
 
             return delegate;
         }else{
 
-            String patientUUid = context.getRequest().getParameter("subject:Patient");
-            String[] concepts = context.getRequest().getParameter("name").split(",");
+            String patientUUid = request.getParameter("subject:Patient");
+            String[] concepts = request.getParameter("name").split(",");
 
 
             System.out.println(patientUUid);
@@ -134,72 +111,18 @@ public class FHIRObservationResource extends DelegatingCrudResource {
     }
 
 
-    /**
-     * @see org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResource#getByUniqueId(java.lang.String)
-     */
-    // @Override
     public String getByUniqueId(String uniqueId, String contentType) {
         Obs obs = Context.getObsService().getObsByUuid(uniqueId);
-        Observation observation = FHIRObsUtil.generateObs(obs);
+        Observation fhirObs = Context.getService(ObsServiceImpl.class).getObs(uniqueId);
 
-        return FHIRObsUtil.parseObservation(observation, contentType);
+        return FHIRObsUtil.parseObservation(fhirObs, contentType);
     }
 
-    @Override
-    public Object getByUniqueId(String s) {
-        return null;
-    }
+    protected String doSearch(HttpServletRequest request) {
+        System.out.println("in search");
 
-
-    @Override
-    protected void delete(Object o, String s, RequestContext requestContext) throws ResponseException {
-
-    }
-
-    @Override
-    public Object newDelegate() {
-        return null;
-    }
-
-    @Override
-    public Object save(Object o) {
-        return null;
-    }
-
-    @Override
-    public void purge(Object o, RequestContext requestContext) throws ResponseException {
-
-    }
-
-    /**
-     * @see org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResource#getRepresentationDescription(org.openmrs.module.webservices.rest.web.representation.Representation)
-     */
-    @Override
-    public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
-        return null;
-    }
-
-    /**
-     * @see org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResource#getCreatableProperties()
-     */
-    @Override
-    public DelegatingResourceDescription getCreatableProperties() {
-        DelegatingResourceDescription description = new DelegatingResourceDescription();
-        return description;
-    }
-
-    /**
-     * Gets obs by patient or encounter (paged according to context if necessary) only if a patient
-     * or encounter parameter exists respectively in the request set on the {@link RequestContext}
-     * otherwise searches for obs that match the specified query
-     *
-     * @param context
-     * @see org.openmrs.module.webservices.rest.web.resource.impl.DelegatingCrudResource#doSearch(org.openmrs.module.webservices.rest.web.RequestContext)
-     */
-    protected Result doSearch(RequestContext context) {
-
-        String patientUUid = context.getRequest().getParameter("subject:Patient");
-        String[] concepts = context.getRequest().getParameter("name").split(",");
+        String patientUUid = request.getParameter("subject:Patient");
+        String[] concepts = request.getParameter("name").split(",");
 
         Patient patient = Context.getPatientService().getPatientByUuid(patientUUid);
 
@@ -209,8 +132,9 @@ public class FHIRObservationResource extends DelegatingCrudResource {
             conceptList.add(concept);
 
         }
-
+        System.out.println("in search");
         List<Obs> totalObsList = new ArrayList<Obs>();
+        System.out.println("in search" + totalObsList.size());
 
         for (Concept concept : conceptList) {
             List<Obs> obsList = Context.getObsService().getObservationsByPersonAndConcept(patient, concept);
@@ -219,11 +143,9 @@ public class FHIRObservationResource extends DelegatingCrudResource {
 
         String resultString = FHIRObsUtil.generateBundle(totalObsList);
 
-        Result result = new Result();
-        result.toSimpleObject().add("response", resultString);
-
-        return result;
+        return resultString;
     }
 
 }
+
 

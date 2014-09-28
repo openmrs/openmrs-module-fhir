@@ -33,7 +33,6 @@
         <property name="mappings">
 
             <value>
-                /rest/**=unknownResourceController
             </value>
         </property>
     </bean>
