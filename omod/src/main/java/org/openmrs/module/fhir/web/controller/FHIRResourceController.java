@@ -55,7 +55,6 @@ public class FHIRResourceController  {
 	        HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         String result = null;
-        System.out.println(" id " + uuid);
 
         if(resource.equals("Patient")){
             FHIRPatientResource patientResource = new FHIRPatientResource();
@@ -64,10 +63,14 @@ public class FHIRResourceController  {
 
         if(resource.equals("Observation")){
             FHIRObservationResource observationResource = new FHIRObservationResource();
-            result = observationResource.getByUniqueId(uuid, request.getContentType());
+            result = (String) observationResource.retrieve(uuid, request);
         }
 
-        System.out.println(result);
+        if(resource.equals("FamilyHistory")){
+            FHIRFamilyHistoryResource familyHistoryResource = new FHIRFamilyHistoryResource();
+            result = (String)familyHistoryResource.retrieve(uuid, request);
+        }
+
 		return result;
 	}
 

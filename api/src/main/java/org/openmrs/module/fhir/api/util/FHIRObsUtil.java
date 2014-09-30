@@ -239,7 +239,6 @@ public class FHIRObsUtil {
 
 
     public static String generateBundle(List<Obs> obsList) {
-
         Bundle bundle = new Bundle();
         StringDt title = bundle.getTitle();
         title.setValue("Search result");

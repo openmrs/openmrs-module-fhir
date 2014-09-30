@@ -61,7 +61,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class FHIRObservationResource {
+public class FHIRObservationResource extends Resource {
 
     public Object retrieve(String uuid, HttpServletRequest request) throws Exception {
 
@@ -80,11 +80,7 @@ public class FHIRObservationResource {
             String patientUUid = request.getParameter("subject:Patient");
             String[] concepts = request.getParameter("name").split(",");
 
-
-            System.out.println(patientUUid);
-
             Patient patient = Context.getPatientService().getPatientByUuid(patientUUid);
-            System.out.println(patient);
 
             List<Concept> conceptList = new ArrayList<Concept>();
             for (String s : concepts) {
@@ -94,9 +90,6 @@ public class FHIRObservationResource {
             }
 
             List<Obs> totalObsList = new ArrayList<Obs>();
-
-            System.out.println(conceptList);
-
 
             for (Concept concept : conceptList) {
                 List<Obs> obsList = Context.getObsService().getObservationsByPersonAndConcept(patient, concept);
@@ -113,6 +106,7 @@ public class FHIRObservationResource {
 
 
     public String getByUniqueId(String uniqueId, String contentType) {
+
         Obs obs = Context.getObsService().getObsByUuid(uniqueId);
         Observation fhirObs = Context.getService(ObsService.class).getObs(uniqueId);
 
@@ -120,7 +114,6 @@ public class FHIRObservationResource {
     }
 
     protected String doSearch(HttpServletRequest request) {
-        System.out.println("in search");
 
         String patientUUid = request.getParameter("subject:Patient");
         String[] concepts = request.getParameter("name").split(",");
@@ -133,9 +126,7 @@ public class FHIRObservationResource {
             conceptList.add(concept);
 
         }
-        System.out.println("in search");
         List<Obs> totalObsList = new ArrayList<Obs>();
-        System.out.println("in search" + totalObsList.size());
 
         for (Concept concept : conceptList) {
             List<Obs> obsList = Context.getObsService().getObservationsByPersonAndConcept(patient, concept);
