@@ -13,9 +13,7 @@ import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRObsUtil;
 import org.openmrs.module.fhir.api.util.FamilyHistoryUtil;
 
-/**
- * Created by snkasthu on 9/29/14.
- */
+
 public class FamilyHistoryServiceImpl extends BaseOpenmrsService implements FamilyHistoryService {
 
     protected final Log log = LogFactory.getLog(this.getClass());

@@ -63,6 +63,8 @@ import java.util.regex.Pattern;
 
 public class FHIRObservationResource extends Resource {
 
+    org.openmrs.module.fhir.api.ObsService obsService = Context.getService(org.openmrs.module.fhir.api.ObsService.class);
+
     public Object retrieve(String uuid, HttpServletRequest request) throws Exception {
 
         if(!uuid.equals("_search")) {
@@ -107,10 +109,9 @@ public class FHIRObservationResource extends Resource {
 
     public String getByUniqueId(String uniqueId, String contentType) {
 
-        Obs obs = Context.getObsService().getObsByUuid(uniqueId);
-        Observation fhirObs = Context.getService(ObsService.class).getObs(uniqueId);
+        ca.uhn.fhir.model.dstu.resource.Observation fhirObservation = obsService.getObs(uniqueId);
 
-        return FHIRObsUtil.parseObservation(fhirObs, contentType);
+        return FHIRObsUtil.parseObservation(fhirObservation, contentType);
     }
 
     protected String doSearch(HttpServletRequest request) {
@@ -118,20 +119,8 @@ public class FHIRObservationResource extends Resource {
         String patientUUid = request.getParameter("subject:Patient");
         String[] concepts = request.getParameter("name").split(",");
 
-        Patient patient = Context.getPatientService().getPatientByUuid(patientUUid);
 
-        List<Concept> conceptList = new ArrayList<Concept>();
-        for (String s : concepts) {
-            Concept concept = Context.getConceptService().getConceptByMapping(s, "LOINC");
-            conceptList.add(concept);
-
-        }
-        List<Obs> totalObsList = new ArrayList<Obs>();
-
-        for (Concept concept : conceptList) {
-            List<Obs> obsList = Context.getObsService().getObservationsByPersonAndConcept(patient, concept);
-            totalObsList.addAll(obsList);
-        }
+        List<Obs> totalObsList = obsService.getObsByPatientandConcept(patientUUid, concepts);
 
         String resultString = FHIRObsUtil.generateBundle(totalObsList);
 

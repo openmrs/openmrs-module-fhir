@@ -16,7 +16,9 @@ package org.openmrs.module.fhir;
 
 import org.apache.commons.logging.Log; 
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.ModuleActivator;
+import org.openmrs.module.fhir.api.util.StrategyUtil;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
@@ -43,14 +45,16 @@ public class FHIRActivator implements ModuleActivator {
 	 * @see ModuleActivator#willStart()
 	 */
 	public void willStart() {
-		log.info("Starting FHIR Module");
+
+        log.info("Starting FHIR Module");
 	}
 	
 	/**
 	 * @see ModuleActivator#started()
 	 */
 	public void started() {
-		log.info("FHIR Module started");
+        StrategyUtil.strategize();
+        log.info("FHIR Module started");
 	}
 	
 	/**

@@ -55,14 +55,14 @@
     <bean parent="serviceContext">
         <property name="moduleService">
             <list>
-                <value>${project.parent.groupId}.${project.parent.artifactId}.api.PatientService</value>
+                <value>${project.parent.groupId}.${project.parent.artifactId}.api.FHIRService</value>
                 <bean
                         class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
                     <property name="transactionManager">
                         <ref bean="transactionManager" />
                     </property>
                     <property name="target">
-                        <bean class="${project.parent.groupId}.${project.parent.artifactId}.api.impl.PatientServiceImpl">
+                        <bean class="${project.parent.groupId}.${project.parent.artifactId}.api.impl.FHIRServiceImpl">
                             <property name="dao">
                                 <bean class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernateFHIRDAO">
                                     <property name="sessionFactory">

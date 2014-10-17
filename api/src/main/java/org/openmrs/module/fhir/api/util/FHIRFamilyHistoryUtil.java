@@ -18,9 +18,7 @@ import org.openmrs.api.context.Context;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by snkasthu on 9/18/14.
- */
+
 public class FHIRFamilyHistoryUtil {
 
     public static FamilyHistory generateFamilyHistory () {

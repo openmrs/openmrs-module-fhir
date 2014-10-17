@@ -30,7 +30,6 @@
 	<modules>
 		<module>api</module>
 		<module>omod</module>
-    <module>openmrs-project</module>
   </modules>
 	
 	<properties>
@@ -40,6 +39,13 @@
 
 	<dependencyManagement>
 		<dependencies>
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>allergyapi</artifactId>
+                <version>1.1-SNAPSHOT</version>
+                <scope>provided</scope>
+                <type>jar</type>
+            </dependency>
 
             <dependency>
                 <groupId>org.thymeleaf</groupId>
