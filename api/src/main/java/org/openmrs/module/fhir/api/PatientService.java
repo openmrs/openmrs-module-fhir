@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 
  * @see org.openmrs.api.context.Context
  */
+
 @Transactional
 public interface PatientService extends OpenmrsService {
      

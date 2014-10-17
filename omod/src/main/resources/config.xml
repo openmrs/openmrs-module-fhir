@@ -28,6 +28,10 @@
 		<point>org.openmrs.admin.list</point>
 		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.AdminList</class>
 	</extension>
+
+    <aware_of_modules>
+        <aware_of_module version="1.1-SNAPSHOT">org.openmrs.module.allergyapi</aware_of_module>
+    </aware_of_modules>
 	
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>

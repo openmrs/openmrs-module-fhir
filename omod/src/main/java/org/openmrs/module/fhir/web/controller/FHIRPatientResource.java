@@ -18,6 +18,7 @@ import org.openmrs.PatientIdentifier;
 import org.openmrs.Person;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.fhir.api.impl.PatientServiceImpl;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 import org.openmrs.module.fhir.util.Parser;
@@ -28,6 +29,7 @@ import java.util.*;
 public class FHIRPatientResource extends Resource {
 
     public Object retrieve(String uuid) throws Exception {
+
         Object delegate = getByUniqueId(uuid, null);
         System.out.println(delegate);
         if (delegate == null)
@@ -38,8 +40,9 @@ public class FHIRPatientResource extends Resource {
 
 
     public String getByUniqueId(String uuid, String contentType) {
-        Patient patient = Context.getPatientService().getPatientByUuid(uuid);
-        ca.uhn.fhir.model.dstu.resource.Patient fhirPatient = Context.getService(org.openmrs.module.fhir.api.PatientService.class).getPatient(uuid);
+
+        org.openmrs.module.fhir.api.PatientService patientService = Context.getService(org.openmrs.module.fhir.api.PatientService.class);
+        ca.uhn.fhir.model.dstu.resource.Patient fhirPatient = patientService.getPatient(uuid);
 
         return Parser.parsePatient(fhirPatient, contentType);
     }
