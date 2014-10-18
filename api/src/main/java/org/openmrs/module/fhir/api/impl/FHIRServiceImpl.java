@@ -2,7 +2,8 @@ package org.openmrs.module.fhir.api.impl;
 
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.FHIRService;
-import org.openmrs.module.fhir.api.Strategy;
+import org.openmrs.module.fhir.strategy.AllergyStrategyInterface;
+import org.openmrs.module.fhir.strategy.Strategy;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 
 
@@ -25,14 +26,14 @@ public class FHIRServiceImpl  extends BaseOpenmrsService implements FHIRService 
         return dao;
     }
 
-    private Strategy strategy;
+    private AllergyStrategyInterface allergyStrategy;
 
-    public void setStrategy(Strategy strategy){
-        this.strategy = strategy;
+
+    public AllergyStrategyInterface getAllergyStrategy() {
+        return allergyStrategy;
     }
 
-    public Strategy getStrategy(){
-        return this.strategy;
+    public void setAllergyStrategy(AllergyStrategyInterface allergyStrategy) {
+        this.allergyStrategy = allergyStrategy;
     }
-
 }
