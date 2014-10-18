@@ -146,12 +146,36 @@ public class FHIRPatientUtil {
             dts.add(telecom);
             patient.setTelecom(dts);
 
+       // validate(patient);
+
         return patient;
 
     }
 
-    public static String parsePatient(Patient patient, String contentType){
 
+    public static void validate(Patient patient){
+        FhirContext ctx = new FhirContext();
+
+            // Request a validator and apply it
+            FhirValidator val = ctx.newValidator();
+            try {
+
+                val.validate(patient);
+                System.out.println("Validation passed");
+
+            } catch (ValidationFailureException e) {
+                // We failed validation!
+
+                System.out.println("Validation failed");
+
+                String results = ctx.newXmlParser().setPrettyPrint(true).encodeResourceToString(e.getOperationOutcome());
+                System.out.println(results);
+            }
+
+    }
+
+
+    public static String parsePatient(Patient patient, String contentType){
         FhirContext ctx = new FhirContext();
         ctx.setNarrativeGenerator(new DefaultThymeleafNarrativeGenerator());
 
