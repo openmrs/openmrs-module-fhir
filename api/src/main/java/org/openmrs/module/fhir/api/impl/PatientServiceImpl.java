@@ -26,9 +26,24 @@ import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
  * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
  */
 public class PatientServiceImpl extends BaseOpenmrsService implements PatientService {
-	
-	protected final Log log = LogFactory.getLog(this.getClass());
 
+    protected final Log log = LogFactory.getLog(this.getClass());
+
+    private FHIRDAO dao;
+
+    /**
+     * @param dao the dao to set
+     */
+    public void setDao(FHIRDAO dao) {
+        this.dao = dao;
+    }
+
+    /**
+     * @return the dao
+     */
+    public FHIRDAO getDao() {
+        return dao;
+    }
 
     public Patient getPatient(String id){
 
