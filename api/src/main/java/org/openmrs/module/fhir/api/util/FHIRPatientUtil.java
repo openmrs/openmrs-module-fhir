@@ -11,6 +11,8 @@ import ca.uhn.fhir.narrative.DefaultThymeleafNarrativeGenerator;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.ValidationFailureException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.*;
 import org.openmrs.api.context.Context;
 
@@ -20,7 +22,6 @@ import java.util.Date;
 import java.util.List;
 
 public class FHIRPatientUtil {
-
 
     public static Patient generatePatient(org.openmrs.Patient omrsPatient) {
 
@@ -146,7 +147,7 @@ public class FHIRPatientUtil {
             dts.add(telecom);
             patient.setTelecom(dts);
 
-       // validate(patient);
+        validate(patient);
 
         return patient;
 

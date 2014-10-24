@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-  <component name="FacetManager">
-    <facet type="Spring" name="Spring">
-      <configuration />
-    </facet>
-  </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
@@ -27,6 +22,10 @@
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.4" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.3.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.3.2" level="project" />
+    <orderEntry type="library" name="Maven: com.phloc:phloc-schematron:2.7.1" level="project" />
+    <orderEntry type="library" name="Maven: com.phloc:phloc-commons:4.3.3" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.findbugs:annotations:2.0.3" level="project" />
+    <orderEntry type="library" name="Maven: net.sf.saxon:Saxon-HE:9.5.1-5" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.openmrs.api:openmrs-api:1.9.8" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-collections:commons-collections:3.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-beanutils:commons-beanutils:1.7.0" level="project" />
