@@ -61,27 +61,22 @@
 
 
             <dependency>
-                <groupId>com.helger</groupId>
-                <artifactId>ph-schematron</artifactId>
-                <version>2.8.3</version>
+                <groupId>com.phloc</groupId>
+                <artifactId>phloc-schematron</artifactId>
+                <version>2.7.1</version>
             </dependency>
 
-
-            <!--<dependency>
-                <groupId>com.phloc</groupId>
-                <artifactId>phloc-schematron-validator</artifactId>
-                <version>2.7.0</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>xerces</groupId>
-                        <artifactId>xerces</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>Saxon-HE</groupId>
-                        <artifactId>Saxon-HE</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency> -->
+            <dependency>
+            <groupId>com.phloc</groupId>
+            <artifactId>phloc-commons</artifactId>
+            <version>4.3.3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+            </dependency>
 
 			<!--
 			Libraries to add as dependencies with compile or runtime scope:
