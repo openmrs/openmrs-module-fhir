@@ -32,7 +32,7 @@ public class FHIRPatientUtil {
             patient.setId(uuid);
 
 
-            for (PatientIdentifier identifier : omrsPatient.getIdentifiers()) {
+            for (PatientIdentifier identifier : omrsPatient.getActiveIdentifiers()) {
                 String uri = Context.getAdministrationService().getGlobalProperty("webservices.rest.uriPrefix") + "/ws/rest/v1/patientidentifiertype/" + identifier.getIdentifierType().getUuid();
                 if (identifier.isPreferred()) {
 
@@ -46,40 +46,43 @@ public class FHIRPatientUtil {
 
             for (PersonName name : omrsPatient.getNames()) {
 
-                HumanNameDt fhirName = new HumanNameDt();
-                StringDt familyName = new StringDt();
-                familyName.setValue(name.getFamilyName());
-                List<StringDt> familyNames = new ArrayList<StringDt>();
-                familyNames.add(familyName);
+                if(name.isPreferred()) {
 
-                fhirName.setFamily(familyNames);
+                    HumanNameDt fhirName = new HumanNameDt();
+                    StringDt familyName = new StringDt();
+                    familyName.setValue(name.getFamilyName());
+                    List<StringDt> familyNames = new ArrayList<StringDt>();
+                    familyNames.add(familyName);
 
-
-                StringDt givenName = new StringDt();
-                givenName.setValue(name.getGivenName());
-                List<StringDt> givenNames = new ArrayList<StringDt>();
-                givenNames.add(givenName);
-
-                fhirName.setGiven(givenNames);
+                    fhirName.setFamily(familyNames);
 
 
-                if (name.getFamilyNameSuffix() != null) {
-                    StringDt suffix = fhirName.addSuffix();
-                    suffix.setValue(name.getFamilyNameSuffix());
+                    StringDt givenName = new StringDt();
+                    givenName.setValue(name.getGivenName());
+                    List<StringDt> givenNames = new ArrayList<StringDt>();
+                    givenNames.add(givenName);
+
+                    fhirName.setGiven(givenNames);
+
+
+                    if (name.getFamilyNameSuffix() != null) {
+                        StringDt suffix = fhirName.addSuffix();
+                        suffix.setValue(name.getFamilyNameSuffix());
+                    }
+
+                    if (name.getPrefix() != null) {
+                        StringDt prefix = fhirName.addPrefix();
+                        prefix.setValue(name.getPrefix());
+                    }
+
+
+                    if (name.isPreferred())
+                        fhirName.setUse(NameUseEnum.USUAL);
+                    else
+                        fhirName.setUse(NameUseEnum.NICKNAME);
+
+                    humanNameDts.add(fhirName);
                 }
-
-                if (name.getPrefix() != null) {
-                    StringDt prefix = fhirName.addPrefix();
-                    prefix.setValue(name.getPrefix());
-                }
-
-
-                if (name.isPreferred())
-                    fhirName.setUse(NameUseEnum.USUAL);
-                else
-                    fhirName.setUse(NameUseEnum.NICKNAME);
-
-                humanNameDts.add(fhirName);
 
             }
 
@@ -99,28 +102,30 @@ public class FHIRPatientUtil {
 
             for (PersonAddress address : omrsPatient.getAddresses()) {
 
-                AddressDt fhirAddress = new AddressDt();
-                fhirAddress.setCity(address.getCityVillage());
-                fhirAddress.setCountry(address.getCountry());
+                if(address.isPreferred()) {
 
-                List<StringDt> addressStrings = new ArrayList<StringDt>();
+                    AddressDt fhirAddress = new AddressDt();
+                    fhirAddress.setCity(address.getCityVillage());
+                    fhirAddress.setCountry(address.getCountry());
 
-                addressStrings.add(new StringDt(address.getAddress1()));
-                addressStrings.add(new StringDt(address.getAddress2()));
-                addressStrings.add(new StringDt(address.getAddress3()));
-                addressStrings.add(new StringDt(address.getAddress4()));
-                addressStrings.add(new StringDt(address.getAddress5()));
+                    List<StringDt> addressStrings = new ArrayList<StringDt>();
+
+                    addressStrings.add(new StringDt(address.getAddress1()));
+                    addressStrings.add(new StringDt(address.getAddress2()));
+                    addressStrings.add(new StringDt(address.getAddress3()));
+                    addressStrings.add(new StringDt(address.getAddress4()));
+                    addressStrings.add(new StringDt(address.getAddress5()));
 
 
-                fhirAddress.setLine(addressStrings);
+                    fhirAddress.setLine(addressStrings);
 
-                if (address.isPreferred())
-                    fhirAddress.setUse(AddressUseEnum.HOME);
-                else
-                    fhirAddress.setUse(AddressUseEnum.OLD);
+                    if (address.isPreferred())
+                        fhirAddress.setUse(AddressUseEnum.HOME);
+                    else
+                        fhirAddress.setUse(AddressUseEnum.OLD);
 
-                fhirAddresses.add(fhirAddress);
-
+                    fhirAddresses.add(fhirAddress);
+                }
             }
 
             NarrativeDt dt = new NarrativeDt();
@@ -133,12 +138,19 @@ public class FHIRPatientUtil {
 
             patient.setActive(!omrsPatient.isVoided());
 
-            BooleanDt isDeceased = new BooleanDt();
-            isDeceased.setValue(omrsPatient.getDead());
-            patient.setDeceased(isDeceased);
+            if(omrsPatient.isDead()){
+                DateTimeDt fhirDeathDate = (DateTimeDt) patient.getDeceased();
+                fhirDeathDate.setValue(omrsPatient.getDeathDate());
+                patient.setDeceased(fhirDeathDate);
+            } else {
+                BooleanDt isDeceased = new BooleanDt();
+                isDeceased.setValue(omrsPatient.getDead());
+                patient.setDeceased(isDeceased);
+            }
 
             List<ContactDt> dts = new ArrayList<ContactDt>();
 
+            // Add global property for telephone / email address. These properties will be used to identify the name of the person attribute (if any) being used to store a phone number and/or email.
             ContactDt telecom = new ContactDt();
             if (omrsPatient.getAttribute("Telephone Number") != null)
                 telecom.setValue(omrsPatient.getAttribute("Telephone Number").getValue());

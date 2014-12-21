@@ -5,11 +5,18 @@
 				code="admin.title.short" /></a></li>
 
 	<li
-		<c:if test='<%= request.getRequestURI().contains("/manage") %>'>class="active"</c:if>>
-		<a
-		href="${pageContext.request.contextPath}/module/fhir/manage.form"><spring:message
-				code="fhir.manage" /></a>
-	</li>
+    <c:if test='<%= request.getRequestURI().contains("/manage") %>'>class="active"</c:if>>
+    <a
+            href="${pageContext.request.contextPath}/module/fhir/manage.form"><spring:message
+            code="fhir.manage" /></a>
+    </li>
+
+    <li
+    <c:if test='<%= request.getRequestURI().contains("/settings") %>'>class="active"</c:if>>
+    <a
+            href="${pageContext.request.contextPath}/module/fhir/settings.form"><spring:message
+            code="fhir.settings" /></a>
+    </li>
 	
 	<!-- Add further links here -->
 </ul>
