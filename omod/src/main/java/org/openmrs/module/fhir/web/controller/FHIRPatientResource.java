@@ -47,4 +47,15 @@ public class FHIRPatientResource extends Resource {
         return Parser.parsePatient(fhirPatient, contentType);
     }
 
+
+    //search by patient identifier. ex: GET [base-url]/Patient?identifier=http://acme.org/patient|2345
+    //returns a bundle of patients
+    public String searchByIdentifier(String identifier, String contentType) {
+
+        org.openmrs.module.fhir.api.PatientService patientService = Context.getService(org.openmrs.module.fhir.api.PatientService.class);
+        ca.uhn.fhir.model.api.Bundle patientBundle = patientService.getPatientsByIdentifier(identifier);
+
+        return null;
+    }
+
 }
