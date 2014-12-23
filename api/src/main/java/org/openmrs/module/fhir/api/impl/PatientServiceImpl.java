@@ -59,15 +59,18 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
     }
 
     public Bundle getPatientsByIdentifier(String identifier){
-        String[] ids = identifier.split("|");
-
+        System.out.println("lengthw" + identifier);
+        String[] ids = identifier.split("\\|");
+        System.out.println("length" + ids.length);
+        System.out.println("length" + ids[0]);
+        System.out.println("length" + ids[1]);
         PatientIdentifierType patientIdentifierType = Context.getPatientService().getPatientIdentifierTypeByName(ids[0]);
         List<PatientIdentifierType> patientIdentifierTypes = new ArrayList<PatientIdentifierType>();
         List<org.openmrs.Patient> patientList = Context.getPatientService().getPatients(null, ids[1],patientIdentifierTypes, true);
+        System.out.println("size " + patientList.size());
 
-        FHIRPatientUtil.generateBundle(patientList);
 
 
-        return null;
+        return FHIRPatientUtil.generateBundle(patientList);
     }
 }

@@ -33,7 +33,7 @@ public class FHIRResourceController  {
     @RequestMapping(value = "/{resource}", method = RequestMethod.GET)
     @ResponseBody
     public Object search(@PathVariable("resource") String resource,
-                         @RequestParam(value = "name") String name,
+                         @RequestParam(value = "identifier", required = false) String identifier,
                          HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         String result = null;
@@ -43,16 +43,21 @@ public class FHIRResourceController  {
             result = observationResource.doSearch(request);
         }
 
+        if(resource.equals("Patient")){
+            System.out.println(identifier);
+            FHIRPatientResource patientResource = new FHIRPatientResource();
+            result = patientResource.searchByIdentifier(identifier, request.getContentType());
+        }
+
         System.out.println(result);
         return result;
     }
 
 
-	@RequestMapping(value = "/{resource}/{uuid}", method = RequestMethod.GET)
-	@ResponseBody
-	public Object retrieve(@PathVariable("resource") String resource, @PathVariable("uuid") String uuid,
-                           @RequestParam(value = "name", required = false) String name,
-	        HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @RequestMapping(value = "/{resource}/{uuid}", method = RequestMethod.GET)
+    @ResponseBody
+    public Object retrieve(@PathVariable("resource") String resource, @PathVariable("uuid") String uuid,
+                           HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         String result = null;
 
@@ -71,8 +76,8 @@ public class FHIRResourceController  {
             result = (String)familyHistoryResource.retrieve(uuid, request);
         }
 
-		return result;
-	}
+        return result;
+    }
 
 
 }

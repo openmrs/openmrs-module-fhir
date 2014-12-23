@@ -222,7 +222,7 @@ public class FHIRPatientUtil {
     }
 
 
-    public static String generateBundle(List<org.openmrs.Patient> patientList) {
+    public static Bundle generateBundle(List<org.openmrs.Patient> patientList) {
         Bundle bundle = new Bundle();
         StringDt title = bundle.getTitle();
         title.setValue("Search result");
@@ -255,6 +255,13 @@ public class FHIRPatientUtil {
 
             bundle.addEntry(bundleEntry);
         }
+
+
+
+        return bundle;
+    }
+
+    public static String parseBundle(Bundle bundle){
 
         FhirContext ctx = new FhirContext();
         IParser jsonParser = ctx.newJsonParser();
