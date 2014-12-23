@@ -24,7 +24,7 @@ public class FHIRFamilyHistoryUtil {
     public static FamilyHistory generateFamilyHistory () {
         FamilyHistory familyHistory = new FamilyHistory();
         IdDt idDt = new IdDt();
-        idDt.setId("1");
+        idDt.setValue("1");
         familyHistory.setId(idDt);
         familyHistory.setId("id");
 
