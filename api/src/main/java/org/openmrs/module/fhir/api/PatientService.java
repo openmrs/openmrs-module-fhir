@@ -14,6 +14,7 @@
 package org.openmrs.module.fhir.api;
 
 import ca.uhn.fhir.model.dstu.resource.Patient;
+import ca.uhn.fhir.model.api.Bundle;
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,5 +38,8 @@ public interface PatientService extends OpenmrsService {
 	 */
 
     Patient getPatient(String id);
+
+    Bundle getPatientsByIdentifier(String identifier);
+
 
 }

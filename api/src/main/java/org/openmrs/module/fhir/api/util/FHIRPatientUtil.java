@@ -222,4 +222,49 @@ public class FHIRPatientUtil {
     }
 
 
+    public static String generateBundle(List<org.openmrs.Patient> patientList) {
+        Bundle bundle = new Bundle();
+        StringDt title = bundle.getTitle();
+        title.setValue("Search result");
+
+        IdDt id = new IdDt();
+        id.setValue("the request uri");
+        bundle.setId(id);
+
+        for(org.openmrs.Patient patient : patientList){
+            BundleEntry bundleEntry = new BundleEntry();
+
+            IdDt entryId = new IdDt();
+            entryId.setValue(Context.getAdministrationService().getGlobalProperty("webservices.rest.uriPrefix") + "/ws/fhir/Patient/" + patient.getUuid());
+
+            bundleEntry.setId(entryId);
+
+            StringDt entryTitle = bundleEntry.getTitle();
+            entryTitle.setValue("Patient'/" +patient.getUuid());
+
+            IResource resource = new Patient();
+            resource = generatePatient(patient);
+
+            bundleEntry.setResource(resource);
+            InstantDt dt = new InstantDt();
+            if (patient.getDateChanged() != null)
+                dt.setValue(patient.getDateChanged());
+            else
+                dt.setValue(patient.getDateCreated());
+            bundleEntry.setUpdated(dt);
+
+            bundle.addEntry(bundleEntry);
+        }
+
+        FhirContext ctx = new FhirContext();
+        IParser jsonParser = ctx.newJsonParser();
+
+        jsonParser.setPrettyPrint(true);
+        String encoded = jsonParser.encodeBundleToString(bundle);
+        System.out.println(encoded);
+
+        return encoded;
+    }
+
+
 }

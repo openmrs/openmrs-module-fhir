@@ -14,6 +14,9 @@
 package org.openmrs.module.fhir.api.impl;
 
 import ca.uhn.fhir.model.dstu.resource.Patient;
+import ca.uhn.fhir.model.api.Bundle;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.apache.commons.logging.Log;
@@ -21,6 +24,9 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.fhir.api.PatientService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
+import java.util.List;
+
+import java.util.ArrayList;
 
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
@@ -50,5 +56,18 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
         org.openmrs.Patient omrsPatient = Context.getPatientService().getPatientByUuid(id);
         return FHIRPatientUtil.generatePatient(omrsPatient);
 
+    }
+
+    public Bundle getPatientsByIdentifier(String identifier){
+        String[] ids = identifier.split("|");
+
+        PatientIdentifierType patientIdentifierType = Context.getPatientService().getPatientIdentifierTypeByName(ids[0]);
+        List<PatientIdentifierType> patientIdentifierTypes = new ArrayList<PatientIdentifierType>();
+        List<org.openmrs.Patient> patientList = Context.getPatientService().getPatients(null, ids[1],patientIdentifierTypes, true);
+
+        FHIRPatientUtil.generateBundle(patientList);
+
+
+        return null;
     }
 }
