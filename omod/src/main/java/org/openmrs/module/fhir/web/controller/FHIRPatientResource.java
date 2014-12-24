@@ -44,7 +44,7 @@ public class FHIRPatientResource extends Resource {
         org.openmrs.module.fhir.api.PatientService patientService = Context.getService(org.openmrs.module.fhir.api.PatientService.class);
         ca.uhn.fhir.model.dstu.resource.Patient fhirPatient = patientService.getPatient(uuid);
 
-        return Parser.parsePatient(fhirPatient, contentType);
+        return Parser.parse(fhirPatient, contentType);
     }
 
 

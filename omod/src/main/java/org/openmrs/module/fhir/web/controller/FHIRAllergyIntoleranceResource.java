@@ -44,7 +44,7 @@ public class FHIRAllergyIntoleranceResource extends Resource {
         Patient patient = Context.getPatientService().getPatientByUuid(uuid);
         ca.uhn.fhir.model.dstu.resource.Patient fhirPatient = Context.getService(org.openmrs.module.fhir.api.PatientService.class).getPatient(uuid);
 
-        return Parser.parsePatient(fhirPatient, contentType);
+        return Parser.parse(fhirPatient, contentType);
     }
 
 }

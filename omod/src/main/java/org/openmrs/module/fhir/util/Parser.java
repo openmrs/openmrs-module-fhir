@@ -5,11 +5,12 @@ import ca.uhn.fhir.model.dstu.resource.Observation;
 import ca.uhn.fhir.model.dstu.resource.Patient;
 import ca.uhn.fhir.narrative.DefaultThymeleafNarrativeGenerator;
 import ca.uhn.fhir.parser.IParser;
+import ca.uhn.fhir.model.api.IResource;
 
 
 public class Parser {
 
-    public static String parsePatient(Patient patient, String contentType) {
+    public static String parse(IResource resource, String contentType) {
 
         FhirContext ctx = new FhirContext();
         ctx.setNarrativeGenerator(new DefaultThymeleafNarrativeGenerator());
@@ -23,18 +24,18 @@ public class Parser {
             if (contentType.equals("application/xml+fhir")) {
 
                 xmlParser.setPrettyPrint(true);
-                encoded = xmlParser.encodeResourceToString(patient);
+                encoded = xmlParser.encodeResourceToString(resource);
                 System.out.println(encoded);
             } else {
                 jsonParser.setPrettyPrint(true);
-                encoded = jsonParser.encodeResourceToString(patient);
+                encoded = jsonParser.encodeResourceToString(resource);
                 System.out.println(encoded);
 
             }
         } else {
 
             jsonParser.setPrettyPrint(true);
-            encoded = jsonParser.encodeResourceToString(patient);
+            encoded = jsonParser.encodeResourceToString(resource);
             System.out.println(encoded);
         }
 
