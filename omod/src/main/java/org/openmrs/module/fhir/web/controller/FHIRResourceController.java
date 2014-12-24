@@ -66,6 +66,11 @@ public class FHIRResourceController  {
             result = patientResource.getByUniqueId(uuid, request.getContentType());
         }
 
+        if(resource.equals("Practitioner")){
+            FHIRPractitionerResource practitionerResource = new FHIRPractitionerResource();
+            result = practitionerResource.getByUniqueId(uuid, request.getContentType());
+        }
+
         if(resource.equals("Observation")){
             FHIRObservationResource observationResource = new FHIRObservationResource();
             result = (String) observationResource.retrieve(uuid, request);
