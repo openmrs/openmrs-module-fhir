@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.fhir.web.controller;
 
+import ca.uhn.fhir.model.dstu.resource.Encounter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -79,6 +80,11 @@ public class FHIRResourceController  {
         if(resource.equals("FamilyHistory")){
             FHIRFamilyHistoryResource familyHistoryResource = new FHIRFamilyHistoryResource();
             result = (String)familyHistoryResource.retrieve(uuid, request);
+        }
+
+        if(resource.equals("Encounter")){
+            FHIREncounterResource encounterResource = new FHIREncounterResource();
+            result = (String)encounterResource.getByUniqueId(uuid, request.getContentType());
         }
 
         return result;
