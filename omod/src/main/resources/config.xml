@@ -66,5 +66,12 @@
         <url-pattern>/ws/fhir/*</url-pattern>
     </filter-mapping>
 
+
+    <globalProperty>
+        <property>${project.parent.artifactId}.uriPrefix</property>
+        <defaultValue>http://localhost:8080/openmrs/ws/fhir</defaultValue>
+        <description>The URI prefix through which clients consuming FHIR services will connect to the web application, should be of the form http://{ipAddress}:{port}/{contextPath}/ws/fhir</description>
+    </globalProperty>
+
 </module>
 

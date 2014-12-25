@@ -235,7 +235,7 @@ public class FHIRPatientUtil {
             BundleEntry bundleEntry = new BundleEntry();
 
             IdDt entryId = new IdDt();
-            entryId.setValue(Context.getAdministrationService().getGlobalProperty("webservices.rest.uriPrefix") + "/ws/fhir/Patient/" + patient.getUuid());
+            entryId.setValue(Context.getAdministrationService().getGlobalProperty("fhir.uriPrefix") + "/Patient/" + patient.getUuid());
 
             bundleEntry.setId(entryId);
 

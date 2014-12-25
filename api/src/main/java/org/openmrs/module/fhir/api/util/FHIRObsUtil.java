@@ -42,7 +42,7 @@ public class FHIRObsUtil {
         nameDisplay += "(" + Context.getPatientService().getPatientByUuid(obs.getPerson().getUuid()).getPatientIdentifier().getIdentifier() + ")";
 
         patientReference.setDisplay(nameDisplay);
-        String patientUri = Context.getAdministrationService().getGlobalProperty("webservices.rest.uriPrefix")+ "/ws/rest/v1/fhirpatient/" + obs.getPerson().getUuid();
+        String patientUri = Context.getAdministrationService().getGlobalProperty("fhir.uriPrefix")+ "/Patient/" + obs.getPerson().getUuid();
 
         IdDt patientRef = new IdDt();
         patientRef.setValue(patientUri);
@@ -251,7 +251,7 @@ public class FHIRObsUtil {
             BundleEntry bundleEntry = new BundleEntry();
 
             IdDt entryId = new IdDt();
-            entryId.setValue(Context.getAdministrationService().getGlobalProperty("webservices.rest.uriPrefix") + "/ws/fhir/Observation/" + obs.getUuid());
+            entryId.setValue(Context.getAdministrationService().getGlobalProperty("fhir.uriPrefix") + "/Observation/" + obs.getUuid());
 
             bundleEntry.setId(entryId);
 

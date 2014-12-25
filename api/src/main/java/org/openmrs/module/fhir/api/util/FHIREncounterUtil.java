@@ -41,7 +41,7 @@ public class FHIREncounterUtil {
         ResourceReferenceDt patientReference = new ResourceReferenceDt();
 
         patientReference.setDisplay("Patient");
-        String patientUri = Context.getAdministrationService().getGlobalProperty("webservices.rest.uriPrefix")+ "/ws/fhir/Patient/" + openMRSEncounter.getPatient().getUuid();
+        String patientUri = Context.getAdministrationService().getGlobalProperty("fhir.uriPrefix")+ "/Patient/" + openMRSEncounter.getPatient().getUuid();
 
         IdDt patientRef = new IdDt();
         patientRef.setValue(patientUri);
@@ -61,7 +61,7 @@ public class FHIREncounterUtil {
             ResourceReferenceDt providerReference = new ResourceReferenceDt();
 
             providerReference.setDisplay("Provider");
-            String providerUri = Context.getAdministrationService().getGlobalProperty("webservices.rest.uriPrefix")+ "/ws/fhir/Practitioner/" + provider.getUuid();
+            String providerUri = Context.getAdministrationService().getGlobalProperty("fhir.uriPrefix")+ "/Practitioner/" + provider.getUuid();
 
             IdDt providerRef = new IdDt();
             providerRef.setValue(providerUri);

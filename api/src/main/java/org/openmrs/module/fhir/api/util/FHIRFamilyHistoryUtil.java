@@ -87,7 +87,7 @@ InstantDt instant = bundle.getUpdated();
 
 
         IdDt entryId = new IdDt();
-        entryId.setValue(Context.getAdministrationService().getGlobalProperty("webservices.rest.uriPrefix") + "/ws/fhir/Observation/" + "123");
+        entryId.setValue(Context.getAdministrationService().getGlobalProperty("fhir.uriPrefix") + "/Observation/" + "123");
 
         jsonParser.setPrettyPrint(true);
         String encoded = jsonParser.encodeBundleToString(bundle);
