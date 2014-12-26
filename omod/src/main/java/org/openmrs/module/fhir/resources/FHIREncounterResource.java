@@ -1,4 +1,4 @@
-package org.openmrs.module.fhir.web.controller;
+package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.model.dstu.resource.Composition;
 import org.openmrs.api.context.Context;
