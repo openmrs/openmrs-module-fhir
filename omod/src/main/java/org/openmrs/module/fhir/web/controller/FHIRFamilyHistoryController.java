@@ -13,24 +13,26 @@
  */
 package org.openmrs.module.fhir.web.controller;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.resources.FHIRFamilyHistoryResource;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-/**
- * The main controller.
- */
+import javax.servlet.http.HttpServletRequest;
+
 @Controller
-public class FHIRManageController {
-	
-	protected final static Log log = LogFactory.getLog(FHIRManageController.class);
+@RequestMapping(value = "/fhir/")
+public class FHIRFamilyHistoryController {
 
-	@RequestMapping(value = "/module/fhir/manage", method = RequestMethod.GET)
-	public void manage(ModelMap model) {
-		model.addAttribute("user", Context.getAuthenticatedUser());
+	@RequestMapping(value = "/familyhistory/{uuid}", method = RequestMethod.GET)
+	@ResponseBody
+	public Object retrieve(@PathVariable("uuid") String uuid,
+	                       HttpServletRequest request) throws Exception {
+		String result;
+		FHIRFamilyHistoryResource familyHistoryResource = new FHIRFamilyHistoryResource();
+		result = (String) familyHistoryResource.retrieve(uuid, request);
+		return result;
 	}
 }

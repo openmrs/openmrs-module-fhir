@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface FHIRService extends OpenmrsService {
 
-    public void setAllergyStrategy(AllergyStrategyInterface strategy);
+	public void setAllergyStrategy(AllergyStrategyInterface strategy);
 
-    public Strategy getAllergyStrategy();
+	public Strategy getAllergyStrategy();
 
 }

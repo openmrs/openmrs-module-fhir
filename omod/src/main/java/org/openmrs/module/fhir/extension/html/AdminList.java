@@ -13,15 +13,15 @@
  */
 package org.openmrs.module.fhir.extension.html;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.openmrs.module.Extension;
 import org.openmrs.module.web.extension.AdministrationSectionExt;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * This class defines the links that will appear on the administration page under the
- * "fhir.title" heading. 
+ * "fhir.title" heading.
  */
 public class AdminList extends AdministrationSectionExt {
 	
@@ -45,7 +45,7 @@ public class AdminList extends AdministrationSectionExt {
 	public Map<String, String> getLinks() {
 		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
 		map.put("/module/fhir/manage.form", "fhir.manage");
-        map.put("/module/fhir/settings.form", "fhir.settings");
+		map.put("/module/fhir/settings.form", "fhir.settings");
 		return map;
 	}
 	

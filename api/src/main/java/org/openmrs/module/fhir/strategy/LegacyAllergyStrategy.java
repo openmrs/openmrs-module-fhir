@@ -8,11 +8,11 @@ import java.util.List;
  */
 public class LegacyAllergyStrategy implements AllergyStrategyInterface {
 
-    @Override
-    public List<String> getSupportedOpenMRSVersions() {
-        List<String> supportedOpenMRSVersions = new ArrayList<String>();
-        supportedOpenMRSVersions.add("1.9.0");
+	@Override
+	public List<String> getSupportedOpenMRSVersions() {
+		List<String> supportedOpenMRSVersions = new ArrayList<String>();
+		supportedOpenMRSVersions.add("1.9.0");
 
-        return supportedOpenMRSVersions;
-    }
+		return supportedOpenMRSVersions;
+	}
 }

@@ -13,64 +13,57 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import ca.uhn.fhir.model.dstu.resource.Patient;
 import ca.uhn.fhir.model.api.Bundle;
-import org.openmrs.PatientIdentifier;
+import ca.uhn.fhir.model.dstu.resource.Patient;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.fhir.api.PatientService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
-import java.util.List;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
  */
 public class PatientServiceImpl extends BaseOpenmrsService implements PatientService {
 
-    protected final Log log = LogFactory.getLog(this.getClass());
+	protected final Log log = LogFactory.getLog(this.getClass());
 
-    private FHIRDAO dao;
+	private FHIRDAO dao;
 
-    /**
-     * @param dao the dao to set
-     */
-    public void setDao(FHIRDAO dao) {
-        this.dao = dao;
-    }
+	/**
+	 * @param dao the dao to set
+	 */
+	public void setDao(FHIRDAO dao) {
+		this.dao = dao;
+	}
 
-    /**
-     * @return the dao
-     */
-    public FHIRDAO getDao() {
-        return dao;
-    }
+	/**
+	 * @return the dao
+	 */
+	public FHIRDAO getDao() {
+		return dao;
+	}
 
-    public Patient getPatient(String id){
+	public Patient getPatient(String id) {
 
-        org.openmrs.Patient omrsPatient = Context.getPatientService().getPatientByUuid(id);
-        return FHIRPatientUtil.generatePatient(omrsPatient);
+		org.openmrs.Patient omrsPatient = Context.getPatientService().getPatientByUuid(id);
+		return FHIRPatientUtil.generatePatient(omrsPatient);
 
-    }
+	}
 
-    public Bundle getPatientsByIdentifier(String identifier){
-        System.out.println("lengthw" + identifier);
-        String[] ids = identifier.split("\\|");
-        System.out.println("length" + ids.length);
-        System.out.println("length" + ids[0]);
-        System.out.println("length" + ids[1]);
-        PatientIdentifierType patientIdentifierType = Context.getPatientService().getPatientIdentifierTypeByName(ids[0]);
-        List<PatientIdentifierType> patientIdentifierTypes = new ArrayList<PatientIdentifierType>();
-        List<org.openmrs.Patient> patientList = Context.getPatientService().getPatients(null, ids[1],patientIdentifierTypes, true);
-        System.out.println("size " + patientList.size());
-
-
-
-        return FHIRPatientUtil.generateBundle(patientList);
-    }
+	public Bundle getPatientsByIdentifier(String identifier) {
+		String[] ids = identifier.split("\\|");
+		PatientIdentifierType patientIdentifierType = Context.getPatientService().getPatientIdentifierTypeByName(ids[0]);
+		List<PatientIdentifierType> patientIdentifierTypes = new ArrayList<PatientIdentifierType>();
+		List<org.openmrs.Patient> patientList = Context.getPatientService().getPatients(null, ids[1],
+				patientIdentifierTypes,
+				true);
+		return FHIRPatientUtil.generateBundle(patientList);
+	}
 }

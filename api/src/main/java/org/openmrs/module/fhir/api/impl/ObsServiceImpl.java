@@ -14,13 +14,13 @@
 package org.openmrs.module.fhir.api.impl;
 
 import ca.uhn.fhir.model.dstu.resource.Observation;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.fhir.api.ObsService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRObsUtil;
@@ -33,53 +33,49 @@ import java.util.List;
  */
 public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 
-    protected final Log log = LogFactory.getLog(this.getClass());
+	protected final Log log = LogFactory.getLog(this.getClass());
 
-    private FHIRDAO dao;
+	private FHIRDAO dao;
 
-    /**
-     * @param dao the dao to set
-     */
-    public void setDao(FHIRDAO dao) {
-        this.dao = dao;
-    }
+	/**
+	 * @param dao the dao to set
+	 */
+	public void setDao(FHIRDAO dao) {
+		this.dao = dao;
+	}
 
-    /**
-     * @return the dao
-     */
-    public FHIRDAO getDao() {
-        return dao;
-    }
+	/**
+	 * @return the dao
+	 */
+	public FHIRDAO getDao() {
+		return dao;
+	}
 
-    public Observation getObs(String id){
+	public Observation getObs(String id) {
 
-        Obs omrsObs = Context.getObsService().getObsByUuid(id);
-        return FHIRObsUtil.generateObs(omrsObs);
+		Obs omrsObs = Context.getObsService().getObsByUuid(id);
+		return FHIRObsUtil.generateObs(omrsObs);
 
-    }
+	}
 
+	public List<Obs> getObsByPatientandConcept(String patientUUid, String[] concepts) {
 
-    public List<Obs> getObsByPatientandConcept(String patientUUid, String[] concepts){
+		Patient patient = Context.getPatientService().getPatientByUuid(patientUUid);
 
-        Patient patient = Context.getPatientService().getPatientByUuid(patientUUid);
+		List<Concept> conceptList = new ArrayList<Concept>();
+		for (String s : concepts) {
+			Concept concept = Context.getConceptService().getConceptByMapping(s, "LOINC");
+			conceptList.add(concept);
 
-        List<Concept> conceptList = new ArrayList<Concept>();
-        for (String s : concepts) {
-            Concept concept = Context.getConceptService().getConceptByMapping(s, "LOINC");
-            conceptList.add(concept);
+		}
+		List<Obs> obsList = new ArrayList<Obs>();
 
-        }
-        List<Obs> obsList = new ArrayList<Obs>();
+		for (Concept concept : conceptList) {
+			List<Obs> obs = Context.getObsService().getObservationsByPersonAndConcept(patient, concept);
+			obsList.addAll(obs);
+		}
 
-        for (Concept concept : conceptList) {
-            List<Obs> obs = Context.getObsService().getObservationsByPersonAndConcept(patient, concept);
-            obsList.addAll(obs);
-        }
+		return obsList;
 
-
-          return obsList;
-
-
-
-    }
+	}
 }
