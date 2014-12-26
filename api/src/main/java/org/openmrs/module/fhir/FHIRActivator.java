@@ -13,10 +13,8 @@
  */
 package org.openmrs.module.fhir;
 
-
-import org.apache.commons.logging.Log; 
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.ModuleActivator;
 import org.openmrs.module.fhir.api.util.StrategyUtil;
 
@@ -26,7 +24,7 @@ import org.openmrs.module.fhir.api.util.StrategyUtil;
 public class FHIRActivator implements ModuleActivator {
 	
 	protected Log log = LogFactory.getLog(getClass());
-		
+
 	/**
 	 * @see ModuleActivator#willRefreshContext()
 	 */
@@ -46,15 +44,15 @@ public class FHIRActivator implements ModuleActivator {
 	 */
 	public void willStart() {
 
-        log.info("Starting FHIR Module");
+		log.info("Starting FHIR Module");
 	}
 	
 	/**
 	 * @see ModuleActivator#started()
 	 */
 	public void started() {
-        StrategyUtil.strategize();
-        log.info("FHIR Module started");
+		StrategyUtil.strategize();
+		log.info("FHIR Module started");
 	}
 	
 	/**
@@ -70,5 +68,5 @@ public class FHIRActivator implements ModuleActivator {
 	public void stopped() {
 		log.info("FHIR Module stopped");
 	}
-		
+
 }

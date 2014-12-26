@@ -13,70 +13,66 @@
  */
 package org.openmrs.module.fhir.api;
 
-import static org.junit.Assert.*;
-
 import org.junit.Before;
 import org.junit.Test;
-import org.openmrs.*;
+import org.openmrs.Concept;
+import org.openmrs.ConceptMap;
+import org.openmrs.ConceptSource;
+import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import java.util.List;
 
-
 public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 
-    protected static final String ENC_INITIAL_DATA_XML = "org/openmrs/api/include/EncounterServiceTest-initialData.xml";
-    protected static final String PAT_INITIAL_DATA_XML = "org/openmrs/api/include/PatientServiceTest-findPatients.xml";
-    protected static final String CON_INITIAL_DATA_XML = "org/openmrs/api/include/ConceptServiceTest-initialConcepts.xml";
+	protected static final String ENC_INITIAL_DATA_XML = "org/openmrs/api/include/EncounterServiceTest-initialData.xml";
+	protected static final String PAT_INITIAL_DATA_XML = "org/openmrs/api/include/PatientServiceTest-findPatients.xml";
+	protected static final String CON_INITIAL_DATA_XML = "org/openmrs/api/include/ConceptServiceTest-initialConcepts.xml";
 
+	@Before
+	public void runBeforeEachTest() throws Exception {
+		executeDataSet(ENC_INITIAL_DATA_XML);
+		executeDataSet(PAT_INITIAL_DATA_XML);
+		executeDataSet(CON_INITIAL_DATA_XML);
 
-    @Before
-    public void runBeforeEachTest() throws Exception {
-        executeDataSet(ENC_INITIAL_DATA_XML);
-        executeDataSet(PAT_INITIAL_DATA_XML);
-        executeDataSet(CON_INITIAL_DATA_XML);
-
-    }
+	}
 
 	@Test
 	public void shouldSetupContext() {
 		//assertNotNull(Context.getService(PatientService.class));
 	}
 
-    @Test
-    public void createPatient(){
-       // FHIRPatientUtil.generatePatient(Context.getPatientService().getPatient(2));
-       // Patient patient = Context.getPatientService().getPatient(2);
+	@Test
+	public void createPatient() {
+		// FHIRPatientUtil.generatePatient(Context.getPatientService().getPatient(2));
+		// Patient patient = Context.getPatientService().getPatient(2);
 
-        Obs obs = new Obs();
-        Concept concept = new Concept();
-        ConceptMap map = new ConceptMap();
-        ConceptSource source = new ConceptSource();
-        source.setName("loinc");
-        source.setHl7Code("Loinc");
-        map.setSource(source);
+		Obs obs = new Obs();
+		Concept concept = new Concept();
+		ConceptMap map = new ConceptMap();
+		ConceptSource source = new ConceptSource();
+		source.setName("loinc");
+		source.setHl7Code("Loinc");
+		map.setSource(source);
 
-        map.setSource(source);
-        map.setConcept(concept);
-        map.setSourceCode("sourcecode");
+		map.setSource(source);
+		map.setConcept(concept);
+		map.setSourceCode("sourcecode");
 
-        concept.addConceptMapping(map);
-        obs.setConcept(concept);
-       //  FHIRPatientUtil.generateObs(obs);
-    }
+		concept.addConceptMapping(map);
+		obs.setConcept(concept);
+		//  FHIRPatientUtil.generateObs(obs);
+	}
 
-    //@Test
-    public void generateBundle() {
+	//@Test
+	public void generateBundle() {
 
-        List<Obs> obsList = Context.getObsService().getObservationsByPerson(Context.getPatientService().getPatient(3));
-        obsList.size();
+		List<Obs> obsList = Context.getObsService().getObservationsByPerson(Context.getPatientService().getPatient(3));
+		obsList.size();
 
-        FHIRPatientUtilAPI.generateBundle(obsList, "");
+		FHIRPatientUtilAPI.generateBundle(obsList, "");
 
-
-    }
-
-
+	}
 
 }

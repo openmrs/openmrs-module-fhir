@@ -7,12 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
 @Transactional
 public interface ObsService extends OpenmrsService {
 
-    public Observation getObs(String id);
+	public Observation getObs(String id);
 
-    public List<Obs> getObsByPatientandConcept(String patientUUid, String[] concepts);
+	public List<Obs> getObsByPatientandConcept(String patientUUid, String[] concepts);
 
 }
