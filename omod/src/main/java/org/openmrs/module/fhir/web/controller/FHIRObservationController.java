@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping(value = "/fhir/")
 public class FHIRObservationController {
 
-	@RequestMapping(value = "/observation", method = RequestMethod.GET)
+	@RequestMapping(value = "/Observation", method = RequestMethod.GET)
 	@ResponseBody
 	public Object search(@RequestParam(value = "identifier", required = false) String identifier,
 	                     HttpServletRequest request) throws Exception {
@@ -37,7 +37,7 @@ public class FHIRObservationController {
 		return result;
 	}
 
-	@RequestMapping(value = "/observation/{uuid}", method = RequestMethod.GET)
+	@RequestMapping(value = "/Observation/{uuid}", method = RequestMethod.GET)
 	@ResponseBody
 	public Object retrieve(@PathVariable("uuid") String uuid,
 	                       HttpServletRequest request) throws Exception {

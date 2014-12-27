@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping(value = "/fhir/")
 public class FHIRFamilyHistoryController {
 
-	@RequestMapping(value = "/familyhistory/{uuid}", method = RequestMethod.GET)
+	@RequestMapping(value = "/FamilyHistory/{uuid}", method = RequestMethod.GET)
 	@ResponseBody
 	public Object retrieve(@PathVariable("uuid") String uuid,
 	                       HttpServletRequest request) throws Exception {
