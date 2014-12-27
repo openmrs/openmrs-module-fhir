@@ -22,7 +22,7 @@ import ca.uhn.fhir.model.primitive.StringDt;
 import ca.uhn.fhir.narrative.DefaultThymeleafNarrativeGenerator;
 import ca.uhn.fhir.parser.IParser;
 import org.openmrs.api.context.Context;
-
+import org.openmrs.module.fhir.api.manager.FHIRContextFactory;
 import java.util.Date;
 
 /**
@@ -70,7 +70,7 @@ public class FamilyHistoryUtil {
 
 	public static String generateBundle() {
 
-		FhirContext ctx = new FhirContext();
+		FhirContext ctx = FHIRContextFactory.getFHIRContext();
 		IParser jsonParser = ctx.newJsonParser();
 
 		Bundle bundle = new Bundle();

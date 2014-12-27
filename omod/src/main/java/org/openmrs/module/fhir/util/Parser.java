@@ -18,12 +18,13 @@ import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu.resource.Observation;
 import ca.uhn.fhir.narrative.DefaultThymeleafNarrativeGenerator;
 import ca.uhn.fhir.parser.IParser;
+import org.openmrs.module.fhir.api.manager.FHIRContextFactory;
 
 public class Parser {
 
 	public static String parse(IResource resource, String contentType) {
 
-		FhirContext ctx = new FhirContext();
+		FhirContext ctx = FHIRContextFactory.getFHIRContext();
 		ctx.setNarrativeGenerator(new DefaultThymeleafNarrativeGenerator());
 		IParser jsonParser = ctx.newJsonParser();
 		IParser xmlParser = ctx.newXmlParser();
@@ -46,7 +47,7 @@ public class Parser {
 
 	public static String parseObs(Observation observation, String contentType) {
 
-		FhirContext ctx = new FhirContext();
+		FhirContext ctx = FHIRContextFactory.getFHIRContext();
 		ctx.setNarrativeGenerator(new DefaultThymeleafNarrativeGenerator()
 		);
 
