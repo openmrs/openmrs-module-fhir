@@ -30,10 +30,15 @@ public class FHIRPatientController {
 	@RequestMapping(value = "/patient", method = RequestMethod.GET)
 	@ResponseBody
 	public Object search(@RequestParam(value = "identifier", required = false) String identifier,
+                         @RequestParam(value = "_id", required = false) String _id,
 	                     HttpServletRequest request) throws Exception {
-		String result;
+		String result = null;
 		FHIRPatientResource patientResource = new FHIRPatientResource();
-		result = patientResource.searchByIdentifier(identifier, request.getContentType());
+
+        if(identifier != null)
+		    result = patientResource.searchByIdentifier(identifier, request.getContentType());
+        if(_id != null)
+            result = patientResource.searchById(_id, request.getContentType());
 		return result;
 	}
 

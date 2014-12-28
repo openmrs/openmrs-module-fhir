@@ -38,7 +38,7 @@ public interface PatientService extends OpenmrsService {
 	 */
 
 	Patient getPatient(String id);
-
+    Bundle getPatientsById(String id);
 	Bundle getPatientsByIdentifier(String identifier);
 
 }
