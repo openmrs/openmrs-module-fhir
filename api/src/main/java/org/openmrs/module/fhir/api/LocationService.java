@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.fhir.api;
 
+import ca.uhn.fhir.model.api.Bundle;
 import ca.uhn.fhir.model.dstu.resource.Location;
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,5 +38,6 @@ public interface LocationService extends OpenmrsService {
 	 */
 
 	Location getLocation(String id);
+    Bundle getLocationsById(String id);
 
 }

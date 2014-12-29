@@ -14,17 +14,27 @@
 package org.openmrs.module.fhir.web.controller;
 
 import org.openmrs.module.fhir.resources.FHIRLocationResource;
+import org.openmrs.module.fhir.resources.FHIRPatientResource;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping(value = "/fhir/")
 public class FHIRLocationController {
+
+    @RequestMapping(value = "/Location", method = RequestMethod.GET)
+    @ResponseBody
+    public Object search(@RequestParam(value = "_id", required = false) String _id,
+                         HttpServletRequest request) throws Exception {
+        String result = null;
+        FHIRLocationResource locationResource = new FHIRLocationResource();
+
+        if(_id != null)
+            result = locationResource.searchById(_id, request.getContentType());
+        return result;
+    }
 
 	@RequestMapping(value = "/Location/{uuid}", method = RequestMethod.GET)
 	@ResponseBody
