@@ -4,6 +4,7 @@ import ca.uhn.fhir.model.dstu.resource.Practitioner;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.PractitionerService;
 import org.openmrs.module.fhir.util.Parser;
+import org.openmrs.module.fhir.api.util.FHIRPractitionerUtil;
 
 public class FHIRPractitionerResource extends Resource {
 
@@ -25,5 +26,12 @@ public class FHIRPractitionerResource extends Resource {
 
 		return Parser.parse(fhirPractitioner, contentType);
 	}
+
+    public String searchById(String id, String contentType) {
+
+        PractitionerService practitionerService = Context.getService(PractitionerService.class);
+        ca.uhn.fhir.model.api.Bundle practitionerBundle = practitionerService.getPractitionersById(id);
+        return FHIRPractitionerUtil.parseBundle(practitionerBundle);
+    }
 
 }
