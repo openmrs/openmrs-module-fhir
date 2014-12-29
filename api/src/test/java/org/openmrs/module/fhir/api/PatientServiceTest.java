@@ -15,14 +15,14 @@ package org.openmrs.module.fhir.api;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu.resource.Patient;
+import ca.uhn.fhir.model.api.Bundle;
+import ca.uhn.fhir.model.api.BundleEntry;
 import org.junit.Before;
 import org.junit.Test;
-import org.openmrs.Concept;
-import org.openmrs.ConceptMap;
-import org.openmrs.ConceptSource;
-import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
@@ -51,10 +51,10 @@ public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 
     @Test
     public void getPatient_shouldReturnResourceIfExists(){
-        /*String patientUuid = "5631b434-78aa-102b-91a0-001e378eb67e";
+        String patientUuid = "61b38324-e2fd-4feb-95b7-9e9a2a4400df";
         Patient fhirPatient = getService().getPatient(patientUuid);
         assertNotNull(fhirPatient);
-        assertEquals(fhirPatient.getId(),patientUuid);*/
+        assertEquals(fhirPatient.getId().toString(),patientUuid);
 
     }
 
@@ -65,7 +65,19 @@ public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 
     @Test
     public void getPatientsById_shouldReturnBundleIfExists(){
+        String patientUuid = "61b38324-e2fd-4feb-95b7-9e9a2a4400df";
+        Bundle bundle = getService().getPatientsById(patientUuid);
 
+        assertNotNull(bundle);
+        assertEquals(bundle.getEntries().size(), 1);
+
+        BundleEntry entry = bundle.getEntries().get(0);
+        IResource resource = entry.getResource();
+
+        assertNotNull(resource);
+        assertTrue(resource instanceof Patient);
+        Patient fhirPatient = (Patient) resource;
+        assertEquals(fhirPatient.getId().toString(),patientUuid);
     }
 
     @Test
