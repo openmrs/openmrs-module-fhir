@@ -1,4 +1,4 @@
-/**
+/*
  * The contents of this file are subject to the OpenMRS Public License
  * Version 1.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping(value = "/fhir/")
 public class FHIRFamilyHistoryController {
 
-	@RequestMapping(value = "/familyhistory/{uuid}", method = RequestMethod.GET)
+	@RequestMapping(value = "/FamilyHistory/{uuid}", method = RequestMethod.GET)
 	@ResponseBody
 	public Object retrieve(@PathVariable("uuid") String uuid,
 	                       HttpServletRequest request) throws Exception {

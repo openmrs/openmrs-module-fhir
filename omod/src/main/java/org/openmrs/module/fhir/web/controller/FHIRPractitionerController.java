@@ -1,4 +1,4 @@
-/**
+/*
  * The contents of this file are subject to the OpenMRS Public License
  * Version 1.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping(value = "/fhir/")
 public class FHIRPractitionerController {
 
-    @RequestMapping(value = "/practitioner", method = RequestMethod.GET)
+    @RequestMapping(value = "/Practitioner", method = RequestMethod.GET)
     @ResponseBody
     public Object search(@RequestParam(value = "_id", required = false) String _id,
                          HttpServletRequest request) throws Exception {
@@ -35,8 +35,8 @@ public class FHIRPractitionerController {
         return result;
     }
 
-	@RequestMapping(value = "/practitioner/{uuid}", method = RequestMethod.GET)
-	@ResponseBody
+	@RequestMapping(value = "/Practitioner/{uuid}", method = RequestMethod.GET)
+    @ResponseBody
 	public Object retrieve(@PathVariable("uuid") String uuid,
 	                       HttpServletRequest request) throws Exception {
 		String result;

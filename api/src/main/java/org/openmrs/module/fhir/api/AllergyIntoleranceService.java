@@ -1,4 +1,4 @@
-/**
+/*
  * The contents of this file are subject to the OpenMRS Public License
  * Version 1.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -15,8 +15,8 @@ package org.openmrs.module.fhir.api;
 
 import ca.uhn.fhir.model.dstu.resource.AllergyIntolerance;
 import org.openmrs.api.OpenmrsService;
-import org.springframework.transaction.annotation.Transactional;
 import org.openmrs.module.fhir.strategy.AllergyStrategyInterface;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This service exposes module's core functionality. It is a Spring managed bean which is configured in

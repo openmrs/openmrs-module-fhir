@@ -1,4 +1,4 @@
-/**
+/*
  * The contents of this file are subject to the OpenMRS Public License
  * Version 1.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -31,11 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public interface PatientService extends OpenmrsService {
-     
-	/*
-	 * Add service methods here
-	 * 
-	 */
 
 	Patient getPatient(String id);
     Bundle getPatientsById(String id);

@@ -1,6 +1,4 @@
-package org.openmrs.module.fhir.filter;
-
-/**
+/*
  * The contents of this file are subject to the OpenMRS Public License
  * Version 1.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
@@ -13,6 +11,7 @@ package org.openmrs.module.fhir.filter;
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
+package org.openmrs.module.fhir.filter;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;

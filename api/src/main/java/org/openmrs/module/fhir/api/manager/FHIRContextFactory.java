@@ -11,26 +11,15 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.fhir.strategy;
+package org.openmrs.module.fhir.api.manager;
 
-import java.util.ArrayList;
-import java.util.List;
+import ca.uhn.fhir.context.FhirContext;
 
-/**
- * Created by snkasthu on 10/17/14.
- */
-public class OpenMRS20AllergyStrategy implements AllergyStrategyInterface {
+public class FHIRContextFactory {
 
-	@Override
-	public List<String> getSupportedOpenMRSVersions() {
-		List<String> supportedOpenMRSVersions = new ArrayList<String>();
-		supportedOpenMRSVersions.add("1.9.7");
-		supportedOpenMRSVersions.add("1.9.8");
-		return supportedOpenMRSVersions;
+	private static final FhirContext context = new FhirContext();
+
+	public static FhirContext getFHIRContext() {
+		return context;
 	}
-
-
-
-
-
 }
