@@ -24,6 +24,7 @@ import ca.uhn.fhir.model.api.BundleEntry;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.exception.FHIRValidationException;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import java.util.List;
@@ -50,7 +51,7 @@ public class PatientServiceTest extends BaseModuleContextSensitiveTest {
     }
 
     @Test
-    public void getPatient_shouldReturnResourceIfExists(){
+    public void getPatient_shouldReturnResourceIfExists() throws FHIRValidationException {
         String patientUuid = "61b38324-e2fd-4feb-95b7-9e9a2a4400df";
         Patient fhirPatient = getService().getPatient(patientUuid);
         assertNotNull(fhirPatient);
@@ -64,7 +65,7 @@ public class PatientServiceTest extends BaseModuleContextSensitiveTest {
     }
 
     @Test
-    public void getPatientsById_shouldReturnBundleIfExists(){
+    public void getPatientsById_shouldReturnBundleIfExists() throws FHIRValidationException {
         String patientUuid = "61b38324-e2fd-4feb-95b7-9e9a2a4400df";
         Bundle bundle = getService().getPatientsById(patientUuid);
 

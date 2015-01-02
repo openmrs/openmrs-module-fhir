@@ -31,11 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public interface PractitionerService extends OpenmrsService {
-     
-	/*
-	 * Add service methods here
-	 * 
-	 */
 
 	Practitioner getPractitioner(String id);
     Bundle getPractitionersById(String id);
