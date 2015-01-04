@@ -23,6 +23,7 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.PatientService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
+import org.openmrs.module.fhir.exception.FHIRValidationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,14 +51,13 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 		return dao;
 	}
 
-	public Patient getPatient(String id) {
-
+	public Patient getPatient(String id) throws FHIRValidationException {
 		org.openmrs.Patient omrsPatient = Context.getPatientService().getPatientByUuid(id);
 		return FHIRPatientUtil.generatePatient(omrsPatient);
 
 	}
 
-    public Bundle getPatientsById(String id) {
+    public Bundle getPatientsById(String id) throws FHIRValidationException {
 
         org.openmrs.Patient omrsPatient = Context.getPatientService().getPatientByUuid(id);
         List<org.openmrs.Patient> patientList = new ArrayList<org.openmrs.Patient>();
@@ -65,7 +65,7 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
         return FHIRPatientUtil.generateBundle(patientList);
     }
 
-	public Bundle getPatientsByIdentifier(String identifier) {
+	public Bundle getPatientsByIdentifier(String identifier) throws FHIRValidationException {
 		String[] ids = identifier.split("\\|");
 		PatientIdentifierType patientIdentifierType = Context.getPatientService().getPatientIdentifierTypeByName(ids[0]);
 		List<PatientIdentifierType> patientIdentifierTypes = new ArrayList<PatientIdentifierType>();

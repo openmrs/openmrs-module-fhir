@@ -13,6 +13,8 @@
  */
 package org.openmrs.module.fhir.web.controller;
 
+import org.openmrs.module.fhir.exception.FHIRModuleOmodException;
+import org.openmrs.module.fhir.exception.FHIRValidationException;
 import org.openmrs.module.fhir.resources.FHIRPatientResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,24 +33,34 @@ public class FHIRPatientController {
 	@ResponseBody
 	public Object search(@RequestParam(value = "identifier", required = false) String identifier,
                          @RequestParam(value = "_id", required = false) String _id,
-	                     HttpServletRequest request) throws Exception {
+	                     HttpServletRequest request){
 		String result = null;
 		FHIRPatientResource patientResource = new FHIRPatientResource();
-
+		try {
         if(identifier != null)
-		    result = patientResource.searchByIdentifier(identifier, request.getContentType());
-        if(_id != null)
+		        result = patientResource.searchByIdentifier(identifier, request.getContentType());
+		if(_id != null)
             result = patientResource.searchById(_id, request.getContentType());
+		} catch (FHIRModuleOmodException e) {
+			e.printStackTrace();
+		} catch (FHIRValidationException e) {
+			e.printStackTrace();
+		}
 		return result;
 	}
 
 	@RequestMapping(value = "/Patient/{uuid}", method = RequestMethod.GET)
 	@ResponseBody
-	public Object retrieve(@PathVariable("uuid") String uuid, HttpServletRequest request)
-			throws Exception {
-		String result;
-		FHIRPatientResource patientResource = new FHIRPatientResource();
-		result = patientResource.getByUniqueId(uuid, request.getContentType());
+	public Object retrieve(@PathVariable("uuid") String uuid, HttpServletRequest request) {
+		String result = null;
+		try {
+			FHIRPatientResource patientResource = new FHIRPatientResource();
+			result = patientResource.getByUniqueId(uuid, request.getContentType());
+		} catch (FHIRModuleOmodException e) {
+			e.printStackTrace();
+		} catch (FHIRValidationException e) {
+			e.printStackTrace();
+		}
 		return result;
 	}
 }

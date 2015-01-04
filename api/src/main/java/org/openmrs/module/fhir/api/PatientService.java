@@ -16,6 +16,7 @@ package org.openmrs.module.fhir.api;
 import ca.uhn.fhir.model.api.Bundle;
 import ca.uhn.fhir.model.dstu.resource.Patient;
 import org.openmrs.api.OpenmrsService;
+import org.openmrs.module.fhir.exception.FHIRValidationException;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -32,8 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface PatientService extends OpenmrsService {
 
-	Patient getPatient(String id);
-    Bundle getPatientsById(String id);
-	Bundle getPatientsByIdentifier(String identifier);
+	Patient getPatient(String id) throws FHIRValidationException;
+	Bundle getPatientsById(String id) throws FHIRValidationException;
+	Bundle getPatientsByIdentifier(String identifier) throws FHIRValidationException;
 
 }

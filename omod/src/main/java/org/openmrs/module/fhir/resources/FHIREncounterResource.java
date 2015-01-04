@@ -16,6 +16,7 @@ package org.openmrs.module.fhir.resources;
 import ca.uhn.fhir.model.dstu.resource.Composition;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.EncounterService;
+import org.openmrs.module.fhir.exception.FHIRModuleOmodException;
 import org.openmrs.module.fhir.util.Parser;
 
 
@@ -31,7 +32,7 @@ public class FHIREncounterResource extends Resource {
         return delegate;
     }
 
-    public String getByUniqueId(String uuid, String contentType) {
+    public String getByUniqueId(String uuid, String contentType) throws FHIRModuleOmodException {
 
         EncounterService encounterService = Context.getService(EncounterService.class);
         Composition fhirEncounter = encounterService.getEncounter(uuid);
