@@ -62,6 +62,13 @@
             <artifactId>fhir-api</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <!-- Needed for JEE/Servlet support -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.0.1</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.thymeleaf</groupId>
             <artifactId>thymeleaf</artifactId>

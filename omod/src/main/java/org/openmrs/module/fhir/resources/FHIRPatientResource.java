@@ -13,29 +13,30 @@
  */
 package org.openmrs.module.fhir.resources;
 
+import ca.uhn.fhir.model.dstu.resource.Patient;
+import ca.uhn.fhir.model.primitive.IdDt;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 import org.openmrs.module.fhir.exception.FHIRModuleOmodException;
 import org.openmrs.module.fhir.exception.FHIRValidationException;
-import org.openmrs.module.fhir.util.Parser;
 
 public class FHIRPatientResource extends Resource {
 
-	public Object retrieve(String uuid) throws Exception {
+	public Object retrieve(IdDt theId) throws Exception {
 
-		Object delegate = getByUniqueId(uuid, null);
+		Object delegate = getByUniqueId(theId, null);
 		if (delegate == null) {
 			throw new Exception();
 		}
 		return delegate;
 	}
 
-	public String getByUniqueId(String uuid, String contentType) throws FHIRModuleOmodException, FHIRValidationException {
+	public Patient getByUniqueId(IdDt theId, String contentType) throws FHIRModuleOmodException, FHIRValidationException {
 
 		org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
 				org.openmrs.module.fhir.api.PatientService.class);
-		ca.uhn.fhir.model.dstu.resource.Patient fhirPatient = patientService.getPatient(uuid);
-		return Parser.parse(fhirPatient, contentType);
+		ca.uhn.fhir.model.dstu.resource.Patient fhirPatient = patientService.getPatient(theId.getIdPart());
+		return fhirPatient;
 	}
 
     public String searchById(String id, String contentType) throws FHIRModuleOmodException, FHIRValidationException {

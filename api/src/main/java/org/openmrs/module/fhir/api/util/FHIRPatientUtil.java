@@ -119,7 +119,6 @@ public class FHIRPatientUtil {
 		}
 
 		List<AddressDt> fhirAddresses = patient.getAddress();
-
 		for (PersonAddress address : omrsPatient.getAddresses()) {
 				AddressDt fhirAddress = new AddressDt();
 				fhirAddress.setCity(address.getCityVillage());

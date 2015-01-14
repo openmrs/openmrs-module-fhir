@@ -16,6 +16,7 @@ package org.openmrs.module.fhir.api;
 import ca.uhn.fhir.model.api.Bundle;
 import ca.uhn.fhir.model.dstu.resource.Practitioner;
 import org.openmrs.api.OpenmrsService;
+import org.openmrs.module.fhir.exception.FHIRValidationException;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -32,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface PractitionerService extends OpenmrsService {
 
-	Practitioner getPractitioner(String id);
-    Bundle getPractitionersById(String id);
+	Practitioner getPractitioner(String id) throws FHIRValidationException;
+    Bundle getPractitionersById(String id) throws FHIRValidationException;
 
 }

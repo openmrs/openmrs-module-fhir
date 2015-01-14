@@ -17,23 +17,21 @@ import ca.uhn.fhir.model.dstu.resource.Practitioner;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.PractitionerService;
 import org.openmrs.module.fhir.exception.FHIRModuleOmodException;
+import org.openmrs.module.fhir.exception.FHIRValidationException;
 import org.openmrs.module.fhir.util.Parser;
 import org.openmrs.module.fhir.api.util.FHIRPractitionerUtil;
 
 public class FHIRPractitionerResource extends Resource {
 
 	public Object retrieve(String uuid) throws Exception {
-
 		Object delegate = getByUniqueId(uuid, null);
-		System.out.println(delegate);
 		if (delegate == null) {
 			throw new Exception();
 		}
-
 		return delegate;
 	}
 
-	public String getByUniqueId(String uuid, String contentType) throws FHIRModuleOmodException {
+	public String getByUniqueId(String uuid, String contentType) throws FHIRModuleOmodException, FHIRValidationException {
 
 		PractitionerService practitionerService = Context.getService(PractitionerService.class);
 		Practitioner fhirPractitioner = practitionerService.getPractitioner(uuid);
@@ -41,7 +39,7 @@ public class FHIRPractitionerResource extends Resource {
 		return Parser.parse(fhirPractitioner, contentType);
 	}
 
-    public String searchById(String id, String contentType) {
+    public String searchById(String id, String contentType) throws FHIRValidationException {
 
         PractitionerService practitionerService = Context.getService(PractitionerService.class);
         ca.uhn.fhir.model.api.Bundle practitionerBundle = practitionerService.getPractitionersById(id);
