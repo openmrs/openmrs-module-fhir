@@ -14,6 +14,7 @@
 package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.model.dstu.resource.FamilyHistory;
+import ca.uhn.fhir.model.primitive.IdDt;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRFamilyHistoryUtil;
@@ -22,37 +23,11 @@ import javax.servlet.http.HttpServletRequest;
 
 public class FHIRFamilyHistoryResource extends Resource {
 
-	public Object retrieve(String uuid, HttpServletRequest request) throws Exception {
+	public FamilyHistory getByUniqueId(IdDt theId) {
 
-		if (!uuid.equals("search")) {
-			String resource = request.getParameter("Patient");
-			String name = request.getParameter("name");
-
-			String contentType = request.getContentType();
-			Object delegate = getByUniqueId(uuid, contentType);
-			if (delegate == null) {
-				throw new Exception();
-			}
-
-			return delegate;
-		} else {
-
-			String patientUUid = request.getParameter("subject:Patient");
-
-			Patient patient = Context.getPatientService().getPatientByUuid(patientUUid);
-
-			String resultString = FHIRFamilyHistoryUtil.generateBundle();
-
-			return resultString;
-
-		}
-	}
-
-	public String getByUniqueId(String uuid, String contentType) {
-		Patient patient = Context.getPatientService().getPatientByUuid(uuid);
+		Patient patient = Context.getPatientService().getPatientByUuid(theId.getIdPart());
 		FamilyHistory familyHistory = FHIRFamilyHistoryUtil.generateFamilyHistory();
-
-		return FHIRFamilyHistoryUtil.parseFamilyHistory(familyHistory, contentType);
+		return familyHistory;
 	}
 
 }

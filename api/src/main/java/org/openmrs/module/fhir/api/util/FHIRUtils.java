@@ -15,6 +15,7 @@ package org.openmrs.module.fhir.api.util;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.IResource;
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.ValidationResult;
 import org.openmrs.api.context.Context;
@@ -41,10 +42,10 @@ public class FHIRUtils {
 		return resourceURI + resourceId;
 	}
 
-	public static void validate(IResource resource) throws FHIRValidationException {
+	public static void validate(IResource resource) {
 		ValidationResult result = val.validateWithResult(resource);
 		if(!result.isSuccessful()) {
-			throw new FHIRValidationException(ctx.newXmlParser().setPrettyPrint(true).encodeResourceToString(result
+			throw new UnprocessableEntityException(ctx.newXmlParser().setPrettyPrint(true).encodeResourceToString(result
 					.getOperationOutcome()));
 		}
 	}

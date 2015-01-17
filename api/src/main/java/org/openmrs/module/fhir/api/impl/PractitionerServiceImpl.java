@@ -25,6 +25,7 @@ import org.openmrs.module.fhir.api.PractitionerService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 import org.openmrs.module.fhir.api.util.FHIRPractitionerUtil;
+import org.openmrs.module.fhir.exception.FHIRValidationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,10 +57,9 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 
 		Provider omrsProvider = Context.getProviderService().getProviderByUuid(id);
 		return FHIRPractitionerUtil.generatePractitioner(omrsProvider);
-
 	}
 
-    public Bundle getPractitionersById(String id) {
+    public Bundle getPractitionersById(String id) throws FHIRValidationException {
 
         Provider omrsProvider = Context.getProviderService().getProviderByUuid(id);
         List<Provider> providerList = new ArrayList<Provider>();

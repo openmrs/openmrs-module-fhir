@@ -54,6 +54,10 @@
 
     </mappingFiles>
 
+    <servlet>
+        <servlet-name>fhirServelet</servlet-name>
+        <servlet-class>org.openmrs.module.fhir.server.FHIRRESTServer</servlet-class>
+    </servlet>
     <!-- Internationalization -->
     <!-- All message codes should start with ${project.parent.artifactId}. -->
     <messages>
@@ -77,6 +81,14 @@
     </filter>
     <filter-mapping>
         <filter-name>FHIR Authorization</filter-name>
+        <url-pattern>/ws/fhir/*</url-pattern>
+    </filter-mapping>
+    <filter>
+        <filter-name>forwardingFilterr</filter-name>
+        <filter-class>org.openmrs.module.fhir.filter.ForwardingFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>forwardingFilterr</filter-name>
         <url-pattern>/ws/fhir/*</url-pattern>
     </filter-mapping>
 
