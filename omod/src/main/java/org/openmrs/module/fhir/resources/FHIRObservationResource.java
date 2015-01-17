@@ -13,6 +13,8 @@
  */
 package org.openmrs.module.fhir.resources;
 
+import ca.uhn.fhir.model.dstu.resource.Observation;
+import ca.uhn.fhir.model.primitive.IdDt;
 import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -23,75 +25,14 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by snkasthu on 9/9/14.
- */
-/**
- * Created by snkasthu on 9/9/14.
- */
 public class FHIRObservationResource extends Resource {
 
 	org.openmrs.module.fhir.api.ObsService obsService = Context.getService(org.openmrs.module.fhir.api.ObsService.class);
 
-	public Object retrieve(String uuid, HttpServletRequest request) throws Exception {
+	public Observation getByUniqueId(IdDt theId) {
 
-		if (!uuid.equals("_search")) {
-			String resource = request.getParameter("Patient");
-			String name = request.getParameter("name");
-
-			String contentType = request.getContentType();
-			Object delegate = getByUniqueId(uuid, contentType);
-			if (delegate == null) {
-				throw new Exception();
-			}
-
-			return delegate;
-		} else {
-
-			String patientUUid = request.getParameter("subject:Patient");
-			String[] concepts = request.getParameter("name").split(",");
-
-			Patient patient = Context.getPatientService().getPatientByUuid(patientUUid);
-
-			List<Concept> conceptList = new ArrayList<Concept>();
-			for (String s : concepts) {
-				Concept concept = Context.getConceptService().getConceptByMapping(s, "LOINC");
-				conceptList.add(concept);
-
-			}
-
-			List<Obs> totalObsList = new ArrayList<Obs>();
-
-			for (Concept concept : conceptList) {
-				List<Obs> obsList = Context.getObsService().getObservationsByPersonAndConcept(patient, concept);
-				totalObsList.addAll(obsList);
-			}
-
-			String resultString = FHIRObsUtil.generateBundle(totalObsList);
-
-			return resultString;
-
-		}
-
-	}
-
-	public String getByUniqueId(String uniqueId, String contentType) {
-
-		ca.uhn.fhir.model.dstu.resource.Observation fhirObservation = obsService.getObs(uniqueId);
-
-		return FHIRObsUtil.parseObservation(fhirObservation, contentType);
-	}
-
-	public String doSearch(HttpServletRequest request) {
-
-		String patientUUid = request.getParameter("subject:Patient");
-		String[] concepts = request.getParameter("name").split(",");
-
-		List<Obs> totalObsList = obsService.getObsByPatientandConcept(patientUUid, concepts);
-
-		String resultString = FHIRObsUtil.generateBundle(totalObsList);
-
-		return resultString;
+		ca.uhn.fhir.model.dstu.resource.Observation fhirObservation = obsService.getObs(theId.getIdPart());
+		return fhirObservation;
 	}
 
 }

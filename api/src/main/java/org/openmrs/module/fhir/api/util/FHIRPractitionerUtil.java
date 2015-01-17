@@ -41,7 +41,7 @@ import java.util.List;
 
 public class FHIRPractitionerUtil {
 
-	public static Practitioner generatePractitioner(Provider provider) throws FHIRValidationException {
+	public static Practitioner generatePractitioner(Provider provider) {
 
 		Practitioner practitioner = new Practitioner();
 		//Set practitioner ID

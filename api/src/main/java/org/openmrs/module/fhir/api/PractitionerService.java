@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface PractitionerService extends OpenmrsService {
 
-	Practitioner getPractitioner(String id) throws FHIRValidationException;
+	Practitioner getPractitioner(String id);
     Bundle getPractitionersById(String id) throws FHIRValidationException;
 
 }

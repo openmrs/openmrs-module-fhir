@@ -13,20 +13,12 @@
  */
 package org.openmrs.module.fhir.resources;
 
+import ca.uhn.fhir.model.dstu.resource.AllergyIntolerance;
+import ca.uhn.fhir.model.primitive.IdDt;
+
 public class FHIRAllergyIntoleranceResource extends Resource {
 
-	public Object retrieve(String uuid) throws Exception {
-
-		Object delegate = getByUniqueId(uuid, null);
-		if (delegate == null) {
-			throw new Exception();
-		}
-
-		return delegate;
-	}
-
-	public String getByUniqueId(String uuid, String contentType) {
-
+	public AllergyIntolerance getByUniqueId(IdDt theId) {
 		return null;
 	}
 

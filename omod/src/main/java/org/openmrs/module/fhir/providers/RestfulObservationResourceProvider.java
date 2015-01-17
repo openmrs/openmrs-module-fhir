@@ -15,14 +15,11 @@ package org.openmrs.module.fhir.providers;
 
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu.resource.Observation;
-import ca.uhn.fhir.model.dstu.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.openmrs.module.fhir.exception.FHIRModuleOmodException;
-import org.openmrs.module.fhir.exception.FHIRValidationException;
-import org.openmrs.module.fhir.resources.FHIRPatientResource;
+import org.openmrs.module.fhir.resources.FHIRObservationResource;
 
 public class RestfulObservationResourceProvider implements IResourceProvider {
 	
@@ -42,15 +39,9 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 */
 	@Read()
 	public Observation getResourceById(@IdParam IdDt theId) {
-		Patient result = null;
-		try {
-			FHIRPatientResource patientResource = new FHIRPatientResource();
-			result = patientResource.getByUniqueId(theId, null);
-		} catch (FHIRModuleOmodException e) {
-			e.printStackTrace();
-		} catch (FHIRValidationException e) {
-			e.printStackTrace();
-		}
-		return null;
+		Observation result = null;
+		FHIRObservationResource provider = new FHIRObservationResource();
+		result = provider.getByUniqueId(theId);
+		return result;
 	}
 }

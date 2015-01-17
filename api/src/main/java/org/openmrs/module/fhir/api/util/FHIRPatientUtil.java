@@ -48,7 +48,7 @@ import java.util.List;
 
 public class FHIRPatientUtil {
 
-	public static Patient generatePatient(org.openmrs.Patient omrsPatient) throws FHIRValidationException {
+	public static Patient generatePatient(org.openmrs.Patient omrsPatient) {
 
 		Patient patient = new Patient();
 		//Set patient id to fhir patient

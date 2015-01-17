@@ -17,7 +17,13 @@ import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.IncomingRequestAddressStrategy;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import org.openmrs.module.fhir.addressstrategy.OpenMRSFHIRRequestAddressStrategy;
+import org.openmrs.module.fhir.providers.RestfulAllergyIntoleranceResourceProvider;
+import org.openmrs.module.fhir.providers.RestfulEncounterResourceProvider;
+import org.openmrs.module.fhir.providers.RestfulFamilyHistoryResourceProvider;
+import org.openmrs.module.fhir.providers.RestfulLocationResourceProvider;
+import org.openmrs.module.fhir.providers.RestfulObservationResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulPatientResourceProvider;
+import org.openmrs.module.fhir.providers.RestfulPractitionerResourceProvider;
 
 import javax.servlet.ServletException;
 import java.util.ArrayList;
@@ -26,6 +32,7 @@ import java.util.List;
 public class FHIRRESTServer extends RestfulServer {
 
 	private static final long serialVersionUID = 1L;
+	private static final String MODULE_SERVELET_PREFIX = "/fhir/fhirServelet";
 
 	/**
 	 * The initialize method is automatically called when the servlet is starting up, so it can
@@ -37,6 +44,16 @@ public class FHIRRESTServer extends RestfulServer {
 		this.setServerAddressStrategy(new OpenMRSFHIRRequestAddressStrategy());
 		List<IResourceProvider> resourceProviders = new ArrayList<IResourceProvider>();
 		resourceProviders.add(new RestfulPatientResourceProvider());
+		resourceProviders.add(new RestfulAllergyIntoleranceResourceProvider());
+		resourceProviders.add(new RestfulEncounterResourceProvider());
+		resourceProviders.add(new RestfulFamilyHistoryResourceProvider());
+		resourceProviders.add(new RestfulLocationResourceProvider());
+		resourceProviders.add(new RestfulObservationResourceProvider());
+		resourceProviders.add(new RestfulPractitionerResourceProvider());
 		setResourceProviders(resourceProviders);
+	}
+
+	protected String getRequestPath(String requestFullPath, String servletContextPath, String servletPath ) {
+		return requestFullPath.substring(escapedLength(servletContextPath) + escapedLength(servletPath) + escapedLength(MODULE_SERVELET_PREFIX));
 	}
 }

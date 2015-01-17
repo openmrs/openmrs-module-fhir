@@ -14,30 +14,19 @@
 package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.model.dstu.resource.Composition;
+import ca.uhn.fhir.model.primitive.IdDt;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.EncounterService;
 import org.openmrs.module.fhir.exception.FHIRModuleOmodException;
 import org.openmrs.module.fhir.util.Parser;
 
-
 public class FHIREncounterResource extends Resource {
 
-    public Object retrieve(String uuid) throws Exception {
-
-        Object delegate = getByUniqueId(uuid, null);
-        System.out.println(delegate);
-        if (delegate == null)
-            throw new Exception();
-
-        return delegate;
-    }
-
-    public String getByUniqueId(String uuid, String contentType) throws FHIRModuleOmodException {
+    public Composition getByUniqueId(IdDt theId) {
 
         EncounterService encounterService = Context.getService(EncounterService.class);
-        Composition fhirEncounter = encounterService.getEncounter(uuid);
-
-        return Parser.parse(fhirEncounter, contentType);
+        Composition fhirEncounter = encounterService.getEncounter(theId.getIdPart());
+        return fhirEncounter;
     }
 
 }

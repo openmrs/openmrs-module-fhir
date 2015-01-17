@@ -55,7 +55,7 @@
     </mappingFiles>
 
     <servlet>
-        <servlet-name>fhirservice</servlet-name>
+        <servlet-name>fhirServelet</servlet-name>
         <servlet-class>org.openmrs.module.fhir.server.FHIRRESTServer</servlet-class>
     </servlet>
     <!-- Internationalization -->

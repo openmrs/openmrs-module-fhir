@@ -22,16 +22,7 @@ import org.openmrs.module.fhir.exception.FHIRValidationException;
 
 public class FHIRPatientResource extends Resource {
 
-	public Object retrieve(IdDt theId) throws Exception {
-
-		Object delegate = getByUniqueId(theId, null);
-		if (delegate == null) {
-			throw new Exception();
-		}
-		return delegate;
-	}
-
-	public Patient getByUniqueId(IdDt theId, String contentType) throws FHIRModuleOmodException, FHIRValidationException {
+	public Patient getByUniqueId(IdDt theId) {
 
 		org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
 				org.openmrs.module.fhir.api.PatientService.class);
@@ -39,18 +30,10 @@ public class FHIRPatientResource extends Resource {
 		return fhirPatient;
 	}
 
-    public String searchById(String id, String contentType) throws FHIRModuleOmodException, FHIRValidationException {
-
-        org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
-                org.openmrs.module.fhir.api.PatientService.class);
-        ca.uhn.fhir.model.api.Bundle patientBundle = patientService.getPatientsById(id);
-        return FHIRPatientUtil.parseBundle(patientBundle);
-    }
-
 	//search by patient identifier. ex: GET [base-url]/Patient?identifier=http://acme.org/patient|2345
 	//returns a bundle of patients
 	public String searchByIdentifier(String identifier, String contentType)
-			throws FHIRModuleOmodException, FHIRValidationException {
+			throws FHIRValidationException {
 
 		org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
 				org.openmrs.module.fhir.api.PatientService.class);

@@ -53,7 +53,7 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 		return dao;
 	}
 
-	public Practitioner getPractitioner(String id) throws FHIRValidationException {
+	public Practitioner getPractitioner(String id) {
 
 		Provider omrsProvider = Context.getProviderService().getProviderByUuid(id);
 		return FHIRPractitionerUtil.generatePractitioner(omrsProvider);

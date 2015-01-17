@@ -15,6 +15,7 @@ package org.openmrs.module.fhir.api.impl;
 
 import ca.uhn.fhir.model.api.Bundle;
 import ca.uhn.fhir.model.dstu.resource.Patient;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.PatientIdentifierType;
@@ -51,8 +52,11 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 		return dao;
 	}
 
-	public Patient getPatient(String id) throws FHIRValidationException {
+	public Patient getPatient(String id) {
 		org.openmrs.Patient omrsPatient = Context.getPatientService().getPatientByUuid(id);
+		if(omrsPatient == null) {
+			throw new ResourceNotFoundException("Patient is not found for the given Id " + id);
+		}
 		return FHIRPatientUtil.generatePatient(omrsPatient);
 
 	}

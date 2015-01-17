@@ -20,9 +20,8 @@ import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.openmrs.module.fhir.exception.FHIRModuleOmodException;
-import org.openmrs.module.fhir.exception.FHIRValidationException;
 import org.openmrs.module.fhir.resources.FHIRPatientResource;
+import org.openmrs.module.fhir.resources.FHIRPractitionerResource;
 
 public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	
@@ -42,15 +41,9 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	 */
 	@Read()
 	public Practitioner getResourceById(@IdParam IdDt theId) {
-		Patient result = null;
-		try {
-			FHIRPatientResource patientResource = new FHIRPatientResource();
-			result = patientResource.getByUniqueId(theId, null);
-		} catch (FHIRModuleOmodException e) {
-			e.printStackTrace();
-		} catch (FHIRValidationException e) {
-			e.printStackTrace();
-		}
-		return null;
+		Practitioner result = null;
+		FHIRPractitionerResource practitionerResource = new FHIRPractitionerResource();
+		result = practitionerResource.getByUniqueId(theId);
+		return result;
 	}
 }

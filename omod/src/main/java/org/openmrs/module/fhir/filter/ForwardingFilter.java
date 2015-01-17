@@ -37,7 +37,7 @@ public class ForwardingFilter implements Filter {
 		String requestURI = request.getRequestURI();
 
 		if (requestURI.startsWith(openmrsPath + "/ws/fhir")) {
-			String newURI = requestURI.replace("/openmrs/ws/fhir", "/ms/fhir/fhirservice");
+			String newURI = requestURI.replace("/openmrs/ws/fhir", "/ms/fhir/fhirServelet");
 			req.getRequestDispatcher(newURI).forward(req, res);
 		} else {
 			chain.doFilter(req, res);

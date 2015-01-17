@@ -20,8 +20,6 @@ import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.openmrs.module.fhir.exception.FHIRModuleOmodException;
-import org.openmrs.module.fhir.exception.FHIRValidationException;
 import org.openmrs.module.fhir.resources.FHIRPatientResource;
 
 public class RestfulAllergyIntoleranceResourceProvider implements IResourceProvider {
@@ -43,14 +41,8 @@ public class RestfulAllergyIntoleranceResourceProvider implements IResourceProvi
 	@Read()
 	public AllergyIntolerance getResourceById(@IdParam IdDt theId) {
 		Patient result = null;
-		try {
 			FHIRPatientResource patientResource = new FHIRPatientResource();
-			result = patientResource.getByUniqueId(theId, null);
-		} catch (FHIRModuleOmodException e) {
-			e.printStackTrace();
-		} catch (FHIRValidationException e) {
-			e.printStackTrace();
-		}
+		result = patientResource.getByUniqueId(theId);
 		return null;
 	}
 }

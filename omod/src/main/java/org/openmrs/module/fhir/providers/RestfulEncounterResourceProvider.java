@@ -14,6 +14,7 @@
 package org.openmrs.module.fhir.providers;
 
 import ca.uhn.fhir.model.api.IResource;
+import ca.uhn.fhir.model.dstu.resource.Composition;
 import ca.uhn.fhir.model.dstu.resource.Encounter;
 import ca.uhn.fhir.model.dstu.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
@@ -22,6 +23,7 @@ import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.openmrs.module.fhir.exception.FHIRModuleOmodException;
 import org.openmrs.module.fhir.exception.FHIRValidationException;
+import org.openmrs.module.fhir.resources.FHIREncounterResource;
 import org.openmrs.module.fhir.resources.FHIRPatientResource;
 
 public class RestfulEncounterResourceProvider implements IResourceProvider {
@@ -42,15 +44,9 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	 */
 	@Read()
 	public Encounter getResourceById(@IdParam IdDt theId) {
-		Patient result = null;
-		try {
-			FHIRPatientResource patientResource = new FHIRPatientResource();
-			result = patientResource.getByUniqueId(theId, null);
-		} catch (FHIRModuleOmodException e) {
-			e.printStackTrace();
-		} catch (FHIRValidationException e) {
-			e.printStackTrace();
-		}
+		Composition result = null;
+		FHIREncounterResource encounterResource = new FHIREncounterResource();
+		result = encounterResource.getByUniqueId(theId);
 		return null;
 	}
 }
