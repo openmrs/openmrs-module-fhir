@@ -39,11 +39,47 @@ public interface PatientService extends OpenmrsService {
 	List<Patient> searchPatientsById(String id);
 
 	/**
-	 * Search patient by identifier
+	 * Search patient by identifier and identifier type id
 	 *
-	 * @param identifier identifier to be search
+	 * @param identifierValue identifier to be search
+	 * @param identifierTypeId id of the patient identifier type
 	 * @return fhir patient resource list
 	 */
-	List<Patient> searchPatientsByIdentifier(String identifier);
+	List<Patient> searchPatientsByIdentifier(String identifierValue, String identifierTypeId);
 
+	/**
+	 * Search patient by identifier
+	 *
+	 * @param identifierValue identifier to be search
+	 * @return fhir patient resource list
+	 */
+	List<Patient> searchPatientsByIdentifier(String identifierValue);
+
+	/**
+	 * Search all patients either active or inactive
+	 *
+	 * @return active patients list
+	 */
+	List<Patient> searchPatients(boolean active);
+
+	/**
+	 * Search all patients by given name
+	 *
+	 * @return active patients list
+	 */
+	List<Patient> searchPatientsByGivenName(String givenName);
+
+	/**
+	 * Search all patients by given name
+	 *
+	 * @return active patients list
+	 */
+	List<Patient> searchPatientsByFamilyName(String familyName);
+
+	/**
+	 * Search all patients by  name
+	 *
+	 * @return active patients list
+	 */
+	List<Patient> searchPatientsByName(String name);
 }

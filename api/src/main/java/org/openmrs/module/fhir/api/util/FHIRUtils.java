@@ -48,4 +48,10 @@ public class FHIRUtils {
 					.getOperationOutcome()));
 		}
 	}
+
+	public static String buildURN(String type, String value) {
+		StringBuilder urnBuilder = new StringBuilder();
+		urnBuilder.append(FHIRConstants.URN).append(":").append(type).append(":").append(value);
+		return urnBuilder.toString();
+	}
 }

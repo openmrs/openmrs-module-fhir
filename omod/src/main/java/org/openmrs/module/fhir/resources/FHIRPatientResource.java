@@ -15,6 +15,7 @@ package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.model.dstu.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.model.primitive.StringDt;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.openmrs.api.context.Context;
@@ -44,7 +45,37 @@ public class FHIRPatientResource extends Resource {
 	public List<Patient> searchByIdentifier(TokenParam identifier) {
 		org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
 				org.openmrs.module.fhir.api.PatientService.class);
+		if(identifier.getSystem() !=null && !identifier.getSystem().isEmpty()) {
+			return patientService.searchPatientsByIdentifier(identifier.getValue(), identifier.getSystem().split(":")[2]);
+		}
 		return patientService.searchPatientsByIdentifier(identifier.getValue());
 	}
 
+	public List<Patient> searchByGivenName(StringDt givenName) {
+		org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
+				org.openmrs.module.fhir.api.PatientService.class);
+		return patientService.searchPatientsByGivenName(givenName.getValue());
+	}
+
+	public List<Patient> searchByFamilyName(StringDt familyName) {
+		org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
+				org.openmrs.module.fhir.api.PatientService.class);
+		return patientService.searchPatientsByFamilyName(familyName.getValue());
+	}
+
+	public List<Patient> searchByName(StringDt name) {
+		org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
+				org.openmrs.module.fhir.api.PatientService.class);
+		return patientService.searchPatientsByName(name.getValue());
+	}
+
+	public List<Patient> searchPatients(TokenParam active) {
+		org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
+				org.openmrs.module.fhir.api.PatientService.class);
+		if("true".equalsIgnoreCase(active.getValue())) {
+			return patientService.searchPatients(true);
+		} else {
+			return patientService.searchPatients(false);
+		}
+	}
 }

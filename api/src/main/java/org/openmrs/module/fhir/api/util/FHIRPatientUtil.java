@@ -45,13 +45,12 @@ public class FHIRPatientUtil {
 
 		//Set patient identifiers to fhir patient
 		for (PatientIdentifier identifier : omrsPatient.getActiveIdentifiers()) {
-			String uri = FHIRUtils.getWebServicesURI(FHIRUtils.PATIENT_IDENTIFIER_TYPE_REST_RESOURCE_URI, identifier
-					.getIdentifierType().getUuid());
+			String urn = FHIRUtils.buildURN(FHIRConstants.UUID, identifier.getIdentifierType().getUuid());
 			if (identifier.isPreferred()) {
-				patient.addIdentifier().setUse(IdentifierUseEnum.USUAL).setSystem(uri).setValue(identifier.getIdentifier())
+				patient.addIdentifier().setUse(IdentifierUseEnum.USUAL).setSystem(urn).setValue(identifier.getIdentifier())
 						.setLabel(identifier.getIdentifierType().getName());
 			} else {
-				patient.addIdentifier().setUse(IdentifierUseEnum.SECONDARY).setSystem(uri).setValue(
+				patient.addIdentifier().setUse(IdentifierUseEnum.SECONDARY).setSystem(urn).setValue(
 						identifier.getIdentifier()).setLabel(identifier.getIdentifierType().getName());
 			}
 		}

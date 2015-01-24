@@ -101,15 +101,15 @@ public class FHIRObsUtil {
 
 			if (map.getSource().getName().equals("LOINC")) {
 				dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-						Constants.loinc));
+						FHIRConstants.loinc));
 			}
 			if (map.getSource().getName().equals("SNOMED")) {
 				dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-						Constants.snomed));
+						FHIRConstants.snomed));
 			}
 			if (map.getSource().getName().equals("CIEL")) {
 				dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-						Constants.ciel));
+						FHIRConstants.ciel));
 			}
 
 			dt.setCoding(dts);
@@ -192,17 +192,17 @@ public class FHIRObsUtil {
 				if (map.getSource().getName().equals("LOINC")) {
 					values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
 							.setSystem(
-									Constants.loinc));
+									FHIRConstants.loinc));
 				}
 				if (map.getSource().getName().equals("SNOMED")) {
 					values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
 							.setSystem(
-									Constants.snomed));
+									FHIRConstants.snomed));
 				}
 				if (map.getSource().getName().equals("CIEL")) {
 					values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
 							.setSystem(
-									Constants.ciel));
+									FHIRConstants.ciel));
 				} else {
 					String uri = Context.getAdministrationService().getGlobalProperty("webservices.rest.uriPrefix")
 					             + "/ws/rest/v1/fhirconceptsource/" + map.getSource().getUuid();
