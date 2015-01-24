@@ -21,7 +21,6 @@ import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.Search;
-import ca.uhn.fhir.rest.param.DateParam;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
@@ -76,7 +75,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 */
 	@Search()
 	public List<Patient> findPatientsByFamilyName(@RequiredParam(name = Patient.SP_FAMILY) StringDt theFamilyName) {
-		throw new NotImplementedOperationException("Find patients by family name is not implemented yet");
+		return patientResource.searchByFamilyName(theFamilyName);
 	}
 
 	/**
@@ -88,7 +87,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 */
 	@Search()
 	public List<Patient> findPatientsByName(@RequiredParam(name = Patient.SP_NAME) StringDt name) {
-		throw new NotImplementedOperationException("Find patients by patient name is not implemented yet");
+		return patientResource.searchByName(name);
 	}
 
 	/**
@@ -111,20 +110,8 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 * empty.
 	 */
 	@Search()
-	public List<Patient> findActivePatients(@RequiredParam(name = Patient.SP_ACTIVE) StringDt active) {
-		throw new NotImplementedOperationException("Find active patients is not implemented yet");
-	}
-
-	/**
-	 * Get patients by telephone number
-	 *
-	 * @param telecom telephone number to be search
-	 * @return This method returns a list of Patients. This list may contain multiple matching resources, or it may also be
-	 * empty.
-	 */
-	@Search()
-	public List<Patient> findPatientByTelecom(@RequiredParam(name = Patient.SP_TELECOM) StringDt telecom) {
-		throw new NotImplementedOperationException("Find patients by telephone number is not implemented yet");
+	public List<Patient> findActivePatients(@RequiredParam(name = Patient.SP_ACTIVE) TokenParam active) {
+		return patientResource.searchPatients(active);
 	}
 
 	/**
@@ -136,68 +123,9 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 */
 	@Search()
 	public List<Patient> findPatientsByGivenName(@RequiredParam(name = Patient.SP_GIVEN) StringDt givenName) {
-		throw new NotImplementedOperationException("Find patients by given name is not implemented yet");
+		return patientResource.searchByGivenName(givenName);
 	}
 
-	/**
-	 * Find patients by birth date
-	 *
-	 * @param theBirthDate birth date of the patient
-	 * @return This method returns a list of Patients. This list may contain multiple matching resources, or it may also be
-	 * empty.
-	 */
-	@Search()
-	public List<Patient> searchPatientsByBirthDate(@RequiredParam(name = Patient.SP_BIRTHDATE) DateParam theBirthDate) {
-		throw new NotImplementedOperationException("Find patients by patients by birth date is not implemented yet");
-	}
-
-	/**
-	 * Find patients by patients' language
-	 *
-	 * @param language language to be search
-	 * @return This method returns a list of Patients. This list may contain multiple matching resources, or it may also be
-	 * empty.
-	 */
-	@Search()
-	public List<Patient> searchPatientsByLanguage(@RequiredParam(name = Patient.SP_RES_LANGUAGE) TokenParam language) {
-		throw new NotImplementedOperationException("Find patients by language is not implemented yet");
-	}
-
-	/**
-	 * Find patients by address
-	 *
-	 * @param address address to be search
-	 * @return This method returns a list of Patients. This list may contain multiple matching resources, or it may also be
-	 * empty.
-	 */
-	@Search()
-	public List<Patient> searchPatientsByAddress(@RequiredParam(name = Patient.SP_ADDRESS) StringDt address) {
-		throw new NotImplementedOperationException("Find patients by address is not implemented yet");
-	}
-
-	/**
-	 * Find patients by gender
-	 *
-	 * @param gender the gender of the patients to be search
-	 * @return This method returns a list of Patients. This list may contain multiple matching resources, or it may also be
-	 * empty.
-	 */
-	@Search()
-	public List<Patient> searchPatientsByGender(@RequiredParam(name = Patient.SP_GENDER) TokenParam gender) {
-		throw new NotImplementedOperationException("Find patients by gender is not implemented yet");
-	}
-
-	/**
-	 * Find patients by link
-	 *
-	 * @param link the link of the patient
-	 * @return This method returns a list of Patients. This list may contain multiple matching resources, or it may also be
-	 * empty.
-	 */
-	@Search()
-	public List<Patient> searchPatientsByLink(@RequiredParam(name = Patient.SP_LINK) ReferenceParam link) {
-		throw new NotImplementedOperationException("Find patients by link is not implemented yet");
-	}
 
 	/**
 	 * Find patients by provider
@@ -209,29 +137,5 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	@Search()
 	public List<Patient> searchPatientsByProvider(@RequiredParam(name = Patient.SP_PROVIDER) ReferenceParam provider) {
 		throw new NotImplementedOperationException("Find patients by provider is not implemented yet");
-	}
-
-	/**
-	 * Find patients by phonetic
-	 *
-	 * @param phonetic the phonetic of the patient
-	 * @return This method returns a list of Patients. This list may contain multiple matching resources, or it may also be
-	 * empty.
-	 */
-	@Search()
-	public List<Patient> searchPatientsByPhonetic(@RequiredParam(name = Patient.SP_PHONETIC) StringDt phonetic) {
-		throw new NotImplementedOperationException("Find patients by phonetic is not implemented yet");
-	}
-
-	/**
-	 * Find patients by language
-	 *
-	 * @param language birth date of the patient
-	 * @return This method returns a list of Patients. This list may contain multiple matching resources, or it may also be
-	 * empty.
-	 */
-	@Search()
-	public List<Patient> searchPatientsByLanguageCode(@RequiredParam(name = Patient.SP_LANGUAGE) TokenParam language) {
-		throw new NotImplementedOperationException("Find patients by language is not implemented yet");
 	}
 }

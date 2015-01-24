@@ -74,15 +74,75 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 	}
 
 	/**
+	 * @see org.openmrs.module.fhir.api.PatientService#searchPatientsByIdentifier(String, String)
+	 */
+	public List<Patient> searchPatientsByIdentifier(String identifierValue, String identifierTypeId) {
+		org.openmrs.api.PatientService patientService = Context.getPatientService();
+		List<PatientIdentifierType> patientIdentifierTypes = new ArrayList<PatientIdentifierType>();
+		patientIdentifierTypes.add(patientService.getPatientIdentifierTypeByUuid(identifierTypeId));
+		List<org.openmrs.Patient> patientList = patientService.getPatients(null, identifierValue, patientIdentifierTypes,
+				true);
+		List<Patient> fhirPatientList = new ArrayList<Patient>();
+		for(org.openmrs.Patient patient : patientList) {
+			fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
+		}
+		return fhirPatientList;
+	}
+
+	/**
 	 * @see org.openmrs.module.fhir.api.PatientService#searchPatientsByIdentifier(String)
 	 */
 	public List<Patient> searchPatientsByIdentifier(String identifier) {
-		String[] ids = identifier.split("\\|");
-		PatientIdentifierType patientIdentifierType = Context.getPatientService().getPatientIdentifierTypeByName(ids[0]);
-		List<PatientIdentifierType> patientIdentifierTypes = new ArrayList<PatientIdentifierType>();
-		List<org.openmrs.Patient> patientList = Context.getPatientService().getPatients(null, ids[1],
-				patientIdentifierTypes,
+		org.openmrs.api.PatientService patientService = Context.getPatientService();
+		List<PatientIdentifierType> allPatientIdentifierTypes = patientService.getAllPatientIdentifierTypes();
+		List<org.openmrs.Patient> patientList = patientService.getPatients(null, identifier, allPatientIdentifierTypes,
 				true);
-		return new ArrayList<Patient>();
+		List<Patient> fhirPatientList = new ArrayList<Patient>();
+		for(org.openmrs.Patient patient : patientList) {
+			fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
+		}
+		return fhirPatientList;
+	}
+
+	/**
+	 * @see org.openmrs.module.fhir.api.PatientService#searchPatients(boolean)
+	 */
+	public List<Patient> searchPatients(boolean active) {
+		List<org.openmrs.Patient> activePatients = Context.getPatientService().getAllPatients(active);
+		List<Patient> fhirPatientList = new ArrayList<Patient>();
+		for(org.openmrs.Patient patient : activePatients) {
+			fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
+		}
+		return fhirPatientList;
+	}
+
+	/**
+	 * @see org.openmrs.module.fhir.api.PatientService#searchPatientsByGivenName(String)
+	 */
+	public List<Patient> searchPatientsByGivenName(String givenName) {
+		return searchPatientByQuery(givenName);
+	}
+
+	/**
+	 * @see org.openmrs.module.fhir.api.PatientService#searchPatientsByFamilyName(String)
+	 */
+	public List<Patient> searchPatientsByFamilyName(String familyName) {
+		return searchPatientByQuery(familyName);
+	}
+
+	/**
+	 * @see org.openmrs.module.fhir.api.PatientService#searchPatientsByName(String) (String)
+	 */
+	public List<Patient> searchPatientsByName(String name) {
+		return searchPatientByQuery(name);
+	}
+
+	private List<Patient> searchPatientByQuery(String query) {
+		List<org.openmrs.Patient> patients = Context.getPatientService().getPatients(query);
+		List<Patient> fhirPatientList = new ArrayList<Patient>();
+		for(org.openmrs.Patient patient : patients) {
+			fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
+		}
+		return fhirPatientList;
 	}
 }
