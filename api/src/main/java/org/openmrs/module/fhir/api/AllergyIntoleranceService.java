@@ -15,32 +15,17 @@ package org.openmrs.module.fhir.api;
 
 import ca.uhn.fhir.model.dstu.resource.AllergyIntolerance;
 import org.openmrs.api.OpenmrsService;
-import org.openmrs.module.fhir.strategy.AllergyStrategyInterface;
 import org.springframework.transaction.annotation.Transactional;
-
-/**
- * This service exposes module's core functionality. It is a Spring managed bean which is configured in
- * moduleApplicationContext.xml.
- * It can be accessed only via Context:<br>
- * <code>
- * Context.getService(FHIRService.class).someMethod();
- * </code>
- *
- * @see org.openmrs.api.context.Context
- */
 
 @Transactional
 public interface AllergyIntoleranceService extends OpenmrsService {
-     
-	/*
-	 * Add service methods here
-	 * 
+
+	/**
+	 * Get allergy by id
+	 *
+	 * @param id allergy uuid
+	 * @return fhir allergy tolerence resource
 	 */
-
-    void setAllergyStrategy(AllergyStrategyInterface allergyStrategyInterface);
-
-    AllergyStrategyInterface getAllergyStrategy(AllergyStrategyInterface allergyStrategyInterface);
-
-    AllergyIntolerance getAllergyIntolerance(String id);
+	AllergyIntolerance getAllergyIntolerance(String id);
 
 }

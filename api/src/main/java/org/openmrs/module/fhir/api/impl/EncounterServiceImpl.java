@@ -27,29 +27,35 @@ import org.openmrs.module.fhir.api.util.FHIREncounterUtil;
  */
 public class EncounterServiceImpl extends BaseOpenmrsService implements EncounterService {
 
-    protected final Log log = LogFactory.getLog(this.getClass());
+	protected final Log log = LogFactory.getLog(this.getClass());
 
-    private FHIRDAO dao;
+	private FHIRDAO dao;
 
-    /**
-     * @param dao the dao to set
-     */
-    public void setDao(FHIRDAO dao) {
-        this.dao = dao;
-    }
+	/**
+	 * @param dao the dao to set
+	 */
+	public void setDao(FHIRDAO dao) {
+		this.dao = dao;
+	}
 
-    /**
-     * @return the dao
-     */
-    public FHIRDAO getDao() {
-        return dao;
-    }
+	/**
+	 * @return the dao
+	 */
+	public FHIRDAO getDao() {
+		return dao;
+	}
 
-    public Composition getEncounter(String id){
+	/**
+	 * @see org.openmrs.module.fhir.api.EncounterService#getEncounter(String)
+	 */
+	public Composition getEncounter(String id) {
 
-        org.openmrs.Encounter omrsEncounter = Context.getEncounterService().getEncounterByUuid(id);
-        return FHIREncounterUtil.generateEncounter(omrsEncounter);
+		org.openmrs.Encounter omrsEncounter = Context.getEncounterService().getEncounterByUuid(id);
+		if (omrsEncounter == null) {
+			return null;
+		}
+		return FHIREncounterUtil.generateEncounter(omrsEncounter);
 
-    }
+	}
 
 }

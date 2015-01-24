@@ -41,7 +41,7 @@ public class RestfulAllergyIntoleranceResourceProvider implements IResourceProvi
 	@Read()
 	public AllergyIntolerance getResourceById(@IdParam IdDt theId) {
 		Patient result = null;
-			FHIRPatientResource patientResource = new FHIRPatientResource();
+		FHIRPatientResource patientResource = new FHIRPatientResource();
 		result = patientResource.getByUniqueId(theId);
 		return null;
 	}

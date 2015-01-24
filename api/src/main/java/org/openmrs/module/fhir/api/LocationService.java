@@ -13,31 +13,29 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.api.Bundle;
 import ca.uhn.fhir.model.dstu.resource.Location;
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * This service exposes module's core functionality. It is a Spring managed bean which is configured in
- * moduleApplicationContext.xml.
- * It can be accessed only via Context:<br>
- * <code>
- * Context.getService(FHIRService.class).someMethod();
- * </code>
- *
- * @see org.openmrs.api.context.Context
- */
+import java.util.List;
 
 @Transactional
 public interface LocationService extends OpenmrsService {
-     
-	/*
-	 * Add service methods here
-	 * 
-	 */
 
+	/**
+	 * Get location by id
+	 *
+	 * @param id location uuid
+	 * @return location fhir resource
+	 */
 	Location getLocation(String id);
-    Bundle getLocationsById(String id);
+
+	/**
+	 * Search locations by id
+	 *
+	 * @param id location uuid
+	 * @return fhir locations list
+	 */
+	List<Location> searchLocationsById(String id);
 
 }

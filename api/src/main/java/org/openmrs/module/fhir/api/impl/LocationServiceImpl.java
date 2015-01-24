@@ -13,17 +13,14 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import ca.uhn.fhir.model.api.Bundle;
 import ca.uhn.fhir.model.dstu.resource.Location;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.LocationService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRLocationUtil;
-import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,19 +48,30 @@ public class LocationServiceImpl extends BaseOpenmrsService implements LocationS
 		return dao;
 	}
 
+	/**
+	 * @see org.openmrs.module.fhir.api.LocationService#getLocation(String)
+	 */
 	public Location getLocation(String id) {
 
 		org.openmrs.Location omrsLocation = Context.getLocationService().getLocationByUuid(id);
+		if (omrsLocation == null) {
+			return null;
+		}
 		return FHIRLocationUtil.generateLocation(omrsLocation);
 
 	}
 
-    public Bundle getLocationsById(String id) {
+	/**
+	 * @see org.openmrs.module.fhir.api.LocationService#searchLocationsById(String)
+	 */
+	public List<Location> searchLocationsById(String id) {
 
-        org.openmrs.Location omrsLocation = Context.getLocationService().getLocationByUuid(id);
-        List<org.openmrs.Location> locationList = new ArrayList<org.openmrs.Location>();
-        locationList.add(omrsLocation);
-        return FHIRLocationUtil.generateBundle(locationList);
-    }
+		org.openmrs.Location omrsLocation = Context.getLocationService().getLocationByUuid(id);
+		List<Location> locationList = new ArrayList<Location>();
+		if (omrsLocation != null) {
+			locationList.add(FHIRLocationUtil.generateLocation(omrsLocation));
+		}
+		return locationList;
+	}
 
 }

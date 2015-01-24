@@ -13,19 +13,15 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import ca.uhn.fhir.model.api.Bundle;
 import ca.uhn.fhir.model.dstu.resource.Practitioner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.PractitionerService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
-import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 import org.openmrs.module.fhir.api.util.FHIRPractitionerUtil;
-import org.openmrs.module.fhir.exception.FHIRValidationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,18 +49,26 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 		return dao;
 	}
 
+	/**
+	 * @see org.openmrs.module.fhir.api.PractitionerService#getPractitioner(String)
+	 */
 	public Practitioner getPractitioner(String id) {
-
 		Provider omrsProvider = Context.getProviderService().getProviderByUuid(id);
+		if (omrsProvider == null) {
+			return null;
+		}
 		return FHIRPractitionerUtil.generatePractitioner(omrsProvider);
 	}
 
-    public Bundle getPractitionersById(String id) throws FHIRValidationException {
-
-        Provider omrsProvider = Context.getProviderService().getProviderByUuid(id);
-        List<Provider> providerList = new ArrayList<Provider>();
-        providerList.add(omrsProvider);
-        return FHIRPractitionerUtil.generateBundle(providerList);
-    }
-
+	/**
+	 * @see org.openmrs.module.fhir.api.PractitionerService#searchPractitionersById(String)
+	 */
+	public List<Practitioner> searchPractitionersById(String id) {
+		Provider omrsProvider = Context.getProviderService().getProviderByUuid(id);
+		List<Practitioner> practitioners = new ArrayList<Practitioner>();
+		if (omrsProvider != null) {
+			practitioners.add(FHIRPractitionerUtil.generatePractitioner(omrsProvider));
+		}
+		return practitioners;
+	}
 }

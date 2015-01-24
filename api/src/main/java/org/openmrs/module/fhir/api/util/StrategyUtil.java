@@ -22,13 +22,8 @@ public class StrategyUtil {
 
 	public static void strategize() {
 
-        AllergyIntoleranceService allergyIntoleranceService = Context.getService(AllergyIntoleranceService.class);
+		AllergyIntoleranceService allergyIntoleranceService = Context.getService(AllergyIntoleranceService.class);
 		//String omrsVersion = Context.getAdministrationService().getSystemInformation().get("SystemInfo
 		// .OpenMRSInstallation.openmrsVersion");
-
-		if (OpenmrsConstants.OPENMRS_VERSION_SHORT.equals("1.10.0")) {
-            allergyIntoleranceService.setAllergyStrategy(new OpenMRS20AllergyStrategy());
-
-		}
 	}
 }

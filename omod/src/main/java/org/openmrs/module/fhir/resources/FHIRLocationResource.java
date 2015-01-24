@@ -14,20 +14,19 @@
 package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.model.dstu.resource.Location;
-import ca.uhn.fhir.model.api.Bundle;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.LocationService;
-import org.openmrs.module.fhir.api.util.FHIRLocationUtil;
-import org.openmrs.module.fhir.exception.FHIRModuleOmodException;
-import org.openmrs.module.fhir.util.Parser;
 
 public class FHIRLocationResource extends Resource {
 
-	public Location getByUniqueId(IdDt theId) {
-
+	public Location getByUniqueId(IdDt id) {
 		LocationService locationService = Context.getService(LocationService.class);
-		Location fhirLocation = locationService.getLocation(theId.getIdPart());
+		Location fhirLocation = locationService.getLocation(id.getIdPart());
+		if(fhirLocation == null) {
+			throw new ResourceNotFoundException("Location is not found for the given Id " + id.getIdPart());
+		}
 		return fhirLocation;
 	}
 

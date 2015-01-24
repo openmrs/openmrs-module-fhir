@@ -13,28 +13,37 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.api.Bundle;
 import ca.uhn.fhir.model.dstu.resource.Patient;
 import org.openmrs.api.OpenmrsService;
-import org.openmrs.module.fhir.exception.FHIRValidationException;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * This service exposes module's core functionality. It is a Spring managed bean which is configured in
- * moduleApplicationContext.xml.
- * It can be accessed only via Context:<br>
- * <code>
- * Context.getService(FHIRService.class).someMethod();
- * </code>
- *
- * @see org.openmrs.api.context.Context
- */
+import java.util.List;
 
 @Transactional
 public interface PatientService extends OpenmrsService {
 
+	/**
+	 * Get fhir patient resource by uuid
+	 *
+	 * @param id uuid of the patient
+	 * @return fhir patient resource and will return null if patient not found for the given id
+	 */
 	Patient getPatient(String id);
-	Bundle getPatientsById(String id) throws FHIRValidationException;
-	Bundle getPatientsByIdentifier(String identifier) throws FHIRValidationException;
+
+	/**
+	 * Search patients by uuid
+	 *
+	 * @param id the uuid to be search
+	 * @return fhir patient resource list
+	 */
+	List<Patient> searchPatientsById(String id);
+
+	/**
+	 * Search patient by identifier
+	 *
+	 * @param identifier identifier to be search
+	 * @return fhir patient resource list
+	 */
+	List<Patient> searchPatientsByIdentifier(String identifier);
 
 }

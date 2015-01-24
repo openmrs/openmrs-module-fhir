@@ -13,9 +13,7 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import ca.uhn.fhir.model.api.Bundle;
 import ca.uhn.fhir.model.dstu.resource.Patient;
-import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.PatientIdentifierType;
@@ -24,7 +22,6 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.PatientService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
-import org.openmrs.module.fhir.exception.FHIRValidationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,30 +49,40 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 		return dao;
 	}
 
+	/**
+	 * @see org.openmrs.module.fhir.api.PatientService#getPatient(String)
+	 */
 	public Patient getPatient(String id) {
 		org.openmrs.Patient omrsPatient = Context.getPatientService().getPatientByUuid(id);
-		if(omrsPatient == null) {
-			throw new ResourceNotFoundException("Patient is not found for the given Id " + id);
+		if (omrsPatient == null) {
+			return null;
 		}
 		return FHIRPatientUtil.generatePatient(omrsPatient);
 
 	}
 
-    public Bundle getPatientsById(String id) throws FHIRValidationException {
+	/**
+	 * @see org.openmrs.module.fhir.api.PatientService#searchPatientsById(String)
+	 */
+	public List<Patient> searchPatientsById(String id) {
+		org.openmrs.Patient omrsPatient = Context.getPatientService().getPatientByUuid(id);
+		List<Patient> patientList = new ArrayList<Patient>();
+		if (omrsPatient != null) {
+			patientList.add(FHIRPatientUtil.generatePatient(omrsPatient));
+		}
+		return patientList;
+	}
 
-        org.openmrs.Patient omrsPatient = Context.getPatientService().getPatientByUuid(id);
-        List<org.openmrs.Patient> patientList = new ArrayList<org.openmrs.Patient>();
-        patientList.add(omrsPatient);
-        return FHIRPatientUtil.generateBundle(patientList);
-    }
-
-	public Bundle getPatientsByIdentifier(String identifier) throws FHIRValidationException {
+	/**
+	 * @see org.openmrs.module.fhir.api.PatientService#searchPatientsByIdentifier(String)
+	 */
+	public List<Patient> searchPatientsByIdentifier(String identifier) {
 		String[] ids = identifier.split("\\|");
 		PatientIdentifierType patientIdentifierType = Context.getPatientService().getPatientIdentifierTypeByName(ids[0]);
 		List<PatientIdentifierType> patientIdentifierTypes = new ArrayList<PatientIdentifierType>();
 		List<org.openmrs.Patient> patientList = Context.getPatientService().getPatients(null, ids[1],
 				patientIdentifierTypes,
 				true);
-		return FHIRPatientUtil.generateBundle(patientList);
+		return new ArrayList<Patient>();
 	}
 }

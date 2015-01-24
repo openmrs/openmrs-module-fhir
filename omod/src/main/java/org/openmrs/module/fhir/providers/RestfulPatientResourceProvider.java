@@ -28,8 +28,6 @@ import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.NotImplementedOperationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.module.fhir.exception.FHIRModuleOmodException;
-import org.openmrs.module.fhir.exception.FHIRValidationException;
 import org.openmrs.module.fhir.resources.FHIRPatientResource;
 
 import java.util.List;
@@ -37,6 +35,11 @@ import java.util.List;
 public class RestfulPatientResourceProvider implements IResourceProvider {
 
 	private static final Log log = LogFactory.getLog(RestfulPatientResourceProvider.class);
+	private FHIRPatientResource patientResource;
+
+	public RestfulPatientResourceProvider() {
+		patientResource = new FHIRPatientResource();
+	}
 
 	@Override
 	public Class<? extends IResource> getResourceType() {
@@ -51,10 +54,19 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 */
 	@Read()
 	public Patient getResourceById(@IdParam IdDt id) {
-		FHIRPatientResource patientResource = new FHIRPatientResource();
-		Patient result = null;
-		result = patientResource.getByUniqueId(id);
-		return result;
+		Patient patient = null;
+		patient = patientResource.getByUniqueId(id);
+		return patient;
+	}
+
+	/**
+	 * Search patient by unique id
+	 *
+	 * @param id object contaning the requested family name
+	 */
+	@Search()
+	public List<Patient> searchPatientByUniqueId(@RequiredParam(name = Patient.SP_RES_ID) TokenParam id) {
+		return patientResource.searchByUniqueId(id);
 	}
 
 	/**
@@ -88,7 +100,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 */
 	@Search()
 	public List<Patient> searchPatientsByIdentifier(@RequiredParam(name = Patient.SP_IDENTIFIER) TokenParam identifier) {
-		throw new NotImplementedOperationException("Find patients by identifier is not implemented yet");
+		return patientResource.searchByIdentifier(identifier);
 	}
 
 	/**

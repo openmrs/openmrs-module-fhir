@@ -36,8 +36,8 @@ public class Parser {
 				parser = ctx.newXmlParser();
 				parser.setPrettyPrint(true);
 				encoded = parser.encodeResourceToString(resource);
-			} else if(contentType.equals(FHIRUtils.CONTENT_TYPE_APPLICATION_JSON_FHIR) || contentType.equals(FHIRUtils
-					.CONTENT_TYPE_APPLICATION_JSON)){
+			} else if (contentType.equals(FHIRUtils.CONTENT_TYPE_APPLICATION_JSON_FHIR) || contentType.equals(FHIRUtils
+					.CONTENT_TYPE_APPLICATION_JSON)) {
 				parser = ctx.newJsonParser();
 				parser.setPrettyPrint(true);
 				encoded = parser.encodeResourceToString(resource);
@@ -60,8 +60,7 @@ public class Parser {
 		IParser jsonParser = ctx.newJsonParser();
 		IParser xmlParser = ctx.newXmlParser();
 		String encoded = null;
-		if (contentType != null)
-		{
+		if (contentType != null) {
 			if (contentType.equals("application/xml+fhir")) {
 				xmlParser.setPrettyPrint(true);
 				encoded = xmlParser.encodeResourceToString(observation);

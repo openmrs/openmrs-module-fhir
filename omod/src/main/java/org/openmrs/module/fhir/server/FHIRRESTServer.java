@@ -14,7 +14,6 @@
 package org.openmrs.module.fhir.server;
 
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import ca.uhn.fhir.rest.server.IncomingRequestAddressStrategy;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import org.openmrs.module.fhir.addressstrategy.OpenMRSFHIRRequestAddressStrategy;
 import org.openmrs.module.fhir.providers.RestfulAllergyIntoleranceResourceProvider;
@@ -53,7 +52,8 @@ public class FHIRRESTServer extends RestfulServer {
 		setResourceProviders(resourceProviders);
 	}
 
-	protected String getRequestPath(String requestFullPath, String servletContextPath, String servletPath ) {
-		return requestFullPath.substring(escapedLength(servletContextPath) + escapedLength(servletPath) + escapedLength(MODULE_SERVELET_PREFIX));
+	protected String getRequestPath(String requestFullPath, String servletContextPath, String servletPath) {
+		return requestFullPath.substring(escapedLength(servletContextPath) + escapedLength(servletPath) + escapedLength(
+				MODULE_SERVELET_PREFIX));
 	}
 }

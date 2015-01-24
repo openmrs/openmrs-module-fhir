@@ -13,11 +13,11 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.api.Bundle;
 import ca.uhn.fhir.model.dstu.resource.Practitioner;
 import org.openmrs.api.OpenmrsService;
-import org.openmrs.module.fhir.exception.FHIRValidationException;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * This service exposes module's core functionality. It is a Spring managed bean which is configured in
@@ -33,7 +33,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface PractitionerService extends OpenmrsService {
 
+	/**
+	 * Get practitioner by id
+	 *
+	 * @param id the practitioner identifier
+	 * @return practitioner fhir resource object
+	 */
 	Practitioner getPractitioner(String id);
-    Bundle getPractitionersById(String id) throws FHIRValidationException;
+
+	/**
+	 * Search practitioners by uuid
+	 *
+	 * @param id the uuid to be search
+	 * @return fhir practitioner resource list
+	 */
+	List<Practitioner> searchPractitionersById(String id);
 
 }

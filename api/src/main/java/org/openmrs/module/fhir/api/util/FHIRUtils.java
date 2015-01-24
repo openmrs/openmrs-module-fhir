@@ -20,7 +20,6 @@ import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.ValidationResult;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.manager.FHIRContextFactory;
-import org.openmrs.module.fhir.exception.FHIRValidationException;
 
 public class FHIRUtils {
 
@@ -36,7 +35,7 @@ public class FHIRUtils {
 
 	public static String getWebServicesURI(String resourceURI, String resourceId) {
 		String webSerrivcesURIPrefix = Context.getAdministrationService().getGlobalProperty("webservices.rest.uriPrefix");
-		if(webSerrivcesURIPrefix != null) {
+		if (webSerrivcesURIPrefix != null) {
 			return webSerrivcesURIPrefix + resourceURI + resourceId;
 		}
 		return resourceURI + resourceId;
@@ -44,7 +43,7 @@ public class FHIRUtils {
 
 	public static void validate(IResource resource) {
 		ValidationResult result = val.validateWithResult(resource);
-		if(!result.isSuccessful()) {
+		if (!result.isSuccessful()) {
 			throw new UnprocessableEntityException(ctx.newXmlParser().setPrettyPrint(true).encodeResourceToString(result
 					.getOperationOutcome()));
 		}

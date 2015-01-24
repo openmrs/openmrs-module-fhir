@@ -13,93 +13,64 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.dstu.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu.resource.Composition;
 import ca.uhn.fhir.model.dstu.resource.Composition.Section;
 import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.validation.FhirValidator;
-import ca.uhn.fhir.validation.ValidationFailureException;
 import org.openmrs.EncounterProvider;
 import org.openmrs.api.context.Context;
 
 public class FHIREncounterUtil {
 
-    public static Composition generateEncounter(org.openmrs.Encounter openMRSEncounter) {
-        Composition composition = new Composition();
+	public static Composition generateEncounter(org.openmrs.Encounter openMRSEncounter) {
+		Composition composition = new Composition();
 
-        IdDt uuid = new IdDt();
+		IdDt uuid = new IdDt();
 
-        uuid.setValue(openMRSEncounter.getUuid());
-        composition.setId(uuid);
+		uuid.setValue(openMRSEncounter.getUuid());
+		composition.setId(uuid);
 
-        Section patientSection = composition.addSection();
+		Section patientSection = composition.addSection();
 
-        IdDt patientUuid = new IdDt();
+		IdDt patientUuid = new IdDt();
 
-        patientUuid.setValue(openMRSEncounter.getPatient().getUuid());
-        patientSection.setId(patientUuid);
+		patientUuid.setValue(openMRSEncounter.getPatient().getUuid());
+		patientSection.setId(patientUuid);
 
-        ResourceReferenceDt patientReference = new ResourceReferenceDt();
+		ResourceReferenceDt patientReference = new ResourceReferenceDt();
 
-        patientReference.setDisplay("Patient");
-        String patientUri = Context.getAdministrationService().getGlobalProperty("fhir.uriPrefix")+ "/Patient/" + openMRSEncounter.getPatient().getUuid();
+		patientReference.setDisplay("Patient");
+		String patientUri = Context.getAdministrationService().getGlobalProperty("fhir.uriPrefix") + "/Patient/"
+		                    + openMRSEncounter.getPatient().getUuid();
 
-        IdDt patientRef = new IdDt();
-        patientRef.setValue(patientUri);
-        patientReference.setReference(patientRef);
+		IdDt patientRef = new IdDt();
+		patientRef.setValue(patientUri);
+		patientReference.setReference(patientRef);
 
-        patientSection.setSubject(patientReference);
+		patientSection.setSubject(patientReference);
 
-        for(EncounterProvider provider : openMRSEncounter.getEncounterProviders()){
+		for (EncounterProvider provider : openMRSEncounter.getEncounterProviders()) {
 
-            Section providerSection = composition.addSection();
+			Section providerSection = composition.addSection();
 
-            IdDt providerUuid = new IdDt();
+			IdDt providerUuid = new IdDt();
 
-            providerUuid.setValue(provider.getUuid());
-            providerSection.setId(providerUuid);
+			providerUuid.setValue(provider.getUuid());
+			providerSection.setId(providerUuid);
 
-            ResourceReferenceDt providerReference = new ResourceReferenceDt();
+			ResourceReferenceDt providerReference = new ResourceReferenceDt();
 
-            providerReference.setDisplay("Provider");
-            String providerUri = Context.getAdministrationService().getGlobalProperty("fhir.uriPrefix")+ "/Practitioner/" + provider.getUuid();
+			providerReference.setDisplay("Provider");
+			String providerUri = Context.getAdministrationService().getGlobalProperty("fhir.uriPrefix") + "/Practitioner/"
+			                     + provider.getUuid();
 
-            IdDt providerRef = new IdDt();
-            providerRef.setValue(providerUri);
-            providerReference.setReference(providerRef);
+			IdDt providerRef = new IdDt();
+			providerRef.setValue(providerUri);
+			providerReference.setReference(providerRef);
 
-            providerSection.setSubject(providerReference);
+			providerSection.setSubject(providerReference);
 
-
-
-
-
-
-        }
-
-
-        return composition;
-    }
-
-    public static void validate(org.openmrs.Encounter encounter){
-        FhirContext ctx = new FhirContext();
-
-        // Request a validator and apply it
-        FhirValidator val = ctx.newValidator();
-        try {
-
-
-            System.out.println("Validation passed");
-
-        } catch (ValidationFailureException e) {
-            // We failed validation!
-
-            System.out.println("Validation failed");
-
-            String results = ctx.newXmlParser().setPrettyPrint(true).encodeResourceToString(e.getOperationOutcome());
-            System.out.println(results);
-        }
-
-    }
+		}
+		return composition;
+	}
 }

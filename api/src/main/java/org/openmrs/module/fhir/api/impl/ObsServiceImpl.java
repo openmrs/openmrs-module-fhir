@@ -51,14 +51,21 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 		return dao;
 	}
 
+	/**
+	 * @see org.openmrs.module.fhir.api.ObsService#getObs(String)
+	 */
 	public Observation getObs(String id) {
-
 		Obs omrsObs = Context.getObsService().getObsByUuid(id);
+		if (omrsObs == null) {
+			return null;
+		}
 		return FHIRObsUtil.generateObs(omrsObs);
-
 	}
 
-	public List<Obs> getObsByPatientandConcept(String patientUUid, String[] concepts) {
+	/**
+	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByPatientandConcept(String, String[])
+	 */
+	public List<Observation> searchObsByPatientandConcept(String patientUUid, String[] concepts) {
 
 		Patient patient = Context.getPatientService().getPatientByUuid(patientUUid);
 
@@ -66,16 +73,27 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 		for (String s : concepts) {
 			Concept concept = Context.getConceptService().getConceptByMapping(s, "LOINC");
 			conceptList.add(concept);
-
 		}
-		List<Obs> obsList = new ArrayList<Obs>();
 
+		List<Observation> obsList = new ArrayList<Observation>();
 		for (Concept concept : conceptList) {
 			List<Obs> obs = Context.getObsService().getObservationsByPersonAndConcept(patient, concept);
-			obsList.addAll(obs);
+			for (Obs ob : obs) {
+				obsList.add(FHIRObsUtil.generateObs(ob));
+			}
 		}
-
 		return obsList;
+	}
 
+	/**
+	 * @see org.openmrs.module.fhir.api.ObsService#searchObsById(String)
+	 */
+	public List<Observation> searchObsById(String id) {
+		Obs omrsObs = Context.getObsService().getObsByUuid(id);
+		List<Observation> obsList = new ArrayList<Observation>();
+		if (omrsObs != null) {
+			obsList.add(FHIRObsUtil.generateObs(omrsObs));
+		}
+		return obsList;
 	}
 }

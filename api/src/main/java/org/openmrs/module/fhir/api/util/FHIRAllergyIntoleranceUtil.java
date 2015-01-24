@@ -21,7 +21,7 @@ import ca.uhn.fhir.validation.ValidationFailureException;
 public class FHIRAllergyIntoleranceUtil {
 
 	public static AllergyIntolerance generatePractitioner() {
-        AllergyIntolerance allergyIntolerance = new AllergyIntolerance();
+		AllergyIntolerance allergyIntolerance = new AllergyIntolerance();
 
 		validate(allergyIntolerance);
 
