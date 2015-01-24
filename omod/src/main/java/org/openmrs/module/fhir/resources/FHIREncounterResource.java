@@ -15,18 +15,20 @@ package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.model.dstu.resource.Composition;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.EncounterService;
-import org.openmrs.module.fhir.exception.FHIRModuleOmodException;
-import org.openmrs.module.fhir.util.Parser;
 
 public class FHIREncounterResource extends Resource {
 
-    public Composition getByUniqueId(IdDt theId) {
+	public Composition getByUniqueId(IdDt id) {
 
-        EncounterService encounterService = Context.getService(EncounterService.class);
-        Composition fhirEncounter = encounterService.getEncounter(theId.getIdPart());
-        return fhirEncounter;
-    }
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		Composition fhirEncounter = encounterService.getEncounter(id.getIdPart());
+		if(fhirEncounter == null) {
+			throw new ResourceNotFoundException("Encounter is not found for the given Id " + id.getIdPart());
+		}
+		return fhirEncounter;
+	}
 
 }

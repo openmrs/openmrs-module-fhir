@@ -14,7 +14,6 @@
 package org.openmrs.module.fhir.api;
 
 import ca.uhn.fhir.model.dstu.resource.Observation;
-import org.openmrs.Obs;
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,8 +22,29 @@ import java.util.List;
 @Transactional
 public interface ObsService extends OpenmrsService {
 
+	/**
+	 * Get observation by id
+	 *
+	 * @param id uuid of the observation
+	 * @return observation fhir resource
+	 */
 	public Observation getObs(String id);
 
-	public List<Obs> getObsByPatientandConcept(String patientUUid, String[] concepts);
+	/**
+	 * Search observations by patient and concepts
+	 *
+	 * @param patientUUid patient uuid
+	 * @param concepts    concepts to be search
+	 * @return fhir obs resource list
+	 */
+	public List<Observation> searchObsByPatientandConcept(String patientUUid, String[] concepts);
+
+	/**
+	 * Search observations by patient and concepts
+	 *
+	 * @param id obs uuid
+	 * @return fhir obs resource list
+	 */
+	public List<Observation> searchObsById(String id);
 
 }

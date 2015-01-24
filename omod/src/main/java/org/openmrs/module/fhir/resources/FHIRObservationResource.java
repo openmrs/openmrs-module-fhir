@@ -15,23 +15,17 @@ package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.model.dstu.resource.Observation;
 import ca.uhn.fhir.model.primitive.IdDt;
-import org.openmrs.Concept;
-import org.openmrs.Obs;
-import org.openmrs.Patient;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.util.FHIRObsUtil;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 
 public class FHIRObservationResource extends Resource {
 
-	org.openmrs.module.fhir.api.ObsService obsService = Context.getService(org.openmrs.module.fhir.api.ObsService.class);
-
-	public Observation getByUniqueId(IdDt theId) {
-
-		ca.uhn.fhir.model.dstu.resource.Observation fhirObservation = obsService.getObs(theId.getIdPart());
+	public Observation getByUniqueId(IdDt id) {
+		org.openmrs.module.fhir.api.ObsService obsService = Context.getService(org.openmrs.module.fhir.api.ObsService.class);
+		ca.uhn.fhir.model.dstu.resource.Observation fhirObservation = obsService.getObs(id.getIdPart());
+		if(fhirObservation == null) {
+			throw new ResourceNotFoundException("Observation is not found for the given Id " + id.getIdPart());
+		}
 		return fhirObservation;
 	}
 

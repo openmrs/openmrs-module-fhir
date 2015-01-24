@@ -13,10 +13,6 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.model.api.Bundle;
-import ca.uhn.fhir.model.api.BundleEntry;
-import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu.composite.CodingDt;
 import ca.uhn.fhir.model.dstu.composite.PeriodDt;
@@ -29,8 +25,6 @@ import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.InstantDt;
 import ca.uhn.fhir.model.primitive.StringDt;
-import ca.uhn.fhir.narrative.DefaultThymeleafNarrativeGenerator;
-import ca.uhn.fhir.parser.IParser;
 import org.openmrs.ConceptMap;
 import org.openmrs.ConceptNumeric;
 import org.openmrs.EncounterProvider;
@@ -233,78 +227,6 @@ public class FHIRObsUtil {
 		observation.setApplies(dateApplies);
 
 		return observation;
-
-	}
-
-	public static String parseObservation(Observation observation, String contentType) {
-
-		FhirContext ctx = new FhirContext();
-		ctx.setNarrativeGenerator(new DefaultThymeleafNarrativeGenerator());
-
-		IParser jsonParser = ctx.newJsonParser();
-		IParser xmlParser = ctx.newXmlParser();
-
-		String encoded = null;
-
-		if (contentType != null) {
-
-			if (contentType.equals("application/xml+fhir")) {
-				xmlParser.setPrettyPrint(true);
-				encoded = xmlParser.encodeResourceToString(observation);
-			} else {
-				jsonParser.setPrettyPrint(true);
-				encoded = jsonParser.encodeResourceToString(observation);
-			}
-		} else {
-			jsonParser.setPrettyPrint(true);
-			encoded = jsonParser.encodeResourceToString(observation);
-		}
-		return encoded;
-	}
-
-	public static String generateBundle(List<Obs> obsList) {
-		Bundle bundle = new Bundle();
-		StringDt title = bundle.getTitle();
-		title.setValue("Search result");
-
-		IdDt id = new IdDt();
-		id.setValue("the request uri");
-		bundle.setId(id);
-
-		for (Obs obs : obsList) {
-			BundleEntry bundleEntry = new BundleEntry();
-
-			IdDt entryId = new IdDt();
-			entryId.setValue(Context.getAdministrationService().getGlobalProperty("webservices.rest.uriPrefix")
-			                 + "/ws/fhir/Observation/" + obs.getUuid());
-
-			bundleEntry.setId(entryId);
-
-			StringDt entryTitle = bundleEntry.getTitle();
-			entryTitle.setValue("Observation'/" + obs.getUuid());
-
-			IResource resource = new Observation();
-			resource = generateObs(obs);
-
-			bundleEntry.setResource(resource);
-			InstantDt dt = new InstantDt();
-			if (obs.getDateChanged() != null) {
-				dt.setValue(obs.getDateChanged());
-			} else {
-				dt.setValue(obs.getDateCreated());
-			}
-			bundleEntry.setUpdated(dt);
-
-			bundle.addEntry(bundleEntry);
-		}
-
-		FhirContext ctx = new FhirContext();
-		IParser jsonParser = ctx.newJsonParser();
-
-		jsonParser.setPrettyPrint(true);
-		String encoded = jsonParser.encodeBundleToString(bundle);
-
-		return encoded;
 
 	}
 }

@@ -16,7 +16,24 @@ package org.openmrs.module.fhir.api;
 import ca.uhn.fhir.model.dstu.resource.FamilyHistory;
 import org.openmrs.api.OpenmrsService;
 
+import java.util.List;
+
 public interface FamilyHistoryService extends OpenmrsService {
 
+	/**
+	 * Get family history by id
+	 *
+	 * @param id family history uuid
+	 * @return family history fhir resource
+	 */
 	public FamilyHistory getFamilyHistory(String id);
+
+	/**
+	 * Search family history by id
+	 *
+	 * @param id family history uuid
+	 * @return family history fhir resource list
+	 */
+	public List<FamilyHistory> searchFamilyHistoryById(String id);
+
 }

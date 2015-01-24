@@ -13,82 +13,70 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.api.Bundle;
-import ca.uhn.fhir.model.api.BundleEntry;
-import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu.resource.Location;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
-import static org.junit.Assert.*;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class LocationServiceTest extends BaseModuleContextSensitiveTest {
 
-    protected static final String LOC_INITIAL_DATA_XML = "org/openmrs/api/include/LocationServiceTest-initialData.xml";
+	protected static final String LOC_INITIAL_DATA_XML = "org/openmrs/api/include/LocationServiceTest-initialData.xml";
 
-    public LocationService getService() {
-        return Context.getService(LocationService.class);
-    }
+	public LocationService getService() {
+		return Context.getService(LocationService.class);
+	}
 
-    @Before
-    public void runBeforeEachTest() throws Exception {
-        executeDataSet(LOC_INITIAL_DATA_XML);
-    }
+	@Before
+	public void runBeforeEachTest() throws Exception {
+		executeDataSet(LOC_INITIAL_DATA_XML);
+	}
 
-    @Test
-    public void shouldSetupContext() {
-        assertNotNull(getService());
-    }
+	@Test
+	public void shouldSetupContext() {
+		assertNotNull(getService());
+	}
 
-    @Test
-    public void getLocation_shouldReturnResourceIfExists(){
-        String locationUuid = "f08ba64b-ea57-4a41-b33c-9dfc59b0c60a";
-        Location fhirLocation = getService().getLocation(locationUuid);
-        assertNotNull(fhirLocation);
-        assertEquals(fhirLocation.getId().toString(),locationUuid);
+	@Test
+	public void getLocation_shouldReturnResourceIfExists() {
+		String locationUuid = "f08ba64b-ea57-4a41-b33c-9dfc59b0c60a";
+		Location fhirLocation = getService().getLocation(locationUuid);
+		assertNotNull(fhirLocation);
+		assertEquals(fhirLocation.getId().toString(), locationUuid);
 
-    }
+	}
 
-    @Test
-    public void getLocation_shouldReturnOperationOutcomeIfDoesNotExist(){
+	@Test
+	public void getLocation_shouldReturnOperationOutcomeIfDoesNotExist() {
 
-    }
+	}
 
-    @Test
-    public void getLocationsById_shouldReturnBundleIfExists(){
-        String locationUuid = "f08ba64b-ea57-4a41-b33c-9dfc59b0c60a";
-        Bundle bundle = getService().getLocationsById(locationUuid);
+	@Test
+	public void getLocationsById_shouldReturnBundleIfExists() {
+		String locationUuid = "f08ba64b-ea57-4a41-b33c-9dfc59b0c60a";
+		List<Location> locations = getService().searchLocationsById(locationUuid);
+		assertNotNull(locations);
+		assertEquals(locations.size(), 1);
+		assertEquals(locations.get(0).getId().getIdPart(), locationUuid);
+	}
 
-        assertNotNull(bundle);
-        assertEquals(bundle.getEntries().size(), 1);
+	@Test
+	public void getLocationsById_shouldReturnEmptyBundleIfDoesNotExist() {
 
-        BundleEntry entry = bundle.getEntries().get(0);
-        IResource resource = entry.getResource();
+	}
 
-        assertNotNull(resource);
-        assertTrue(resource instanceof Location);
-        Location fhirLocation = (Location) resource;
-        assertEquals(fhirLocation.getId().toString(),locationUuid);
-    }
+	@Test
+	public void getLocationsByIdentifier_shouldReturnBundleIfExists() {
 
-    @Test
-    public void getLocationsById_shouldReturnEmptyBundleIfDoesNotExist(){
+	}
 
-    }
+	@Test
+	public void getLocationsByIdentifier_shouldReturnEmptyBundleIfDoesNotExist() {
 
-    @Test
-    public void getLocationsByIdentifier_shouldReturnBundleIfExists(){
-
-    }
-
-    @Test
-    public void getLocationsByIdentifier_shouldReturnEmptyBundleIfDoesNotExist(){
-
-    }
-
-
-
-
+	}
 }

@@ -29,8 +29,4 @@ public class OpenMRS20AllergyStrategy implements AllergyStrategyInterface {
 		return supportedOpenMRSVersions;
 	}
 
-
-
-
-
 }

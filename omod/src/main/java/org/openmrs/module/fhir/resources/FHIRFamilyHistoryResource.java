@@ -15,18 +15,21 @@ package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.model.dstu.resource.FamilyHistory;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.FamilyHistoryService;
+import org.openmrs.module.fhir.api.LocationService;
 import org.openmrs.module.fhir.api.util.FHIRFamilyHistoryUtil;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class FHIRFamilyHistoryResource extends Resource {
 
-	public FamilyHistory getByUniqueId(IdDt theId) {
-
-		Patient patient = Context.getPatientService().getPatientByUuid(theId.getIdPart());
-		FamilyHistory familyHistory = FHIRFamilyHistoryUtil.generateFamilyHistory();
+	public FamilyHistory getByUniqueId(IdDt id) {
+		FamilyHistoryService familyHistoryService = Context.getService(FamilyHistoryService.class);
+		FamilyHistory familyHistory = familyHistoryService.getFamilyHistory(id.getIdPart());
+		if(familyHistory == null) {
+			throw new ResourceNotFoundException("Family history is not found for the given Id " + id.getIdPart());
+		}
 		return familyHistory;
 	}
 

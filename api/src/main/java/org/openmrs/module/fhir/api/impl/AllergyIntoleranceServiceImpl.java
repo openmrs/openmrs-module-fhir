@@ -30,7 +30,7 @@ public class AllergyIntoleranceServiceImpl extends BaseOpenmrsService implements
 
 	private FHIRDAO dao;
 
-    private AllergyStrategyInterface allergyStrategyInterface;
+	private AllergyStrategyInterface allergyStrategyInterface;
 
 	/**
 	 * @param dao the dao to set
@@ -46,20 +46,12 @@ public class AllergyIntoleranceServiceImpl extends BaseOpenmrsService implements
 		return dao;
 	}
 
-    @Override
-    public void setAllergyStrategy(AllergyStrategyInterface allergyStrategyInterface) {
-        this.allergyStrategyInterface = allergyStrategyInterface;
-    }
-
-    @Override
-    public AllergyStrategyInterface getAllergyStrategy(AllergyStrategyInterface allergyStrategyInterface) {
-        return this.allergyStrategyInterface;
-    }
-
-    public AllergyIntolerance getAllergyIntolerance(String id) {
-
+	/**
+	 * @see org.openmrs.module.fhir.api.AllergyIntoleranceService#getAllergyIntolerance(String)
+	 */
+	public AllergyIntolerance getAllergyIntolerance(String id) {
+		//TODO implement
 		return new AllergyIntolerance();
-
 	}
 
 }

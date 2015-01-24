@@ -19,33 +19,33 @@ import org.junit.Test;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 
-    protected static final String OBS_INITIAL_DATA_XML = "org/openmrs/api/include/ObsServiceTest-initial.xml";
+	protected static final String OBS_INITIAL_DATA_XML = "org/openmrs/api/include/ObsServiceTest-initial.xml";
 
-    public ObsService getService() {
-        return Context.getService(ObsService.class);
-    }
+	public ObsService getService() {
+		return Context.getService(ObsService.class);
+	}
 
-    @Before
-    public void runBeforeEachTest() throws Exception {
-        executeDataSet(OBS_INITIAL_DATA_XML);
-    }
+	@Before
+	public void runBeforeEachTest() throws Exception {
+		executeDataSet(OBS_INITIAL_DATA_XML);
+	}
 
-    @Test
-    public void shouldSetupContext() {
-        assertNotNull(getService());
-    }
+	@Test
+	public void shouldSetupContext() {
+		assertNotNull(getService());
+	}
 
-    @Test
-    public void getObservation_shouldReturnResourceIfExists(){
-        String obsUuid = "be3a4d7a-f9ab-47bb-aaad-bc0b452fcda4";
-        Observation fhirObservation = getService().getObs(obsUuid);
-        assertNotNull(fhirObservation);
-        assertEquals(fhirObservation.getId().toString(),obsUuid);
-
-    }
+	@Test
+	public void getObservation_shouldReturnResourceIfExists() {
+		String obsUuid = "be3a4d7a-f9ab-47bb-aaad-bc0b452fcda4";
+		Observation fhirObservation = getService().getObs(obsUuid);
+		assertNotNull(fhirObservation);
+		assertEquals(fhirObservation.getId().toString(), obsUuid);
+	}
 
 }

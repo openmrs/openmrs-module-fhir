@@ -18,24 +18,25 @@ import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * This service exposes module's core functionality. It is a Spring managed bean which is configured in moduleApplicationContext.xml.
- * <p>
+ * This service exposes module's core functionality. It is a Spring managed bean which is configured in
+ * moduleApplicationContext.xml.
  * It can be accessed only via Context:<br>
  * <code>
  * Context.getService(FHIRService.class).someMethod();
  * </code>
- * 
+ *
  * @see org.openmrs.api.context.Context
  */
 
 @Transactional
 public interface EncounterService extends OpenmrsService {
-     
-	/*
-	 * Add service methods here
-	 * 
-	 */
 
-    Composition getEncounter(String id);
+	/**
+	 * Get encounter composition by id
+	 *
+	 * @param id encounter id
+	 * @return fhir composition of enconter
+	 */
+	Composition getEncounter(String id);
 
 }

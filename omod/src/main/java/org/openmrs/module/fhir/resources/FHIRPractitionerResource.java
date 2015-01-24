@@ -15,19 +15,18 @@ package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.model.dstu.resource.Practitioner;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.PractitionerService;
-import org.openmrs.module.fhir.exception.FHIRModuleOmodException;
-import org.openmrs.module.fhir.exception.FHIRValidationException;
-import org.openmrs.module.fhir.util.Parser;
-import org.openmrs.module.fhir.api.util.FHIRPractitionerUtil;
 
 public class FHIRPractitionerResource extends Resource {
 
 	public Practitioner getByUniqueId(IdDt id) {
-
 		PractitionerService practitionerService = Context.getService(PractitionerService.class);
 		Practitioner fhirPractitioner = practitionerService.getPractitioner(id.getIdPart());
+		if (fhirPractitioner == null) {
+			throw new ResourceNotFoundException("Practitioner is not found for the given Id " + id.getIdPart());
+		}
 		return fhirPractitioner;
 	}
 

@@ -13,14 +13,8 @@
  */
 package org.openmrs.module.fhir.api;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu.resource.Patient;
-import ca.uhn.fhir.model.api.Bundle;
-import ca.uhn.fhir.model.api.BundleEntry;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
@@ -29,74 +23,72 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 
-    protected static final String PAT_INITIAL_DATA_XML = "org/openmrs/api/include/PatientServiceTest-createPatient.xml";
-    protected static final String PAT_SEARCH_DATA_XML = "org/openmrs/api/include/PatientServiceTest-findPatients.xml";
+	protected static final String PAT_INITIAL_DATA_XML = "org/openmrs/api/include/PatientServiceTest-createPatient.xml";
+	protected static final String PAT_SEARCH_DATA_XML = "org/openmrs/api/include/PatientServiceTest-findPatients.xml";
 
+	public PatientService getService() {
+		return Context.getService(PatientService.class);
+	}
 
-    public PatientService getService() {
-        return Context.getService(PatientService.class);
-    }
+	@Before
+	public void runBeforeEachTest() throws Exception {
+		executeDataSet(PAT_INITIAL_DATA_XML);
+		executeDataSet(PAT_SEARCH_DATA_XML);
+	}
 
-    @Before
-    public void runBeforeEachTest() throws Exception {
-        executeDataSet(PAT_INITIAL_DATA_XML);
-        executeDataSet(PAT_SEARCH_DATA_XML);
-    }
+	@Test
+	public void shouldSetupContext() {
+		assertNotNull(getService());
+	}
 
-    @Test
-    public void shouldSetupContext() {
-        assertNotNull(getService());
-    }
+	@Test
+	public void getPatient_shouldReturnResourceIfExists() throws FHIRValidationException {
+		String patientUuid = "61b38324-e2fd-4feb-95b7-9e9a2a4400df";
+		Patient fhirPatient = getService().getPatient(patientUuid);
+		assertNotNull(fhirPatient);
+		assertEquals(fhirPatient.getId().toString(), patientUuid);
 
-    @Test
-    public void getPatient_shouldReturnResourceIfExists() throws FHIRValidationException {
-        String patientUuid = "61b38324-e2fd-4feb-95b7-9e9a2a4400df";
-        Patient fhirPatient = getService().getPatient(patientUuid);
-        assertNotNull(fhirPatient);
-        assertEquals(fhirPatient.getId().toString(),patientUuid);
+	}
 
-    }
+	@Test
+	public void getPatient_shouldReturnOperationOutcomeIfDoesNotExist() {
 
-    @Test
-    public void getPatient_shouldReturnOperationOutcomeIfDoesNotExist(){
+	}
 
-    }
+	@Test
+	public void getPatientsById_shouldReturnBundleIfExists() throws FHIRValidationException {
+		String patientUuid = "61b38324-e2fd-4feb-95b7-9e9a2a4400df";
+		List<Patient> patients = getService().searchPatientsById(patientUuid);
 
-    @Test
-    public void getPatientsById_shouldReturnBundleIfExists() throws FHIRValidationException {
-        String patientUuid = "61b38324-e2fd-4feb-95b7-9e9a2a4400df";
-        Bundle bundle = getService().getPatientsById(patientUuid);
+		assertNotNull(patients);
+		assertEquals(patients.size(), 1);
 
-        assertNotNull(bundle);
-        assertEquals(bundle.getEntries().size(), 1);
+		IResource resource = patients.get(0);
+		assertNotNull(resource);
+		assertTrue(resource instanceof Patient);
+		Patient fhirPatient = (Patient) resource;
+		assertEquals(fhirPatient.getId().toString(), patientUuid);
+	}
 
-        BundleEntry entry = bundle.getEntries().get(0);
-        IResource resource = entry.getResource();
+	@Test
+	public void getPatientsById_shouldReturnEmptyBundleIfDoesNotExist() {
 
-        assertNotNull(resource);
-        assertTrue(resource instanceof Patient);
-        Patient fhirPatient = (Patient) resource;
-        assertEquals(fhirPatient.getId().toString(),patientUuid);
-    }
+	}
 
-    @Test
-    public void getPatientsById_shouldReturnEmptyBundleIfDoesNotExist(){
+	@Test
+	public void getPatientsByIdentifier_shouldReturnBundleIfExists() {
 
-    }
+	}
 
-    @Test
-    public void getPatientsByIdentifier_shouldReturnBundleIfExists(){
+	@Test
+	public void getPatientsByIdentifier_shouldReturnEmptyBundleIfDoesNotExist() {
 
-    }
-
-    @Test
-    public void getPatientsByIdentifier_shouldReturnEmptyBundleIfDoesNotExist(){
-
-    }
-
-
-
+	}
 
 }

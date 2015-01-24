@@ -15,30 +15,36 @@ package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.model.dstu.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.param.TokenParam;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
-import org.openmrs.module.fhir.exception.FHIRModuleOmodException;
-import org.openmrs.module.fhir.exception.FHIRValidationException;
+
+import java.util.List;
 
 public class FHIRPatientResource extends Resource {
 
-	public Patient getByUniqueId(IdDt theId) {
-
+	public Patient getByUniqueId(IdDt id) {
 		org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
 				org.openmrs.module.fhir.api.PatientService.class);
-		ca.uhn.fhir.model.dstu.resource.Patient fhirPatient = patientService.getPatient(theId.getIdPart());
+		ca.uhn.fhir.model.dstu.resource.Patient fhirPatient = patientService.getPatient(id.getIdPart());
+		if (fhirPatient == null) {
+			throw new ResourceNotFoundException("Patient is not found for the given Id " + id.getIdPart());
+		}
 		return fhirPatient;
+	}
+
+	public List<Patient> searchByUniqueId(TokenParam id) {
+		org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
+				org.openmrs.module.fhir.api.PatientService.class);
+		return patientService.searchPatientsById(id.getValue());
 	}
 
 	//search by patient identifier. ex: GET [base-url]/Patient?identifier=http://acme.org/patient|2345
 	//returns a bundle of patients
-	public String searchByIdentifier(String identifier, String contentType)
-			throws FHIRValidationException {
-
+	public List<Patient> searchByIdentifier(TokenParam identifier) {
 		org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
 				org.openmrs.module.fhir.api.PatientService.class);
-		ca.uhn.fhir.model.api.Bundle patientBundle = patientService.getPatientsByIdentifier(identifier);
-		return FHIRPatientUtil.parseBundle(patientBundle);
+		return patientService.searchPatientsByIdentifier(identifier.getValue());
 	}
 
 }

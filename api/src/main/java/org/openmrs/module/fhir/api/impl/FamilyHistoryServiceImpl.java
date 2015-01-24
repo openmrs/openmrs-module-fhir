@@ -21,6 +21,9 @@ import org.openmrs.module.fhir.api.FamilyHistoryService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FamilyHistoryUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FamilyHistoryServiceImpl extends BaseOpenmrsService implements FamilyHistoryService {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
@@ -41,9 +44,18 @@ public class FamilyHistoryServiceImpl extends BaseOpenmrsService implements Fami
 		return dao;
 	}
 
+	/**
+	 * @see org.openmrs.module.fhir.api.FamilyHistoryService#getFamilyHistory(String)
+	 */
 	public FamilyHistory getFamilyHistory(String id) {
-
 		return FamilyHistoryUtil.generateFamilyHistory();
+	}
 
+	/**
+	 * @see org.openmrs.module.fhir.api.FamilyHistoryService#searchFamilyHistoryById(String)
+	 */
+	public List<FamilyHistory> searchFamilyHistoryById(String id) {
+		//TODO need to implement
+		return new ArrayList<FamilyHistory>();
 	}
 }
