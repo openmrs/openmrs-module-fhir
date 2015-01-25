@@ -14,9 +14,11 @@
 package org.openmrs.module.fhir.api.util;
 
 import ca.uhn.fhir.model.dstu.composite.AddressDt;
+import ca.uhn.fhir.model.dstu.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu.resource.Location;
 import ca.uhn.fhir.model.dstu.resource.Location.Position;
 import ca.uhn.fhir.model.dstu.valueset.AddressUseEnum;
+import ca.uhn.fhir.model.dstu.valueset.LocationStatusEnum;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.StringDt;
 
@@ -29,31 +31,31 @@ public class FHIRLocationUtil {
 	public static Location generateLocation(org.openmrs.Location omrsLocation) {
 		Location location = new Location();
 
+		//Set resource id
 		IdDt uuid = new IdDt();
-
 		uuid.setValue(omrsLocation.getUuid());
 		location.setId(uuid);
 
+		//Set name and location description
 		location.setName(omrsLocation.getName());
 		location.setDescription(omrsLocation.getDescription());
 
+		//Set address
 		AddressDt address = new AddressDt();
 		address.setCity(omrsLocation.getCityVillage());
 		address.setCountry(omrsLocation.getCountry());
 
 		List<StringDt> addressStrings = new ArrayList<StringDt>();
-		
 		addressStrings.add(new StringDt(omrsLocation.getAddress1()));
 		addressStrings.add(new StringDt(omrsLocation.getAddress2()));
 		addressStrings.add(new StringDt(omrsLocation.getAddress3()));
 		addressStrings.add(new StringDt(omrsLocation.getAddress4()));
 		addressStrings.add(new StringDt(omrsLocation.getAddress5()));
-
 		address.setLine(addressStrings);
 		address.setUse(AddressUseEnum.WORK);
+		location.setAddress(address);
 
 		Position position = location.getPosition();
-
 		if (omrsLocation.getLongitude() != null) {
 			BigDecimal longitude = new BigDecimal(omrsLocation.getLongitude());
 			position.setLongitude(longitude);
@@ -64,6 +66,18 @@ public class FHIRLocationUtil {
 			position.setLatitude(latitude);
 		}
 
+		if(!omrsLocation.isRetired()) {
+			location.setStatus(LocationStatusEnum.ACTIVE);
+		} else {
+			location.setStatus(LocationStatusEnum.INACTIVE);
+		}
+
+		if(omrsLocation.getParentLocation() != null) {
+			ResourceReferenceDt parent = new ResourceReferenceDt();
+			parent.setDisplay("The parent resource");
+			parent.setReference(FHIRConstants.LOCATION + "/" + omrsLocation.getParentLocation().getUuid());
+			location.setPartOf(parent);
+		}
 		return location;
 	}
 }

@@ -38,4 +38,19 @@ public interface LocationService extends OpenmrsService {
 	 */
 	List<Location> searchLocationsById(String id);
 
-}
+	/**
+	 * Search all active or inactive locations
+	 *
+	 * @param status boolean status
+	 * @return fhir location resource list
+	 */
+	public List<Location> searchLocationsByStatus(boolean status);
+
+	/**
+	 * Search locations by name
+	 *
+	 * @param name location name to be search
+	 * @return fhir location resource list
+	 */
+	public List<Location> searchLocationsByName(String name);
+	}

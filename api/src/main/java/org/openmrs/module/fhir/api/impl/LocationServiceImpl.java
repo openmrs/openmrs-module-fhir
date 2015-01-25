@@ -14,6 +14,7 @@
 package org.openmrs.module.fhir.api.impl;
 
 import ca.uhn.fhir.model.dstu.resource.Location;
+import ca.uhn.fhir.model.dstu.valueset.LocationStatusEnum;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
@@ -74,4 +75,38 @@ public class LocationServiceImpl extends BaseOpenmrsService implements LocationS
 		return locationList;
 	}
 
+	/**
+	 * @see org.openmrs.module.fhir.api.LocationService#searchLocationsById(String)
+	 */
+	public List<Location> searchLocationsByName(String name) {
+		List<org.openmrs.Location> omrsLocations = Context.getLocationService().getLocations(name);
+		List<Location> locationList = new ArrayList<Location>();
+		for (org.openmrs.Location location : omrsLocations) {
+			if(name.equalsIgnoreCase(location.getName())) {
+				locationList.add(FHIRLocationUtil.generateLocation(location));
+			}
+		}
+		return locationList;
+	}
+
+	/**
+	 * @see org.openmrs.module.fhir.api.LocationService#searchLocationsById(String)
+	 */
+	public List<Location> searchLocationsByStatus(boolean status) {
+		//TODO this method looks for all the locations which is inefficient. Reimplement after API revamp
+		List<org.openmrs.Location> omrsLocations = Context.getLocationService().getAllLocations(true);
+		List<Location> locationList = new ArrayList<Location>();
+		for (org.openmrs.Location location : omrsLocations) {
+			if(status) {
+				if(!location.isRetired()) {
+					locationList.add(FHIRLocationUtil.generateLocation(location));
+				}
+			} else {
+				if(location.isRetired()) {
+					locationList.add(FHIRLocationUtil.generateLocation(location));
+				}
+			}
+		}
+		return locationList;
+	}
 }

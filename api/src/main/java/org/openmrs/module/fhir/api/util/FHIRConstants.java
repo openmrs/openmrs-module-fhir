@@ -21,4 +21,5 @@ public final class FHIRConstants {
 	public static final String other = "UNSPECIFIED";
 	public static final String URN = "urn";
 	public static final String UUID = "uuid";
+	public static final String LOCATION = "Location";
 }

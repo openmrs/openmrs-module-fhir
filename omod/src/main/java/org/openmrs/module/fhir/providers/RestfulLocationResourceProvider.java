@@ -16,13 +16,25 @@ package org.openmrs.module.fhir.providers;
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu.resource.Location;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.model.primitive.StringDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
+import ca.uhn.fhir.rest.annotation.RequiredParam;
+import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.openmrs.module.fhir.resources.FHIRLocationResource;
 
+import java.util.List;
+
 public class RestfulLocationResourceProvider implements IResourceProvider {
-	
+
+	private FHIRLocationResource locationResource;
+
+	public RestfulLocationResourceProvider() {
+		this.locationResource = new FHIRLocationResource();
+	}
+
 	@Override
 	public Class<? extends IResource> getResourceType() {
 		return Location.class;
@@ -40,8 +52,41 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	@Read()
 	public Location getResourceById(@IdParam IdDt theId) {
 		Location result = null;
-		FHIRLocationResource locationResource = new FHIRLocationResource();
 		result = locationResource.getByUniqueId(theId);
 		return result;
+	}
+
+	/**
+	 * Search locations by unique id
+	 *
+	 * @param id object containing the requested id
+	 */
+	@Search()
+	public List<Location> searchLocationsByUniqueId(@RequiredParam(name = Location.SP_RES_ID) TokenParam id) {
+		return locationResource.searchLocationsById(id);
+	}
+
+	/**
+	 * Get locations by name
+	 *
+	 * @param name name of the location
+	 * @return This method returns a list of locations. This list may contain multiple matching resources, or it may also be
+	 * empty.
+	 */
+	@Search()
+	public List<Location> findLocationsByName(@RequiredParam(name = Location.SP_NAME) StringDt name) {
+		return locationResource.searchLocationsByName(name);
+	}
+
+	/**
+	 * Search location by status
+	 *
+	 * @param active search term
+	 * @return This method returns a list of locations. This list may contain multiple matching resources, or it may also be
+	 * empty.
+	 */
+	@Search()
+	public List<Location> searchLocationsByStatus(@RequiredParam(name = Location.SP_STATUS) TokenParam active) {
+		return locationResource.searchLocationsByStatus(active);
 	}
 }
