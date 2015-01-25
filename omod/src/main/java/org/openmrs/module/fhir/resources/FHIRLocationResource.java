@@ -14,10 +14,15 @@
 package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.model.dstu.resource.Location;
+import ca.uhn.fhir.model.dstu.valueset.LocationStatusEnum;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.model.primitive.StringDt;
+import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.LocationService;
+
+import java.util.List;
 
 public class FHIRLocationResource extends Resource {
 
@@ -30,4 +35,20 @@ public class FHIRLocationResource extends Resource {
 		return fhirLocation;
 	}
 
+
+	public List<Location> searchLocationsById(TokenParam id) {
+		return Context.getService(LocationService.class).searchLocationsById(id.getValue());
+	}
+
+	public List<Location> searchLocationsByStatus(TokenParam active) {
+		if(active != null && active.getValue().equalsIgnoreCase(LocationStatusEnum.ACTIVE.getCode())) {
+			return Context.getService(LocationService.class).searchLocationsByStatus(true);
+		} else {
+			return Context.getService(LocationService.class).searchLocationsByStatus(false);
+		}
+	}
+
+	public List<Location> searchLocationsByName(StringDt name) {
+		return Context.getService(LocationService.class).searchLocationsByName(name.getValue());
+	}
 }

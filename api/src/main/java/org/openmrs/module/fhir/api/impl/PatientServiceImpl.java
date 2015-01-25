@@ -109,10 +109,19 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 	 * @see org.openmrs.module.fhir.api.PatientService#searchPatients(boolean)
 	 */
 	public List<Patient> searchPatients(boolean active) {
-		List<org.openmrs.Patient> activePatients = Context.getPatientService().getAllPatients(active);
+		//TODO this method looks for all the patients which is inefficient. Reimplement after API revamp
+		List<org.openmrs.Patient> patients = Context.getPatientService().getAllPatients(true);
 		List<Patient> fhirPatientList = new ArrayList<Patient>();
-		for(org.openmrs.Patient patient : activePatients) {
-			fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
+		for(org.openmrs.Patient patient : patients) {
+			if(active) {
+				if(!patient.isVoided()) {
+					fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
+				}
+			} else {
+				if(patient.isVoided()) {
+					fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
+				}
+			}
 		}
 		return fhirPatientList;
 	}

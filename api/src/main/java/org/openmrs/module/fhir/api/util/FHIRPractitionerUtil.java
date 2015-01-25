@@ -116,7 +116,6 @@ public class FHIRPractitionerUtil {
 		DateTimeDt fhirBirthDate = practitioner.getBirthDate();
 		fhirBirthDate.setValue(provider.getPerson().getBirthdate());
 		practitioner.setBirthDate(fhirBirthDate);
-		FHIRUtils.validate(practitioner);
 		return practitioner;
 	}
 }
