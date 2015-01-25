@@ -23,6 +23,7 @@ import org.openmrs.module.fhir.providers.RestfulLocationResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulObservationResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulPatientResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulPractitionerResourceProvider;
+import org.openmrs.module.fhir.util.FHIROmodConstants;
 
 import javax.servlet.ServletException;
 import java.util.ArrayList;
@@ -50,6 +51,7 @@ public class FHIRRESTServer extends RestfulServer {
 		resourceProviders.add(new RestfulObservationResourceProvider());
 		resourceProviders.add(new RestfulPractitionerResourceProvider());
 		setResourceProviders(resourceProviders);
+		setServerName(FHIROmodConstants.OPENMRS_FHIR_SERVER_NAME);
 	}
 
 	protected String getRequestPath(String requestFullPath, String servletContextPath, String servletPath) {
