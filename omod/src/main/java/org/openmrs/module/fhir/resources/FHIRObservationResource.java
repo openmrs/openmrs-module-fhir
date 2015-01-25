@@ -28,7 +28,6 @@ public class FHIRObservationResource extends Resource {
 		}
 		return fhirObservation;
 	}
-
 }
 
 
