@@ -16,6 +16,7 @@ package org.openmrs.module.fhir.api.impl;
 import ca.uhn.fhir.model.dstu.resource.Practitioner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.PersonName;
 import org.openmrs.Provider;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
@@ -70,5 +71,76 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 			practitioners.add(FHIRPractitionerUtil.generatePractitioner(omrsProvider));
 		}
 		return practitioners;
+	}
+
+	/**
+	 * @see org.openmrs.module.fhir.api.PractitionerService#searchPractitionersByName(String)
+	 */
+	public List<Practitioner> searchPractitionersByName(String name) {
+		List<Provider> omrsProviders = searchProvidersByQuery(name);
+		List<Practitioner> practitioners = new ArrayList<Practitioner>();
+		for(Provider provider : omrsProviders) {
+			practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
+		}
+		return practitioners;
+	}
+
+	/**
+	 * @see org.openmrs.module.fhir.api.PractitionerService#searchPractitionersByGivenName(String)
+	 */
+	public List<Practitioner> searchPractitionersByGivenName(String givenName) {
+		List<Provider> omrsProviders = searchProvidersByQuery(givenName);
+		List<Practitioner> practitioners = new ArrayList<Practitioner>();
+		for(Provider provider : omrsProviders) {
+			//Search through the provider given name for check whether given name exist in the returned provider resource
+			if(givenName.equalsIgnoreCase(provider.getPerson().getGivenName())) {
+				practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
+			} else {
+				for(PersonName personName : provider.getPerson().getNames()) {
+					if(givenName.equalsIgnoreCase(personName.getGivenName())) {
+						practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
+					}
+				}
+			}
+		}
+		return practitioners;
+	}
+
+	/**
+	 * @see org.openmrs.module.fhir.api.PractitionerService#searchPractitionersByFamilyName(String)
+	 */
+	public List<Practitioner> searchPractitionersByFamilyName(String familyName) {
+		List<Provider> omrsProviders = searchProvidersByQuery(familyName);
+		List<Practitioner> practitioners = new ArrayList<Practitioner>();
+		for(Provider provider : omrsProviders) {
+			//Search through the provider family name for check whether family name exist in the returned provider resource
+			if (familyName.equalsIgnoreCase(provider.getPerson().getFamilyName())) {
+				practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
+			} else {
+				for (PersonName personName : provider.getPerson().getNames()) {
+					if (familyName.equalsIgnoreCase(personName.getFamilyName())) {
+						practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
+					}
+				}
+			}
+		}
+		return practitioners;
+	}
+
+	/**
+	 * @see org.openmrs.module.fhir.api.PractitionerService#searchPractitionersByIdentifier(String)
+	 */
+	public List<Practitioner> searchPractitionersByIdentifier(String identifier) {
+		Provider omrsProvider = Context.getProviderService().getProviderByIdentifier(identifier);
+		List<Practitioner> practitioners = new ArrayList<Practitioner>();
+		if (omrsProvider != null) {
+			practitioners.add(FHIRPractitionerUtil.generatePractitioner(omrsProvider));
+		}
+		return practitioners;
+	}
+
+
+	private List<Provider> searchProvidersByQuery(String query) {
+		return Context.getProviderService().getProviders(query, null, null, null, false);
 	}
 }
