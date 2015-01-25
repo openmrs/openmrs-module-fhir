@@ -49,4 +49,35 @@ public interface PractitionerService extends OpenmrsService {
 	 */
 	List<Practitioner> searchPractitionersById(String id);
 
+	/**
+	 * Search practitioners by name
+	 *
+	 * @param name the name to be search
+	 * @return fhir practitioner resource list
+	 */
+	List<Practitioner> searchPractitionersByName(String name);
+
+	/**
+	 * Search practitioners by givenName
+	 *
+	 * @param givenName the name to be search
+	 * @return fhir practitioner resource list
+	 */
+	List<Practitioner> searchPractitionersByGivenName(String givenName);
+
+	/**
+	 * Search practitioners by familyName
+	 *
+	 * @param familyName the name to be search
+	 * @return fhir practitioner resource list
+	 */
+	List<Practitioner> searchPractitionersByFamilyName(String familyName);
+
+	/**
+	 * Search practitioners by identifier
+	 *
+	 * @param identifier the identifier to be search
+	 * @return fhir practitioner resource list
+	 */
+	List<Practitioner> searchPractitionersByIdentifier(String identifier);
 }
