@@ -17,6 +17,7 @@ import ca.uhn.fhir.model.dstu.resource.Patient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.PatientService;
@@ -120,29 +121,57 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 	 * @see org.openmrs.module.fhir.api.PatientService#searchPatientsByGivenName(String)
 	 */
 	public List<Patient> searchPatientsByGivenName(String givenName) {
-		return searchPatientByQuery(givenName);
+		List<org.openmrs.Patient> patients = searchPatientByQuery(givenName);
+		List<Patient> fhirPatientList = new ArrayList<Patient>();
+		//Go through the patients given by the openmrs core api and find them patient who has the givenName matching
+		for(org.openmrs.Patient patient : patients) {
+			if(givenName.equalsIgnoreCase(patient.getGivenName())) {
+				fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
+			} else {
+				for(PersonName personName : patient.getNames()) {
+					if(givenName.equalsIgnoreCase(personName.getGivenName())) {
+						fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
+					}
+				}
+			}
+		}
+		return fhirPatientList;
 	}
 
 	/**
 	 * @see org.openmrs.module.fhir.api.PatientService#searchPatientsByFamilyName(String)
 	 */
 	public List<Patient> searchPatientsByFamilyName(String familyName) {
-		return searchPatientByQuery(familyName);
+		List<org.openmrs.Patient> patients = searchPatientByQuery(familyName);
+		List<Patient> fhirPatientList = new ArrayList<Patient>();
+		//Go through the patients given by the openmrs core api and find them patient who has the familyName matching
+		for(org.openmrs.Patient patient : patients) {
+			if(familyName.equalsIgnoreCase(patient.getFamilyName())) {
+				fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
+			} else {
+				for(PersonName personName : patient.getNames()) {
+					if(familyName.equalsIgnoreCase(personName.getFamilyName())) {
+						fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
+					}
+				}
+			}
+		}
+		return fhirPatientList;
 	}
 
 	/**
 	 * @see org.openmrs.module.fhir.api.PatientService#searchPatientsByName(String) (String)
 	 */
 	public List<Patient> searchPatientsByName(String name) {
-		return searchPatientByQuery(name);
-	}
-
-	private List<Patient> searchPatientByQuery(String query) {
-		List<org.openmrs.Patient> patients = Context.getPatientService().getPatients(query);
+		List<org.openmrs.Patient> patients = searchPatientByQuery(name);
 		List<Patient> fhirPatientList = new ArrayList<Patient>();
 		for(org.openmrs.Patient patient : patients) {
 			fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
 		}
 		return fhirPatientList;
+	}
+
+	private List<org.openmrs.Patient> searchPatientByQuery(String query) {
+		return Context.getPatientService().getPatients(query);
 	}
 }
