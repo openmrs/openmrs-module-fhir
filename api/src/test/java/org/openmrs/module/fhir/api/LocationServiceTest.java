@@ -52,31 +52,28 @@ public class LocationServiceTest extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void getLocation_shouldReturnOperationOutcomeIfDoesNotExist() {
-
-	}
-
-	@Test
-	public void getLocationsById_shouldReturnBundleIfExists() {
+	public void searchLocationsById_shouldReturnBundle() {
 		String locationUuid = "f08ba64b-ea57-4a41-b33c-9dfc59b0c60a";
 		List<Location> locations = getService().searchLocationsById(locationUuid);
 		assertNotNull(locations);
-		assertEquals(locations.size(), 1);
+		assertEquals(1, locations.size());
 		assertEquals(locations.get(0).getId().getIdPart(), locationUuid);
 	}
 
 	@Test
-	public void getLocationsById_shouldReturnEmptyBundleIfDoesNotExist() {
-
+	public void searchLocationsByName_shouldReturnBundle() {
+		String name = "Test Parent Location";
+		String locationUuid = "f08ba64b-ea57-4a41-b33c-9dfc59b0c60a";
+		List<Location> locations = getService().searchLocationsByName(name);
+		assertNotNull(locations);
+		assertEquals(1, locations.size());
+		assertEquals(locations.get(0).getId().getIdPart(), locationUuid);
 	}
 
 	@Test
-	public void getLocationsByIdentifier_shouldReturnBundleIfExists() {
-
-	}
-
-	@Test
-	public void getLocationsByIdentifier_shouldReturnEmptyBundleIfDoesNotExist() {
-
+	public void searchActiveLocations_shouldReturnBundle() {
+		List<Location> locations = getService().searchLocationsByStatus(true);
+		assertNotNull(locations);
+		assertEquals(5, locations.size());
 	}
 }
