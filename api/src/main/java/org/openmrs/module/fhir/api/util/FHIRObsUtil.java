@@ -45,13 +45,11 @@ public class FHIRObsUtil {
 
 		InstantDt instant = new InstantDt();
 		instant.setValue(obs.getDateCreated());
-
 		observation.setIssued(instant);
 
 		observation.setComments(obs.getComment());
 
 		ResourceReferenceDt patientReference = new ResourceReferenceDt();
-
 		PersonName name = Context.getPatientService().getPatientByUuid(obs.getPerson().getUuid()).getPersonName();
 		String nameDisplay = name.getGivenName() + " " + name.getFamilyName();
 		nameDisplay += "(" + Context.getPatientService().getPatientByUuid(obs.getPerson().getUuid()).getPatientIdentifier()

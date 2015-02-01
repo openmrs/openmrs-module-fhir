@@ -50,26 +50,45 @@ public class PractitionerServiceTest extends BaseModuleContextSensitiveTest {
 		String practitionerUuid = "a3a5913e-6b94-11e0-93c3-18a905e044dc";
 		Practitioner fhirPractitioner = getService().getPractitioner(practitionerUuid);
 		assertNotNull(fhirPractitioner);
-		assertEquals(fhirPractitioner.getId().toString(), practitionerUuid);
-
+		assertEquals(practitionerUuid, fhirPractitioner.getId().toString());
 	}
 
 	@Test
-	public void getPatient_shouldReturnOperationOutcomeIfDoesNotExist() {
-
-	}
-
-	@Test
-	public void getPractitionerById_shouldReturnBundleIfExists() throws FHIRValidationException {
+	public void SearchPractitionerById_shouldReturnBundle() throws FHIRValidationException {
 		String practitionerUuid = "a3a5913e-6b94-11e0-93c3-18a905e044dc";
 		List<Practitioner> practitionerList = getService().searchPractitionersById(practitionerUuid);
 		assertNotNull(practitionerList);
 		assertEquals(practitionerList.size(), 1);
-		IResource resource = practitionerList.get(0);
-		assertNotNull(resource);
-		assertTrue(resource instanceof Practitioner);
-		Practitioner fhirPractitioner = (Practitioner) resource;
-		assertEquals(fhirPractitioner.getId().toString(), practitionerUuid);
+		assertEquals(practitionerUuid, practitionerList.get(0).getId().toString());
 	}
 
+	@Test
+	public void searchPractitionersByName_shouldReturnBundle() throws FHIRValidationException {
+		String name = "RobertClive";
+		String practitionerUuid = "a2c3868a-6b90-11e0-93c3-18a905e044dc";
+		List<Practitioner> practitionerList = getService().searchPractitionersByName(name);
+		assertNotNull(practitionerList);
+		assertEquals(practitionerList.size(), 1);
+		assertEquals(practitionerUuid, practitionerList.get(0).getId().toString());
+	}
+
+	@Test
+	public void searchPractitionersByGivenName_shouldReturnBundle() throws FHIRValidationException {
+		String givenName = "Collet";
+		String practitionerUuid = "ba4781f4-6b94-11e0-93c3-18a905e044dc";
+		List<Practitioner> practitionerList = getService().searchPractitionersByGivenName(givenName);
+		assertNotNull(practitionerList);
+		assertEquals(practitionerList.size(), 1);
+		assertEquals(practitionerUuid, practitionerList.get(0).getId().toString());
+	}
+
+	@Test
+	public void searchPractitionersByIdentifier_shouldReturnBundle() throws FHIRValidationException {
+		String identifier = "8A762";
+		String practitionerUuid = "ae401f88-6b94-11e0-93c3-18a905e044dc";
+		List<Practitioner> practitionerList = getService().searchPractitionersByIdentifier(identifier);
+		assertNotNull(practitionerList);
+		assertEquals(practitionerList.size(), 1);
+		assertEquals(practitionerUuid, practitionerList.get(0).getId().toString());
+	}
 }

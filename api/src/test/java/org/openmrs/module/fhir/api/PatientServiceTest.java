@@ -14,6 +14,7 @@
 package org.openmrs.module.fhir.api;
 
 import ca.uhn.fhir.model.api.IResource;
+import ca.uhn.fhir.model.dstu.composite.IdentifierDt;
 import ca.uhn.fhir.model.dstu.resource.Patient;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,38 +58,91 @@ public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void getPatient_shouldReturnOperationOutcomeIfDoesNotExist() {
-
-	}
-
-	@Test
-	public void getPatientsById_shouldReturnBundleIfExists() throws FHIRValidationException {
+	public void searchPatientsById_shouldReturnBundleIfExists() throws FHIRValidationException {
 		String patientUuid = "61b38324-e2fd-4feb-95b7-9e9a2a4400df";
 		List<Patient> patients = getService().searchPatientsById(patientUuid);
-
 		assertNotNull(patients);
-		assertEquals(patients.size(), 1);
-
-		IResource resource = patients.get(0);
-		assertNotNull(resource);
-		assertTrue(resource instanceof Patient);
-		Patient fhirPatient = (Patient) resource;
+		assertEquals(1, patients.size());
+		Patient fhirPatient = patients.get(0);
 		assertEquals(fhirPatient.getId().toString(), patientUuid);
 	}
 
 	@Test
-	public void getPatientsById_shouldReturnEmptyBundleIfDoesNotExist() {
-
+	public void searchPatientsByIdentifier_shouldReturnBundle() {
+		String returned_patientUuid = "61b38324-e2fd-4feb-95b7-9e9a2a4400df";
+		String identifierValue = "1234";
+		List<Patient> patients = getService().searchPatientsByIdentifier(identifierValue);
+		assertNotNull(patients);
+		assertEquals(1, patients.size());
+		Patient fhirPatient = patients.get(0);
+		assertEquals(fhirPatient.getId().toString(), returned_patientUuid);
+		boolean exist = false;
+		for(Patient patient : patients) {
+			for(IdentifierDt identifierDt : patient.getIdentifier()) {
+				if(identifierValue.equals(identifierDt.getValue().getValue())) {
+					exist = true;
+				}
+			}
+		}
+		assertTrue(exist);
 	}
 
 	@Test
-	public void getPatientsByIdentifier_shouldReturnBundleIfExists() {
-
+	public void searchPatientsByIdentifierAndIdentifierType_shouldReturnBundle() {
+		String returned_patientUuid = "61b38324-e2fd-4feb-95b7-9e9a2a4400df";
+		String identifierValue = "1234";
+		String identifierUuid = "c5576187-9a67-43a7-9b7c-04db22851211";
+		List<Patient> patients = getService().searchPatientsByIdentifier(identifierValue, identifierUuid);
+		assertNotNull(patients);
+		assertEquals(1, patients.size());
+		Patient fhirPatient = patients.get(0);
+		assertEquals(fhirPatient.getId().toString(), returned_patientUuid);
+		boolean exist = false;
+		for(Patient patient : patients) {
+			for(IdentifierDt identifierDt : patient.getIdentifier()) {
+				if(identifierValue.equals(identifierDt.getValue().getValue())) {
+					exist = true;
+				}
+			}
+		}
+		assertTrue(exist);
 	}
 
 	@Test
-	public void getPatientsByIdentifier_shouldReturnEmptyBundleIfDoesNotExist() {
-
+	public void searchPatientsByName_shouldReturnBundle() {
+		String name = "Jean";
+		List<Patient> patients = getService().searchPatientsByName(name);
+		assertNotNull(patients);
+		assertEquals(2, patients.size());
 	}
 
+	@Test
+	public void searchPatientsByGivenName_shouldReturnBundle() {
+		String name = "Jean";
+		List<Patient> patients = getService().searchPatientsByGivenName(name);
+		assertNotNull(patients);
+		assertEquals(1, patients.size());
+	}
+
+	@Test
+	public void searchPatientsByFamilyName_shouldReturnBundle() {
+		String name = "Doe";
+		List<Patient> patients = getService().searchPatientsByFamilyName(name);
+		assertNotNull(patients);
+		assertEquals(2, patients.size());
+	}
+
+	@Test
+	public void searchActivePatients_shouldReturnBundle() {
+		List<Patient> patients = getService().searchPatients(true);
+		assertNotNull(patients);
+		assertEquals(6, patients.size());
+	}
+
+	@Test
+	public void searchInActivePatients_shouldReturnBundle() {
+		List<Patient> patients = getService().searchPatients(false);
+		assertNotNull(patients);
+		assertEquals(2, patients.size());
+	}
 }

@@ -46,76 +46,86 @@ public class FHIRPractitionerUtil {
 		List<IdentifierDt> identifiers = new ArrayList<IdentifierDt>();
 		identifiers.add(identifier);
 		practitioner.setIdentifier(identifiers);
-		for (PersonName name : provider.getPerson().getNames()) {
-			if (name.isPreferred()) {
-				HumanNameDt fhirName = new HumanNameDt();
-				StringDt familyName = new StringDt();
-				familyName.setValue(name.getFamilyName());
-				List<StringDt> familyNames = new ArrayList<StringDt>();
-				familyNames.add(familyName);
-				fhirName.setFamily(familyNames);
-				StringDt givenName = new StringDt();
-				givenName.setValue(name.getGivenName());
-				List<StringDt> givenNames = new ArrayList<StringDt>();
-				givenNames.add(givenName);
-				fhirName.setGiven(givenNames);
+		if (provider.getPerson() != null) {
+			for (PersonName name : provider.getPerson().getNames()) {
+				if (name.isPreferred()) {
+					HumanNameDt fhirName = new HumanNameDt();
+					StringDt familyName = new StringDt();
+					familyName.setValue(name.getFamilyName());
+					List<StringDt> familyNames = new ArrayList<StringDt>();
+					familyNames.add(familyName);
+					fhirName.setFamily(familyNames);
+					StringDt givenName = new StringDt();
+					givenName.setValue(name.getGivenName());
+					List<StringDt> givenNames = new ArrayList<StringDt>();
+					givenNames.add(givenName);
+					fhirName.setGiven(givenNames);
 
-				if (name.getFamilyNameSuffix() != null) {
-					StringDt suffix = fhirName.addSuffix();
-					suffix.setValue(name.getFamilyNameSuffix());
-					List<StringDt> suffixes = new ArrayList<StringDt>();
-					suffixes.add(suffix);
-					fhirName.setSuffix(suffixes);
-				}
+					if (name.getFamilyNameSuffix() != null) {
+						StringDt suffix = fhirName.addSuffix();
+						suffix.setValue(name.getFamilyNameSuffix());
+						List<StringDt> suffixes = new ArrayList<StringDt>();
+						suffixes.add(suffix);
+						fhirName.setSuffix(suffixes);
+					}
 
-				if (name.getPrefix() != null) {
-					StringDt prefix = fhirName.addPrefix();
-					prefix.setValue(name.getPrefix());
-					List<StringDt> prefixes = new ArrayList<StringDt>();
-					prefixes.add(prefix);
-					fhirName.setSuffix(prefixes);
+					if (name.getPrefix() != null) {
+						StringDt prefix = fhirName.addPrefix();
+						prefix.setValue(name.getPrefix());
+						List<StringDt> prefixes = new ArrayList<StringDt>();
+						prefixes.add(prefix);
+						fhirName.setSuffix(prefixes);
+					}
+					fhirName.setUse(NameUseEnum.USUAL);
+					practitioner.setName(fhirName);
 				}
-				fhirName.setUse(NameUseEnum.USUAL);
-				practitioner.setName(fhirName);
 			}
-		}
-
-		//Set address in FHIR patient
-		AddressDt fhirAddress = practitioner.getAddress();
-		for (PersonAddress address : provider.getPerson().getAddresses()) {
-			if (address.isPreferred()) {
-				fhirAddress.setCity(address.getCityVillage());
-				fhirAddress.setCountry(address.getCountry());
-				fhirAddress.setState(address.getStateProvince());
-				fhirAddress.setZip(address.getPostalCode());
-				List<StringDt> addressStrings = new ArrayList<StringDt>();
-				addressStrings.add(new StringDt(address.getAddress1()));
-				addressStrings.add(new StringDt(address.getAddress2()));
-				addressStrings.add(new StringDt(address.getAddress3()));
-				addressStrings.add(new StringDt(address.getAddress4()));
-				addressStrings.add(new StringDt(address.getAddress5()));
-				fhirAddress.setLine(addressStrings);
+			//Set address in FHIR patient
+			AddressDt fhirAddress = practitioner.getAddress();
+			for (PersonAddress address : provider.getPerson().getAddresses()) {
 				if (address.isPreferred()) {
-					fhirAddress.setUse(AddressUseEnum.HOME);
-				} else {
-					fhirAddress.setUse(AddressUseEnum.OLD);
+					fhirAddress.setCity(address.getCityVillage());
+					fhirAddress.setCountry(address.getCountry());
+					fhirAddress.setState(address.getStateProvince());
+					fhirAddress.setZip(address.getPostalCode());
+					List<StringDt> addressStrings = new ArrayList<StringDt>();
+					addressStrings.add(new StringDt(address.getAddress1()));
+					addressStrings.add(new StringDt(address.getAddress2()));
+					addressStrings.add(new StringDt(address.getAddress3()));
+					addressStrings.add(new StringDt(address.getAddress4()));
+					addressStrings.add(new StringDt(address.getAddress5()));
+					fhirAddress.setLine(addressStrings);
+					if (address.isPreferred()) {
+						fhirAddress.setUse(AddressUseEnum.HOME);
+					} else {
+						fhirAddress.setUse(AddressUseEnum.OLD);
+					}
+					practitioner.setAddress(fhirAddress);
 				}
-				practitioner.setAddress(fhirAddress);
 			}
-		}
+			//Set gender in fhir practitioner object
+			if (provider.getPerson().getGender().equals("M")) {
+				practitioner.setGender(AdministrativeGenderCodesEnum.M);
+			} else if (provider.getPerson().getGender().equals("F")) {
+				practitioner.setGender(AdministrativeGenderCodesEnum.F);
+			} else {
+				practitioner.setGender(AdministrativeGenderCodesEnum.UNK);
+			}
 
-		//Set gender in fhir practitioner object
-		if (provider.getPerson().getGender().equals("M")) {
-			practitioner.setGender(AdministrativeGenderCodesEnum.M);
-		} else if (provider.getPerson().getGender().equals("F")) {
-			practitioner.setGender(AdministrativeGenderCodesEnum.F);
+			DateTimeDt fhirBirthDate = practitioner.getBirthDate();
+			fhirBirthDate.setValue(provider.getPerson().getBirthdate());
+			practitioner.setBirthDate(fhirBirthDate);
 		} else {
+			HumanNameDt fhirName = new HumanNameDt();
+			StringDt givenName = new StringDt();
+			givenName.setValue(provider.getName());
+			List<StringDt> givenNames = new ArrayList<StringDt>();
+			givenNames.add(givenName);
+			fhirName.setGiven(givenNames);
+			fhirName.setUse(NameUseEnum.USUAL);
+			practitioner.setName(fhirName);
 			practitioner.setGender(AdministrativeGenderCodesEnum.UNK);
 		}
-
-		DateTimeDt fhirBirthDate = practitioner.getBirthDate();
-		fhirBirthDate.setValue(provider.getPerson().getBirthdate());
-		practitioner.setBirthDate(fhirBirthDate);
 		return practitioner;
 	}
 }

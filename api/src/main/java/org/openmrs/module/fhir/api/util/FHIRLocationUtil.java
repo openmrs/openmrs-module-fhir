@@ -56,12 +56,12 @@ public class FHIRLocationUtil {
 		location.setAddress(address);
 
 		Position position = location.getPosition();
-		if (omrsLocation.getLongitude() != null) {
+		if (omrsLocation.getLongitude() != null && !omrsLocation.getLongitude().isEmpty()) {
 			BigDecimal longitude = new BigDecimal(omrsLocation.getLongitude());
 			position.setLongitude(longitude);
 		}
 
-		if (omrsLocation.getLatitude() != null) {
+		if (omrsLocation.getLatitude() != null && !omrsLocation.getLatitude().isEmpty()) {
 			BigDecimal latitude = new BigDecimal(omrsLocation.getLatitude());
 			position.setLatitude(latitude);
 		}
