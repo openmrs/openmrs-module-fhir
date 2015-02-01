@@ -127,13 +127,16 @@ public class FHIRPatientUtil {
 		}
 		patient.setAddress(fhirAddresses);
 
-		DateTimeDt fhirBirthDate = patient.getBirthDate();
-		fhirBirthDate.setValue(omrsPatient.getBirthdate());
+		if(omrsPatient.getBirthdate() != null) {
+			DateTimeDt fhirBirthDate = new DateTimeDt();
+			fhirBirthDate.setValue(omrsPatient.getBirthdate());
+			patient.setBirthDate(fhirBirthDate);
+		}
 
 		patient.setActive(!omrsPatient.isVoided());
 
 		if (omrsPatient.isDead()) {
-			DateTimeDt fhirDeathDate = (DateTimeDt) patient.getDeceased();
+			DateTimeDt fhirDeathDate = new DateTimeDt();
 			fhirDeathDate.setValue(omrsPatient.getDeathDate());
 			patient.setDeceased(fhirDeathDate);
 		} else {
