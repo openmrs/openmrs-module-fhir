@@ -13,18 +13,22 @@
  */
 package org.openmrs.module.fhir.api.util;
 
+import ca.uhn.fhir.model.dstu.composite.AttachmentDt;
 import ca.uhn.fhir.model.dstu.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu.composite.CodingDt;
 import ca.uhn.fhir.model.dstu.composite.PeriodDt;
 import ca.uhn.fhir.model.dstu.composite.QuantityDt;
 import ca.uhn.fhir.model.dstu.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu.resource.Observation;
+import ca.uhn.fhir.model.dstu.valueset.ObservationRelationshipTypeEnum;
 import ca.uhn.fhir.model.dstu.valueset.ObservationReliabilityEnum;
 import ca.uhn.fhir.model.dstu.valueset.ObservationStatusEnum;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.InstantDt;
 import ca.uhn.fhir.model.primitive.StringDt;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.ConceptMap;
 import org.openmrs.ConceptNumeric;
 import org.openmrs.EncounterProvider;
@@ -32,12 +36,16 @@ import org.openmrs.Obs;
 import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class FHIRObsUtil {
 
+	private static final Log log = LogFactory.getLog(FHIRObsUtil.class);
 	public static Observation generateObs(Obs obs) {
 
 		Observation observation = new Observation();
@@ -202,6 +210,19 @@ public class FHIRObsUtil {
 			CodeableConceptDt codeableConceptDt = new CodeableConceptDt();
 			codeableConceptDt.setCoding(values);
 			observation.setValue(codeableConceptDt);
+		} else if (FHIRConstants.ED_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
+			AttachmentDt attachmentDt = new AttachmentDt();
+			attachmentDt.setUrl(obs.getValueComplex());
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			ObjectOutputStream os = null;
+			try {
+				os = new ObjectOutputStream(out);
+				os.writeObject(obs.getComplexData().getData());
+			} catch (IOException e) {
+				log.error("Error while converting object data to stream");
+				attachmentDt.setData(out.toByteArray());
+			}
+			observation.setValue(attachmentDt);
 		} else {
 			StringDt value = new StringDt();
 			value.setValue(obs.getValueAsString(Context.getLocale()));
@@ -214,6 +235,25 @@ public class FHIRObsUtil {
 		DateTimeDt dateApplies = new DateTimeDt();
 		dateApplies.setValue(obs.getObsDatetime());
 		observation.setApplies(dateApplies);
+
+		//Set reference observations
+		if(obs.getGroupMembers() != null && !obs.getGroupMembers().isEmpty()) {
+			List<Observation.Related> relatedObs = new ArrayList<Observation.Related>();
+			ResourceReferenceDt resourceReferenceDt;
+			Observation.Related related;
+			for (Obs ob : obs.getGroupMembers()) {
+				related = new Observation.Related();
+				related.setType(ObservationRelationshipTypeEnum.HAS_COMPONENT);
+				resourceReferenceDt = new ResourceReferenceDt();
+				resourceReferenceDt.setDisplay(ob.getConcept().getName().getName());
+				IdDt providerRef = new IdDt();
+				String obsUri = FHIRConstants.OBSERVATION + "/" + obs.getUuid();
+				providerRef.setValue(obsUri);
+				resourceReferenceDt.setReference(providerRef);
+				related.setTarget(resourceReferenceDt);
+			}
+			observation.setRelated(relatedObs);
+		}
 
 		return observation;
 

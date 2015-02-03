@@ -25,6 +25,7 @@ public final class FHIRConstants {
 	public static final String IDENTIFIER = "Identifier";
 	public static final String PATIENT = "Patient";
 	public static final String PRACTITIONER = "Practitioner";
+	public static final String OBSERVATION = "Observation";
 	public static final String LOINC = "LOINC";
 	public static final String CIEL = "CIEL";
 	public static final String SNOMED = "SNOMED";
