@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.fhir.api.util;
 
+import ca.uhn.fhir.model.api.ExtensionDt;
 import ca.uhn.fhir.model.dstu.composite.AttachmentDt;
 import ca.uhn.fhir.model.dstu.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu.composite.CodingDt;
@@ -62,22 +63,27 @@ public class FHIRObsUtil {
 
 		//Build and set patient reference
 		ResourceReferenceDt patientReference = new ResourceReferenceDt();
-		PersonName name = Context.getPatientService().getPatientByUuid(obs.getPerson().getUuid()).getPersonName();
+		PersonName name = obs.getPerson().getPersonName();
 		StringBuilder nameDisplay = new StringBuilder();
 		nameDisplay.append(name.getGivenName());
 		nameDisplay.append("");
 		nameDisplay.append(name.getFamilyName());
-		nameDisplay.append("(");
-		nameDisplay.append(FHIRConstants.IDENTIFIER);
-		nameDisplay.append(":");
-		nameDisplay.append(Context.getPatientService().getPatientByUuid(obs.getPerson().getUuid()).getPatientIdentifier()
-				.getIdentifier());
-		nameDisplay.append(")");
+		String uri;
+		if(Context.getPatientService().getPatientByUuid(obs.getPerson().getUuid()) != null) {
+			nameDisplay.append("(");
+			nameDisplay.append(FHIRConstants.IDENTIFIER);
+			nameDisplay.append(":");
+			nameDisplay.append(Context.getPatientService().getPatientByUuid(obs.getPerson().getUuid()).getPatientIdentifier().getIdentifier());
+			nameDisplay.append(")");
+			uri = FHIRConstants.PATIENT + "/"+ obs.getPerson().getUuid();
+		} else {
+			uri = FHIRConstants.WEB_SERVICES_URI_PREFIX + "/" + FHIRConstants.PERSON + "/" + obs.getPerson().getUuid();
+		}
+
 		patientReference.setDisplay(nameDisplay.toString());
-		String patientUri = FHIRConstants.PATIENT + "/"+ obs.getPerson().getUuid();
 
 		IdDt patientRef = new IdDt();
-		patientRef.setValue(patientUri);
+		patientRef.setValue(uri);
 		patientReference.setReference(patientRef);
 		observation.setSubject(patientReference);
 
@@ -255,7 +261,16 @@ public class FHIRObsUtil {
 			observation.setRelated(relatedObs);
 		}
 
+		StringDt location = new StringDt();
+		location.setValue(FHIRConstants.LOCATION + "/" + obs.getLocation().getUuid());
+		ExtensionDt locationExt = new ExtensionDt(false, FHIRConstants.LOCATION_EXTENTION_URI, location);
+		observation.addUndeclaredExtension(locationExt);
+		if(obs.getEncounter() != null) {
+			StringDt encounter = new StringDt();
+			encounter.setValue(FHIRConstants.ENCOUNTER + "/" + obs.getLocation().getUuid());
+			ExtensionDt encounterExt = new ExtensionDt(false, FHIRConstants.ENCOUNTER_EXTENTION_URI, encounter);
+			observation.addUndeclaredExtension(encounterExt);
+		}
 		return observation;
-
 	}
 }

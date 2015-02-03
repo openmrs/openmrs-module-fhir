@@ -19,6 +19,12 @@ import org.junit.Test;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -41,11 +47,52 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void getObservation_shouldReturnResourceIfExists() {
+	public void getObservation_shouldReturnResource() {
 		String obsUuid = "be3a4d7a-f9ab-47bb-aaad-bc0b452fcda4";
 		Observation fhirObservation = getService().getObs(obsUuid);
 		assertNotNull(fhirObservation);
 		assertEquals(fhirObservation.getId().toString(), obsUuid);
 	}
 
+	@Test
+	public void searchObsByPatientAndConcept_shouldReturnMatchingObservationList() {
+		String personUuid = "da7f524f-27ce-4bb2-86d6-6d1d05312bd5";
+		String conceptName = "Some concept name";
+		List<Observation> obs = getService().searchObsByPatientAndConcept(personUuid, conceptName);
+		assertNotNull(obs);
+		assertEquals(2, obs.size());
+	}
+
+	@Test
+	public void searchObsById_shouldReturnMatchingObservationList() {
+		String obsUuid = "be3a4d7a-f9ab-47bb-aaad-bc0b452fcda4";
+		List<Observation> fhirObservations = getService().searchObsById(obsUuid);
+		assertNotNull(fhirObservations);
+		assertEquals(fhirObservations.get(0).getId().getIdPart(), obsUuid);
+	}
+
+	@Test
+	public void searchObsByName_shouldReturnMatchingObservationList() {
+		String name = "Some concept name";
+		List<Observation> obs = getService().searchObsByName(name);
+		assertNotNull(obs);
+		assertEquals(10, obs.size());
+	}
+
+	@Test
+	public void searchObsByDate_shouldReturnMatchingObservationList() throws ParseException {
+		String obsDate = "2009-01-01 00:00:00.0";
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = df.parse(obsDate);
+		List<Observation> obs = getService().searchObsByDate(date);
+		assertEquals(1, obs.size());
+	}
+
+	@Test
+	public void searchObsByPerson_shouldReturnMatchingObservationList() {
+		String personUuid = "da7f524f-27ce-4bb2-86d6-6d1d05312bd5";
+		List<Observation> obs = getService().searchObsByPerson(personUuid);
+		assertNotNull(obs);
+		assertEquals(3, obs.size());
+	}
 }

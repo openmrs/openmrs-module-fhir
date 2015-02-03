@@ -22,6 +22,7 @@ public final class FHIRConstants {
 	public static final String URN = "urn";
 	public static final String UUID = "uuid";
 	public static final String LOCATION = "Location";
+	public static final String ENCOUNTER = "Encounter";
 	public static final String IDENTIFIER = "Identifier";
 	public static final String PATIENT = "Patient";
 	public static final String PRACTITIONER = "Practitioner";
@@ -41,6 +42,8 @@ public final class FHIRConstants {
 	public static final String SN_HL7_ABBREVATION = "SN";
 	public static final String ED_HL7_ABBREVATION = "ED";
 	public static final String BIT_HL7_ABBREVATION = "BIT";
-
-
+	public static final String LOCATION_EXTENTION_URI= "http://resources.openmrs.org/doc/fhir/profiles/vitalsigns.xml#location";
+	public static final String ENCOUNTER_EXTENTION_URI= "http://resources.openmrs.org/doc/fhir/profiles/vitalsigns.xml#encounter";
+	public static final String WEB_SERVICES_URI_PREFIX= "ws/rest";
+	public static final String PERSON= "person";
 }

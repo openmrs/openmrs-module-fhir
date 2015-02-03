@@ -17,6 +17,7 @@ import ca.uhn.fhir.model.dstu.resource.Observation;
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Transactional
@@ -34,10 +35,10 @@ public interface ObsService extends OpenmrsService {
 	 * Search observations by patient and concepts
 	 *
 	 * @param patientUUid patient uuid
-	 * @param concepts    concepts to be search
+	 * @param conceptName    name of the concept
 	 * @return fhir obs resource list
 	 */
-	public List<Observation> searchObsByPatientandConcept(String patientUUid, String[] concepts);
+	public List<Observation> searchObsByPatientAndConcept(String patientUUid, String conceptName);
 
 	/**
 	 * Search observations by patient and concepts
@@ -47,4 +48,35 @@ public interface ObsService extends OpenmrsService {
 	 */
 	public List<Observation> searchObsById(String id);
 
+	/**
+	 * Search observations by observation name
+	 *
+	 * @param name obs name
+	 * @return fhir obs resource list
+	 */
+	public List<Observation> searchObsByName(String name);
+
+	/**
+	 * Search observations by observation date
+	 *
+	 * @param date obs date
+	 * @return fhir obs resource list
+	 */
+	public List<Observation> searchObsByDate(Date date);
+
+	/**
+	 * Search observations by person
+	 *
+	 * @param personUuid person uuid of the person which observations needs to search for
+	 * @return fhir obs resource list
+	 */
+	public List<Observation> searchObsByPerson(String personUuid);
+
+	/**
+	 * Search observations by value concept
+	 *
+	 * @param conceptName value concept name
+	 * @return fhir obs resource list
+	 */
+	public List<Observation> searchObsByValueConcept(String conceptName);
 }
