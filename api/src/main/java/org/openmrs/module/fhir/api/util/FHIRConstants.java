@@ -22,4 +22,24 @@ public final class FHIRConstants {
 	public static final String URN = "urn";
 	public static final String UUID = "uuid";
 	public static final String LOCATION = "Location";
+	public static final String IDENTIFIER = "Identifier";
+	public static final String PATIENT = "Patient";
+	public static final String PRACTITIONER = "Practitioner";
+	public static final String LOINC = "LOINC";
+	public static final String CIEL = "CIEL";
+	public static final String SNOMED = "SNOMED";
+	public static final String NUMERIC_CONCEPT_MEASURE_URI = "http://unitsofmeasure.org";
+	public static final String NM_HL7_ABBREVATION = "NM";
+	public static final String CWE_HL7_ABBREVATION = "CWE";
+	public static final String ST_HL7_ABBREVATION = "ST";
+	public static final String ZZ_HL7_ABBREVATION = "ZZ";
+	public static final String RP_HL7_ABBREVATION = "RP";
+	public static final String DT_HL7_ABBREVATION = "DT";
+	public static final String TM_HL7_ABBREVATION = "TM";
+	public static final String TS_HL7_ABBREVATION = "TS";
+	public static final String SN_HL7_ABBREVATION = "SN";
+	public static final String ED_HL7_ABBREVATION = "ED";
+	public static final String BIT_HL7_ABBREVATION = "BIT";
+
+
 }
