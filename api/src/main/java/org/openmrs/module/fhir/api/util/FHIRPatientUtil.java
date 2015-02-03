@@ -155,6 +155,7 @@ public class FHIRPatientUtil {
 			dts.add(telecom);
 		}
 		patient.setTelecom(dts);
+		FHIRUtils.validate(patient);
 		return patient;
 	}
 }
