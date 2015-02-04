@@ -13,7 +13,6 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu.resource.Practitioner;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +24,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class PractitionerServiceTest extends BaseModuleContextSensitiveTest {
 

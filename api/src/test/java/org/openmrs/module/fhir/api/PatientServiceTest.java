@@ -13,7 +13,6 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu.composite.IdentifierDt;
 import ca.uhn.fhir.model.dstu.resource.Patient;
 import org.junit.Before;
