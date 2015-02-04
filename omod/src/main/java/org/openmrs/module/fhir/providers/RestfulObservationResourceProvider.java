@@ -70,7 +70,7 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	/**
 	 * Search obsservation by patient and concept name
 	 *
-	 * @param id object containing the requested id
+	 * @param name object containing the requested name
 	 */
 	@Search()
 	public List<Observation> searchObsByPatientAndConcept(@RequiredParam(name = Observation.SP_SUBJECT) ReferenceParam

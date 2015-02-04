@@ -28,7 +28,7 @@ public class FHIRObservationResource extends Resource {
 
 	public Observation getByUniqueId(IdDt id) {
 		ObsService obsService = Context.getService(ObsService.class);
-		Observation fhirObservation = obsService.getObs(id.getValue());
+		Observation fhirObservation = obsService.getObs(id.getIdPart());
 		if(fhirObservation == null) {
 			throw new ResourceNotFoundException("Observation is not found for the given Id " + id.getValue());
 		}
