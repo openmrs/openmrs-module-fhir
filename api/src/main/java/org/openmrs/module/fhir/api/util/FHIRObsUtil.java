@@ -149,8 +149,12 @@ public class FHIRObsUtil {
 			//Set high and low ranges
 			List<Observation.ReferenceRange> referenceRanges = new ArrayList<Observation.ReferenceRange>();
 			Observation.ReferenceRange referenceRange = new Observation.ReferenceRange();
-			referenceRange.setHigh(cn.getHiAbsolute());
-			referenceRange.setLow(cn.getLowAbsolute());
+			if(cn.getHiAbsolute() != null) {
+				referenceRange.setHigh(cn.getHiAbsolute());
+			}
+			if(cn.getLowAbsolute() != null) {
+				referenceRange.setLow(cn.getLowAbsolute());
+			}
 			referenceRanges.add(referenceRange);
 			observation.setReferenceRange(referenceRanges);
 
