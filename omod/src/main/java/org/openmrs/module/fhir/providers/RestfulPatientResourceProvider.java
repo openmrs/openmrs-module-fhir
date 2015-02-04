@@ -22,6 +22,7 @@ import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.Search;
 import ca.uhn.fhir.rest.param.ReferenceParam;
+import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.NotImplementedOperationException;
@@ -48,7 +49,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	/**
 	 * Get patient by patient uuid
 	 *
-	 * @param id id object contaning the requested id
+	 * @param id id object containing the requested id
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read()
@@ -61,7 +62,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	/**
 	 * Search patient by unique id
 	 *
-	 * @param id object contaning the requested family name
+	 * @param id object containing the requested id
 	 */
 	@Search()
 	public List<Patient> searchPatientByUniqueId(@RequiredParam(name = Patient.SP_RES_ID) TokenParam id) {
@@ -74,7 +75,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 * @param theFamilyName object contaning the requested family name
 	 */
 	@Search()
-	public List<Patient> findPatientsByFamilyName(@RequiredParam(name = Patient.SP_FAMILY) StringDt theFamilyName) {
+	public List<Patient> findPatientsByFamilyName(@RequiredParam(name = Patient.SP_FAMILY) StringParam theFamilyName) {
 		return patientResource.searchByFamilyName(theFamilyName);
 	}
 
@@ -86,7 +87,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 * empty.
 	 */
 	@Search()
-	public List<Patient> findPatientsByName(@RequiredParam(name = Patient.SP_NAME) StringDt name) {
+	public List<Patient> findPatientsByName(@RequiredParam(name = Patient.SP_NAME) StringParam name) {
 		return patientResource.searchByName(name);
 	}
 
@@ -122,7 +123,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 * empty.
 	 */
 	@Search()
-	public List<Patient> findPatientsByGivenName(@RequiredParam(name = Patient.SP_GIVEN) StringDt givenName) {
+	public List<Patient> findPatientsByGivenName(@RequiredParam(name = Patient.SP_GIVEN) StringParam givenName) {
 		return patientResource.searchByGivenName(givenName);
 	}
 

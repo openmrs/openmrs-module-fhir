@@ -22,6 +22,7 @@ import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.openmrs.module.fhir.resources.FHIRPractitionerResource;
@@ -73,7 +74,7 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	 * @param theFamilyName object contaning the requested family name
 	 */
 	@Search()
-	public List<Practitioner> findPractitionersByFamilyName(@RequiredParam(name = Practitioner.SP_FAMILY) StringDt theFamilyName) {
+	public List<Practitioner> findPractitionersByFamilyName(@RequiredParam(name = Practitioner.SP_FAMILY) StringParam theFamilyName) {
 		return practitionerResource.searchByFamilyName(theFamilyName);
 	}
 
@@ -85,7 +86,7 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	 * empty.
 	 */
 	@Search()
-	public List<Practitioner> findPractitionersByName(@RequiredParam(name = Practitioner.SP_NAME) StringDt name) {
+	public List<Practitioner> findPractitionersByName(@RequiredParam(name = Practitioner.SP_NAME) StringParam name) {
 		return practitionerResource.searchByName(name);
 	}
 
@@ -109,7 +110,7 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	 * empty.
 	 */
 	@Search()
-	public List<Practitioner> findPractitionersByGivenName(@RequiredParam(name = Practitioner.SP_GIVEN) StringDt givenName) {
+	public List<Practitioner> findPractitionersByGivenName(@RequiredParam(name = Practitioner.SP_GIVEN) StringParam givenName) {
 		return practitionerResource.searchByGivenName(givenName);
 	}
 }

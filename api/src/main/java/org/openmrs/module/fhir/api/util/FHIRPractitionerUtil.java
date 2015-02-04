@@ -126,6 +126,7 @@ public class FHIRPractitionerUtil {
 			practitioner.setName(fhirName);
 			practitioner.setGender(AdministrativeGenderCodesEnum.UNK);
 		}
+		FHIRUtils.validate(practitioner);
 		return practitioner;
 	}
 }

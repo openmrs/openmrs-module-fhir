@@ -78,6 +78,7 @@ public class FHIRLocationUtil {
 			parent.setReference(FHIRConstants.LOCATION + "/" + omrsLocation.getParentLocation().getUuid());
 			location.setPartOf(parent);
 		}
+		FHIRUtils.validate(location);
 		return location;
 	}
 }

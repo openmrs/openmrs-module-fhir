@@ -13,18 +13,23 @@
  */
 package org.openmrs.module.fhir.api.util;
 
+import ca.uhn.fhir.model.api.ExtensionDt;
+import ca.uhn.fhir.model.dstu.composite.AttachmentDt;
 import ca.uhn.fhir.model.dstu.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu.composite.CodingDt;
 import ca.uhn.fhir.model.dstu.composite.PeriodDt;
 import ca.uhn.fhir.model.dstu.composite.QuantityDt;
 import ca.uhn.fhir.model.dstu.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu.resource.Observation;
+import ca.uhn.fhir.model.dstu.valueset.ObservationRelationshipTypeEnum;
 import ca.uhn.fhir.model.dstu.valueset.ObservationReliabilityEnum;
 import ca.uhn.fhir.model.dstu.valueset.ObservationStatusEnum;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.InstantDt;
 import ca.uhn.fhir.model.primitive.StringDt;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.ConceptMap;
 import org.openmrs.ConceptNumeric;
 import org.openmrs.EncounterProvider;
@@ -32,189 +37,202 @@ import org.openmrs.Obs;
 import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class FHIRObsUtil {
 
+	private static final Log log = LogFactory.getLog(FHIRObsUtil.class);
 	public static Observation generateObs(Obs obs) {
 
 		Observation observation = new Observation();
+		//Set observation id
 		observation.setId(obs.getUuid());
 
+		//Set issued date
 		InstantDt instant = new InstantDt();
 		instant.setValue(obs.getDateCreated());
 		observation.setIssued(instant);
 
+		//Set fhir observation comment
 		observation.setComments(obs.getComment());
 
+		//Build and set patient reference
 		ResourceReferenceDt patientReference = new ResourceReferenceDt();
-		PersonName name = Context.getPatientService().getPatientByUuid(obs.getPerson().getUuid()).getPersonName();
-		String nameDisplay = name.getGivenName() + " " + name.getFamilyName();
-		nameDisplay += "(" + Context.getPatientService().getPatientByUuid(obs.getPerson().getUuid()).getPatientIdentifier()
-				.getIdentifier() + ")";
+		PersonName name = obs.getPerson().getPersonName();
+		StringBuilder nameDisplay = new StringBuilder();
+		nameDisplay.append(name.getGivenName());
+		nameDisplay.append("");
+		nameDisplay.append(name.getFamilyName());
+		String uri;
+		if(Context.getPatientService().getPatientByUuid(obs.getPerson().getUuid()) != null) {
+			nameDisplay.append("(");
+			nameDisplay.append(FHIRConstants.IDENTIFIER);
+			nameDisplay.append(":");
+			nameDisplay.append(Context.getPatientService().getPatientByUuid(obs.getPerson().getUuid()).getPatientIdentifier().getIdentifier());
+			nameDisplay.append(")");
+			uri = FHIRConstants.PATIENT + "/"+ obs.getPerson().getUuid();
+		} else {
+			uri = FHIRConstants.WEB_SERVICES_URI_PREFIX + "/" + FHIRConstants.PERSON + "/" + obs.getPerson().getUuid();
+		}
 
-		patientReference.setDisplay(nameDisplay);
-		String patientUri = Context.getAdministrationService().getGlobalProperty("webservices.rest.uriPrefix")
-		                    + "/ws/rest/v1/fhirpatient/" + obs.getPerson().getUuid();
+		patientReference.setDisplay(nameDisplay.toString());
 
 		IdDt patientRef = new IdDt();
-		patientRef.setValue(patientUri);
+		patientRef.setValue(uri);
 		patientReference.setReference(patientRef);
-
 		observation.setSubject(patientReference);
 
+		//Set fhir performers from openmrs providers
 		List<ResourceReferenceDt> performers = new ArrayList<ResourceReferenceDt>();
-
 		if (obs.getEncounter() != null) {
-
 			for (EncounterProvider provider : obs.getEncounter().getEncounterProviders()) {
 				ResourceReferenceDt providerReference = new ResourceReferenceDt();
-				providerReference.setDisplay(
-						provider.getProvider().getName() + "(" + provider.getProvider().getProviderId() + ")");
+				StringBuilder providerNameDisplay = new StringBuilder();
+				providerNameDisplay.append(provider.getProvider().getName());
+				providerNameDisplay.append("(");
+				providerNameDisplay.append(FHIRConstants.IDENTIFIER);
+				providerNameDisplay.append(":");
+				providerNameDisplay.append(provider.getProvider().getIdentifier());
+				providerNameDisplay.append(")");
+				providerReference.setDisplay(providerNameDisplay.toString());
 				IdDt providerRef = new IdDt();
-				String providerUri = Context.getAdministrationService().getSystemVariables().get("OPENMRS_HOSTNAME")
-				                     + "/ws/rest/v1/fhirprovider/" + provider.getUuid();
-
+				String providerUri = FHIRConstants.PRACTITIONER + "/" + provider.getUuid();
 				providerRef.setValue(providerUri);
 				providerReference.setReference(providerRef);
-
 				performers.add(providerReference);
 			}
 		}
-
 		observation.setPerformer(performers);
 
+		//Set concepts
 		Collection<ConceptMap> mappings = obs.getConcept().getConceptMappings();
 		CodeableConceptDt dt = observation.getName();
 		List<CodingDt> dts = new ArrayList<CodingDt>();
 
 		for (ConceptMap map : mappings) {
-
+			//Set concept name as the display value and set concept uuid if name is empty
 			String display = map.getConceptReferenceTerm().getName();
-			if (display == null) {
+			if (display == null || display.isEmpty()) {
 				display = map.getConceptReferenceTerm().getUuid();
 			}
 
-			if (map.getSource().getName().equals("LOINC")) {
+			//Set concept mappings of concept
+			if (map.getConceptReferenceTerm().getName().equalsIgnoreCase(FHIRConstants.CIEL)) {
 				dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
 						FHIRConstants.loinc));
-			}
-			if (map.getSource().getName().equals("SNOMED")) {
+			} else if (map.getConceptReferenceTerm().getName().equals(FHIRConstants.SNOMED)) {
 				dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
 						FHIRConstants.snomed));
-			}
-			if (map.getSource().getName().equals("CIEL")) {
+			} else if (map.getConceptReferenceTerm().getName().equals(FHIRConstants.CIEL)) {
 				dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
 						FHIRConstants.ciel));
+			} else {
+				dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
+						FHIRConstants.other));
 			}
-
 			dt.setCoding(dts);
 		}
 
 		if (obs.getConcept().isNumeric()) {
 			ConceptNumeric cn = Context.getConceptService().getConceptNumeric(obs.getConcept().getId());
+			QuantityDt quantity = new QuantityDt();
+			quantity.setValue(obs.getValueNumeric());
+			quantity.setSystem(FHIRConstants.NUMERIC_CONCEPT_MEASURE_URI);
+			quantity.setUnits(cn.getUnits());
+			quantity.setCode(cn.getUnits());
+			observation.setValue(quantity);
+			//Set high and low ranges
+			List<Observation.ReferenceRange> referenceRanges = new ArrayList<Observation.ReferenceRange>();
+			Observation.ReferenceRange referenceRange = new Observation.ReferenceRange();
+			referenceRange.setHigh(cn.getHiAbsolute());
+			referenceRange.setLow(cn.getLowAbsolute());
+			referenceRanges.add(referenceRange);
+			observation.setReferenceRange(referenceRanges);
 
-			QuantityDt q = new QuantityDt();
-
-			q.setValue(obs.getValueNumeric());
-			q.setSystem("http://unitsofmeasure.org");
-			q.setUnits(cn.getUnits());
-			q.setCode(cn.getUnits());
-
-			observation.setValue(q);
-
-		}
-
-		if (obs.getConcept().getDatatype().getHl7Abbreviation().equals("ST")) {
+		} else if (FHIRConstants.ST_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
 			StringDt value = new StringDt();
 			value.setValue(obs.getValueAsString(Context.getLocale()));
 			observation.setValue(value);
 
-		}
-
-		if (obs.getConcept().getDatatype().getHl7Abbreviation().equals("BIT")) {
+		} else if (FHIRConstants.BIT_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
 			CodeableConceptDt codeableConceptDt = new CodeableConceptDt();
-
 			List<CodingDt> codingDts = new ArrayList<CodingDt>();
 			CodingDt codingDt = new CodingDt();
-
+			codingDt.setCode(obs.getValueCoded().getName().getName());
 			codingDts.add(codingDt);
-
 			codeableConceptDt.setCoding(codingDts);
 			observation.setValue(codeableConceptDt);
 
-		}
-
-		if (obs.getConcept().getDatatype().getHl7Abbreviation().equals("TS")) {
+		} else if (FHIRConstants.TS_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
 			PeriodDt datetime = new PeriodDt();
-
 			DateTimeDt startDate = new DateTimeDt();
 			startDate.setValue(obs.getValueDatetime());
 			DateTimeDt endDate = new DateTimeDt();
 			endDate.setValue(obs.getValueDatetime());
-
 			datetime.setStart(startDate);
 			datetime.setEnd(endDate);
 			observation.setValue(datetime);
-		}
 
-		if (obs.getConcept().getDatatype().getHl7Abbreviation().equals("DT")) {
+		} else if (FHIRConstants.DT_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
 			PeriodDt datetime = new PeriodDt();
 
 			DateTimeDt startDate = new DateTimeDt();
 			startDate.setValue(obs.getValueDate());
 			DateTimeDt endDate = new DateTimeDt();
 			endDate.setValue(obs.getValueDate());
-
 			datetime.setStart(startDate);
 			datetime.setEnd(endDate);
 			observation.setValue(datetime);
 
-		}
-
-		if (obs.getConcept().getDatatype().getHl7Abbreviation().equals("CWE")) {
+		} else if (FHIRConstants.CWE_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
 
 			Collection<ConceptMap> valueMappings = obs.getValueCoded().getConceptMappings();
-
 			List<CodingDt> values = new ArrayList<CodingDt>();
-
 			for (ConceptMap map : valueMappings) {
-
 				String display = map.getConceptReferenceTerm().getName();
-				if (display == null) {
-					display = map.getConceptReferenceTerm().toString();
+				if (display == null || display.isEmpty()) {
+					display = map.getConceptReferenceTerm().getUuid();
 				}
-
-				if (map.getSource().getName().equals("LOINC")) {
-					values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
-							.setSystem(
-									FHIRConstants.loinc));
-				}
-				if (map.getSource().getName().equals("SNOMED")) {
-					values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
-							.setSystem(
-									FHIRConstants.snomed));
-				}
-				if (map.getSource().getName().equals("CIEL")) {
-					values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
-							.setSystem(
-									FHIRConstants.ciel));
+				//Set concept mappings of concept
+				if (map.getConceptReferenceTerm().getName().equalsIgnoreCase(FHIRConstants.CIEL)) {
+					values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
+							FHIRConstants.loinc));
+				} else if (map.getConceptReferenceTerm().getName().equals(FHIRConstants.SNOMED)) {
+					values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
+							FHIRConstants.snomed));
+				} else if (map.getConceptReferenceTerm().getName().equals(FHIRConstants.CIEL)) {
+					values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
+							FHIRConstants.ciel));
 				} else {
-					String uri = Context.getAdministrationService().getGlobalProperty("webservices.rest.uriPrefix")
-					             + "/ws/rest/v1/fhirconceptsource/" + map.getSource().getUuid();
-					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-							uri));
-
+					values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
+							FHIRConstants.other));
 				}
-
 			}
-
 			CodeableConceptDt codeableConceptDt = new CodeableConceptDt();
 			codeableConceptDt.setCoding(values);
 			observation.setValue(codeableConceptDt);
-
+		} else if (FHIRConstants.ED_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
+			AttachmentDt attachmentDt = new AttachmentDt();
+			attachmentDt.setUrl(obs.getValueComplex());
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			ObjectOutputStream os = null;
+			try {
+				os = new ObjectOutputStream(out);
+				os.writeObject(obs.getComplexData().getData());
+			} catch (IOException e) {
+				log.error("Error while converting object data to stream");
+				attachmentDt.setData(out.toByteArray());
+			}
+			observation.setValue(attachmentDt);
+		} else {
+			StringDt value = new StringDt();
+			value.setValue(obs.getValueAsString(Context.getLocale()));
+			observation.setValue(value);
 		}
 
 		observation.setStatus(ObservationStatusEnum.FINAL);
@@ -224,7 +242,35 @@ public class FHIRObsUtil {
 		dateApplies.setValue(obs.getObsDatetime());
 		observation.setApplies(dateApplies);
 
-		return observation;
+		//Set reference observations
+		if(obs.getGroupMembers() != null && !obs.getGroupMembers().isEmpty()) {
+			List<Observation.Related> relatedObs = new ArrayList<Observation.Related>();
+			ResourceReferenceDt resourceReferenceDt;
+			Observation.Related related;
+			for (Obs ob : obs.getGroupMembers()) {
+				related = new Observation.Related();
+				related.setType(ObservationRelationshipTypeEnum.HAS_COMPONENT);
+				resourceReferenceDt = new ResourceReferenceDt();
+				resourceReferenceDt.setDisplay(ob.getConcept().getName().getName());
+				IdDt providerRef = new IdDt();
+				String obsUri = FHIRConstants.OBSERVATION + "/" + obs.getUuid();
+				providerRef.setValue(obsUri);
+				resourceReferenceDt.setReference(providerRef);
+				related.setTarget(resourceReferenceDt);
+			}
+			observation.setRelated(relatedObs);
+		}
 
+		StringDt location = new StringDt();
+		location.setValue(FHIRConstants.LOCATION + "/" + obs.getLocation().getUuid());
+		ExtensionDt locationExt = new ExtensionDt(false, FHIRConstants.LOCATION_EXTENTION_URI, location);
+		observation.addUndeclaredExtension(locationExt);
+		if(obs.getEncounter() != null) {
+			StringDt encounter = new StringDt();
+			encounter.setValue(FHIRConstants.ENCOUNTER + "/" + obs.getLocation().getUuid());
+			ExtensionDt encounterExt = new ExtensionDt(false, FHIRConstants.ENCOUNTER_EXTENTION_URI, encounter);
+			observation.addUndeclaredExtension(encounterExt);
+		}
+		return observation;
 	}
 }

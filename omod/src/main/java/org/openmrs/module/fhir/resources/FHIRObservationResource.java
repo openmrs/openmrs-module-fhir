@@ -14,19 +14,56 @@
 package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.model.dstu.resource.Observation;
+import ca.uhn.fhir.model.primitive.DateDt;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.param.DateParam;
+import ca.uhn.fhir.rest.param.ReferenceParam;
+import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.ObsService;
+
+import java.util.List;
 
 public class FHIRObservationResource extends Resource {
 
 	public Observation getByUniqueId(IdDt id) {
-		org.openmrs.module.fhir.api.ObsService obsService = Context.getService(org.openmrs.module.fhir.api.ObsService.class);
-		ca.uhn.fhir.model.dstu.resource.Observation fhirObservation = obsService.getObs(id.getIdPart());
+		ObsService obsService = Context.getService(ObsService.class);
+		Observation fhirObservation = obsService.getObs(id.getValue());
 		if(fhirObservation == null) {
-			throw new ResourceNotFoundException("Observation is not found for the given Id " + id.getIdPart());
+			throw new ResourceNotFoundException("Observation is not found for the given Id " + id.getValue());
 		}
 		return fhirObservation;
+	}
+
+	public List<Observation> searchObsById(TokenParam id) {
+		ObsService obsService = Context.getService(ObsService.class);
+		return obsService.searchObsById(id.getValue());
+	}
+
+	public List<Observation> searchObsByPatientAndConcept(ReferenceParam person, TokenParam name) {
+		ObsService obsService = Context.getService(ObsService.class);
+		return obsService.searchObsByPatientAndConcept(person.getIdPart(), name.getValue());
+	}
+
+	public List<Observation> searchObsByName(TokenParam name) {
+		ObsService obsService = Context.getService(ObsService.class);
+		return obsService.searchObsByName(name.getValue());
+	}
+
+	public List<Observation> searchObsByDate(DateParam date) {
+		ObsService obsService = Context.getService(ObsService.class);
+		return obsService.searchObsByDate(date.getValue());
+	}
+
+	public List<Observation> searchObsByPerson(ReferenceParam person) {
+		ObsService obsService = Context.getService(ObsService.class);
+		return obsService.searchObsByPerson(person.getIdPart());
+	}
+
+	public List<Observation> searchObsByValueConcept(TokenParam answerConceptName) {
+		ObsService obsService = Context.getService(ObsService.class);
+		return obsService.searchObsById(answerConceptName.getValue());
 	}
 }
 

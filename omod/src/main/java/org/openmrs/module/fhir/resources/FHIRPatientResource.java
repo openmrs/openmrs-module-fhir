@@ -16,6 +16,7 @@ package org.openmrs.module.fhir.resources;
 import ca.uhn.fhir.model.dstu.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.StringDt;
+import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.openmrs.api.context.Context;
@@ -51,19 +52,19 @@ public class FHIRPatientResource extends Resource {
 		return patientService.searchPatientsByIdentifier(identifier.getValue());
 	}
 
-	public List<Patient> searchByGivenName(StringDt givenName) {
+	public List<Patient> searchByGivenName(StringParam givenName) {
 		org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
 				org.openmrs.module.fhir.api.PatientService.class);
 		return patientService.searchPatientsByGivenName(givenName.getValue());
 	}
 
-	public List<Patient> searchByFamilyName(StringDt familyName) {
+	public List<Patient> searchByFamilyName(StringParam theFamilyName) {
 		org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
 				org.openmrs.module.fhir.api.PatientService.class);
-		return patientService.searchPatientsByFamilyName(familyName.getValue());
+		return patientService.searchPatientsByFamilyName(theFamilyName.getValue());
 	}
 
-	public List<Patient> searchByName(StringDt name) {
+	public List<Patient> searchByName(StringParam name) {
 		org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
 				org.openmrs.module.fhir.api.PatientService.class);
 		return patientService.searchPatientsByName(name.getValue());

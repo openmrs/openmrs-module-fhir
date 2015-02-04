@@ -19,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.Person;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.ObsService;
@@ -26,6 +27,7 @@ import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRObsUtil;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -63,24 +65,16 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByPatientandConcept(String, String[])
+	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByPatientAndConcept(String, String)
 	 */
-	public List<Observation> searchObsByPatientandConcept(String patientUUid, String[] concepts) {
+	public List<Observation> searchObsByPatientAndConcept(String patientUUid, String conceptName) {
 
 		Patient patient = Context.getPatientService().getPatientByUuid(patientUUid);
-
-		List<Concept> conceptList = new ArrayList<Concept>();
-		for (String s : concepts) {
-			Concept concept = Context.getConceptService().getConceptByMapping(s, "LOINC");
-			conceptList.add(concept);
-		}
-
+		Concept concept = Context.getConceptService().getConceptByName(conceptName);
+		List<Obs> obs = Context.getObsService().getObservationsByPersonAndConcept(patient, concept);
 		List<Observation> obsList = new ArrayList<Observation>();
-		for (Concept concept : conceptList) {
-			List<Obs> obs = Context.getObsService().getObservationsByPersonAndConcept(patient, concept);
-			for (Obs ob : obs) {
-				obsList.add(FHIRObsUtil.generateObs(ob));
-			}
+		for (Obs ob : obs) {
+			obsList.add(FHIRObsUtil.generateObs(ob));
 		}
 		return obsList;
 	}
@@ -93,6 +87,65 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 		List<Observation> obsList = new ArrayList<Observation>();
 		if (omrsObs != null) {
 			obsList.add(FHIRObsUtil.generateObs(omrsObs));
+		}
+		return obsList;
+	}
+
+	/**
+	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByName(String)
+	 */
+	public List<Observation> searchObsByName(String name) {
+		Concept concept = Context.getConceptService().getConcept(name);
+		List<Concept> concepts = new ArrayList<Concept>();
+		concepts.add(concept);
+		List<Obs> omrsObs = Context.getObsService().getObservations(null, null, concepts, null, null, null, null, null,
+				null, null, null, false);
+		List<Observation> obsList = new ArrayList<Observation>();
+		for (Obs obs : omrsObs) {
+			obsList.add(FHIRObsUtil.generateObs(obs));
+		}
+		return obsList;
+	}
+
+	/**
+	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByDate(java.util.Date)
+	 */
+	public List<Observation> searchObsByDate(Date date) {
+		List<Obs> omrsObs = Context.getObsService().getObservations(null, null, null, null, null, null, null, null,
+				null, date, date, false);
+		List<Observation> obsList = new ArrayList<Observation>();
+		for (Obs obs : omrsObs) {
+			obsList.add(FHIRObsUtil.generateObs(obs));
+		}
+		return obsList;
+	}
+
+	/**
+	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByPerson(String)
+	 */
+	public List<Observation> searchObsByPerson(String personUuid) {
+		Person person = Context.getPersonService().getPersonByUuid(personUuid);
+		List<Obs> omrsObs = Context.getObsService().getObservationsByPerson(person);
+		List<Observation> obsList = new ArrayList<Observation>();
+		for (Obs obs : omrsObs) {
+			obsList.add(FHIRObsUtil.generateObs(obs));
+		}
+		return obsList;
+	}
+
+	/**
+	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByValueConcept(String)
+	 */
+	public List<Observation> searchObsByValueConcept(String conceptName) {
+		Concept concept = Context.getConceptService().getConcept(conceptName);
+		List<Concept> conceptsAnswers = new ArrayList<Concept>();
+		conceptsAnswers.add(concept);
+		List<Obs> omrsObs = Context.getObsService().getObservations(null, null, null, conceptsAnswers, null, null, null,
+				null,
+				null, null, null, false);
+		List<Observation> obsList = new ArrayList<Observation>();
+		for (Obs obs : omrsObs) {
+			obsList.add(FHIRObsUtil.generateObs(obs));
 		}
 		return obsList;
 	}

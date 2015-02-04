@@ -15,17 +15,31 @@ package org.openmrs.module.fhir.providers;
 
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu.resource.Observation;
+import ca.uhn.fhir.model.primitive.DateDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
+import ca.uhn.fhir.rest.annotation.RequiredParam;
+import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.param.DateParam;
+import ca.uhn.fhir.rest.param.ReferenceParam;
+import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.openmrs.module.fhir.resources.FHIRObservationResource;
 
+import java.util.List;
+
 public class RestfulObservationResourceProvider implements IResourceProvider {
-	
+
+	private FHIRObservationResource provider;
+
 	@Override
 	public Class<? extends IResource> getResourceType() {
 		return Observation.class;
+	}
+
+	public RestfulObservationResourceProvider() {
+		provider = new FHIRObservationResource();
 	}
 
 	/**
@@ -40,8 +54,69 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	@Read()
 	public Observation getResourceById(@IdParam IdDt theId) {
 		Observation result = null;
-		FHIRObservationResource provider = new FHIRObservationResource();
 		result = provider.getByUniqueId(theId);
 		return result;
+	}
+
+	/**
+	 * Search obsservation by unique id
+	 *
+	 * @param id object containing the requested id
+	 */
+	@Search()
+	public List<Observation> searchObservationById(@RequiredParam(name = Observation.SP_RES_ID) TokenParam id) {
+		return provider.searchObsById(id);
+	}
+
+	/**
+	 * Search obsservation by patient and concept name
+	 *
+	 * @param id object containing the requested id
+	 */
+	@Search()
+	public List<Observation> searchObsByPatientAndConcept(@RequiredParam(name = Observation.SP_SUBJECT) ReferenceParam
+			                                                          person, @RequiredParam(name = Observation.SP_NAME) TokenParam name) {
+		return provider.searchObsByPatientAndConcept(person, name);
+	}
+
+	/**
+	 * Search obsservation by observation name
+	 *
+	 * @param name object containing the requested name
+	 */
+	@Search()
+	public List<Observation> searchObsByName(@RequiredParam(name = Observation.SP_NAME) TokenParam name) {
+		return provider.searchObsByName(name);
+	}
+
+	/**
+	 * Search obsservation by observation date
+	 *
+	 * @param date object containing the requested date
+	 */
+	@Search()
+	public List<Observation> searchObsByDate(@RequiredParam(name = Observation.SP_DATE) DateParam date) {
+		return provider.searchObsByDate(date);
+	}
+
+	/**
+	 * Search obsservation by person
+	 *
+	 * @param person object containing the requested person id
+	 */
+	@Search()
+	public List<Observation> searchObsByPerson(@RequiredParam(name = Observation.SP_SUBJECT) ReferenceParam person) {
+		return provider.searchObsByPerson(person);
+	}
+
+	/**
+	 * Search obsservation by answer concept
+	 *
+	 * @param answerConceptName object containing the value concept name which is the answer concept
+	 */
+	@Search()
+	public List<Observation> searchObsByValueConcept(@RequiredParam(name = Observation.SP_VALUE_CONCEPT) TokenParam
+			                                                     answerConceptName) {
+		return provider.searchObsByValueConcept(answerConceptName);
 	}
 }
