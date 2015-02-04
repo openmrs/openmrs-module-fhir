@@ -16,11 +16,8 @@ package org.openmrs.module.fhir.resources;
 import ca.uhn.fhir.model.dstu.resource.FamilyHistory;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
-import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.FamilyHistoryService;
-import org.openmrs.module.fhir.api.LocationService;
-import org.openmrs.module.fhir.api.util.FHIRFamilyHistoryUtil;
 
 public class FHIRFamilyHistoryResource extends Resource {
 
