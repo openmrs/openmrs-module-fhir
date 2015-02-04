@@ -21,6 +21,7 @@ import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.openmrs.module.fhir.resources.FHIRLocationResource;
@@ -74,7 +75,7 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	 * empty.
 	 */
 	@Search()
-	public List<Location> findLocationsByName(@RequiredParam(name = Location.SP_NAME) StringDt name) {
+	public List<Location> findLocationsByName(@RequiredParam(name = Location.SP_NAME) StringParam name) {
 		return locationResource.searchLocationsByName(name);
 	}
 

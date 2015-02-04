@@ -17,6 +17,7 @@ import ca.uhn.fhir.model.dstu.resource.Location;
 import ca.uhn.fhir.model.dstu.valueset.LocationStatusEnum;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.StringDt;
+import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.openmrs.api.context.Context;
@@ -48,7 +49,7 @@ public class FHIRLocationResource extends Resource {
 		}
 	}
 
-	public List<Location> searchLocationsByName(StringDt name) {
+	public List<Location> searchLocationsByName(StringParam name) {
 		return Context.getService(LocationService.class).searchLocationsByName(name.getValue());
 	}
 }
