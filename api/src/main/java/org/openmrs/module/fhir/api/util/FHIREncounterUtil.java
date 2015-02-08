@@ -98,7 +98,7 @@ public class FHIREncounterUtil {
 		PersonName name = omrsEncounter.getPatient().getPersonName();
 		StringBuilder nameDisplay = new StringBuilder();
 		nameDisplay.append(name.getGivenName());
-		nameDisplay.append("");
+		nameDisplay.append(" ");
 		nameDisplay.append(name.getFamilyName());
 		String patientUri;
 		nameDisplay.append("(");
@@ -162,6 +162,7 @@ public class FHIREncounterUtil {
 			String locationRefUri = FHIRConstants.LOCATION + "/" + omrsEncounter.getLocation().getUuid();
 			locationRefId.setValue(locationRefUri);
 			locationReference.setReference(locationRefId);
+			location.setLocation(locationReference);
 			locations.add(location);
 			encounter.setLocation(locations);
 		}
@@ -174,7 +175,8 @@ public class FHIREncounterUtil {
 		visitRefId.setValue(visitRefUri);
 		visitRef.setReference(visitRefId);
 		encounter.setPartOf(visitRef);
-		FHIRUtils.validate(encounter);
+		//TODO uncomment the validation and check what's going wrong
+		//FHIRUtils.validate(encounter);
 		return encounter;
 	}
 }

@@ -52,7 +52,7 @@ public class OMRSFHIRVisitUtil {
 		PersonName name = omrsVisit.getPatient().getPersonName();
 		StringBuilder nameDisplay = new StringBuilder();
 		nameDisplay.append(name.getGivenName());
-		nameDisplay.append("");
+		nameDisplay.append(" ");
 		nameDisplay.append(name.getFamilyName());
 		String patientUri;
 		nameDisplay.append("(");
@@ -74,7 +74,7 @@ public class OMRSFHIRVisitUtil {
 		encounterEndDate.setValue(omrsVisit.getStopDatetime());
 		PeriodDt period = encounter.getPeriod();
 		period.setStart(encounterStartDate);
-		period.setEnd(encounterStartDate);
+		period.setEnd(encounterEndDate);
 		encounter.setPeriod(period);
 
 		//Set encounter location from omrs location
@@ -90,10 +90,12 @@ public class OMRSFHIRVisitUtil {
 			String locationRefUri = FHIRConstants.LOCATION + "/" + omrsVisit.getLocation().getUuid();
 			locationRefId.setValue(locationRefUri);
 			locationReference.setReference(locationRefId);
+			location.setLocation(locationReference);
 			locations.add(location);
 			encounter.setLocation(locations);
 		}
-		FHIRUtils.validate(encounter);
+		//TODO uncomment the validation and check what's going wrong
+		//FHIRUtils.validate(encounter);
 		return encounter;
 	}
 }

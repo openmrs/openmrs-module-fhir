@@ -66,7 +66,7 @@ public class FHIRObsUtil {
 		PersonName name = obs.getPerson().getPersonName();
 		StringBuilder nameDisplay = new StringBuilder();
 		nameDisplay.append(name.getGivenName());
-		nameDisplay.append("");
+		nameDisplay.append(" ");
 		nameDisplay.append(name.getFamilyName());
 		String uri;
 		if(Context.getPatientService().getPatientByUuid(obs.getPerson().getUuid()) != null) {
