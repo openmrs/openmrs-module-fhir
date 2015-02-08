@@ -13,7 +13,7 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import ca.uhn.fhir.model.dstu.resource.Composition;
+import ca.uhn.fhir.model.dstu.resource.Encounter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
@@ -48,7 +48,7 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 	/**
 	 * @see org.openmrs.module.fhir.api.EncounterService#getEncounter(String)
 	 */
-	public Composition getEncounter(String id) {
+	public Encounter getEncounter(String id) {
 
 		org.openmrs.Encounter omrsEncounter = Context.getEncounterService().getEncounterByUuid(id);
 		if (omrsEncounter == null) {

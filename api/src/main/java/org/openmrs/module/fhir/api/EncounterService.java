@@ -13,7 +13,7 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu.resource.Composition;
+import ca.uhn.fhir.model.dstu.resource.Encounter;
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +37,6 @@ public interface EncounterService extends OpenmrsService {
 	 * @param id encounter id
 	 * @return fhir composition of enconter
 	 */
-	Composition getEncounter(String id);
+	Encounter getEncounter(String id);
 
 }

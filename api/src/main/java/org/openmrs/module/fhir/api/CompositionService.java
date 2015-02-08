@@ -11,15 +11,8 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.fhir.api.util;
+package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu.resource.FamilyHistory;
-
-public class FamilyHistoryUtil {
-
-	public static FamilyHistory generateFamilyHistory() {
-		FamilyHistory familyHistory = new FamilyHistory();
-		//TODO needs to be implemented
-		return familyHistory;
-	}
+public interface CompositionService {
+	
 }

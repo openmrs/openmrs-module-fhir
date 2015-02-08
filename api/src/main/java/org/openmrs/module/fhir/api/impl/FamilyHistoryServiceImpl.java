@@ -19,7 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.FamilyHistoryService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
-import org.openmrs.module.fhir.api.util.FamilyHistoryUtil;
+import org.openmrs.module.fhir.api.util.FHIRFamilyHistoryUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +48,7 @@ public class FamilyHistoryServiceImpl extends BaseOpenmrsService implements Fami
 	 * @see org.openmrs.module.fhir.api.FamilyHistoryService#getFamilyHistory(String)
 	 */
 	public FamilyHistory getFamilyHistory(String id) {
-		return FamilyHistoryUtil.generateFamilyHistory();
+		return FHIRFamilyHistoryUtil.generateFamilyHistory();
 	}
 
 	/**

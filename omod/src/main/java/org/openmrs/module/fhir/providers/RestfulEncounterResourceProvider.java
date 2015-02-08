@@ -40,9 +40,9 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	 */
 	@Read()
 	public Encounter getResourceById(@IdParam IdDt theId) {
-		Composition result = null;
+		Encounter result = null;
 		FHIREncounterResource encounterResource = new FHIREncounterResource();
 		result = encounterResource.getByUniqueId(theId);
-		return null;
+		return result;
 	}
 }

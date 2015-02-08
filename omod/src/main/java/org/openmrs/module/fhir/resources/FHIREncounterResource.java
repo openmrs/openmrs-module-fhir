@@ -13,7 +13,7 @@
  */
 package org.openmrs.module.fhir.resources;
 
-import ca.uhn.fhir.model.dstu.resource.Composition;
+import ca.uhn.fhir.model.dstu.resource.Encounter;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.openmrs.api.context.Context;
@@ -21,10 +21,10 @@ import org.openmrs.module.fhir.api.EncounterService;
 
 public class FHIREncounterResource extends Resource {
 
-	public Composition getByUniqueId(IdDt id) {
+	public Encounter getByUniqueId(IdDt id) {
 
 		EncounterService encounterService = Context.getService(EncounterService.class);
-		Composition fhirEncounter = encounterService.getEncounter(id.getIdPart());
+		Encounter fhirEncounter = encounterService.getEncounter(id.getIdPart());
 		if(fhirEncounter == null) {
 			throw new ResourceNotFoundException("Encounter is not found for the given Id " + id.getIdPart());
 		}
