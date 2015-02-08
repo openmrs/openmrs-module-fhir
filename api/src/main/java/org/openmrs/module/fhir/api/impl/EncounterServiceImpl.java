@@ -16,11 +16,13 @@ package org.openmrs.module.fhir.api.impl;
 import ca.uhn.fhir.model.dstu.resource.Encounter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Visit;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.EncounterService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIREncounterUtil;
+import org.openmrs.module.fhir.api.util.OMRSFHIRVisitUtil;
 
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
@@ -52,7 +54,12 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 
 		org.openmrs.Encounter omrsEncounter = Context.getEncounterService().getEncounterByUuid(id);
 		if (omrsEncounter == null) {
-			return null;
+			Visit visit = Context.getVisitService().getVisitByUuid(id);
+			if(visit != null) {
+				return OMRSFHIRVisitUtil.generateEncounter(visit);
+			} else {
+				return null;
+			}
 		}
 		return FHIREncounterUtil.generateEncounter(omrsEncounter);
 

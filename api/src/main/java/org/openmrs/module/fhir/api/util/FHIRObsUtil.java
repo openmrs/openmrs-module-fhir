@@ -81,7 +81,6 @@ public class FHIRObsUtil {
 		}
 
 		patientReference.setDisplay(nameDisplay.toString());
-
 		IdDt patientRef = new IdDt();
 		patientRef.setValue(uri);
 		patientReference.setReference(patientRef);

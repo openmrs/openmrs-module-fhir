@@ -33,6 +33,8 @@ public interface EncounterService extends OpenmrsService {
 
 	/**
 	 * Get encounter composition by id
+	 * As OpenMRS visits and encounters both model as fhir encounter, this method will return OpenMRS visit or a encounter
+	 * which is to the matching id provided in the method parameter
 	 *
 	 * @param id encounter id
 	 * @return fhir composition of enconter
