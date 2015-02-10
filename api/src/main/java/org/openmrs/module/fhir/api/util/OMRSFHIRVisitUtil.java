@@ -15,14 +15,16 @@ package org.openmrs.module.fhir.api.util;
 
 import ca.uhn.fhir.model.dstu.composite.PeriodDt;
 import ca.uhn.fhir.model.dstu.composite.ResourceReferenceDt;
+import ca.uhn.fhir.model.dstu.resource.Composition;
 import ca.uhn.fhir.model.dstu.resource.Encounter;
 import ca.uhn.fhir.model.dstu.valueset.EncounterClassEnum;
 import ca.uhn.fhir.model.dstu.valueset.EncounterStateEnum;
-import ca.uhn.fhir.model.dstu.valueset.EncounterTypeEnum;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
+import org.openmrs.EncounterProvider;
 import org.openmrs.PersonName;
 import org.openmrs.Visit;
+import org.openmrs.api.context.Context;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,10 +40,12 @@ public class OMRSFHIRVisitUtil {
 		encounter.setStatus(EncounterStateEnum.FINISHED);
 		//TODO what class element needs to be set
 		encounter.setClassElement(EncounterClassEnum.INPATIENT);
-		if(omrsVisit.getIndication() != null) {
+		if (omrsVisit.getIndication() != null) {
 			ResourceReferenceDt indication = new ResourceReferenceDt();
 			indication.setDisplay(omrsVisit.getIndication().getName().getName());
-			String uri = FHIRConstants.WEB_SERVICES_URI_PREFIX + "/" + FHIRConstants.CONCEPT + "/" + omrsVisit.getIndication().getUuid();
+			String uri =
+					FHIRConstants.WEB_SERVICES_URI_PREFIX + "/" + FHIRConstants.CONCEPT + "/" + omrsVisit.getIndication()
+							.getUuid();
 			IdDt indicationRef = new IdDt();
 			indicationRef.setValue(uri);
 			indication.setReference(indicationRef);

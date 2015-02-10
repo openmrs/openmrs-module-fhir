@@ -23,7 +23,12 @@ import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.openmrs.module.fhir.resources.FHIREncounterResource;
 
 public class RestfulEncounterResourceProvider implements IResourceProvider {
-	
+
+	private FHIREncounterResource encounterResource;
+
+	public RestfulEncounterResourceProvider() {
+		encounterResource = new FHIREncounterResource();
+	}
 	@Override
 	public Class<? extends IResource> getResourceType() {
 		return Encounter.class;
@@ -41,7 +46,6 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	@Read()
 	public Encounter getResourceById(@IdParam IdDt theId) {
 		Encounter result = null;
-		FHIREncounterResource encounterResource = new FHIREncounterResource();
 		result = encounterResource.getByUniqueId(theId);
 		return result;
 	}

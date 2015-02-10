@@ -13,14 +13,17 @@
  */
 package org.openmrs.module.fhir.api.util;
 
+import ca.uhn.fhir.model.dstu.composite.CodingDt;
 import ca.uhn.fhir.model.dstu.composite.PeriodDt;
 import ca.uhn.fhir.model.dstu.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu.resource.Composition;
 import ca.uhn.fhir.model.dstu.resource.Composition.Section;
 import ca.uhn.fhir.model.dstu.resource.Encounter;
+import ca.uhn.fhir.model.dstu.valueset.CompositionStatusEnum;
 import ca.uhn.fhir.model.dstu.valueset.EncounterClassEnum;
 import ca.uhn.fhir.model.dstu.valueset.EncounterStateEnum;
 import ca.uhn.fhir.model.dstu.valueset.ParticipantTypeEnum;
+import ca.uhn.fhir.model.primitive.CodeDt;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import org.openmrs.EncounterProvider;
@@ -32,25 +35,42 @@ import java.util.List;
 
 public class FHIREncounterUtil {
 
-	public static Composition generateComposition(org.openmrs.Encounter openMRSEncounter) {
+	public static Composition generateComposition(org.openmrs.Encounter omrsEncounter) {
 
 		Composition composition = new Composition();
 
+		//Set id of the composition from omrs encounter id
 		IdDt uuid = new IdDt();
-		uuid.setValue(openMRSEncounter.getUuid());
+		uuid.setValue(omrsEncounter.getUuid());
 		composition.setId(uuid);
+
+		//Set composition date
+		DateTimeDt encounterDate = new DateTimeDt();
+		encounterDate.setValue(omrsEncounter.getEncounterDatetime());
+		composition.setDate(encounterDate);
+
+		//Set composition status
+		composition.setStatus(CompositionStatusEnum.FINAL);
+
+		//Set document confidentiality
+		CodingDt confidentialityCode = new CodingDt();
+		confidentialityCode.setCode(FHIRConstants.CONFIDENTIALITY_CODING_R);
+		confidentialityCode.setDisplay(FHIRConstants.CONFIDENTIALITY_CODING_VALUE_RESTRICTED);
+		composition.setConfidentiality(confidentialityCode);
+
+		//Set composition subject as patient resource
+		composition.setSubject(buildPatientReference(omrsEncounter));
 
 		Section patientSection = composition.addSection();
 		IdDt patientUuid = new IdDt();
-
-		patientUuid.setValue(openMRSEncounter.getPatient().getUuid());
+		patientUuid.setValue(omrsEncounter.getPatient().getUuid());
 		patientSection.setId(patientUuid);
 
 		ResourceReferenceDt patientReference = new ResourceReferenceDt();
 
 		patientReference.setDisplay("Patient");
 		String patientUri = Context.getAdministrationService().getGlobalProperty("fhir.uriPrefix") + "/Patient/"
-		                    + openMRSEncounter.getPatient().getUuid();
+		                    + omrsEncounter.getPatient().getUuid();
 
 		IdDt patientRef = new IdDt();
 		patientRef.setValue(patientUri);
@@ -58,7 +78,7 @@ public class FHIREncounterUtil {
 
 		patientSection.setSubject(patientReference);
 
-		for (EncounterProvider provider : openMRSEncounter.getEncounterProviders()) {
+		for (EncounterProvider provider : omrsEncounter.getEncounterProviders()) {
 
 			Section providerSection = composition.addSection();
 
@@ -93,25 +113,8 @@ public class FHIREncounterUtil {
 		//TODO what class element needs to be set
 		encounter.setClassElement(EncounterClassEnum.INPATIENT);
 
-		//Build and set patient reference
-		ResourceReferenceDt patientReference = new ResourceReferenceDt();
-		PersonName name = omrsEncounter.getPatient().getPersonName();
-		StringBuilder nameDisplay = new StringBuilder();
-		nameDisplay.append(name.getGivenName());
-		nameDisplay.append(" ");
-		nameDisplay.append(name.getFamilyName());
-		String patientUri;
-		nameDisplay.append("(");
-		nameDisplay.append(FHIRConstants.IDENTIFIER);
-		nameDisplay.append(":");
-		nameDisplay.append(omrsEncounter.getPatient().getPatientIdentifier().getIdentifier());
-		nameDisplay.append(")");
-		patientUri = FHIRConstants.PATIENT + "/" + omrsEncounter.getPatient().getUuid();
-		IdDt patientRef = new IdDt();
-		patientRef.setValue(patientUri);
-		patientReference.setReference(patientRef);
-		patientReference.setDisplay(nameDisplay.toString());
-		encounter.setSubject(patientReference);
+		//Set patient reference
+		encounter.setSubject(buildPatientReference(omrsEncounter));
 
 		//Set participants
 		if (omrsEncounter.getEncounterProviders().size() > 0) {
@@ -178,5 +181,27 @@ public class FHIREncounterUtil {
 		//TODO uncomment the validation and check what's going wrong
 		//FHIRUtils.validate(encounter);
 		return encounter;
+	}
+
+	private static ResourceReferenceDt buildPatientReference(org.openmrs.Encounter omrsEncounter) {
+		//Build and set patient reference
+		ResourceReferenceDt patientReference = new ResourceReferenceDt();
+		PersonName name = omrsEncounter.getPatient().getPersonName();
+		StringBuilder nameDisplay = new StringBuilder();
+		nameDisplay.append(name.getGivenName());
+		nameDisplay.append(" ");
+		nameDisplay.append(name.getFamilyName());
+		String patientUri;
+		nameDisplay.append("(");
+		nameDisplay.append(FHIRConstants.IDENTIFIER);
+		nameDisplay.append(":");
+		nameDisplay.append(omrsEncounter.getPatient().getPatientIdentifier().getIdentifier());
+		nameDisplay.append(")");
+		patientUri = FHIRConstants.PATIENT + "/" + omrsEncounter.getPatient().getUuid();
+		IdDt patientRef = new IdDt();
+		patientRef.setValue(patientUri);
+		patientReference.setReference(patientRef);
+		patientReference.setDisplay(nameDisplay.toString());
+		return patientReference;
 	}
 }

@@ -49,4 +49,6 @@ public final class FHIRConstants {
 	public static final String WEB_SERVICES_URI_PREFIX = "ws/rest";
 	public static final String PERSON = "person";
 	public static final String CONCEPT = "concept";
+	public static final String CONFIDENTIALITY_CODING_R = "R";
+	public static final String CONFIDENTIALITY_CODING_VALUE_RESTRICTED = "restricted";
 }
