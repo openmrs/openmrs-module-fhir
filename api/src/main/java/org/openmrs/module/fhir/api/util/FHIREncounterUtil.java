@@ -23,12 +23,11 @@ import ca.uhn.fhir.model.dstu.valueset.CompositionStatusEnum;
 import ca.uhn.fhir.model.dstu.valueset.EncounterClassEnum;
 import ca.uhn.fhir.model.dstu.valueset.EncounterStateEnum;
 import ca.uhn.fhir.model.dstu.valueset.ParticipantTypeEnum;
-import ca.uhn.fhir.model.primitive.CodeDt;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import org.openmrs.EncounterProvider;
+import org.openmrs.Obs;
 import org.openmrs.PersonName;
-import org.openmrs.api.context.Context;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,44 +60,60 @@ public class FHIREncounterUtil {
 		//Set composition subject as patient resource
 		composition.setSubject(buildPatientReference(omrsEncounter));
 
-		Section patientSection = composition.addSection();
-		IdDt patientUuid = new IdDt();
-		patientUuid.setValue(omrsEncounter.getPatient().getUuid());
-		patientSection.setId(patientUuid);
+		//Setting composition author
+		if (omrsEncounter.getEncounterProviders().size() > 0) {
+			List<ResourceReferenceDt> authors = new ArrayList<ResourceReferenceDt>();
+			ResourceReferenceDt author;
+			for (EncounterProvider provider : omrsEncounter.getEncounterProviders()) {
+				author = new ResourceReferenceDt();
+				StringBuilder providerNameDisplay = new StringBuilder();
+				providerNameDisplay.append(provider.getProvider().getName());
+				providerNameDisplay.append("(");
+				providerNameDisplay.append(FHIRConstants.IDENTIFIER);
+				providerNameDisplay.append(":");
+				providerNameDisplay.append(provider.getProvider().getIdentifier());
+				providerNameDisplay.append(")");
+				author.setDisplay(providerNameDisplay.toString());
+				IdDt providerRef = new IdDt();
+				String providerUri = FHIRConstants.PRACTITIONER + "/" + provider.getUuid();
+				providerRef.setValue(providerUri);
+				author.setReference(providerRef);
+				authors.add(author);
+			}
+			composition.setAuthor(authors);
+		}
 
-		ResourceReferenceDt patientReference = new ResourceReferenceDt();
+		//Set encounter reference
+		ResourceReferenceDt encounterRef = new ResourceReferenceDt();
+		IdDt encounterRefId = new IdDt();
+		encounterRefId.setValue(FHIRConstants.ENCOUNTER + "/" + omrsEncounter.getUuid());
+		encounterRef.setReference(encounterRefId);
+		composition.setEncounter(encounterRef);
 
-		patientReference.setDisplay("Patient");
-		String patientUri = Context.getAdministrationService().getGlobalProperty("fhir.uriPrefix") + "/Patient/"
-		                    + omrsEncounter.getPatient().getUuid();
+		//Set location
+		Section locationSection = composition.addSection();
+		ResourceReferenceDt locationRef = new ResourceReferenceDt();
+		locationRef.setDisplay(FHIRConstants.LOCATION);
+		String locationUri = FHIRConstants.LOCATION + "/" + omrsEncounter.getLocation().getUuid();
 
-		IdDt patientRef = new IdDt();
-		patientRef.setValue(patientUri);
-		patientReference.setReference(patientRef);
+		IdDt locatioId = new IdDt();
+		locatioId.setValue(locationUri);
+		locationRef.setReference(locatioId);
+		locationSection.setContent(locationRef);
 
-		patientSection.setSubject(patientReference);
-
-		for (EncounterProvider provider : omrsEncounter.getEncounterProviders()) {
-
-			Section providerSection = composition.addSection();
-
-			IdDt providerUuid = new IdDt();
-
-			providerUuid.setValue(provider.getUuid());
-			providerSection.setId(providerUuid);
-
-			ResourceReferenceDt providerReference = new ResourceReferenceDt();
-
-			providerReference.setDisplay("Provider");
-			String providerUri = Context.getAdministrationService().getGlobalProperty("fhir.uriPrefix") + "/Practitioner/"
-			                     + provider.getUuid();
-
-			IdDt providerRef = new IdDt();
-			providerRef.setValue(providerUri);
-			providerReference.setReference(providerRef);
-
-			providerSection.setSubject(providerReference);
-
+		//Set observation section
+		if (omrsEncounter.getAllObs(false).size() > 0) {
+			Section obsSection = composition.addSection();
+			ResourceReferenceDt obsRef;
+			String obsUri;
+			IdDt obsId;
+			for (Obs obs : omrsEncounter.getAllObs(false)) {
+				obsRef = new ResourceReferenceDt();
+				obsUri = FHIRConstants.OBSERVATION + "/" + obs.getUuid();
+				obsId = new IdDt();
+				obsId.setValue(obsUri);
+				obsSection.setContent(obsRef);
+			}
 		}
 		return composition;
 	}
