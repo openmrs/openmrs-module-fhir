@@ -13,16 +13,21 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
+import ca.uhn.fhir.model.dstu.resource.Composition;
 import ca.uhn.fhir.model.dstu.resource.Encounter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Visit;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.module.fhir.FHIR;
 import org.openmrs.module.fhir.api.EncounterService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIREncounterUtil;
 import org.openmrs.module.fhir.api.util.OMRSFHIRVisitUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
@@ -62,7 +67,28 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 			}
 		}
 		return FHIREncounterUtil.generateEncounter(omrsEncounter);
-
 	}
 
+	public List<Encounter> searchEncounterById(String id) {
+		org.openmrs.Encounter omrsEncounter = Context.getEncounterService().getEncounterByUuid(id);
+		List<Encounter> encounterList = new ArrayList<Encounter>();
+		if (omrsEncounter != null) {
+			encounterList.add(FHIREncounterUtil.generateEncounter(omrsEncounter));
+		} else {
+			Visit visit = Context.getVisitService().getVisitByUuid(id);
+			if(visit != null) {
+				encounterList.add(OMRSFHIRVisitUtil.generateEncounter(visit));
+			}
+		}
+		return encounterList;
+	}
+
+	public List<Composition> searchEncounterConposition(String id) {
+		org.openmrs.Encounter omrsEncounter = Context.getEncounterService().getEncounterByUuid(id);
+		List<Composition> encounterList = new ArrayList<Composition>();
+		if(omrsEncounter != null) {
+			encounterList.add(FHIREncounterUtil.generateComposition(omrsEncounter));
+		}
+		return encounterList;
+	}
 }

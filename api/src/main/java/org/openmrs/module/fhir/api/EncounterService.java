@@ -13,9 +13,12 @@
  */
 package org.openmrs.module.fhir.api;
 
+import ca.uhn.fhir.model.dstu.resource.Composition;
 import ca.uhn.fhir.model.dstu.resource.Encounter;
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * This service exposes module's core functionality. It is a Spring managed bean which is configured in
@@ -41,4 +44,20 @@ public interface EncounterService extends OpenmrsService {
 	 */
 	Encounter getEncounter(String id);
 
-}
+	/**
+	 * Search encounters by id
+	 *
+	 * @param id to be search
+	 * @return fhir encounter resource list
+	 */
+	public List<Encounter> searchEncounterById(String id);
+
+	/**
+	 * Search encounters by id and returned composition
+	 *
+	 * @param id the encounter id to be search
+	 * @return fhir composition list
+	 */
+	public List<Composition> searchEncounterConposition(String id);
+
+	}
