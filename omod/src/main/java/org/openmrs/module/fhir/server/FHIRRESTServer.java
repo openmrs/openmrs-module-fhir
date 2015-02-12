@@ -17,6 +17,7 @@ import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import org.openmrs.module.fhir.addressstrategy.OpenMRSFHIRRequestAddressStrategy;
 import org.openmrs.module.fhir.providers.RestfulAllergyIntoleranceResourceProvider;
+import org.openmrs.module.fhir.providers.RestfulCompositionResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulEncounterResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulFamilyHistoryResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulLocationResourceProvider;
@@ -50,6 +51,7 @@ public class FHIRRESTServer extends RestfulServer {
 		resourceProviders.add(new RestfulLocationResourceProvider());
 		resourceProviders.add(new RestfulObservationResourceProvider());
 		resourceProviders.add(new RestfulPractitionerResourceProvider());
+		resourceProviders.add(new RestfulCompositionResourceProvider());
 		setResourceProviders(resourceProviders);
 		setServerName(FHIROmodConstants.OPENMRS_FHIR_SERVER_NAME);
 	}

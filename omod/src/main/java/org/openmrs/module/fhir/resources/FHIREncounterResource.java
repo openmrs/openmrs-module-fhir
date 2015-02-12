@@ -15,9 +15,12 @@ package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.model.dstu.resource.Encounter;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.EncounterService;
+
+import java.util.List;
 
 public class FHIREncounterResource extends Resource {
 
@@ -31,4 +34,7 @@ public class FHIREncounterResource extends Resource {
 		return fhirEncounter;
 	}
 
+	public List<Encounter> searchEncountersById(TokenParam id) {
+		return Context.getService(EncounterService.class).searchEncounterById(id.getValue());
+	}
 }

@@ -19,8 +19,13 @@ import ca.uhn.fhir.model.dstu.resource.Encounter;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
+import ca.uhn.fhir.rest.annotation.RequiredParam;
+import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.openmrs.module.fhir.resources.FHIREncounterResource;
+
+import java.util.List;
 
 public class RestfulEncounterResourceProvider implements IResourceProvider {
 
@@ -48,5 +53,15 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 		Encounter result = null;
 		result = encounterResource.getByUniqueId(theId);
 		return result;
+	}
+
+	/**
+	 * Search locations by unique id
+	 *
+	 * @param id object containing the requested id
+	 */
+	@Search()
+	public List<Encounter> searchEncountersByUniqueId(@RequiredParam(name = Encounter.SP_RES_ID) TokenParam id) {
+		return encounterResource.searchEncountersById(id);
 	}
 }
