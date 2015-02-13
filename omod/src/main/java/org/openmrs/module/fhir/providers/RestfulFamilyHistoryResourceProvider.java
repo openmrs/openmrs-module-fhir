@@ -18,11 +18,22 @@ import ca.uhn.fhir.model.dstu.resource.FamilyHistory;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
+import ca.uhn.fhir.rest.annotation.RequiredParam;
+import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.param.ReferenceParam;
+import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.openmrs.module.fhir.resources.FHIRFamilyHistoryResource;
 
+import java.util.List;
+
 public class RestfulFamilyHistoryResourceProvider implements IResourceProvider {
-	
+	private FHIRFamilyHistoryResource familyHistoryResource;
+
+	public RestfulFamilyHistoryResourceProvider() {
+		this.familyHistoryResource = new FHIRFamilyHistoryResource();
+	}
+
 	@Override
 	public Class<? extends IResource> getResourceType() {
 		return FamilyHistory.class;
@@ -40,8 +51,27 @@ public class RestfulFamilyHistoryResourceProvider implements IResourceProvider {
 	@Read()
 	public FamilyHistory getResourceById(@IdParam IdDt theId) {
 		FamilyHistory result = null;
-		FHIRFamilyHistoryResource familyHistoryResource = new FHIRFamilyHistoryResource();
 		result = familyHistoryResource.getByUniqueId(theId);
 		return result;
+	}
+
+	/**
+	 * Search family history by unique id
+	 *
+	 * @param id object containing the requested id
+	 */
+	@Search()
+	public List<FamilyHistory> searchFamilyHistoryByUniqueId(@RequiredParam(name = FamilyHistory.SP_RES_ID) TokenParam id) {
+		return familyHistoryResource.searchFamilyHistoryByUniqueId(id);
+	}
+
+	/**
+	 * Search family history by patient
+	 *
+	 * @param person object containing the requested patient id
+	 */
+	@Search()
+	public List<FamilyHistory> searchFamilyHistoryByPerson(@RequiredParam(name = FamilyHistory.SP_SUBJECT) ReferenceParam  person) {
+		return familyHistoryResource.searchFamilyHistoryByPerson(person);
 	}
 }

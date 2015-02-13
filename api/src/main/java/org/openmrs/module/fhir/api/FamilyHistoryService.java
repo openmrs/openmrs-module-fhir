@@ -21,19 +21,26 @@ import java.util.List;
 public interface FamilyHistoryService extends OpenmrsService {
 
 	/**
-	 * Get family history by id
+	 * Search family history by person
 	 *
-	 * @param id family history uuid
-	 * @return family history fhir resource
+	 * @param personId person id
+	 * @return fhir family history resource
 	 */
-	public FamilyHistory getFamilyHistory(String id);
+	public List<FamilyHistory> searchFamilyHistoryByPerson(String personId);
 
 	/**
-	 * Search family history by id
+	 * Get relationship by id
 	 *
-	 * @param id family history uuid
-	 * @return family history fhir resource list
+	 * @param id the id of the relationship
+	 * @return fhir family history resource
 	 */
-	public List<FamilyHistory> searchFamilyHistoryById(String id);
+	public FamilyHistory getRelationshipById(String id);
 
+	/**
+	 * Search relationship by id
+	 *
+	 * @param id the id of the relationship
+	 * @return fhir family history resource
+	 */
+	public List<FamilyHistory> searchRelationshipsById(String id);
 }

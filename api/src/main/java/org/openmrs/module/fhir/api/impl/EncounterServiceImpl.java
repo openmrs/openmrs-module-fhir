@@ -17,6 +17,7 @@ import ca.uhn.fhir.model.dstu.resource.Composition;
 import ca.uhn.fhir.model.dstu.resource.Encounter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
@@ -83,12 +84,23 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 		return encounterList;
 	}
 
-	public List<Composition> searchEncounterConposition(String id) {
+	public List<Composition> searchEncounterComposition(String id) {
 		org.openmrs.Encounter omrsEncounter = Context.getEncounterService().getEncounterByUuid(id);
 		List<Composition> encounterList = new ArrayList<Composition>();
 		if(omrsEncounter != null) {
 			encounterList.add(FHIREncounterUtil.generateComposition(omrsEncounter));
 		}
 		return encounterList;
+	}
+
+	@Override
+	public List<Composition> searchEncounterCompositionByPatient(String patientId) {
+		Patient patient = Context.getPatientService().getPatientByUuid(patientId);
+		List<org.openmrs.Encounter> omrsEncounters = Context.getEncounterService().getEncountersByPatient(patient);
+		List<Composition> fhirEncounters = new ArrayList<Composition>();
+		for(org.openmrs.Encounter enc : omrsEncounters) {
+			fhirEncounters.add(FHIREncounterUtil.generateComposition(enc));
+		}
+		return fhirEncounters;
 	}
 }

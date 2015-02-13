@@ -24,7 +24,7 @@ public class FHIRCompositionResource {
 
 	public List<Composition> searchEncounterCompostionsByPatient(ReferenceParam patient) {
 		EncounterService encounterService = Context.getService(EncounterService.class);
-		return encounterService.searchEncounterConposition(patient.getIdPart());
+		return encounterService.searchEncounterCompositionByPatient(patient.getIdPart());
 	}
 
 }
