@@ -68,4 +68,4 @@ public interface EncounterService extends OpenmrsService {
 	 */
 	public List<Composition> searchEncounterCompositionByPatient(String patientId);
 
-	}
+}

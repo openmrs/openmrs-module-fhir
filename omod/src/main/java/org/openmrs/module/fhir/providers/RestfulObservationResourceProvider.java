@@ -74,7 +74,8 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 */
 	@Search()
 	public List<Observation> searchObsByPatientAndConcept(@RequiredParam(name = Observation.SP_SUBJECT) ReferenceParam
-			                                                          person, @RequiredParam(name = Observation.SP_NAME) TokenParam name) {
+			                                                      person,
+	                                                      @RequiredParam(name = Observation.SP_NAME) TokenParam name) {
 		return provider.searchObsByPatientAndConcept(person, name);
 	}
 
@@ -115,7 +116,7 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 */
 	@Search()
 	public List<Observation> searchObsByValueConcept(@RequiredParam(name = Observation.SP_VALUE_CONCEPT) TokenParam
-			                                                     answerConceptName) {
+			                                                 answerConceptName) {
 		return provider.searchObsByValueConcept(answerConceptName);
 	}
 }

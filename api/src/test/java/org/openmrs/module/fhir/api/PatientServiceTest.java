@@ -76,9 +76,9 @@ public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 		Patient fhirPatient = patients.get(0);
 		assertEquals(fhirPatient.getId().toString(), returned_patientUuid);
 		boolean exist = false;
-		for(Patient patient : patients) {
-			for(IdentifierDt identifierDt : patient.getIdentifier()) {
-				if(identifierValue.equals(identifierDt.getValue().getValue())) {
+		for (Patient patient : patients) {
+			for (IdentifierDt identifierDt : patient.getIdentifier()) {
+				if (identifierValue.equals(identifierDt.getValue().getValue())) {
 					exist = true;
 				}
 			}
@@ -97,9 +97,9 @@ public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 		Patient fhirPatient = patients.get(0);
 		assertEquals(fhirPatient.getId().toString(), returned_patientUuid);
 		boolean exist = false;
-		for(Patient patient : patients) {
-			for(IdentifierDt identifierDt : patient.getIdentifier()) {
-				if(identifierValue.equals(identifierDt.getValue().getValue())) {
+		for (Patient patient : patients) {
+			for (IdentifierDt identifierDt : patient.getIdentifier()) {
+				if (identifierValue.equals(identifierDt.getValue().getValue())) {
 					exist = true;
 				}
 			}

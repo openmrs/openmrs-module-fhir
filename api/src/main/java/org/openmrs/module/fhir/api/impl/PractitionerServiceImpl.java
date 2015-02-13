@@ -79,7 +79,7 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 	public List<Practitioner> searchPractitionersByName(String name) {
 		List<Provider> omrsProviders = searchProvidersByQuery(name);
 		List<Practitioner> practitioners = new ArrayList<Practitioner>();
-		for(Provider provider : omrsProviders) {
+		for (Provider provider : omrsProviders) {
 			practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
 		}
 		return practitioners;
@@ -91,13 +91,13 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 	public List<Practitioner> searchPractitionersByGivenName(String givenName) {
 		List<Provider> omrsProviders = searchProvidersByQuery(givenName);
 		List<Practitioner> practitioners = new ArrayList<Practitioner>();
-		for(Provider provider : omrsProviders) {
+		for (Provider provider : omrsProviders) {
 			//Search through the provider given name for check whether given name exist in the returned provider resource
-			if(givenName.equalsIgnoreCase(provider.getPerson().getGivenName())) {
+			if (givenName.equalsIgnoreCase(provider.getPerson().getGivenName())) {
 				practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
 			} else {
-				for(PersonName personName : provider.getPerson().getNames()) {
-					if(givenName.equalsIgnoreCase(personName.getGivenName())) {
+				for (PersonName personName : provider.getPerson().getNames()) {
+					if (givenName.equalsIgnoreCase(personName.getGivenName())) {
 						practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
 					}
 				}
@@ -112,7 +112,7 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 	public List<Practitioner> searchPractitionersByFamilyName(String familyName) {
 		List<Provider> omrsProviders = searchProvidersByQuery(familyName);
 		List<Practitioner> practitioners = new ArrayList<Practitioner>();
-		for(Provider provider : omrsProviders) {
+		for (Provider provider : omrsProviders) {
 			//Search through the provider family name for check whether family name exist in the returned provider resource
 			if (familyName.equalsIgnoreCase(provider.getPerson().getFamilyName())) {
 				practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
@@ -138,7 +138,6 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 		}
 		return practitioners;
 	}
-
 
 	private List<Provider> searchProvidersByQuery(String query) {
 		return Context.getProviderService().getProviders(query, null, null, null, false);

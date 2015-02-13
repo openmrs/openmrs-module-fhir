@@ -53,4 +53,4 @@ public interface LocationService extends OpenmrsService {
 	 * @return fhir location resource list
 	 */
 	public List<Location> searchLocationsByName(String name);
-	}
+}

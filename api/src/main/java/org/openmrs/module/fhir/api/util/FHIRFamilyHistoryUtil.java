@@ -65,7 +65,8 @@ public class FHIRFamilyHistoryUtil {
 		Person relatedPerson;
 		String relationshipType;
 
-		//TODO currently this will add all the relationships person had which needs to be filter out to add only family type relations
+		//TODO currently this will add all the relationships person had which needs to be filter out to add only family
+		// type relations
 		//Set related person and relationship type
 		for (Relationship relationship : relationships) {
 			fhirRelation = new FamilyHistory.Relation();

@@ -157,7 +157,7 @@ public class FHIREncounterUtil {
 				providerReference.setReference(providerRef);
 				participant.setIndividual(providerReference);
 				participants.add(participant);
-		}
+			}
 			encounter.setParticipant(participants);
 		}
 		//Set encounter period from omrs encounter
@@ -169,7 +169,7 @@ public class FHIREncounterUtil {
 		encounter.setPeriod(period);
 
 		//Set encounter location from omrs location
-		if(omrsEncounter.getLocation() != null) {
+		if (omrsEncounter.getLocation() != null) {
 			List<Encounter.Location> locations = new ArrayList<Encounter.Location>();
 			Encounter.Location location = new Encounter.Location();
 			//set encounter period

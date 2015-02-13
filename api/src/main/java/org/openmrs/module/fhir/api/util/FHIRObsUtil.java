@@ -47,6 +47,7 @@ import java.util.List;
 public class FHIRObsUtil {
 
 	private static final Log log = LogFactory.getLog(FHIRObsUtil.class);
+
 	public static Observation generateObs(Obs obs) {
 
 		Observation observation = new Observation();
@@ -69,13 +70,15 @@ public class FHIRObsUtil {
 		nameDisplay.append(" ");
 		nameDisplay.append(name.getFamilyName());
 		String uri;
-		if(Context.getPatientService().getPatientByUuid(obs.getPerson().getUuid()) != null) {
+		if (Context.getPatientService().getPatientByUuid(obs.getPerson().getUuid()) != null) {
 			nameDisplay.append("(");
 			nameDisplay.append(FHIRConstants.IDENTIFIER);
 			nameDisplay.append(":");
-			nameDisplay.append(Context.getPatientService().getPatientByUuid(obs.getPerson().getUuid()).getPatientIdentifier().getIdentifier());
+			nameDisplay.append(Context.getPatientService().getPatientByUuid(obs.getPerson().getUuid())
+					.getPatientIdentifier()
+					.getIdentifier());
 			nameDisplay.append(")");
-			uri = FHIRConstants.PATIENT + "/"+ obs.getPerson().getUuid();
+			uri = FHIRConstants.PATIENT + "/" + obs.getPerson().getUuid();
 		} else {
 			uri = FHIRConstants.WEB_SERVICES_URI_PREFIX + "/" + FHIRConstants.PERSON + "/" + obs.getPerson().getUuid();
 		}
@@ -148,10 +151,10 @@ public class FHIRObsUtil {
 			//Set high and low ranges
 			List<Observation.ReferenceRange> referenceRanges = new ArrayList<Observation.ReferenceRange>();
 			Observation.ReferenceRange referenceRange = new Observation.ReferenceRange();
-			if(cn.getHiAbsolute() != null) {
+			if (cn.getHiAbsolute() != null) {
 				referenceRange.setHigh(cn.getHiAbsolute());
 			}
-			if(cn.getLowAbsolute() != null) {
+			if (cn.getLowAbsolute() != null) {
 				referenceRange.setLow(cn.getLowAbsolute());
 			}
 			referenceRanges.add(referenceRange);
@@ -162,7 +165,8 @@ public class FHIRObsUtil {
 			value.setValue(obs.getValueAsString(Context.getLocale()));
 			observation.setValue(value);
 
-		} else if (FHIRConstants.BIT_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
+		} else if (FHIRConstants.BIT_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation()
+		)) {
 			CodeableConceptDt codeableConceptDt = new CodeableConceptDt();
 			List<CodingDt> codingDts = new ArrayList<CodingDt>();
 			CodingDt codingDt = new CodingDt();
@@ -192,7 +196,8 @@ public class FHIRObsUtil {
 			datetime.setEnd(endDate);
 			observation.setValue(datetime);
 
-		} else if (FHIRConstants.CWE_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
+		} else if (FHIRConstants.CWE_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation()
+		)) {
 
 			Collection<ConceptMap> valueMappings = obs.getValueCoded().getConceptMappings();
 			List<CodingDt> values = new ArrayList<CodingDt>();
@@ -203,16 +208,20 @@ public class FHIRObsUtil {
 				}
 				//Set concept mappings of concept
 				if (map.getConceptReferenceTerm().getName().equalsIgnoreCase(FHIRConstants.CIEL)) {
-					values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
+					values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
+							.setSystem(
 							FHIRConstants.loinc));
 				} else if (map.getConceptReferenceTerm().getName().equals(FHIRConstants.SNOMED)) {
-					values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
+					values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
+							.setSystem(
 							FHIRConstants.snomed));
 				} else if (map.getConceptReferenceTerm().getName().equals(FHIRConstants.CIEL)) {
-					values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
+					values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
+							.setSystem(
 							FHIRConstants.ciel));
 				} else {
-					values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
+					values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
+							.setSystem(
 							FHIRConstants.other));
 				}
 			}
@@ -246,7 +255,7 @@ public class FHIRObsUtil {
 		observation.setApplies(dateApplies);
 
 		//Set reference observations
-		if(obs.getGroupMembers() != null && !obs.getGroupMembers().isEmpty()) {
+		if (obs.getGroupMembers() != null && !obs.getGroupMembers().isEmpty()) {
 			List<Observation.Related> relatedObs = new ArrayList<Observation.Related>();
 			ResourceReferenceDt resourceReferenceDt;
 			Observation.Related related;
@@ -268,7 +277,7 @@ public class FHIRObsUtil {
 		location.setValue(FHIRConstants.LOCATION + "/" + obs.getLocation().getUuid());
 		ExtensionDt locationExt = new ExtensionDt(false, FHIRConstants.LOCATION_EXTENTION_URI, location);
 		observation.addUndeclaredExtension(locationExt);
-		if(obs.getEncounter() != null) {
+		if (obs.getEncounter() != null) {
 			StringDt encounter = new StringDt();
 			encounter.setValue(FHIRConstants.ENCOUNTER + "/" + obs.getLocation().getUuid());
 			ExtensionDt encounterExt = new ExtensionDt(false, FHIRConstants.ENCOUNTER_EXTENTION_URI, encounter);

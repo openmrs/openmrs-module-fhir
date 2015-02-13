@@ -84,7 +84,7 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 		List<org.openmrs.Patient> patientList = patientService.getPatients(null, identifierValue, patientIdentifierTypes,
 				true);
 		List<Patient> fhirPatientList = new ArrayList<Patient>();
-		for(org.openmrs.Patient patient : patientList) {
+		for (org.openmrs.Patient patient : patientList) {
 			fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
 		}
 		return fhirPatientList;
@@ -99,7 +99,7 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 		List<org.openmrs.Patient> patientList = patientService.getPatients(null, identifier, allPatientIdentifierTypes,
 				true);
 		List<Patient> fhirPatientList = new ArrayList<Patient>();
-		for(org.openmrs.Patient patient : patientList) {
+		for (org.openmrs.Patient patient : patientList) {
 			fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
 		}
 		return fhirPatientList;
@@ -112,13 +112,13 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 		//TODO this method looks for all the patients which is inefficient. Reimplement after API revamp
 		List<org.openmrs.Patient> patients = Context.getPatientService().getAllPatients(true);
 		List<Patient> fhirPatientList = new ArrayList<Patient>();
-		for(org.openmrs.Patient patient : patients) {
-			if(active) {
-				if(!patient.isVoided()) {
+		for (org.openmrs.Patient patient : patients) {
+			if (active) {
+				if (!patient.isVoided()) {
 					fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
 				}
 			} else {
-				if(patient.isVoided()) {
+				if (patient.isVoided()) {
 					fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
 				}
 			}
@@ -133,12 +133,12 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 		List<org.openmrs.Patient> patients = searchPatientByQuery(givenName);
 		List<Patient> fhirPatientList = new ArrayList<Patient>();
 		//Go through the patients given by the openmrs core api and find them patient who has the givenName matching
-		for(org.openmrs.Patient patient : patients) {
-			if(givenName.equalsIgnoreCase(patient.getGivenName())) {
+		for (org.openmrs.Patient patient : patients) {
+			if (givenName.equalsIgnoreCase(patient.getGivenName())) {
 				fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
 			} else {
-				for(PersonName personName : patient.getNames()) {
-					if(givenName.equalsIgnoreCase(personName.getGivenName())) {
+				for (PersonName personName : patient.getNames()) {
+					if (givenName.equalsIgnoreCase(personName.getGivenName())) {
 						fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
 					}
 				}
@@ -154,12 +154,12 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 		List<org.openmrs.Patient> patients = searchPatientByQuery(familyName);
 		List<Patient> fhirPatientList = new ArrayList<Patient>();
 		//Go through the patients given by the openmrs core api and find them patient who has the familyName matching
-		for(org.openmrs.Patient patient : patients) {
-			if(familyName.equalsIgnoreCase(patient.getFamilyName())) {
+		for (org.openmrs.Patient patient : patients) {
+			if (familyName.equalsIgnoreCase(patient.getFamilyName())) {
 				fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
 			} else {
-				for(PersonName personName : patient.getNames()) {
-					if(familyName.equalsIgnoreCase(personName.getFamilyName())) {
+				for (PersonName personName : patient.getNames()) {
+					if (familyName.equalsIgnoreCase(personName.getFamilyName())) {
 						fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
 					}
 				}
@@ -174,7 +174,7 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 	public List<Patient> searchPatientsByName(String name) {
 		List<org.openmrs.Patient> patients = searchPatientByQuery(name);
 		List<Patient> fhirPatientList = new ArrayList<Patient>();
-		for(org.openmrs.Patient patient : patients) {
+		for (org.openmrs.Patient patient : patients) {
 			fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
 		}
 		return fhirPatientList;

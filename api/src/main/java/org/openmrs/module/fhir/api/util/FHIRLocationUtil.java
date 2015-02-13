@@ -66,13 +66,13 @@ public class FHIRLocationUtil {
 			position.setLatitude(latitude);
 		}
 
-		if(!omrsLocation.isRetired()) {
+		if (!omrsLocation.isRetired()) {
 			location.setStatus(LocationStatusEnum.ACTIVE);
 		} else {
 			location.setStatus(LocationStatusEnum.INACTIVE);
 		}
 
-		if(omrsLocation.getParentLocation() != null) {
+		if (omrsLocation.getParentLocation() != null) {
 			ResourceReferenceDt parent = new ResourceReferenceDt();
 			parent.setDisplay("The parent resource");
 			parent.setReference(FHIRConstants.LOCATION + "/" + omrsLocation.getParentLocation().getUuid());

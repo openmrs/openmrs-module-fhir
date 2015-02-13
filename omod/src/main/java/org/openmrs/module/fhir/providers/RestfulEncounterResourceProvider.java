@@ -14,7 +14,6 @@
 package org.openmrs.module.fhir.providers;
 
 import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu.resource.Composition;
 import ca.uhn.fhir.model.dstu.resource.Encounter;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
@@ -34,6 +33,7 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	public RestfulEncounterResourceProvider() {
 		encounterResource = new FHIREncounterResource();
 	}
+
 	@Override
 	public Class<? extends IResource> getResourceType() {
 		return Encounter.class;

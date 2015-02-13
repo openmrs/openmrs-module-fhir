@@ -14,5 +14,6 @@
 package org.openmrs.module.fhir.util;
 
 public class FHIROmodConstants {
+
 	public static final String OPENMRS_FHIR_SERVER_NAME = "OpenMRS FHIR Server";
 }

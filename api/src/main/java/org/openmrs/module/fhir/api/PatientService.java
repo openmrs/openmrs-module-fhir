@@ -41,7 +41,7 @@ public interface PatientService extends OpenmrsService {
 	/**
 	 * Search patient by identifier and identifier type id
 	 *
-	 * @param identifierValue identifier to be search
+	 * @param identifierValue  identifier to be search
 	 * @param identifierTypeId id of the patient identifier type
 	 * @return fhir patient resource list
 	 */

@@ -28,6 +28,7 @@ import org.openmrs.module.fhir.resources.FHIRPractitionerResource;
 import java.util.List;
 
 public class RestfulPractitionerResourceProvider implements IResourceProvider {
+
 	;
 	private FHIRPractitionerResource practitionerResource;
 
@@ -72,7 +73,8 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	 * @param theFamilyName object contaning the requested family name
 	 */
 	@Search()
-	public List<Practitioner> findPractitionersByFamilyName(@RequiredParam(name = Practitioner.SP_FAMILY) StringParam theFamilyName) {
+	public List<Practitioner> findPractitionersByFamilyName(
+			@RequiredParam(name = Practitioner.SP_FAMILY) StringParam theFamilyName) {
 		return practitionerResource.searchByFamilyName(theFamilyName);
 	}
 
@@ -80,7 +82,8 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	 * Get Practitioner by name
 	 *
 	 * @param name name of the Practitioner
-	 * @return This method returns a list of Practitioners. This list may contain multiple matching resources, or it may also be
+	 * @return This method returns a list of Practitioners. This list may contain multiple matching resources, or it may
+	 * also be
 	 * empty.
 	 */
 	@Search()
@@ -92,11 +95,13 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	 * Get Practitioner by identifier
 	 *
 	 * @param identifier
-	 * @return This method returns a list of Practitioners. This list may contain multiple matching resources, or it may also be
+	 * @return This method returns a list of Practitioners. This list may contain multiple matching resources, or it may
+	 * also be
 	 * empty.
 	 */
 	@Search()
-	public List<Practitioner> searchPractitionersByIdentifier(@RequiredParam(name = Practitioner.SP_IDENTIFIER) TokenParam identifier) {
+	public List<Practitioner> searchPractitionersByIdentifier(
+			@RequiredParam(name = Practitioner.SP_IDENTIFIER) TokenParam identifier) {
 		return practitionerResource.searchByIdentifier(identifier);
 	}
 
@@ -104,11 +109,13 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	 * Find Practitioner by given name
 	 *
 	 * @param givenName given name of the Practitioner
-	 * @return This method returns a list of Practitioners. This list may contain multiple matching resources, or it may also be
+	 * @return This method returns a list of Practitioners. This list may contain multiple matching resources, or it may
+	 * also be
 	 * empty.
 	 */
 	@Search()
-	public List<Practitioner> findPractitionersByGivenName(@RequiredParam(name = Practitioner.SP_GIVEN) StringParam givenName) {
+	public List<Practitioner> findPractitionersByGivenName(
+			@RequiredParam(name = Practitioner.SP_GIVEN) StringParam givenName) {
 		return practitionerResource.searchByGivenName(givenName);
 	}
 }

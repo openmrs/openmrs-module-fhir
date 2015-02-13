@@ -21,7 +21,6 @@ import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
-import org.openmrs.module.fhir.FHIR;
 import org.openmrs.module.fhir.api.EncounterService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIREncounterUtil;
@@ -61,7 +60,7 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 		org.openmrs.Encounter omrsEncounter = Context.getEncounterService().getEncounterByUuid(id);
 		if (omrsEncounter == null) {
 			Visit visit = Context.getVisitService().getVisitByUuid(id);
-			if(visit != null) {
+			if (visit != null) {
 				return OMRSFHIRVisitUtil.generateEncounter(visit);
 			} else {
 				return null;
@@ -77,7 +76,7 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 			encounterList.add(FHIREncounterUtil.generateEncounter(omrsEncounter));
 		} else {
 			Visit visit = Context.getVisitService().getVisitByUuid(id);
-			if(visit != null) {
+			if (visit != null) {
 				encounterList.add(OMRSFHIRVisitUtil.generateEncounter(visit));
 			}
 		}
@@ -87,7 +86,7 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 	public List<Composition> searchEncounterComposition(String id) {
 		org.openmrs.Encounter omrsEncounter = Context.getEncounterService().getEncounterByUuid(id);
 		List<Composition> encounterList = new ArrayList<Composition>();
-		if(omrsEncounter != null) {
+		if (omrsEncounter != null) {
 			encounterList.add(FHIREncounterUtil.generateComposition(omrsEncounter));
 		}
 		return encounterList;
@@ -98,7 +97,7 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 		Patient patient = Context.getPatientService().getPatientByUuid(patientId);
 		List<org.openmrs.Encounter> omrsEncounters = Context.getEncounterService().getEncountersByPatient(patient);
 		List<Composition> fhirEncounters = new ArrayList<Composition>();
-		for(org.openmrs.Encounter enc : omrsEncounters) {
+		for (org.openmrs.Encounter enc : omrsEncounters) {
 			fhirEncounters.add(FHIREncounterUtil.generateComposition(enc));
 		}
 		return fhirEncounters;

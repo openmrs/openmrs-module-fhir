@@ -28,7 +28,7 @@ public class FHIREncounterResource extends Resource {
 
 		EncounterService encounterService = Context.getService(EncounterService.class);
 		Encounter fhirEncounter = encounterService.getEncounter(id.getIdPart());
-		if(fhirEncounter == null) {
+		if (fhirEncounter == null) {
 			throw new ResourceNotFoundException("Encounter is not found for the given Id " + id.getIdPart());
 		}
 		return fhirEncounter;

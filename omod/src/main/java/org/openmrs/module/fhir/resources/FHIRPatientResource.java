@@ -45,7 +45,7 @@ public class FHIRPatientResource extends Resource {
 	public List<Patient> searchByIdentifier(TokenParam identifier) {
 		org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
 				org.openmrs.module.fhir.api.PatientService.class);
-		if(identifier.getSystem() !=null && !identifier.getSystem().isEmpty()) {
+		if (identifier.getSystem() != null && !identifier.getSystem().isEmpty()) {
 			return patientService.searchPatientsByIdentifier(identifier.getValue(), identifier.getSystem().split(":")[2]);
 		}
 		return patientService.searchPatientsByIdentifier(identifier.getValue());
@@ -72,7 +72,7 @@ public class FHIRPatientResource extends Resource {
 	public List<Patient> searchPatients(TokenParam active) {
 		org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
 				org.openmrs.module.fhir.api.PatientService.class);
-		if("true".equalsIgnoreCase(active.getValue())) {
+		if ("true".equalsIgnoreCase(active.getValue())) {
 			return patientService.searchPatients(true);
 		} else {
 			return patientService.searchPatients(false);

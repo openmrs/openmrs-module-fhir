@@ -127,7 +127,7 @@ public class FHIRPatientUtil {
 		}
 		patient.setAddress(fhirAddresses);
 
-		if(omrsPatient.getBirthdate() != null) {
+		if (omrsPatient.getBirthdate() != null) {
 			DateTimeDt fhirBirthDate = new DateTimeDt();
 			fhirBirthDate.setValue(omrsPatient.getBirthdate());
 			patient.setBirthDate(fhirBirthDate);

@@ -28,6 +28,7 @@ import org.openmrs.module.fhir.resources.FHIRFamilyHistoryResource;
 import java.util.List;
 
 public class RestfulFamilyHistoryResourceProvider implements IResourceProvider {
+
 	private FHIRFamilyHistoryResource familyHistoryResource;
 
 	public RestfulFamilyHistoryResourceProvider() {
@@ -71,7 +72,8 @@ public class RestfulFamilyHistoryResourceProvider implements IResourceProvider {
 	 * @param person object containing the requested patient id
 	 */
 	@Search()
-	public List<FamilyHistory> searchFamilyHistoryByPerson(@RequiredParam(name = FamilyHistory.SP_SUBJECT) ReferenceParam  person) {
+	public List<FamilyHistory> searchFamilyHistoryByPerson(
+			@RequiredParam(name = FamilyHistory.SP_SUBJECT) ReferenceParam person) {
 		return familyHistoryResource.searchFamilyHistoryByPerson(person);
 	}
 }

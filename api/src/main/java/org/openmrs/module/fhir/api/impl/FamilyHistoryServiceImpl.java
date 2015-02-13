@@ -14,7 +14,6 @@
 package org.openmrs.module.fhir.api.impl;
 
 import ca.uhn.fhir.model.dstu.resource.FamilyHistory;
-import ca.uhn.fhir.model.dstu.resource.Observation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Person;
@@ -53,7 +52,7 @@ public class FamilyHistoryServiceImpl extends BaseOpenmrsService implements Fami
 		List<Relationship> relationships = Context.getPersonService().getRelationshipsByPerson(person);
 		FamilyHistory history = FHIRFamilyHistoryUtil.generateFamilyHistory(relationships, person);
 		List<FamilyHistory> fhirFamilyHistory = new ArrayList<FamilyHistory>();
-		if(history != null) {
+		if (history != null) {
 			fhirFamilyHistory.add(history);
 		}
 		return fhirFamilyHistory;
@@ -61,7 +60,7 @@ public class FamilyHistoryServiceImpl extends BaseOpenmrsService implements Fami
 
 	public FamilyHistory getRelationshipById(String id) {
 		Relationship relationship = Context.getPersonService().getRelationshipByUuid(id);
-		if(relationship == null) {
+		if (relationship == null) {
 			return null;
 		}
 		List<Relationship> omrsRelationships = new ArrayList<Relationship>();
@@ -72,7 +71,7 @@ public class FamilyHistoryServiceImpl extends BaseOpenmrsService implements Fami
 	public List<FamilyHistory> searchRelationshipsById(String id) {
 		Relationship relationship = Context.getPersonService().getRelationshipByUuid(id);
 		List<FamilyHistory> familyHistories = new ArrayList<FamilyHistory>();
-		if(relationship != null) {
+		if (relationship != null) {
 			List<Relationship> omrsRelationships = new ArrayList<Relationship>();
 			omrsRelationships.add(relationship);
 			familyHistories.add(FHIRFamilyHistoryUtil.generateFamilyHistory(omrsRelationships, relationship.getPersonA()));

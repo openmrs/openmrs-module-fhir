@@ -29,19 +29,18 @@ public class FHIRLocationResource extends Resource {
 	public Location getByUniqueId(IdDt id) {
 		LocationService locationService = Context.getService(LocationService.class);
 		Location fhirLocation = locationService.getLocation(id.getIdPart());
-		if(fhirLocation == null) {
+		if (fhirLocation == null) {
 			throw new ResourceNotFoundException("Location is not found for the given Id " + id.getIdPart());
 		}
 		return fhirLocation;
 	}
-
 
 	public List<Location> searchLocationsById(TokenParam id) {
 		return Context.getService(LocationService.class).searchLocationsById(id.getValue());
 	}
 
 	public List<Location> searchLocationsByStatus(TokenParam active) {
-		if(active != null && active.getValue().equalsIgnoreCase(LocationStatusEnum.ACTIVE.getCode())) {
+		if (active != null && active.getValue().equalsIgnoreCase(LocationStatusEnum.ACTIVE.getCode())) {
 			return Context.getService(LocationService.class).searchLocationsByStatus(true);
 		} else {
 			return Context.getService(LocationService.class).searchLocationsByStatus(false);

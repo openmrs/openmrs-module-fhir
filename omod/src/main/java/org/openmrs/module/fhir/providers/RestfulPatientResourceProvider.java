@@ -126,7 +126,6 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 		return patientResource.searchByGivenName(givenName);
 	}
 
-
 	/**
 	 * Find patients by provider
 	 *

@@ -28,7 +28,7 @@ public class FHIRFamilyHistoryResource extends Resource {
 	public FamilyHistory getByUniqueId(IdDt id) {
 		FamilyHistoryService familyHistoryService = Context.getService(FamilyHistoryService.class);
 		FamilyHistory familyHistory = familyHistoryService.getRelationshipById(id.getIdPart());
-		if(familyHistory == null) {
+		if (familyHistory == null) {
 			throw new ResourceNotFoundException("Family history is not found for the given Id " + id.getIdPart());
 		}
 		return familyHistory;

@@ -15,16 +15,13 @@ package org.openmrs.module.fhir.api.util;
 
 import ca.uhn.fhir.model.dstu.composite.PeriodDt;
 import ca.uhn.fhir.model.dstu.composite.ResourceReferenceDt;
-import ca.uhn.fhir.model.dstu.resource.Composition;
 import ca.uhn.fhir.model.dstu.resource.Encounter;
 import ca.uhn.fhir.model.dstu.valueset.EncounterClassEnum;
 import ca.uhn.fhir.model.dstu.valueset.EncounterStateEnum;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
-import org.openmrs.EncounterProvider;
 import org.openmrs.PersonName;
 import org.openmrs.Visit;
-import org.openmrs.api.context.Context;
 
 import java.util.ArrayList;
 import java.util.List;
