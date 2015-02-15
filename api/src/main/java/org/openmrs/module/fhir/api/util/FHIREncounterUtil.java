@@ -185,6 +185,7 @@ public class FHIREncounterUtil {
 			encounter.setLocation(locations);
 		}
 
+		if(omrsEncounter.getVisit() != null) {
 		//Set visit resource as a part of a encounter
 		ResourceReferenceDt visitRef = new ResourceReferenceDt();
 		visitRef.setDisplay(omrsEncounter.getVisit().getVisitType().getName());
@@ -193,6 +194,7 @@ public class FHIREncounterUtil {
 		visitRefId.setValue(visitRefUri);
 		visitRef.setReference(visitRefId);
 		encounter.setPartOf(visitRef);
+		}
 		//TODO uncomment the validation and check what's going wrong
 		//FHIRUtils.validate(encounter);
 		return encounter;
