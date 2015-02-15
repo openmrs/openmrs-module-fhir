@@ -44,7 +44,8 @@ public class FHIRLocationUtil {
 		AddressDt address = new AddressDt();
 		address.setCity(omrsLocation.getCityVillage());
 		address.setCountry(omrsLocation.getCountry());
-
+		address.setState(omrsLocation.getStateProvince());
+		address.setZip(omrsLocation.getPostalCode());
 		List<StringDt> addressStrings = new ArrayList<StringDt>();
 		addressStrings.add(new StringDt(omrsLocation.getAddress1()));
 		addressStrings.add(new StringDt(omrsLocation.getAddress2()));
