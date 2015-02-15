@@ -31,6 +31,9 @@ public class FHIRFamilyHistoryUtil {
 
 	public static FamilyHistory generateFamilyHistory(List<Relationship> relationships, Person person) {
 		FamilyHistory familyHistory = new FamilyHistory();
+		IdDt id = new IdDt();
+		id.setValue(person.getUuid());
+		familyHistory.setId(id);
 		ResourceReferenceDt personRef = new ResourceReferenceDt();
 		String personUri;
 		if (Context.getPatientService().getPatientByUuid(person.getUuid()) != null) {

@@ -21,7 +21,9 @@ import javax.servlet.http.HttpServletRequest;
 
 public class OpenMRSFHIRRequestAddressStrategy implements IServerAddressStrategy {
 
-	private static final String MODULE_SERVELET_PREFIX = "fhir/fhirservice";
+	private static final String MODULE_SERVELET_PREFIX = "/fhir/fhirServelet";
+	private static final String MODULE_SERVELET_ACTUAL_PREFIX = "/ws/fhir";
+	private static final String MODULE_SERVELET_INBUILT_PREFIX = "/ms";
 
 	@Override
 	public String determineServerBase(ServletContext theServletContext, HttpServletRequest theRequest) {
@@ -62,6 +64,8 @@ public class OpenMRSFHIRRequestAddressStrategy implements IServerAddressStrategy
 		String fhirServerBase;
 		int length = contextIndex + servletPath.length() + MODULE_SERVELET_PREFIX.length();
 		fhirServerBase = requestUrl.substring(0, length + 1);
-		return fhirServerBase;
+		String actualBase = fhirServerBase.split(MODULE_SERVELET_INBUILT_PREFIX + MODULE_SERVELET_PREFIX)[0] +
+		                    MODULE_SERVELET_ACTUAL_PREFIX;
+		return actualBase;
 	}
 }

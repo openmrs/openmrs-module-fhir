@@ -59,22 +59,17 @@ public class FamilyHistoryServiceImpl extends BaseOpenmrsService implements Fami
 	}
 
 	public FamilyHistory getRelationshipById(String id) {
-		Relationship relationship = Context.getPersonService().getRelationshipByUuid(id);
-		if (relationship == null) {
-			return null;
-		}
-		List<Relationship> omrsRelationships = new ArrayList<Relationship>();
-		omrsRelationships.add(relationship);
-		return FHIRFamilyHistoryUtil.generateFamilyHistory(omrsRelationships, relationship.getPersonA());
+		Person person = Context.getPersonService().getPersonByUuid(id);
+		List<Relationship> relationships = Context.getPersonService().getRelationshipsByPerson(person);
+		return FHIRFamilyHistoryUtil.generateFamilyHistory(relationships, person);
 	}
 
 	public List<FamilyHistory> searchRelationshipsById(String id) {
-		Relationship relationship = Context.getPersonService().getRelationshipByUuid(id);
+		Person person = Context.getPersonService().getPersonByUuid(id);
 		List<FamilyHistory> familyHistories = new ArrayList<FamilyHistory>();
-		if (relationship != null) {
-			List<Relationship> omrsRelationships = new ArrayList<Relationship>();
-			omrsRelationships.add(relationship);
-			familyHistories.add(FHIRFamilyHistoryUtil.generateFamilyHistory(omrsRelationships, relationship.getPersonA()));
+		List<Relationship> relationships = Context.getPersonService().getRelationshipsByPerson(person);
+		if (relationships != null) {
+			familyHistories.add(FHIRFamilyHistoryUtil.generateFamilyHistory(relationships, person));
 		}
 		return familyHistories;
 	}
