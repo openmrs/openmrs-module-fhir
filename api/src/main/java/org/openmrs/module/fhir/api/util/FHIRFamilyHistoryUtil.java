@@ -81,13 +81,14 @@ public class FHIRFamilyHistoryUtil {
 				relationshipType = relationship.getRelationshipType().getbIsToA();
 			}
 			//Set related person name
-			PersonName relatedPersonName = relatedPerson.getPersonName();
-			StringBuilder relatedPersonNameDisplay = new StringBuilder();
-			relatedPersonNameDisplay.append(relatedPersonName.getGivenName());
-			relatedPersonNameDisplay.append(" ");
-			nameDisplay.append(name.getFamilyName());
-			fhirRelation.setName(relatedPersonNameDisplay.toString());
-
+			if(relatedPerson.getPersonName() != null) {
+				PersonName relatedPersonName = relatedPerson.getPersonName();
+				StringBuilder relatedPersonNameDisplay = new StringBuilder();
+				relatedPersonNameDisplay.append(relatedPersonName.getGivenName());
+				relatedPersonNameDisplay.append(" ");
+				nameDisplay.append(name.getFamilyName());
+				fhirRelation.setName(relatedPersonNameDisplay.toString());
+			}
 			CodeableConceptDt relationType = new CodeableConceptDt();
 			List<CodingDt> relationshipTypeCodings = new ArrayList<CodingDt>();
 			relationshipTypeCodings.add(new CodingDt().setDisplay(relationshipType));
