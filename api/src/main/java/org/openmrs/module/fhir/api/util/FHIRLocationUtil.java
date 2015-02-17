@@ -75,7 +75,7 @@ public class FHIRLocationUtil {
 
 		if (omrsLocation.getParentLocation() != null) {
 			ResourceReferenceDt parent = new ResourceReferenceDt();
-			parent.setDisplay("The parent resource");
+			parent.setDisplay(omrsLocation.getParentLocation().getName());
 			parent.setReference(FHIRConstants.LOCATION + "/" + omrsLocation.getParentLocation().getUuid());
 			location.setPartOf(parent);
 		}
