@@ -273,10 +273,13 @@ public class FHIRObsUtil {
 			observation.setRelated(relatedObs);
 		}
 
-		StringDt location = new StringDt();
-		location.setValue(FHIRConstants.LOCATION + "/" + obs.getLocation().getUuid());
-		ExtensionDt locationExt = new ExtensionDt(false, FHIRConstants.LOCATION_EXTENTION_URI, location);
-		observation.addUndeclaredExtension(locationExt);
+		if(obs.getLocation() != null) {
+			StringDt location = new StringDt();
+			location.setValue(FHIRConstants.LOCATION + "/" + obs.getLocation().getUuid());
+			ExtensionDt locationExt = new ExtensionDt(false, FHIRConstants.LOCATION_EXTENTION_URI, location);
+			observation.addUndeclaredExtension(locationExt);
+		}
+
 		if (obs.getEncounter() != null) {
 			StringDt encounter = new StringDt();
 			encounter.setValue(FHIRConstants.ENCOUNTER + "/" + obs.getLocation().getUuid());
