@@ -22,6 +22,7 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -58,7 +59,9 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 	public void searchObsByPatientAndConcept_shouldReturnMatchingObservationList() {
 		String personUuid = "da7f524f-27ce-4bb2-86d6-6d1d05312bd5";
 		String conceptName = "Some concept name";
-		List<Observation> obs = getService().searchObsByPatientAndConcept(personUuid, conceptName);
+		List<String> concepts = new ArrayList<String>();
+		concepts.add(conceptName);
+		List<Observation> obs = getService().searchObsByPatientAndConcept(personUuid, concepts);
 		assertNotNull(obs);
 		assertEquals(2, obs.size());
 	}

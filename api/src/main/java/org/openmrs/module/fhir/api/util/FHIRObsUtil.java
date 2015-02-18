@@ -118,27 +118,29 @@ public class FHIRObsUtil {
 
 		for (ConceptMap map : mappings) {
 			//Set concept name as the display value and set concept uuid if name is empty
-			String display = map.getConceptReferenceTerm().getName();
-			if (display == null || display.isEmpty()) {
-				display = map.getConceptReferenceTerm().getUuid();
-			}
+			if(map.getConceptReferenceTerm() != null) {
+				String display = map.getConceptReferenceTerm().getName();
+				if (display == null || display.isEmpty()) {
+					display = map.getConceptReferenceTerm().getUuid();
+				}
 
-			//Set concept mappings of concept
-			if (map.getConceptReferenceTerm().getName().equalsIgnoreCase(FHIRConstants.CIEL)) {
-				dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-						FHIRConstants.loinc));
-			} else if (map.getConceptReferenceTerm().getName().equals(FHIRConstants.SNOMED)) {
-				dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-						FHIRConstants.snomed));
-			} else if (map.getConceptReferenceTerm().getName().equals(FHIRConstants.CIEL)) {
-				dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-						FHIRConstants.ciel));
-			} else {
-				dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-						FHIRConstants.other));
+				//Set concept mappings of concept
+				if (FHIRConstants.CIEL.equalsIgnoreCase(map.getConceptReferenceTerm().getName())) {
+					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
+							FHIRConstants.ciel));
+				} else if (FHIRConstants.SNOMED.equalsIgnoreCase(map.getConceptReferenceTerm().getName())) {
+					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
+							FHIRConstants.snomed));
+				} else if (FHIRConstants.LOINC.equalsIgnoreCase(map.getConceptReferenceTerm().getName())) {
+					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
+							FHIRConstants.loinc));
+				} else {
+					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
+							FHIRConstants.other));
+				}
 			}
-			dt.setCoding(dts);
 		}
+		dt.setCoding(dts);
 
 		if (obs.getConcept().isNumeric()) {
 			ConceptNumeric cn = Context.getConceptService().getConceptNumeric(obs.getConcept().getId());
@@ -196,33 +198,33 @@ public class FHIRObsUtil {
 			datetime.setEnd(endDate);
 			observation.setValue(datetime);
 
-		} else if (FHIRConstants.CWE_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation()
-		)) {
-
+		} else if (FHIRConstants.CWE_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
 			Collection<ConceptMap> valueMappings = obs.getValueCoded().getConceptMappings();
 			List<CodingDt> values = new ArrayList<CodingDt>();
 			for (ConceptMap map : valueMappings) {
-				String display = map.getConceptReferenceTerm().getName();
-				if (display == null || display.isEmpty()) {
-					display = map.getConceptReferenceTerm().getUuid();
-				}
-				//Set concept mappings of concept
-				if (map.getConceptReferenceTerm().getName().equalsIgnoreCase(FHIRConstants.CIEL)) {
-					values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
-							.setSystem(
-							FHIRConstants.loinc));
-				} else if (map.getConceptReferenceTerm().getName().equals(FHIRConstants.SNOMED)) {
-					values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
-							.setSystem(
-							FHIRConstants.snomed));
-				} else if (map.getConceptReferenceTerm().getName().equals(FHIRConstants.CIEL)) {
-					values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
-							.setSystem(
-							FHIRConstants.ciel));
-				} else {
-					values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
-							.setSystem(
-							FHIRConstants.other));
+				if(map.getConceptReferenceTerm() != null) {
+					String display = map.getConceptReferenceTerm().getName();
+					if (display == null || display.isEmpty()) {
+						display = map.getConceptReferenceTerm().getUuid();
+					}
+					//Set concept mappings of concept
+					if (FHIRConstants.CIEL.equalsIgnoreCase(map.getConceptReferenceTerm().getName())) {
+						values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
+								.setSystem(
+										FHIRConstants.ciel));
+					} else if (FHIRConstants.SNOMED.equalsIgnoreCase(map.getConceptReferenceTerm().getName())) {
+						values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
+								.setSystem(
+										FHIRConstants.snomed));
+					} else if (FHIRConstants.LOINC.equalsIgnoreCase(map.getConceptReferenceTerm().getName())) {
+						values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
+								.setSystem(
+										FHIRConstants.loinc));
+					} else {
+						values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
+								.setSystem(
+										FHIRConstants.other));
+					}
 				}
 			}
 			CodeableConceptDt codeableConceptDt = new CodeableConceptDt();

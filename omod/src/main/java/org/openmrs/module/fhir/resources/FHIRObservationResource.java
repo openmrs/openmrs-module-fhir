@@ -13,15 +13,18 @@
  */
 package org.openmrs.module.fhir.resources;
 
+import ca.uhn.fhir.model.base.composite.BaseCodingDt;
 import ca.uhn.fhir.model.dstu.resource.Observation;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.DateParam;
 import ca.uhn.fhir.rest.param.ReferenceParam;
+import ca.uhn.fhir.rest.param.TokenOrListParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.ObsService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FHIRObservationResource extends Resource {
@@ -40,9 +43,13 @@ public class FHIRObservationResource extends Resource {
 		return obsService.searchObsById(id.getValue());
 	}
 
-	public List<Observation> searchObsByPatientAndConcept(ReferenceParam person, TokenParam name) {
+	public List<Observation> searchObsByPatientAndConcept(ReferenceParam person, TokenOrListParam names) {
 		ObsService obsService = Context.getService(ObsService.class);
-		return obsService.searchObsByPatientAndConcept(person.getIdPart(), name.getValue());
+		List<String> conceptNames = new ArrayList<String>();
+		for(BaseCodingDt baseCodingDt : names.getListAsCodings()) {
+			conceptNames.add(baseCodingDt.getValueAsQueryToken());
+		}
+		return obsService.searchObsByPatientAndConcept(person.getIdPart(), conceptNames);
 	}
 
 	public List<Observation> searchObsByName(TokenParam name) {

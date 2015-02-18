@@ -65,16 +65,19 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByPatientAndConcept(String, String)
+	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByPatientAndConcept(String, java.util.List)
 	 */
-	public List<Observation> searchObsByPatientAndConcept(String patientUUid, String conceptName) {
+	public List<Observation> searchObsByPatientAndConcept(String patientUUid, List<String> conceptNames) {
 
 		Patient patient = Context.getPatientService().getPatientByUuid(patientUUid);
-		Concept concept = Context.getConceptService().getConceptByName(conceptName);
-		List<Obs> obs = Context.getObsService().getObservationsByPersonAndConcept(patient, concept);
+		Concept concept;
 		List<Observation> obsList = new ArrayList<Observation>();
-		for (Obs ob : obs) {
-			obsList.add(FHIRObsUtil.generateObs(ob));
+		for(String conceptName : conceptNames) {
+			concept = Context.getConceptService().getConceptByName(conceptName);
+			List<Obs> obs = Context.getObsService().getObservationsByPersonAndConcept(patient, concept);
+			for (Obs ob : obs) {
+				obsList.add(FHIRObsUtil.generateObs(ob));
+			}
 		}
 		return obsList;
 	}

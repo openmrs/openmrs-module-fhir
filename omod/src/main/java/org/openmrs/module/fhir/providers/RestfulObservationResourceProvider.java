@@ -22,6 +22,7 @@ import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.Search;
 import ca.uhn.fhir.rest.param.DateParam;
 import ca.uhn.fhir.rest.param.ReferenceParam;
+import ca.uhn.fhir.rest.param.TokenOrListParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.openmrs.module.fhir.resources.FHIRObservationResource;
@@ -75,7 +76,7 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	@Search()
 	public List<Observation> searchObsByPatientAndConcept(@RequiredParam(name = Observation.SP_SUBJECT) ReferenceParam
 			                                                      person,
-	                                                      @RequiredParam(name = Observation.SP_NAME) TokenParam name) {
+	                                                      @RequiredParam(name = Observation.SP_NAME) TokenOrListParam name) {
 		return provider.searchObsByPatientAndConcept(person, name);
 	}
 
