@@ -33,12 +33,8 @@ public class FHIRUtils {
 	public static final String PATIENT_IDENTIFIER_TYPE_REST_RESOURCE_URI = "/ws/rest/v1/patientidentifiertype/";
 	public static final String PATIENT_PHONE_NUMBER_ATTRIBUTE = "Telephone Number";
 
-	public static String getWebServicesURI(String resourceURI, String resourceId) {
-		String webSerrivcesURIPrefix = Context.getAdministrationService().getGlobalProperty("webservices.rest.uriPrefix");
-		if (webSerrivcesURIPrefix != null) {
-			return webSerrivcesURIPrefix + resourceURI + resourceId;
-		}
-		return resourceURI + resourceId;
+	public static String getFHIRBaseUrl() {
+		return Context.getAdministrationService().getGlobalProperty("fhir.baseUrl");
 	}
 
 	public static void validate(IResource resource) {

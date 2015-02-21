@@ -15,57 +15,15 @@ package org.openmrs.module.fhir.addressstrategy;
 
 import ca.uhn.fhir.rest.server.IServerAddressStrategy;
 import org.apache.commons.lang3.StringUtils;
+import org.openmrs.module.fhir.api.util.FHIRUtils;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 public class OpenMRSFHIRRequestAddressStrategy implements IServerAddressStrategy {
 
-	private static final String MODULE_SERVELET_PREFIX = "/fhir/fhirServelet";
-	private static final String MODULE_SERVELET_ACTUAL_PREFIX = "/ws/fhir";
-	private static final String MODULE_SERVELET_INBUILT_PREFIX = "/ms";
-
 	@Override
 	public String determineServerBase(ServletContext theServletContext, HttpServletRequest theRequest) {
-		String requestFullPath = StringUtils.defaultString(theRequest.getRequestURI());
-		String servletPath = StringUtils.defaultString(theRequest.getServletPath());
-		StringBuffer requestUrl = theRequest.getRequestURL();
-		String servletContextPath = "";
-		if (theServletContext != null) {
-			servletContextPath = StringUtils.defaultString(theServletContext.getContextPath());
-			// } else {
-			// servletContextPath = servletPath;
-		}
-
-		String requestPath = requestFullPath.substring(servletContextPath.length() + servletPath.length());
-		if (requestPath.length() > 0 && requestPath.charAt(0) == '/') {
-			requestPath = requestPath.substring(1);
-		}
-
-		int startOfPath = requestUrl.indexOf("//");
-		if (startOfPath != -1 && (startOfPath + 2) < requestUrl.length()) {
-			startOfPath = requestUrl.indexOf("/", startOfPath + 2);
-		}
-		if (startOfPath == -1) {
-			startOfPath = 0;
-		}
-
-		int contextIndex;
-		if (servletPath.length() == 0) {
-			if (requestPath.length() == 0) {
-				contextIndex = requestUrl.length();
-			} else {
-				contextIndex = requestUrl.indexOf(requestPath, startOfPath);
-			}
-		} else {
-			contextIndex = requestUrl.indexOf(servletPath, startOfPath);
-		}
-
-		String fhirServerBase;
-		int length = contextIndex + servletPath.length() + MODULE_SERVELET_PREFIX.length();
-		fhirServerBase = requestUrl.substring(0, length + 1);
-		String actualBase = fhirServerBase.split(MODULE_SERVELET_INBUILT_PREFIX + MODULE_SERVELET_PREFIX)[0] +
-		                    MODULE_SERVELET_ACTUAL_PREFIX;
-		return actualBase;
+		return FHIRUtils.getFHIRBaseUrl();
 	}
 }

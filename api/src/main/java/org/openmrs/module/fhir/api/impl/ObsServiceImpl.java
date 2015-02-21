@@ -24,6 +24,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.ObsService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRObsUtil;
 
 import java.util.ArrayList;
@@ -73,7 +74,7 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 		Concept concept;
 		List<Observation> obsList = new ArrayList<Observation>();
 		for(String conceptName : conceptNames) {
-			concept = Context.getConceptService().getConceptByName(conceptName);
+			concept = Context.getConceptService().getConceptByMapping(conceptName, FHIRConstants.LOINC);
 			List<Obs> obs = Context.getObsService().getObservationsByPersonAndConcept(patient, concept);
 			for (Obs ob : obs) {
 				obsList.add(FHIRObsUtil.generateObs(ob));
