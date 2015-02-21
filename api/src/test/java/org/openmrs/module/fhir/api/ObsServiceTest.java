@@ -16,6 +16,9 @@ package org.openmrs.module.fhir.api;
 import ca.uhn.fhir.model.dstu.resource.Observation;
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.Concept;
+import org.openmrs.ConceptMap;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
@@ -32,6 +35,7 @@ import static org.junit.Assert.assertNotNull;
 public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 
 	protected static final String OBS_INITIAL_DATA_XML = "org/openmrs/api/include/ObsServiceTest-initial.xml";
+	protected static final String CONCEPT_CUSTOM_INITIAL_DATA_XML ="Concept_customTestData.xml";
 
 	public ObsService getService() {
 		return Context.getService(ObsService.class);
@@ -40,6 +44,7 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 	@Before
 	public void runBeforeEachTest() throws Exception {
 		executeDataSet(OBS_INITIAL_DATA_XML);
+		executeDataSet(CONCEPT_CUSTOM_INITIAL_DATA_XML);
 	}
 
 	@Test
@@ -57,13 +62,20 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 
 	@Test
 	public void searchObsByPatientAndConcept_shouldReturnMatchingObservationList() {
-		/*String personUuid = "da7f524f-27ce-4bb2-86d6-6d1d05312bd5";
-		String conceptName = "Some concept name";
+		String personUuid = "da7f524f-27ce-4bb2-86d6-6d1d05312bd5";
+		String conceptName = "3143-9";
 		List<String> concepts = new ArrayList<String>();
+		ConceptService conceptService = Context.getConceptService();
+		Concept concept = conceptService.getConcept(1);
+		ConceptMap conceptMap = new ConceptMap();
+		conceptMap.setConcept(concept);
+		conceptMap.setConceptReferenceTerm(conceptService.getConceptReferenceTerm(558));
+		concept.addConceptMapping(conceptMap);
+		conceptService.saveConcept(concept);
 		concepts.add(conceptName);
 		List<Observation> obs = getService().searchObsByPatientAndConcept(personUuid, concepts);
 		assertNotNull(obs);
-		assertEquals(2, obs.size());*/
+		assertEquals(2, obs.size());
 	}
 
 	@Test
