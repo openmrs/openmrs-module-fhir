@@ -18,7 +18,9 @@ import ca.uhn.fhir.model.dstu.resource.Composition;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.Search;
 import ca.uhn.fhir.rest.param.ReferenceParam;
+import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.resources.FHIRCompositionResource;
 
 import java.util.List;
@@ -37,13 +39,24 @@ public class RestfulCompositionResourceProvider implements IResourceProvider {
 	}
 
 	/**
-	 * Search locations by unique id
+	 * Search compositions by patient
 	 *
 	 * @param patient object containing the requested id
 	 */
 	@Search()
-	public List<Composition> searchEncountersByUniqueId(@RequiredParam(name = Composition.SP_SUBJECT) ReferenceParam
-			                                                    patient) {
+	public List<Composition> searchCompositionEncountersByPatient(@RequiredParam(name = Composition.SP_SUBJECT) ReferenceParam
+			                                                      patient) {
 		return compositionResource.searchEncounterCompostionsByPatient(patient);
+	}
+
+	/**
+	 * Search compositions by patient
+	 *
+	 * @param encounter object containing the requested encounter id
+	 */
+	@Search()
+	public List<Composition> searchCompositionEncountersByEncounterId(@RequiredParam(name = FHIRConstants.ENCOUNTER_ID)
+	                                                                TokenParam encounter) {
+		return compositionResource.searchEncounterCompostionsByEncounterId(encounter);
 	}
 }

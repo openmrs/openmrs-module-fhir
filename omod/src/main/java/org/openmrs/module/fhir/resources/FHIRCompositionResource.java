@@ -15,6 +15,7 @@ package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.model.dstu.resource.Composition;
 import ca.uhn.fhir.rest.param.ReferenceParam;
+import ca.uhn.fhir.rest.param.TokenParam;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.EncounterService;
 
@@ -27,4 +28,8 @@ public class FHIRCompositionResource {
 		return encounterService.searchEncounterCompositionByPatient(patient.getIdPart());
 	}
 
+	public List<Composition> searchEncounterCompostionsByEncounterId(TokenParam encounterId) {
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		return encounterService.searchEncounterCompositionByEncounterId(encounterId.getValue());
+	}
 }
