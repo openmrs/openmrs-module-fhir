@@ -13,12 +13,12 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import ca.uhn.fhir.model.dstu.composite.AddressDt;
-import ca.uhn.fhir.model.dstu.composite.ResourceReferenceDt;
-import ca.uhn.fhir.model.dstu.resource.Location;
-import ca.uhn.fhir.model.dstu.resource.Location.Position;
-import ca.uhn.fhir.model.dstu.valueset.AddressUseEnum;
-import ca.uhn.fhir.model.dstu.valueset.LocationStatusEnum;
+import ca.uhn.fhir.model.dstu2.composite.AddressDt;
+import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
+import ca.uhn.fhir.model.dstu2.resource.Location;
+import ca.uhn.fhir.model.dstu2.resource.Location.Position;
+import ca.uhn.fhir.model.dstu2.valueset.AddressUseEnum;
+import ca.uhn.fhir.model.dstu2.valueset.LocationStatusEnum;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.StringDt;
 
@@ -45,7 +45,7 @@ public class FHIRLocationUtil {
 		address.setCity(omrsLocation.getCityVillage());
 		address.setCountry(omrsLocation.getCountry());
 		address.setState(omrsLocation.getStateProvince());
-		address.setZip(omrsLocation.getPostalCode());
+		address.setPostalCode(omrsLocation.getPostalCode());
 		List<StringDt> addressStrings = new ArrayList<StringDt>();
 		addressStrings.add(new StringDt(omrsLocation.getAddress1()));
 		addressStrings.add(new StringDt(omrsLocation.getAddress2()));

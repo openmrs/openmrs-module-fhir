@@ -14,7 +14,7 @@
 package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.model.base.composite.BaseCodingDt;
-import ca.uhn.fhir.model.dstu.resource.Observation;
+import ca.uhn.fhir.model.dstu2.resource.Observation;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.DateParam;
 import ca.uhn.fhir.rest.param.ReferenceParam;

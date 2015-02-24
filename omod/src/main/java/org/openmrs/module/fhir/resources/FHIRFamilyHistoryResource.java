@@ -13,7 +13,7 @@
  */
 package org.openmrs.module.fhir.resources;
 
-import ca.uhn.fhir.model.dstu.resource.FamilyHistory;
+import ca.uhn.fhir.model.dstu2.resource.FamilyHistory;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;

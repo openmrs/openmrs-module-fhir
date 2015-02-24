@@ -13,7 +13,7 @@
  */
 package org.openmrs.module.fhir.resources;
 
-import ca.uhn.fhir.model.dstu.resource.Patient;
+import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
@@ -27,7 +27,7 @@ public class FHIRPatientResource extends Resource {
 	public Patient getByUniqueId(IdDt id) {
 		org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
 				org.openmrs.module.fhir.api.PatientService.class);
-		ca.uhn.fhir.model.dstu.resource.Patient fhirPatient = patientService.getPatient(id.getIdPart());
+		ca.uhn.fhir.model.dstu2.resource.Patient fhirPatient = patientService.getPatient(id.getIdPart());
 		if (fhirPatient == null) {
 			throw new ResourceNotFoundException("Patient is not found for the given Id " + id.getIdPart());
 		}
