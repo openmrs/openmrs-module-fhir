@@ -109,7 +109,7 @@
     <globalProperty>
         <property>${project.parent.artifactId}.customNarrativePropertiesPath</property>
         <defaultValue>classpath:/com/foo/customnarrative.properties</defaultValue>
-        <description>Set true if you need to enable custom narratives</description>
+        <description>Set custom narratives property path</description>
     </globalProperty>
 
 </module>
