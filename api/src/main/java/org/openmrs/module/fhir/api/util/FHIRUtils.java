@@ -37,6 +37,15 @@ public class FHIRUtils {
 		return Context.getAdministrationService().getGlobalProperty("fhir.baseUrl");
 	}
 
+	public static boolean isCustomNarrativesEnabled() {
+		String enabled = Context.getAdministrationService().getGlobalProperty("fhir.isCustomerNarrativesEnabled");
+		return Boolean.parseBoolean(enabled);
+	}
+
+	public static String gettCustomNarrativesPropertyPath() {
+		return Context.getAdministrationService().getGlobalProperty("fhir.customNarrativePropertiesPath");
+	}
+
 	public static void validate(IResource resource) {
 		ValidationResult result = val.validateWithResult(resource);
 		if (!result.isSuccessful()) {

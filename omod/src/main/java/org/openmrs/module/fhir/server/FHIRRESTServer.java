@@ -13,9 +13,11 @@
  */
 package org.openmrs.module.fhir.server;
 
+import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import org.openmrs.module.fhir.addressstrategy.OpenMRSFHIRRequestAddressStrategy;
+import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.openmrs.module.fhir.providers.RestfulAllergyIntoleranceResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulCompositionResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulEncounterResourceProvider;
@@ -54,6 +56,11 @@ public class FHIRRESTServer extends RestfulServer {
 		resourceProviders.add(new RestfulCompositionResourceProvider());
 		setResourceProviders(resourceProviders);
 		setServerName(FHIROmodConstants.OPENMRS_FHIR_SERVER_NAME);
+		if(FHIRUtils.isCustomNarrativesEnabled()) {
+			String propFile = FHIRUtils.gettCustomNarrativesPropertyPath();
+			CustomThymeleafNarrativeGenerator generator = new CustomThymeleafNarrativeGenerator(propFile);
+			getFhirContext().setNarrativeGenerator(generator);
+		}
 	}
 
 	protected String getRequestPath(String requestFullPath, String servletContextPath, String servletPath) {
