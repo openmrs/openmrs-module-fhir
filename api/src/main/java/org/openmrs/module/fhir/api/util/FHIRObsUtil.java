@@ -113,7 +113,7 @@ public class FHIRObsUtil {
 
 		//Set concepts
 		Collection<ConceptMap> mappings = obs.getConcept().getConceptMappings();
-		CodeableConceptDt dt = observation.getName();
+		CodeableConceptDt dt = observation.getCode();
 		List<CodingDt> dts = new ArrayList<CodingDt>();
 
 		for (ConceptMap map : mappings) {

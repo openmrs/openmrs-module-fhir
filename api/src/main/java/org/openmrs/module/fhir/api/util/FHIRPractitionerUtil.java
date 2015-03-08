@@ -20,6 +20,7 @@ import ca.uhn.fhir.model.dstu2.resource.Practitioner;
 import ca.uhn.fhir.model.dstu2.valueset.AddressUseEnum;
 import ca.uhn.fhir.model.dstu2.valueset.AdministrativeGenderEnum;
 import ca.uhn.fhir.model.dstu2.valueset.NameUseEnum;
+import ca.uhn.fhir.model.primitive.DateDt;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.StringDt;
@@ -113,7 +114,7 @@ public class FHIRPractitionerUtil {
 				practitioner.setGender(AdministrativeGenderEnum.UNKNOWN);
 			}
 
-			DateTimeDt fhirBirthDate = new DateTimeDt();
+			DateDt fhirBirthDate = new DateDt();
 			fhirBirthDate.setValue(provider.getPerson().getBirthdate());
 			practitioner.setBirthDate(fhirBirthDate);
 		} else {
