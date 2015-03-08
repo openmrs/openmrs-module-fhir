@@ -53,8 +53,8 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read()
-	public Practitioner getResourceById(@IdParam IdDt theId) {
-		Practitioner result = null;
+	public Person getResourceById(@IdParam IdDt theId) {
+		Person result = null;
 		result = personResource.getByUniqueId(theId);
 		return result;
 	}
@@ -65,7 +65,7 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	 * @param id object contaning the requested person
 	 */
 	@Search()
-	public List<Practitioner> searchPractitionerByUniqueId(@RequiredParam(name = Practitioner.SP_RES_ID) TokenParam id) {
+	public List<Person> searchPractitionerByUniqueId(@RequiredParam(name = Practitioner.SP_RES_ID) TokenParam id) {
 		return personResource.searchByUniqueId(id);
 	}
 
