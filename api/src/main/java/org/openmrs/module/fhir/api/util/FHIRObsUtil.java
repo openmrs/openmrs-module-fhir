@@ -80,7 +80,7 @@ public class FHIRObsUtil {
 			nameDisplay.append(")");
 			uri = FHIRConstants.PATIENT + "/" + obs.getPerson().getUuid();
 		} else {
-			uri = FHIRConstants.WEB_SERVICES_URI_PREFIX + "/" + FHIRConstants.PERSON + "/" + obs.getPerson().getUuid();
+			uri = FHIRConstants.PERSON + "/" + obs.getPerson().getUuid();
 		}
 
 		patientReference.setDisplay(nameDisplay.toString());

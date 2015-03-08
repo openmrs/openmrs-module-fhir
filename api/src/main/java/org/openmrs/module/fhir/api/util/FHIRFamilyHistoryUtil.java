@@ -39,7 +39,7 @@ public class FHIRFamilyHistoryUtil {
 		if (Context.getPatientService().getPatientByUuid(person.getUuid()) != null) {
 			personUri = FHIRConstants.PATIENT + "/" + person.getUuid();
 		} else {
-			personUri = FHIRConstants.WEB_SERVICES_URI_PREFIX + "/" + FHIRConstants.PERSON + "/" + person.getUuid();
+			personUri = FHIRConstants.PERSON + "/" + person.getUuid();
 		}
 
 		//Set person
