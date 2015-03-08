@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.fhir.server;
 
+import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
@@ -54,6 +55,7 @@ public class FHIRRESTServer extends RestfulServer {
 		resourceProviders.add(new RestfulObservationResourceProvider());
 		resourceProviders.add(new RestfulPractitionerResourceProvider());
 		resourceProviders.add(new RestfulCompositionResourceProvider());
+		this.setFhirContext(FhirContext.forDstu2());
 		setResourceProviders(resourceProviders);
 		setServerName(FHIROmodConstants.OPENMRS_FHIR_SERVER_NAME);
 		if(FHIRUtils.isCustomNarrativesEnabled()) {
