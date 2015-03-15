@@ -53,7 +53,10 @@ public class FHIRObsUtil {
 		Observation observation = new Observation();
 		//Set observation id
 		observation.setId(obs.getUuid());
-
+		//Set obs name
+		CodeableConceptDt obsName = observation.getName();
+		obsName.setText(obs.getConcept().getName().getName());
+		observation.setName(obsName);
 		//Set issued date
 		InstantDt instant = new InstantDt();
 		instant.setValue(obs.getDateCreated());
