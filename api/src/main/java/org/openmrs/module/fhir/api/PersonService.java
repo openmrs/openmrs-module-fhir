@@ -18,7 +18,7 @@ import java.util.List;
 
 public interface PersonService {
 	/**
-	 * Get fhir patient resource by uuid
+	 * Get fhir perso resource by uuid
 	 *
 	 * @param id uuid of the patient
 	 * @return fhir patient resource and will return null if patient not found for the given id
@@ -26,10 +26,18 @@ public interface PersonService {
 	Person getPerson(String id);
 
 	/**
-	 * Search patients by uuid
+	 * Search persons by uuid
 	 *
 	 * @param id the uuid to be search
 	 * @return fhir patient resource list
 	 */
 	List<Person> searchPersonById(String id);
+
+	/**
+	 * Search person by name
+	 *
+	 * @param name the name to be search
+	 * @return fhir person resource list
+	 */
+	List<Person> searchPersonByName(String name);
 }

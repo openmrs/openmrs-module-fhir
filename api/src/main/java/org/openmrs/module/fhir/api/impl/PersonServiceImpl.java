@@ -61,4 +61,9 @@ public class PersonServiceImpl implements PersonService{
 		}
 		return personList;
 	}
+
+	@Override
+	public List<Person> searchPersonByName(String name) {
+		return null;
+	}
 }
