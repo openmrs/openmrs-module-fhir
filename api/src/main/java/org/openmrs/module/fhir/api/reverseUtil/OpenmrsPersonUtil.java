@@ -12,7 +12,7 @@
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 
-package org.openmrs.module.fhir.api.reverse;
+package org.openmrs.module.fhir.api.reverseUtil;
 
 import ca.uhn.fhir.model.dstu2.composite.AddressDt;
 import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
@@ -27,10 +27,7 @@ import org.openmrs.PersonAddress;
 import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import static java.lang.String.valueOf;
 
@@ -42,73 +39,6 @@ public class OpenmrsPersonUtil {
         IdDt uuid = new IdDt();
         uuid.setId(personFHIR.getId());
         omrsPerson.setUuid(valueOf(uuid));
-
-        Set<PersonName> personNameSet = new Set<PersonName>() {
-            @Override
-            public int size() {
-                return 0;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-
-            @Override
-            public boolean contains(Object o) {
-                return false;
-            }
-
-            @Override
-            public Iterator<PersonName> iterator() {
-                return null;
-            }
-
-            @Override
-            public Object[] toArray() {
-                return new Object[0];
-            }
-
-            @Override
-            public <T> T[] toArray(T[] a) {
-                return null;
-            }
-
-            @Override
-            public boolean add(PersonName personName) {
-                return false;
-            }
-
-            @Override
-            public boolean remove(Object o) {
-                return false;
-            }
-
-            @Override
-            public boolean containsAll(Collection<?> c) {
-                return false;
-            }
-
-            @Override
-            public boolean addAll(Collection<? extends PersonName> c) {
-                return false;
-            }
-
-            @Override
-            public boolean retainAll(Collection<?> c) {
-                return false;
-            }
-
-            @Override
-            public boolean removeAll(Collection<?> c) {
-                return false;
-            }
-
-            @Override
-            public void clear() {
-
-            }
-        };
 
         for (HumanNameDt humanNameDt : personFHIR.getName()) {
             PersonName personName = new PersonName();
@@ -166,8 +96,6 @@ public class OpenmrsPersonUtil {
             }
 
             List<AddressDt> addressList = personFHIR.getAddress();
-
-            // omrsPerson.setAddresses(new HashSet<AddressDt>(addressList));
         }
 
         //set gender in fhir person object
@@ -183,29 +111,6 @@ public class OpenmrsPersonUtil {
         } else {
             omrsPerson.setVoided(true);
         }
-        /*
-        * //Check whether person converted to a patient
-		Patient patient = Context.getPatientService().getPatientByUuid(omrsPerson.getUuid());
-		if (patient != null) {
-			List<Person.Link> links = new ArrayList<Person.Link>();
-			Person.Link link = new Person.Link();
-			String uri = FHIRConstants.PATIENT + "/" + omrsPerson.getUuid();
-			ResourceReferenceDt other = new ResourceReferenceDt();
-			PersonName name = omrsPerson.getPersonName();
-			StringBuilder nameDisplay = new StringBuilder();
-			nameDisplay.append(name.getGivenName());
-			nameDisplay.append(" ");
-			nameDisplay.append(name.getFamilyName());
-			other.setDisplay(nameDisplay.toString());
-			IdDt patientRef = new IdDt();
-			patientRef.setValue(uri);
-			other.setReference(patientRef);
-			link.setOther(other);
-			links.add(link);
-			person.setLink(links);
-		}
-
-		FHIRUtils.validate(person);*/
 
         Patient patient = Context.getPatientService().getPatientByUuid(String.valueOf(personFHIR.getId()));
         if(patient!=null) {
