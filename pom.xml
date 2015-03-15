@@ -18,7 +18,7 @@
 
     <groupId>org.openmrs.module</groupId>
     <artifactId>fhir</artifactId>
-    <version>0.9-SNAPSHOT</version>
+    <version>0.8</version>
     <packaging>pom</packaging>
     <name>FHIR Module</name>
     <description>Helps to start writing OpenMRS modules</description>
@@ -238,6 +238,20 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
     </repositories>
+
+
+    <distributionManagement>
+        <repository>
+            <id>openmrs-repo-modules</id>
+            <name>Modules</name>
+            <url>http://mavenrepo.openmrs.org/nexus/content/repositories/modules/</url>
+        </repository>
+        <snapshotRepository>
+            <id>openmrs-repo-snapshots</id>
+            <name>OpenMRS Snapshots</name>
+            <url>http://mavenrepo.openmrs.org/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <pluginRepositories>
         <pluginRepository>
