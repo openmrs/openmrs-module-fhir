@@ -13,24 +13,21 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
+import ca.uhn.fhir.model.dstu2.resource.Person;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.api.impl.BaseOpenmrsService;
-import org.openmrs.module.fhir.api.AllergyIntoleranceService;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.PersonService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
-import org.openmrs.module.fhir.strategy.AllergyStrategyInterface;
+import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
- */
-public class AllergyIntoleranceServiceImpl extends BaseOpenmrsService implements AllergyIntoleranceService {
+public class PersonServiceImpl implements PersonService{
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 
 	private FHIRDAO dao;
-
-	private AllergyStrategyInterface allergyStrategyInterface;
 
 	/**
 	 * @param dao the dao to set
@@ -46,12 +43,27 @@ public class AllergyIntoleranceServiceImpl extends BaseOpenmrsService implements
 		return dao;
 	}
 
-	/**
-	 * @see org.openmrs.module.fhir.api.AllergyIntoleranceService#getAllergyIntolerance(String)
-	 */
-	public AllergyIntolerance getAllergyIntolerance(String id) {
-		//TODO implement
-		return new AllergyIntolerance();
+	@Override
+	public Person getPerson(String id) {
+		org.openmrs.Person omrsPerson = Context.getPersonService().getPersonByUuid(id);
+		if (omrsPerson == null) {
+			return null;
+		}
+		return FHIRPersonUtil.generatePerson(omrsPerson);
 	}
 
+	@Override
+	public List<Person> searchPersonById(String id) {
+		org.openmrs.Person omrsPerson =  Context.getPersonService().getPersonByUuid(id);
+		List<Person> personList = new ArrayList<Person>();
+		if (omrsPerson != null) {
+			personList.add(FHIRPersonUtil.generatePerson(omrsPerson));
+		}
+		return personList;
+	}
+
+	@Override
+	public List<Person> searchPersonByName(String name) {
+		return null;
+	}
 }

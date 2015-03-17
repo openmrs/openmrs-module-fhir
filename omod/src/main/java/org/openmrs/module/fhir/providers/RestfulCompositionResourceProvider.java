@@ -14,7 +14,7 @@
 package org.openmrs.module.fhir.providers;
 
 import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu.resource.Composition;
+import ca.uhn.fhir.model.dstu2.resource.Composition;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.Search;
 import ca.uhn.fhir.rest.param.ReferenceParam;

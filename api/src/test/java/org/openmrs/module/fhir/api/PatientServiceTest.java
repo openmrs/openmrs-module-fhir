@@ -13,8 +13,8 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu.composite.IdentifierDt;
-import ca.uhn.fhir.model.dstu.resource.Patient;
+import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
+import ca.uhn.fhir.model.dstu2.resource.Patient;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
@@ -78,7 +78,7 @@ public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 		boolean exist = false;
 		for (Patient patient : patients) {
 			for (IdentifierDt identifierDt : patient.getIdentifier()) {
-				if (identifierValue.equals(identifierDt.getValue().getValue())) {
+				if (identifierValue.equals(identifierDt.getValue())) {
 					exist = true;
 				}
 			}
@@ -99,7 +99,7 @@ public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 		boolean exist = false;
 		for (Patient patient : patients) {
 			for (IdentifierDt identifierDt : patient.getIdentifier()) {
-				if (identifierValue.equals(identifierDt.getValue().getValue())) {
+				if (identifierValue.equals(identifierDt.getValue())) {
 					exist = true;
 				}
 			}

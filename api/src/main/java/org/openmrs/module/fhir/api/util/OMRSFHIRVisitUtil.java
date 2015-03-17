@@ -13,11 +13,11 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import ca.uhn.fhir.model.dstu.composite.PeriodDt;
-import ca.uhn.fhir.model.dstu.composite.ResourceReferenceDt;
-import ca.uhn.fhir.model.dstu.resource.Encounter;
-import ca.uhn.fhir.model.dstu.valueset.EncounterClassEnum;
-import ca.uhn.fhir.model.dstu.valueset.EncounterStateEnum;
+import ca.uhn.fhir.model.dstu2.composite.PeriodDt;
+import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
+import ca.uhn.fhir.model.dstu2.resource.Encounter;
+import ca.uhn.fhir.model.dstu2.valueset.EncounterClassEnum;
+import ca.uhn.fhir.model.dstu2.valueset.EncounterStateEnum;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import org.openmrs.PersonName;
@@ -43,10 +43,13 @@ public class OMRSFHIRVisitUtil {
 			String uri =
 					FHIRConstants.WEB_SERVICES_URI_PREFIX + "/" + FHIRConstants.CONCEPT + "/" + omrsVisit.getIndication()
 							.getUuid();
+			List<ResourceReferenceDt> indications = new ArrayList<ResourceReferenceDt>();
+			ResourceReferenceDt indicaton = new ResourceReferenceDt();
 			IdDt indicationRef = new IdDt();
 			indicationRef.setValue(uri);
 			indication.setReference(indicationRef);
-			encounter.setIndication(indication);
+			indication.setReference(indicationRef);
+			encounter.setIndication(indications);
 		}
 		//Build and set patient reference
 		ResourceReferenceDt patientReference = new ResourceReferenceDt();
@@ -66,7 +69,7 @@ public class OMRSFHIRVisitUtil {
 		patientRef.setValue(patientUri);
 		patientReference.setReference(patientRef);
 		patientReference.setDisplay(nameDisplay.toString());
-		encounter.setSubject(patientReference);
+		encounter.setPatient(patientReference);
 
 		//Set encounter period from omrs encounter
 		DateTimeDt encounterStartDate = new DateTimeDt();

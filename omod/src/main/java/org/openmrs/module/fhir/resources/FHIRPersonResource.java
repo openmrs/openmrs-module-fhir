@@ -13,28 +13,30 @@
  */
 package org.openmrs.module.fhir.resources;
 
-import ca.uhn.fhir.model.dstu2.resource.Encounter;
+import ca.uhn.fhir.model.dstu2.resource.Person;
+import ca.uhn.fhir.model.dstu2.resource.Practitioner;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.EncounterService;
+import org.openmrs.module.fhir.api.PersonService;
+import org.openmrs.module.fhir.api.PractitionerService;
 
 import java.util.List;
 
-public class FHIREncounterResource extends Resource {
+public class FHIRPersonResource extends Resource {
 
-	public Encounter getByUniqueId(IdDt id) {
-
-		EncounterService encounterService = Context.getService(EncounterService.class);
-		Encounter fhirEncounter = encounterService.getEncounter(id.getIdPart());
-		if (fhirEncounter == null) {
-			throw new ResourceNotFoundException("Encounter is not found for the given Id " + id.getIdPart());
+	public Person getByUniqueId(IdDt id) {
+		PersonService personService = Context.getService(PersonService.class);
+		Person fhirPerson = personService.getPerson(id.getIdPart());
+		if (fhirPerson == null) {
+			throw new ResourceNotFoundException("Practitioner is not found for the given Id " + id.getIdPart());
 		}
-		return fhirEncounter;
+		return fhirPerson;
 	}
 
-	public List<Encounter> searchEncountersById(TokenParam id) {
-		return Context.getService(EncounterService.class).searchEncounterById(id.getValue());
+	public List<Person> searchByUniqueId(TokenParam id) {
+		PersonService personService = Context.getService(PersonService.class);
+		return personService.searchPersonById(id.getValue());
 	}
 }

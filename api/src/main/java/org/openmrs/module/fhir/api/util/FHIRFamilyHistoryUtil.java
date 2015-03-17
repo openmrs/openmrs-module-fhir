@@ -13,10 +13,10 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import ca.uhn.fhir.model.dstu.composite.CodeableConceptDt;
-import ca.uhn.fhir.model.dstu.composite.CodingDt;
-import ca.uhn.fhir.model.dstu.composite.ResourceReferenceDt;
-import ca.uhn.fhir.model.dstu.resource.FamilyHistory;
+import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
+import ca.uhn.fhir.model.dstu2.composite.CodingDt;
+import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
+import ca.uhn.fhir.model.dstu2.resource.FamilyHistory;
 import ca.uhn.fhir.model.primitive.DateDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import org.openmrs.Person;
@@ -39,7 +39,7 @@ public class FHIRFamilyHistoryUtil {
 		if (Context.getPatientService().getPatientByUuid(person.getUuid()) != null) {
 			personUri = FHIRConstants.PATIENT + "/" + person.getUuid();
 		} else {
-			personUri = FHIRConstants.WEB_SERVICES_URI_PREFIX + "/" + FHIRConstants.PERSON + "/" + person.getUuid();
+			personUri = FHIRConstants.PERSON + "/" + person.getUuid();
 		}
 
 		//Set person
@@ -62,7 +62,7 @@ public class FHIRFamilyHistoryUtil {
 			nameDisplay.append(")");
 		}
 		personRef.setDisplay(nameDisplay.toString());
-		familyHistory.setSubject(personRef);
+		familyHistory.setPatient(personRef);
 		FamilyHistory.Relation fhirRelation;
 		List<FamilyHistory.Relation> fhirRelations = new ArrayList<FamilyHistory.Relation>();
 		Person relatedPerson;

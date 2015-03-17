@@ -13,7 +13,7 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu.resource.AllergyIntolerance;
+import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
 

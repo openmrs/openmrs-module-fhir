@@ -13,16 +13,17 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import ca.uhn.fhir.model.dstu.composite.AddressDt;
-import ca.uhn.fhir.model.dstu.composite.ContactDt;
-import ca.uhn.fhir.model.dstu.composite.HumanNameDt;
-import ca.uhn.fhir.model.dstu.resource.Patient;
-import ca.uhn.fhir.model.dstu.valueset.AddressUseEnum;
-import ca.uhn.fhir.model.dstu.valueset.AdministrativeGenderCodesEnum;
-import ca.uhn.fhir.model.dstu.valueset.ContactSystemEnum;
-import ca.uhn.fhir.model.dstu.valueset.IdentifierUseEnum;
-import ca.uhn.fhir.model.dstu.valueset.NameUseEnum;
+import ca.uhn.fhir.model.dstu2.composite.AddressDt;
+import ca.uhn.fhir.model.dstu2.composite.ContactPointDt;
+import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
+import ca.uhn.fhir.model.dstu2.resource.Patient;
+import ca.uhn.fhir.model.dstu2.valueset.AddressUseEnum;
+import ca.uhn.fhir.model.dstu2.valueset.AdministrativeGenderEnum;
+import ca.uhn.fhir.model.dstu2.valueset.ContactPointSystemEnum;
+import ca.uhn.fhir.model.dstu2.valueset.IdentifierUseEnum;
+import ca.uhn.fhir.model.dstu2.valueset.NameUseEnum;
 import ca.uhn.fhir.model.primitive.BooleanDt;
+import ca.uhn.fhir.model.primitive.DateDt;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.StringDt;
@@ -97,11 +98,11 @@ public class FHIRPatientUtil {
 
 		//Set gender in fhir patient object
 		if (omrsPatient.getGender().equals("M")) {
-			patient.setGender(AdministrativeGenderCodesEnum.M);
+			patient.setGender(AdministrativeGenderEnum.MALE);
 		} else if (omrsPatient.getGender().equals("F")) {
-			patient.setGender(AdministrativeGenderCodesEnum.F);
+			patient.setGender(AdministrativeGenderEnum.FEMALE);
 		} else {
-			patient.setGender(AdministrativeGenderCodesEnum.UNK);
+			patient.setGender(AdministrativeGenderEnum.UNKNOWN);
 		}
 
 		List<AddressDt> fhirAddresses = patient.getAddress();
@@ -110,7 +111,7 @@ public class FHIRPatientUtil {
 			fhirAddress.setCity(address.getCityVillage());
 			fhirAddress.setCountry(address.getCountry());
 			fhirAddress.setState(address.getStateProvince());
-			fhirAddress.setZip(address.getPostalCode());
+			fhirAddress.setPostalCode(address.getPostalCode());
 			List<StringDt> addressStrings = new ArrayList<StringDt>();
 			addressStrings.add(new StringDt(address.getAddress1()));
 			addressStrings.add(new StringDt(address.getAddress2()));
@@ -128,7 +129,7 @@ public class FHIRPatientUtil {
 		patient.setAddress(fhirAddresses);
 
 		if (omrsPatient.getBirthdate() != null) {
-			DateTimeDt fhirBirthDate = new DateTimeDt();
+			DateDt fhirBirthDate = new DateDt();
 			fhirBirthDate.setValue(omrsPatient.getBirthdate());
 			patient.setBirthDate(fhirBirthDate);
 		}
@@ -145,12 +146,12 @@ public class FHIRPatientUtil {
 			patient.setDeceased(isDeceased);
 		}
 
-		List<ContactDt> dts = new ArrayList<ContactDt>();
+		List<ContactPointDt> dts = new ArrayList<ContactPointDt>();
 		// Add global property for telephone / email address. These properties will be used to identify the name of the
 		// person attribute (if any) being used to store a phone number and/or email.
 		if (omrsPatient.getAttribute(FHIRUtils.PATIENT_PHONE_NUMBER_ATTRIBUTE) != null) {
-			ContactDt telecom = new ContactDt();
-			telecom.setSystem(ContactSystemEnum.PHONE).setValue(omrsPatient.getAttribute(
+			ContactPointDt telecom = new ContactPointDt();
+			telecom.setSystem(ContactPointSystemEnum.PHONE).setValue(omrsPatient.getAttribute(
 					FHIRUtils.PATIENT_PHONE_NUMBER_ATTRIBUTE).getValue());
 			dts.add(telecom);
 		}

@@ -13,13 +13,14 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import ca.uhn.fhir.model.dstu.composite.AddressDt;
-import ca.uhn.fhir.model.dstu.composite.HumanNameDt;
-import ca.uhn.fhir.model.dstu.composite.IdentifierDt;
-import ca.uhn.fhir.model.dstu.resource.Practitioner;
-import ca.uhn.fhir.model.dstu.valueset.AddressUseEnum;
-import ca.uhn.fhir.model.dstu.valueset.AdministrativeGenderCodesEnum;
-import ca.uhn.fhir.model.dstu.valueset.NameUseEnum;
+import ca.uhn.fhir.model.dstu2.composite.AddressDt;
+import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
+import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
+import ca.uhn.fhir.model.dstu2.resource.Practitioner;
+import ca.uhn.fhir.model.dstu2.valueset.AddressUseEnum;
+import ca.uhn.fhir.model.dstu2.valueset.AdministrativeGenderEnum;
+import ca.uhn.fhir.model.dstu2.valueset.NameUseEnum;
+import ca.uhn.fhir.model.primitive.DateDt;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.StringDt;
@@ -81,13 +82,14 @@ public class FHIRPractitionerUtil {
 				}
 			}
 			//Set address in FHIR patient
-			AddressDt fhirAddress = practitioner.getAddress();
+			List<AddressDt> addressList = new ArrayList<AddressDt>();
+			AddressDt fhirAddress;
 			for (PersonAddress address : provider.getPerson().getAddresses()) {
-				if (address.isPreferred()) {
+					fhirAddress = new AddressDt();
 					fhirAddress.setCity(address.getCityVillage());
 					fhirAddress.setCountry(address.getCountry());
 					fhirAddress.setState(address.getStateProvince());
-					fhirAddress.setZip(address.getPostalCode());
+					fhirAddress.setPostalCode(address.getPostalCode());
 					List<StringDt> addressStrings = new ArrayList<StringDt>();
 					addressStrings.add(new StringDt(address.getAddress1()));
 					addressStrings.add(new StringDt(address.getAddress2()));
@@ -100,19 +102,19 @@ public class FHIRPractitionerUtil {
 					} else {
 						fhirAddress.setUse(AddressUseEnum.OLD);
 					}
-					practitioner.setAddress(fhirAddress);
-				}
+					addressList.add(fhirAddress);
 			}
+			practitioner.setAddress(addressList);
 			//Set gender in fhir practitioner object
 			if (provider.getPerson().getGender().equals("M")) {
-				practitioner.setGender(AdministrativeGenderCodesEnum.M);
+				practitioner.setGender(AdministrativeGenderEnum.MALE);
 			} else if (provider.getPerson().getGender().equals("F")) {
-				practitioner.setGender(AdministrativeGenderCodesEnum.F);
+				practitioner.setGender(AdministrativeGenderEnum.FEMALE);
 			} else {
-				practitioner.setGender(AdministrativeGenderCodesEnum.UNK);
+				practitioner.setGender(AdministrativeGenderEnum.UNKNOWN);
 			}
 
-			DateTimeDt fhirBirthDate = practitioner.getBirthDate();
+			DateDt fhirBirthDate = new DateDt();
 			fhirBirthDate.setValue(provider.getPerson().getBirthdate());
 			practitioner.setBirthDate(fhirBirthDate);
 		} else {
@@ -124,7 +126,7 @@ public class FHIRPractitionerUtil {
 			fhirName.setGiven(givenNames);
 			fhirName.setUse(NameUseEnum.USUAL);
 			practitioner.setName(fhirName);
-			practitioner.setGender(AdministrativeGenderCodesEnum.UNK);
+			practitioner.setGender(AdministrativeGenderEnum.UNKNOWN);
 		}
 		FHIRUtils.validate(practitioner);
 		return practitioner;

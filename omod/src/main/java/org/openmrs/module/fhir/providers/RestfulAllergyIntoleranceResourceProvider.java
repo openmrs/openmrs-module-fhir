@@ -14,8 +14,8 @@
 package org.openmrs.module.fhir.providers;
 
 import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu.resource.AllergyIntolerance;
-import ca.uhn.fhir.model.dstu.resource.Patient;
+import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
+import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;

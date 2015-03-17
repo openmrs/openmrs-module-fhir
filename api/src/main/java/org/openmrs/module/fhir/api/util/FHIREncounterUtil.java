@@ -13,16 +13,16 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import ca.uhn.fhir.model.dstu.composite.CodingDt;
-import ca.uhn.fhir.model.dstu.composite.PeriodDt;
-import ca.uhn.fhir.model.dstu.composite.ResourceReferenceDt;
-import ca.uhn.fhir.model.dstu.resource.Composition;
-import ca.uhn.fhir.model.dstu.resource.Composition.Section;
-import ca.uhn.fhir.model.dstu.resource.Encounter;
-import ca.uhn.fhir.model.dstu.valueset.CompositionStatusEnum;
-import ca.uhn.fhir.model.dstu.valueset.EncounterClassEnum;
-import ca.uhn.fhir.model.dstu.valueset.EncounterStateEnum;
-import ca.uhn.fhir.model.dstu.valueset.ParticipantTypeEnum;
+import ca.uhn.fhir.model.dstu2.composite.CodingDt;
+import ca.uhn.fhir.model.dstu2.composite.PeriodDt;
+import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
+import ca.uhn.fhir.model.dstu2.resource.Composition;
+import ca.uhn.fhir.model.dstu2.resource.Composition.Section;
+import ca.uhn.fhir.model.dstu2.resource.Encounter;
+import ca.uhn.fhir.model.dstu2.valueset.CompositionStatusEnum;
+import ca.uhn.fhir.model.dstu2.valueset.EncounterClassEnum;
+import ca.uhn.fhir.model.dstu2.valueset.EncounterStateEnum;
+import ca.uhn.fhir.model.dstu2.valueset.ParticipantTypeEnum;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import org.openmrs.EncounterProvider;
@@ -129,7 +129,7 @@ public class FHIREncounterUtil {
 		encounter.setClassElement(EncounterClassEnum.INPATIENT);
 
 		//Set patient reference
-		encounter.setSubject(buildPatientReference(omrsEncounter));
+		encounter.setPatient(buildPatientReference(omrsEncounter));
 
 		//Set participants
 		if (omrsEncounter.getEncounterProviders().size() > 0) {

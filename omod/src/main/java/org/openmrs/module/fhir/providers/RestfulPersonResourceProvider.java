@@ -14,32 +14,33 @@
 package org.openmrs.module.fhir.providers;
 
 import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu2.resource.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.Encounter;
-import ca.uhn.fhir.model.primitive.DateDt;
+import ca.uhn.fhir.model.dstu2.resource.Person;
+import ca.uhn.fhir.model.dstu2.resource.Practitioner;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
-import ca.uhn.fhir.rest.annotation.Operation;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.openmrs.module.fhir.resources.FHIREncounterResource;
+import org.openmrs.module.fhir.resources.FHIRPersonResource;
+import org.openmrs.module.fhir.resources.FHIRPractitionerResource;
 
 import java.util.List;
 
-public class RestfulEncounterResourceProvider implements IResourceProvider {
+public class RestfulPersonResourceProvider implements IResourceProvider {
 
-	private FHIREncounterResource encounterResource;
+	;
+	private FHIRPersonResource personResource;
 
-	public RestfulEncounterResourceProvider() {
-		encounterResource = new FHIREncounterResource();
+	public RestfulPersonResourceProvider() {
+		this.personResource = new FHIRPersonResource();
 	}
 
 	@Override
 	public Class<? extends IResource> getResourceType() {
-		return Encounter.class;
+		return Person.class;
 	}
 
 	/**
@@ -52,29 +53,20 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read()
-	public Encounter getResourceById(@IdParam IdDt theId) {
-		Encounter result = null;
-		result = encounterResource.getByUniqueId(theId);
+	public Person getResourceById(@IdParam IdDt theId) {
+		Person result = null;
+		result = personResource.getByUniqueId(theId);
 		return result;
 	}
 
 	/**
-	 * Search locations by unique id
+	 * Search person by unique id
 	 *
-	 * @param id object containing the requested id
+	 * @param id object contaning the requested person
 	 */
 	@Search()
-	public List<Encounter> searchEncountersByUniqueId(@RequiredParam(name = Encounter.SP_RES_ID) TokenParam id) {
-		return encounterResource.searchEncountersById(id);
+	public List<Person> searchPractitionerByUniqueId(@RequiredParam(name = Practitioner.SP_RES_ID) TokenParam id) {
+		return personResource.searchByUniqueId(id);
 	}
 
-	@Operation(name="$everything")
-	public Bundle encounterInstanceOperation(@IdParam IdDt encounterId) {
-		Encounter result = null;
-		result = encounterResource.getByUniqueId(encounterId);
-		Bundle bundle = new Bundle();
-		Bundle.Entry entry = bundle.addEntry();
-		entry.setResource(result);
-		return bundle;
-	}
 }

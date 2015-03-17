@@ -14,16 +14,16 @@
 package org.openmrs.module.fhir.api.util;
 
 import ca.uhn.fhir.model.api.ExtensionDt;
-import ca.uhn.fhir.model.dstu.composite.AttachmentDt;
-import ca.uhn.fhir.model.dstu.composite.CodeableConceptDt;
-import ca.uhn.fhir.model.dstu.composite.CodingDt;
-import ca.uhn.fhir.model.dstu.composite.PeriodDt;
-import ca.uhn.fhir.model.dstu.composite.QuantityDt;
-import ca.uhn.fhir.model.dstu.composite.ResourceReferenceDt;
-import ca.uhn.fhir.model.dstu.resource.Observation;
-import ca.uhn.fhir.model.dstu.valueset.ObservationRelationshipTypeEnum;
-import ca.uhn.fhir.model.dstu.valueset.ObservationReliabilityEnum;
-import ca.uhn.fhir.model.dstu.valueset.ObservationStatusEnum;
+import ca.uhn.fhir.model.dstu2.composite.AttachmentDt;
+import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
+import ca.uhn.fhir.model.dstu2.composite.CodingDt;
+import ca.uhn.fhir.model.dstu2.composite.PeriodDt;
+import ca.uhn.fhir.model.dstu2.composite.QuantityDt;
+import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
+import ca.uhn.fhir.model.dstu2.resource.Observation;
+import ca.uhn.fhir.model.dstu2.valueset.ObservationRelationshipTypeEnum;
+import ca.uhn.fhir.model.dstu2.valueset.ObservationReliabilityEnum;
+import ca.uhn.fhir.model.dstu2.valueset.ObservationStatusEnum;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.InstantDt;
@@ -53,10 +53,6 @@ public class FHIRObsUtil {
 		Observation observation = new Observation();
 		//Set observation id
 		observation.setId(obs.getUuid());
-		//Set obs name
-		CodeableConceptDt obsName = observation.getName();
-		obsName.setText(obs.getConcept().getName().getName());
-		observation.setName(obsName);
 		//Set issued date
 		InstantDt instant = new InstantDt();
 		instant.setValue(obs.getDateCreated());
@@ -83,7 +79,7 @@ public class FHIRObsUtil {
 			nameDisplay.append(")");
 			uri = FHIRConstants.PATIENT + "/" + obs.getPerson().getUuid();
 		} else {
-			uri = FHIRConstants.WEB_SERVICES_URI_PREFIX + "/" + FHIRConstants.PERSON + "/" + obs.getPerson().getUuid();
+			uri = FHIRConstants.PERSON + "/" + obs.getPerson().getUuid();
 		}
 
 		patientReference.setDisplay(nameDisplay.toString());
@@ -116,7 +112,7 @@ public class FHIRObsUtil {
 
 		//Set concepts
 		Collection<ConceptMap> mappings = obs.getConcept().getConceptMappings();
-		CodeableConceptDt dt = observation.getName();
+		CodeableConceptDt dt = observation.getCode();
 		List<CodingDt> dts = new ArrayList<CodingDt>();
 
 		for (ConceptMap map : mappings) {
@@ -157,10 +153,20 @@ public class FHIRObsUtil {
 			List<Observation.ReferenceRange> referenceRanges = new ArrayList<Observation.ReferenceRange>();
 			Observation.ReferenceRange referenceRange = new Observation.ReferenceRange();
 			if (cn.getHiAbsolute() != null) {
-				referenceRange.setHigh(cn.getHiAbsolute());
+				QuantityDt high = new QuantityDt();
+				high.setUnits(cn.getUnits());
+				high.setCode(cn.getUnits());
+				high.setSystem(FHIRConstants.NUMERIC_CONCEPT_MEASURE_URI);
+				high.setValue(cn.getHiAbsolute());
+				referenceRange.setHigh(high);
 			}
 			if (cn.getLowAbsolute() != null) {
-				referenceRange.setLow(cn.getLowAbsolute());
+				QuantityDt low = new QuantityDt();
+				low.setUnits(cn.getUnits());
+				low.setCode(cn.getUnits());
+				low.setSystem(FHIRConstants.NUMERIC_CONCEPT_MEASURE_URI);
+				low.setValue(cn.getLowAbsolute());
+				referenceRange.setHigh(low);
 			}
 			referenceRanges.add(referenceRange);
 			observation.setReferenceRange(referenceRanges);

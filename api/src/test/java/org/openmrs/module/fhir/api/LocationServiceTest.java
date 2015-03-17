@@ -13,7 +13,7 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu.resource.Location;
+import ca.uhn.fhir.model.dstu2.resource.Location;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.context.Context;

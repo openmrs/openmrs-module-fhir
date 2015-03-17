@@ -13,8 +13,8 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import ca.uhn.fhir.model.dstu.resource.Composition;
-import ca.uhn.fhir.model.dstu.resource.Encounter;
+import ca.uhn.fhir.model.dstu2.resource.Composition;
+import ca.uhn.fhir.model.dstu2.resource.Encounter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;

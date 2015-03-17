@@ -14,7 +14,7 @@
 package org.openmrs.module.fhir.providers;
 
 import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu.resource.FamilyHistory;
+import ca.uhn.fhir.model.dstu2.resource.FamilyHistory;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
@@ -73,7 +73,7 @@ public class RestfulFamilyHistoryResourceProvider implements IResourceProvider {
 	 */
 	@Search()
 	public List<FamilyHistory> searchFamilyHistoryByPerson(
-			@RequiredParam(name = FamilyHistory.SP_SUBJECT) ReferenceParam person) {
+			@RequiredParam(name = FamilyHistory.SP_PATIENT) ReferenceParam person) {
 		return familyHistoryResource.searchFamilyHistoryByPerson(person);
 	}
 }

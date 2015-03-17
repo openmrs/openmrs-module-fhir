@@ -14,7 +14,7 @@
 package org.openmrs.module.fhir.api.util;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.model.dstu.resource.AllergyIntolerance;
+import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
 import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.ValidationFailureException;
 

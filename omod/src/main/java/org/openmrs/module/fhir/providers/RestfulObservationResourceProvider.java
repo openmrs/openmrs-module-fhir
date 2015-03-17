@@ -14,7 +14,7 @@
 package org.openmrs.module.fhir.providers;
 
 import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu.resource.Observation;
+import ca.uhn.fhir.model.dstu2.resource.Observation;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
@@ -76,7 +76,7 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	@Search()
 	public List<Observation> searchObsByPatientAndConcept(@RequiredParam(name = Observation.SP_SUBJECT) ReferenceParam
 			                                                      person,
-	                                                      @RequiredParam(name = Observation.SP_NAME) TokenOrListParam name) {
+	                                                      @RequiredParam(name = Observation.SP_CODE) TokenOrListParam name) {
 		return provider.searchObsByPatientAndConcept(person, name);
 	}
 
@@ -86,7 +86,7 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 * @param name object containing the requested name
 	 */
 	@Search()
-	public List<Observation> searchObsByName(@RequiredParam(name = Observation.SP_NAME) TokenParam name) {
+	public List<Observation> searchObsByName(@RequiredParam(name = Observation.SP_CODE_VALUE_CONCEPT) TokenParam name) {
 		return provider.searchObsByName(name);
 	}
 
