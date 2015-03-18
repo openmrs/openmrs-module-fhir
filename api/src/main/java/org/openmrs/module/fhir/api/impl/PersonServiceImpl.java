@@ -19,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.PersonService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
+import org.openmrs.module.fhir.api.reverse.OpenmrsPersonUtil;
 import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,4 +67,10 @@ public class PersonServiceImpl implements PersonService{
 	public List<Person> searchPersonByName(String name) {
 		return null;
 	}
+
+    @Override
+    public org.openmrs.Person consumeFHIRPerson(Person person) {
+
+        return OpenmrsPersonUtil.generateOpenMRSPerson();
+    }
 }
