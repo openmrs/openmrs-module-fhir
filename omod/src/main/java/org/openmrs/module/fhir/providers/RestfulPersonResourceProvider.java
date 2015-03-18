@@ -69,4 +69,16 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 		return personResource.searchByUniqueId(id);
 	}
 
+	/**
+	 * Search persons by name
+	 *
+	 * @param name name of persons
+	 * @return This method returns a list of Persons. This list may contain multiple matching resources, or it may also be
+	 * empty.
+	 */
+	@Search()
+	public List<Person> findPersontsByName(@RequiredParam(name = Person.SP_NAME) StringParam name) {
+		return personResource.searchByName(name);
+	}
+
 }

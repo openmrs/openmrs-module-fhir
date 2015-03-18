@@ -34,10 +34,10 @@ public interface PersonService {
 	List<Person> searchPersonById(String id);
 
 	/**
-	 * Search person by name
+	 * Search persons by name
 	 *
 	 * @param name the name to be search
-	 * @return fhir person resource list
+	 * @return fhir persons resource list
 	 */
-	List<Person> searchPersonByName(String name);
+	List<Person> searchPersonsByName(String name);
 }
