@@ -40,4 +40,12 @@ public interface PersonService {
 	 * @return fhir person resource list
 	 */
 	List<Person> searchPersonByName(String name);
+
+    /**
+     * consume a FHIR person as a oms person
+     * @param person
+     * @return
+     */
+    org.openmrs.Person consumeFHIRPerson(Person person);
+
 }
