@@ -21,11 +21,9 @@ import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.Search;
-import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.openmrs.module.fhir.resources.FHIRPersonResource;
-import org.openmrs.module.fhir.resources.FHIRPractitionerResource;
 
 import java.util.List;
 
@@ -68,5 +66,11 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	public List<Person> searchPractitionerByUniqueId(@RequiredParam(name = Practitioner.SP_RES_ID) TokenParam id) {
 		return personResource.searchByUniqueId(id);
 	}
+
+    @Search()
+    public org.openmrs.Person consumeFHIRPerson(Person person)
+    {
+        return personResource.consumeFHIRPerson(person);
+    }
 
 }

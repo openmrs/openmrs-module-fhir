@@ -14,13 +14,11 @@
 package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.model.dstu2.resource.Person;
-import ca.uhn.fhir.model.dstu2.resource.Practitioner;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.PersonService;
-import org.openmrs.module.fhir.api.PractitionerService;
 
 import java.util.List;
 
@@ -39,4 +37,10 @@ public class FHIRPersonResource extends Resource {
 		PersonService personService = Context.getService(PersonService.class);
 		return personService.searchPersonById(id.getValue());
 	}
+
+    public org.openmrs.Person consumeFHIRPerson(Person person)
+    {
+        PersonService personService = Context.getService(PersonService.class);
+        return personService.createFHIRPerson(person);
+    }
 }
