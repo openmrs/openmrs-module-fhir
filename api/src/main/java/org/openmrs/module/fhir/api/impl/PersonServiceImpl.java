@@ -63,7 +63,13 @@ public class PersonServiceImpl implements PersonService{
 	}
 
 	@Override
-	public List<Person> searchPersonByName(String name) {
-		return null;
+	public List<Person> searchPersonsByName(String name) {
+		List<org.openmrs.Person> persons = Context.getPersonService().getPeople(name, null);
+		List<Person> fhirPersonsList = new ArrayList<Person>();
+		for (org.openmrs.Person person : persons) {
+			fhirPersonsList.add(FHIRPersonUtil.generatePerson(person));
+		}
+		return fhirPersonsList;
 	}
+
 }

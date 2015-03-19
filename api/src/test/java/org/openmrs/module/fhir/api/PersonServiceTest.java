@@ -61,4 +61,12 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest{
 		Person fhirPerson = persons.get(0);
 		assertEquals(fhirPerson.getId().toString(), personUuid);
 	}
+
+	@Test
+	public void searchPersonsByName_shouldReturnBundle() {
+		String name = "Anet";
+		List<Person> persons = getService().searchPersonsByName(name);
+		assertNotNull(persons);
+		assertEquals(2, persons.size());
+	}
 }

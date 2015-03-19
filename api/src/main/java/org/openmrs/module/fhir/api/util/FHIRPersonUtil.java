@@ -104,7 +104,7 @@ public class FHIRPersonUtil {
 		//Set gender in fhir person object
 		if (omrsPerson.getGender().equals("M")) {
 			person.setGender(AdministrativeGenderEnum.MALE);
-		} else if (person.getGender().equals("F")) {
+		} else if (omrsPerson.getGender().equals("F")) {
 			person.setGender(AdministrativeGenderEnum.FEMALE);
 		} else {
 			person.setGender(AdministrativeGenderEnum.UNKNOWN);
