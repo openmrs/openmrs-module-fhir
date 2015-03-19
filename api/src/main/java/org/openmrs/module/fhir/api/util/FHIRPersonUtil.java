@@ -61,12 +61,12 @@ public class FHIRPersonUtil {
 				fhirName.setSuffix(suffixes);
 			}
 
-			if (name.getPrefix() != null) {
+			if (name.getFamilyNamePrefix() != null) {
 				StringDt prefix = fhirName.addPrefix();
 				prefix.setValue(name.getPrefix());
 				List<StringDt> prefixes = new ArrayList<StringDt>();
 				prefixes.add(prefix);
-				fhirName.setSuffix(prefixes);
+				fhirName.setPrefix(prefixes);
 			}
 			if (name.isPreferred()) {
 				fhirName.setUse(NameUseEnum.USUAL);
