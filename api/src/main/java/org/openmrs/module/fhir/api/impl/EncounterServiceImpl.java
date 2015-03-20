@@ -15,6 +15,7 @@ package org.openmrs.module.fhir.api.impl;
 
 import ca.uhn.fhir.model.dstu2.resource.Composition;
 import ca.uhn.fhir.model.dstu2.resource.Encounter;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
@@ -24,6 +25,7 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.EncounterService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIREncounterUtil;
+import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
 import org.openmrs.module.fhir.api.util.OMRSFHIRVisitUtil;
 
 import java.util.ArrayList;
@@ -55,6 +57,7 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 	/**
 	 * @see org.openmrs.module.fhir.api.EncounterService#getEncounter(String)
 	 */
+	@Override
 	public Encounter getEncounter(String id) {
 
 		org.openmrs.Encounter omrsEncounter = Context.getEncounterService().getEncounterByUuid(id);
@@ -69,6 +72,7 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 		return FHIREncounterUtil.generateEncounter(omrsEncounter);
 	}
 
+	@Override
 	public List<Encounter> searchEncounterById(String id) {
 		org.openmrs.Encounter omrsEncounter = Context.getEncounterService().getEncounterByUuid(id);
 		List<Encounter> encounterList = new ArrayList<Encounter>();
@@ -83,6 +87,17 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 		return encounterList;
 	}
 
+	@Override
+	public List<Encounter> searchEncountersByPatientIdentifier(String identifier) {
+		List<org.openmrs.Encounter> encounters = Context.getEncounterService().getEncountersByPatientIdentifier(identifier);
+		List<Encounter> fhirEncountersList = new ArrayList<Encounter>();
+		for (org.openmrs.Encounter encounter: encounters) {
+			fhirEncountersList.add(FHIREncounterUtil.generateEncounter(encounter));
+		}
+		return fhirEncountersList;
+	}
+
+	@Override
 	public List<Composition> searchEncounterComposition(String id) {
 		org.openmrs.Encounter omrsEncounter = Context.getEncounterService().getEncounterByUuid(id);
 		List<Composition> encounterList = new ArrayList<Composition>();

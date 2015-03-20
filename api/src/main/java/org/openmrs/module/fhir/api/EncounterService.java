@@ -15,6 +15,7 @@ package org.openmrs.module.fhir.api;
 
 import ca.uhn.fhir.model.dstu2.resource.Composition;
 import ca.uhn.fhir.model.dstu2.resource.Encounter;
+
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,6 +52,14 @@ public interface EncounterService extends OpenmrsService {
 	 * @return fhir encounter resource list
 	 */
 	public List<Encounter> searchEncounterById(String id);
+
+	/**
+	 * Search encounters by patient identifier
+	 *
+	 * @param identifier to be search
+	 * @return fhir encounter resource list
+	 */
+	public List<Encounter> searchEncountersByPatientIdentifier(String identifier);
 
 	/**
 	 * Search encounters by id and returned composition
