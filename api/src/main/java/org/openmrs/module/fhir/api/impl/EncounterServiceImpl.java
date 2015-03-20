@@ -55,6 +55,7 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 	/**
 	 * @see org.openmrs.module.fhir.api.EncounterService#getEncounter(String)
 	 */
+	@Override
 	public Encounter getEncounter(String id) {
 
 		org.openmrs.Encounter omrsEncounter = Context.getEncounterService().getEncounterByUuid(id);
@@ -69,6 +70,7 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 		return FHIREncounterUtil.generateEncounter(omrsEncounter);
 	}
 
+	@Override
 	public List<Encounter> searchEncounterById(String id) {
 		org.openmrs.Encounter omrsEncounter = Context.getEncounterService().getEncounterByUuid(id);
 		List<Encounter> encounterList = new ArrayList<Encounter>();
@@ -93,6 +95,7 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 		return fhirEncountersList;
 	}
 
+	@Override
 	public List<Composition> searchEncounterComposition(String id) {
 		org.openmrs.Encounter omrsEncounter = Context.getEncounterService().getEncounterByUuid(id);
 		List<Composition> encounterList = new ArrayList<Composition>();
