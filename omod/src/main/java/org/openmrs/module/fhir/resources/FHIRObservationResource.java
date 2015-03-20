@@ -15,12 +15,14 @@ package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.model.base.composite.BaseCodingDt;
 import ca.uhn.fhir.model.dstu2.resource.Observation;
+import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.DateParam;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenOrListParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.ObsService;
 
@@ -71,6 +73,15 @@ public class FHIRObservationResource extends Resource {
 		ObsService obsService = Context.getService(ObsService.class);
 		return obsService.searchObsById(answerConceptName.getValue());
 	}
+
+	public List<Observation> searchObsByPatientIdentifier(ReferenceParam identifier) {
+		List<Observation> fhirEncounters = new ArrayList<Observation>();
+
+		String chain = identifier.getChain();
+		if (Patient.SP_IDENTIFIER.equals(chain)) {
+			fhirEncounters = Context.getService(ObsService.class).searchObsByPatientIdentifier(identifier.getValue());
+		}
+		return fhirEncounters;
+	}
+
 }
-
-

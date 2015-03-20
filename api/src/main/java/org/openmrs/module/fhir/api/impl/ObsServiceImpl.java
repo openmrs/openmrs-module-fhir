@@ -14,6 +14,7 @@
 package org.openmrs.module.fhir.api.impl;
 
 import ca.uhn.fhir.model.dstu2.resource.Observation;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -153,4 +154,18 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 		}
 		return obsList;
 	}
+
+	/**
+	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByPatientIdentifier(String)
+	 */
+	public List<Observation> searchObsByPatientIdentifier(String identifier) {
+		List<Observation> fhirObsList = new ArrayList<Observation>();
+
+		List<Obs> ormsObs = Context.getObsService().getObservations(identifier);
+		for (Obs obs: ormsObs) {
+			fhirObsList.add(FHIRObsUtil.generateObs(obs));
+		}
+		return fhirObsList;
+	}
+
 }
