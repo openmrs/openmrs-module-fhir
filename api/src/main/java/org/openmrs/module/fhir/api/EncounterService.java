@@ -52,6 +52,13 @@ public interface EncounterService extends OpenmrsService {
 	 */
 	public List<Encounter> searchEncounterById(String id);
 
+	/* Search encounters by patient identifier
+	*
+	* @param identifier to be search
+	* @return fhir encounter resource list
+	*/
+	public List<Encounter> searchEncountersByPatientIdentifier(String identifier);
+
 	/**
 	 * Search encounters by id and returned composition
 	 *

@@ -83,6 +83,16 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 		return encounterList;
 	}
 
+	@Override
+	public List<Encounter> searchEncountersByPatientIdentifier(String identifier) {
+		List<org.openmrs.Encounter> encounters = Context.getEncounterService().getEncountersByPatientIdentifier(identifier);
+		List<Encounter> fhirEncountersList = new ArrayList<Encounter>();
+		for (org.openmrs.Encounter encounter: encounters) {
+			fhirEncountersList.add(FHIREncounterUtil.generateEncounter(encounter));
+		}
+		return fhirEncountersList;
+	}
+
 	public List<Composition> searchEncounterComposition(String id) {
 		org.openmrs.Encounter omrsEncounter = Context.getEncounterService().getEncounterByUuid(id);
 		List<Composition> encounterList = new ArrayList<Composition>();
