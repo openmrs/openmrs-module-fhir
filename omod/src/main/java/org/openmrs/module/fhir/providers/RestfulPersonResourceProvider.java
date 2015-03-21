@@ -17,10 +17,7 @@ import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.resource.Person;
 import ca.uhn.fhir.model.dstu2.resource.Practitioner;
 import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.rest.annotation.IdParam;
-import ca.uhn.fhir.rest.annotation.Read;
-import ca.uhn.fhir.rest.annotation.RequiredParam;
-import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.annotation.*;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.openmrs.module.fhir.resources.FHIRPersonResource;
@@ -67,10 +64,9 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 		return personResource.searchByUniqueId(id);
 	}
 
-    @Search()
-    public org.openmrs.Person consumeFHIRPerson(Person person)
-    {
-        return personResource.consumeFHIRPerson(person);
+    @Create()
+    public org.openmrs.Person createFHIRPerson(Person person){
+        return personResource.createFHIRPerson(person);
     }
 
 }

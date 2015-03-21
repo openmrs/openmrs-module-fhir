@@ -42,7 +42,7 @@ public interface PersonService {
 	List<Person> searchPersonByName(String name);
 
     /**
-     * consume a FHIR person as a oms person
+     * creates a oms Person from FHIR personn
      * @param person
      * @return
      */

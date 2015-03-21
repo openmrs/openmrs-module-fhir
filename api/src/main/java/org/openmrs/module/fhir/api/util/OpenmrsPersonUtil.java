@@ -11,7 +11,7 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.fhir.api.reverse;
+package org.openmrs.module.fhir.api.util;
 import ca.uhn.fhir.model.dstu2.composite.AddressDt;
 import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
 import ca.uhn.fhir.model.dstu2.valueset.AddressUseEnum;
@@ -22,14 +22,12 @@ import ca.uhn.fhir.model.primitive.StringDt;
 import org.openmrs.Person;
 import org.openmrs.PersonAddress;
 import org.openmrs.PersonName;
+
 import java.util.List;
+
 import static java.lang.String.valueOf;
 
 public class OpenmrsPersonUtil {
-
-    public static String MALE   = "M";
-    public static String FEMALE = "F";
-
     /**
      * @param personFHIR
      * @return OpenMRS person after giving a FHIR person
@@ -46,10 +44,10 @@ public class OpenmrsPersonUtil {
                     PersonName personName = new PersonName();
                     if (humanNameDt.getUse() != null) {
                         String getUse = humanNameDt.getUse();
-                        if (valueOf(NameUseEnum.USUAL) == getUse) {
+                        if (getUse.equals(NameUseEnum.USUAL)) {
                             personName.setPreferred(true);
                         }
-                        if (valueOf(NameUseEnum.OLD) == getUse) {
+                        if (getUse.equals(NameUseEnum.OLD)) {
                             personName.setPreferred(false);
                         }
                     }
@@ -96,19 +94,19 @@ public class OpenmrsPersonUtil {
                     address.setAddress4(valueOf(addressStrings.get(3)));
                     address.setAddress5(valueOf(addressStrings.get(4)));
                 }
-                if (fhirAddress.getUse() == String.valueOf(AddressUseEnum.HOME)) {
+                if (fhirAddress.getUse().equals(String.valueOf(AddressUseEnum.HOME))) {
                     address.setPreferred(true);
                 }
-                if (fhirAddress.getUse() == String.valueOf(AddressUseEnum.OLD)) {
+                if (fhirAddress.getUse().equals(String.valueOf(AddressUseEnum.OLD))) {
                     address.setPreferred(false);
                 }
 
              }
 
-              if(personFHIR.getGender() == String.valueOf(AdministrativeGenderEnum.MALE)) {
-                omrsPerson.setGender(MALE);
-              } else if (personFHIR.getGender() == String.valueOf(AdministrativeGenderEnum.FEMALE)) {
-                    omrsPerson.setGender(FEMALE);
+              if(personFHIR.getGender().equals(String.valueOf(AdministrativeGenderEnum.MALE))) {
+                omrsPerson.setGender(FHIRConstants.MALE);
+              } else if (personFHIR.getGender().equals(String.valueOf(AdministrativeGenderEnum.FEMALE))) {
+                    omrsPerson.setGender(FHIRConstants.FEMALE);
               }
 
               omrsPerson.setBirthdate(personFHIR.getBirthDate());

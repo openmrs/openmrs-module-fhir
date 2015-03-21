@@ -52,4 +52,7 @@ public final class FHIRConstants {
 	public static final String CONFIDENTIALITY_CODING_R = "R";
 	public static final String CONFIDENTIALITY_CODING_VALUE_RESTRICTED = "restricted";
 	public static final String ENCOUNTER_ID = "encounter_id";
+    public static String MALE = "M";
+    public static String FEMALE = "F";
+
 }
