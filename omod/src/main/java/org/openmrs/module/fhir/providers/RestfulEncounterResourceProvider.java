@@ -70,11 +70,6 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 
 	@Operation(name="$everything")
 	public Bundle encounterInstanceOperation(@IdParam IdDt encounterId) {
-		Encounter result = null;
-		result = encounterResource.getByUniqueId(encounterId);
-		Bundle bundle = new Bundle();
-		Bundle.Entry entry = bundle.addEntry();
-		entry.setResource(result);
-		return bundle;
+		return encounterResource.getEncounterOperationsById(encounterId);
 	}
 }

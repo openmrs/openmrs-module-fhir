@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.fhir.api;
 
+import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Composition;
 import ca.uhn.fhir.model.dstu2.resource.Encounter;
 import org.junit.Before;
@@ -56,7 +57,7 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void searchEncounterByIdFromOmrsEncounter_shouldReturnBundle() {
+	public void searchEncounterByIdFromOmrsEncounter_shouldReturnMatchingEncounter() {
 		String encounterUuid = "33d70956-b359-452a-b3da-b69c8ab459ce";
 		List<Encounter> fhirEncounters = getService().searchEncounterById(encounterUuid);
 		assertNotNull(fhirEncounters);
@@ -64,14 +65,15 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void searchEncounterByIdFromOmrsVisit_shouldReturnBundle() {
+	public void searchEncounterByIdFromOmrsVisit_shouldReturnMatchingVisitAsFHIREncounter() {
 		String visitUuid = "4c48b0c0-1ade-11e1-9c71-00248140a5eb";
 		List<Encounter> fhirEncounters = getService().searchEncounterById(visitUuid);
 		assertNotNull(fhirEncounters);
 		assertEquals(1, fhirEncounters.size());
 	}
+
 	@Test
-	public void searchEncounterComposition_shouldReturnBundle() {
+	public void searchEncounterComposition_shouldReturnMatchingComposition() {
 		String encounterUuid = "33d70956-b359-452a-b3da-b69c8ab459ce";
 		List<Composition> fhirCompositon = getService().searchEncounterComposition(encounterUuid);
 		assertNotNull(fhirCompositon);
@@ -79,7 +81,15 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void searchEncounterCompositionByPatient_shouldReturnBundle() {
+	public void searchEncounterOperations_shouldReturnBundle() {
+		String encounterUuid = "33d70956-b359-452a-b3da-b69c8ab459ce";
+		Bundle bundle = getService().getEncounterOperationsById(encounterUuid);
+		assertNotNull(bundle);
+		assertEquals(4, bundle.getEntry().size());
+	}
+
+	@Test
+	public void searchEncounterCompositionByPatient_shouldReturnMarchingCompositionList() {
 		String personUuid = "4b3f42da-2029-4e47-9396-a1b6a969e802";
 		List<Composition> fhirCompositon = getService().searchEncounterCompositionByPatient(personUuid);
 		assertNotNull(fhirCompositon);

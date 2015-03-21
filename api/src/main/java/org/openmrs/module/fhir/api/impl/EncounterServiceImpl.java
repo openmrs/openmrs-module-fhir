@@ -13,10 +13,13 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
+import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Composition;
 import ca.uhn.fhir.model.dstu2.resource.Encounter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.EncounterProvider;
+import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.api.context.Context;
@@ -24,6 +27,10 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.EncounterService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIREncounterUtil;
+import org.openmrs.module.fhir.api.util.FHIRLocationUtil;
+import org.openmrs.module.fhir.api.util.FHIRObsUtil;
+import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
+import org.openmrs.module.fhir.api.util.FHIRPractitionerUtil;
 import org.openmrs.module.fhir.api.util.OMRSFHIRVisitUtil;
 
 import java.util.ArrayList;
@@ -111,5 +118,42 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 			encounterList.add(FHIREncounterUtil.generateComposition(omrsEncounter));
 		}
 		return encounterList;
+	}
+
+	@Override
+	public Bundle getEncounterOperationsById(String encounterId) {
+		org.openmrs.Encounter omsrEncounter = null;
+		omsrEncounter =  Context.getEncounterService().getEncounterByUuid(encounterId);
+		Bundle bundle = new Bundle();
+		if(omsrEncounter != null) {
+			Bundle.Entry encounter = bundle.addEntry();
+			encounter.setResource(FHIREncounterUtil.generateEncounter(omsrEncounter));
+
+			//Set observation resources
+			Bundle.Entry observation;
+			for(Obs obs : omsrEncounter.getAllObs(false)) {
+				observation = bundle.addEntry();
+				observation.setResource(FHIRObsUtil.generateObs(obs));
+			}
+
+			//Set location
+			Bundle.Entry location;
+			if(omsrEncounter.getLocation() != null) {
+				location = bundle.addEntry();
+				location.setResource(FHIRLocationUtil.generateLocation(omsrEncounter.getLocation()));
+			}
+
+			//Set patient
+			Bundle.Entry patient = bundle.addEntry();
+			patient.setResource(FHIRPatientUtil.generatePatient(omsrEncounter.getPatient()));
+
+			//Set providers
+			Bundle.Entry provider;
+			for(EncounterProvider encounterProvider : omsrEncounter.getEncounterProviders()) {
+				provider = bundle.addEntry();
+				provider.setResource(FHIRPractitionerUtil.generatePractitioner(encounterProvider.getProvider()));
+			}
+		}
+		return bundle;
 	}
 }

@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.fhir.api;
 
+import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Composition;
 import ca.uhn.fhir.model.dstu2.resource.Encounter;
 import org.openmrs.api.OpenmrsService;
@@ -75,5 +76,13 @@ public interface EncounterService extends OpenmrsService {
 	 * @return fhir composition list
 	 */
 	public List<Composition> searchEncounterCompositionByEncounterId(String encounterId);
+
+	/**
+	 * Get Encounter operations bundle resource
+	 *
+	 * @param encounterId the encounter id to be search encounters
+	 * return encounter resource bundle for operations
+	 */
+	public Bundle getEncounterOperationsById(String encounterId);
 
 }

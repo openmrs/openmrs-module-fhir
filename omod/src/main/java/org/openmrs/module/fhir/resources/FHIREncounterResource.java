@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.fhir.resources;
 
+import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Encounter;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.TokenParam;
@@ -25,7 +26,6 @@ import java.util.List;
 public class FHIREncounterResource extends Resource {
 
 	public Encounter getByUniqueId(IdDt id) {
-
 		EncounterService encounterService = Context.getService(EncounterService.class);
 		Encounter fhirEncounter = encounterService.getEncounter(id.getIdPart());
 		if (fhirEncounter == null) {
@@ -36,5 +36,9 @@ public class FHIREncounterResource extends Resource {
 
 	public List<Encounter> searchEncountersById(TokenParam id) {
 		return Context.getService(EncounterService.class).searchEncounterById(id.getValue());
+	}
+
+	public Bundle getEncounterOperationsById(IdDt id) {
+		return Context.getService(EncounterService.class).getEncounterOperationsById(id.getIdPart());
 	}
 }
