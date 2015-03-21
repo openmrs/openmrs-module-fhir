@@ -14,19 +14,18 @@
 package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.model.dstu2.resource.Person;
-import ca.uhn.fhir.model.dstu2.resource.Practitioner;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.PersonService;
-import org.openmrs.module.fhir.api.PractitionerService;
 
 import java.util.List;
 
 public class FHIRPersonResource extends Resource {
-
+	
 	public Person getByUniqueId(IdDt id) {
 		PersonService personService = Context.getService(PersonService.class);
 		Person fhirPerson = personService.getPerson(id.getIdPart());
@@ -35,12 +34,17 @@ public class FHIRPersonResource extends Resource {
 		}
 		return fhirPerson;
 	}
-
+	
 	public List<Person> searchByUniqueId(TokenParam id) {
 		PersonService personService = Context.getService(PersonService.class);
 		return personService.searchPersonById(id.getValue());
 	}
-
+	
+	public List<Person> searchPersons(StringParam name, Integer birthYear, StringParam gender) {
+		PersonService personService = Context.getService(PersonService.class);
+		return personService.searchPersons(name.getValue(), birthYear, gender.getValue());
+	}
+	
 	public List<Person> searchByName(StringParam name) {
 		PersonService personService = Context.getService(PersonService.class);
 		return personService.searchPersonsByName(name.getValue());
