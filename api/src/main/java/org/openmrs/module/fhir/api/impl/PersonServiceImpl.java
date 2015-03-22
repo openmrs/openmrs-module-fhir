@@ -14,17 +14,17 @@
 package org.openmrs.module.fhir.api.impl;
 
 import ca.uhn.fhir.model.dstu2.resource.Person;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.PersonService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
+import org.openmrs.module.fhir.api.util.OpenmrsPersonUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;;
+import java.util.Set;
 
 public class PersonServiceImpl implements PersonService{
 
@@ -84,5 +84,10 @@ public class PersonServiceImpl implements PersonService{
 		}
 		return fhirPersonsList;
 	}
+
+    @Override
+    public org.openmrs.Person createFHIRPerson(Person person) {
+        return OpenmrsPersonUtil.generateOpenMRSPerson(person);
+    }
 	
 }

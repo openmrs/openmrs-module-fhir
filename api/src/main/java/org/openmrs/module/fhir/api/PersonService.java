@@ -51,5 +51,13 @@ public interface PersonService {
 	 * @return fhir persons resource list
 	 */
 	List<Person> searchPersonsByName(String name);
-	
+
+    /**
+     * creates a oms Person from FHIR personn
+     * @param person
+     * @return
+     */
+    org.openmrs.Person createFHIRPerson(Person person);
+
+
 }

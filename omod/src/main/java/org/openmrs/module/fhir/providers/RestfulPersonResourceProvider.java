@@ -25,7 +25,8 @@ import ca.uhn.fhir.rest.param.DateParam;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.PersonService;
 import org.openmrs.module.fhir.resources.FHIRPersonResource;
 
 import java.util.List;
@@ -97,5 +98,10 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	public List<Person> findPersontsByName(@RequiredParam(name = Person.SP_NAME) StringParam name) {
 		return personResource.searchByName(name);
 	}
+
+    public org.openmrs.Person createFHIRPerson(Person person){
+        PersonService personService = Context.getService(PersonService.class);
+        return personService.createFHIRPerson(person);
+    }
 
 }

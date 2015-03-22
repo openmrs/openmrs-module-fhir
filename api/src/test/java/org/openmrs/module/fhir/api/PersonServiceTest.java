@@ -17,6 +17,7 @@ import ca.uhn.fhir.model.dstu2.resource.Person;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.util.OpenmrsPersonUtil;
 import org.openmrs.module.fhir.exception.FHIRValidationException;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
@@ -79,4 +80,16 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest{
 		assertNotNull(persons);
 		assertEquals(2, persons.size());
 	}
+
+    /**
+     * @verifies generate oms person
+     */
+    @Test
+    public void generateOpenMRSPerson_shouldGenerateOmsPerson() throws Exception {
+        String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
+        List<Person> persons = getService().searchPersonById(personUuid);
+        org.openmrs.Person pa = OpenmrsPersonUtil.generateOpenMRSPerson(persons.get(0));
+        assertEquals(pa.getUuid(), personUuid);
+
+    }
 }
