@@ -15,6 +15,7 @@ package org.openmrs.module.fhir.providers;
 
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.resource.Observation;
+import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
@@ -25,6 +26,7 @@ import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenOrListParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+
 import org.openmrs.module.fhir.resources.FHIRObservationResource;
 
 import java.util.List;
@@ -120,4 +122,17 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 			                                                 answerConceptName) {
 		return provider.searchObsByValueConcept(answerConceptName);
 	}
+
+	/**
+	 * Search observations by patient identifier
+	 *
+	 * @param identifier object containing the patient identifier
+	 */
+	@Search()
+	public List<Observation> searchEncountersByPatientIdentifier(
+		@RequiredParam(name=Observation.SP_PATIENT, chainWhitelist= {Patient.SP_IDENTIFIER}) ReferenceParam identifier
+		) {
+		return provider.searchObsByPatientIdentifier(identifier);
+	}
+
 }

@@ -79,4 +79,12 @@ public interface ObsService extends OpenmrsService {
 	 * @return fhir obs resource list
 	 */
 	public List<Observation> searchObsByValueConcept(String conceptName);
+
+	/* Search observations by patient identifier
+	*
+	* @param identifier to be search
+	* @return fhir observation resource list
+	*/
+	public List<Observation> searchObsByPatientIdentifier(String identifier);
+
 }
