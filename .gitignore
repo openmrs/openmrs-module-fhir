@@ -9,5 +9,21 @@ release.properties
 .idea
 *.iml
 
+### Eclipse ###
+*.pydevproject
+.project
+.metadata
+bin/**
+tmp/**
+tmp/**/*
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.classpath
+.settings/
+.loadpath
+
 # Mac OS files
 .DS_Store

@@ -73,6 +73,15 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
+	public void searchEncountersByPatientIdentifier_shouldReturnBundle() {
+		String identifier = "12345";
+		List<Encounter> fhirEncounters = getService().searchEncountersByPatientIdentifier(identifier);
+		assertNotNull(fhirEncounters);
+		assertEquals(2, fhirEncounters.size());
+	}
+
+
+	@Test
 	public void searchEncounterComposition_shouldReturnMatchingComposition() {
 		String encounterUuid = "33d70956-b359-452a-b3da-b69c8ab459ce";
 		List<Composition> fhirCompositon = getService().searchEncounterComposition(encounterUuid);
