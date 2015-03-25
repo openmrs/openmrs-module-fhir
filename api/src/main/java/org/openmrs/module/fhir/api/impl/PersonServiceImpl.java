@@ -86,7 +86,10 @@ public class PersonServiceImpl implements PersonService{
 
     @Override
     public org.openmrs.Person createFHIRPerson(Person person) {
-        return FHIRPersonUtil.generateOpenMRSPerson(person);
+        org.openmrs.Person omrsPerson = FHIRPersonUtil.generateOpenMRSPerson(person);
+	    org.openmrs.api.PersonService personService = Context.getPersonService();
+	    personService.savePerson(omrsPerson);
+	    return omrsPerson;
     }
 	
 }

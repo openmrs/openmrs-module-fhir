@@ -14,13 +14,17 @@
 package org.openmrs.module.fhir.providers;
 
 import ca.uhn.fhir.model.api.IResource;
+import ca.uhn.fhir.model.dstu2.resource.OperationOutcome;
 import ca.uhn.fhir.model.dstu2.resource.Person;
 import ca.uhn.fhir.model.dstu2.resource.Practitioner;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
+import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.DateParam;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
@@ -99,9 +103,22 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 		return personResource.searchByName(name);
 	}
 
-    public org.openmrs.Person createFHIRPerson(Person person){
-        PersonService personService = Context.getService(PersonService.class);
-        return personService.createFHIRPerson(person);
-    }
+	/**
+	 * Create persons
+	 *
+	 * @param person fhir person   object
+	 * @return This method returns a list of Persons. This list may contain multiple matching resources, or it may also be
+	 * empty.
+	 */
+	@Create
+    public MethodOutcome createFHIRPerson(@ResourceParam Person person){
+		personResource.createFHIRPerson(person);
+		MethodOutcome retVal = new MethodOutcome();
+		// This part is optional though:
+		OperationOutcome outcome = new OperationOutcome();
+		outcome.addIssue().setDetails("Person is successfully created");
+		retVal.setOperationOutcome(outcome);
+		return retVal;
+	}
 
 }

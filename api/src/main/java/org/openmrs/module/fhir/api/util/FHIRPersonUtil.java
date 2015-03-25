@@ -146,94 +146,101 @@ public class FHIRPersonUtil {
 		return person;
 	}
 
-    /**
-     * @param personFHIR
-     * @return OpenMRS person after giving a FHIR person
-     * @should generate Oms Person
-     */
-    public static org.openmrs.Person generateOpenMRSPerson(ca.uhn.fhir.model.dstu2.resource.Person personFHIR) {
+	/**
+	 * @param personFHIR
+	 * @return OpenMRS person after giving a FHIR person
+	 * @should generate Oms Person
+	 */
+	public static org.openmrs.Person generateOpenMRSPerson(ca.uhn.fhir.model.dstu2.resource.Person personFHIR) {
 
-        org.openmrs.Person omrsPerson = new org.openmrs.Person();
-        IdDt uuid = new IdDt();
-        uuid.setId(personFHIR.getId());
-        omrsPerson.setUuid(valueOf(uuid));
+		org.openmrs.Person omrsPerson = new org.openmrs.Person();
 
-        for (HumanNameDt humanNameDt : personFHIR.getName()) {
-            PersonName personName = new PersonName();
-            if (humanNameDt.getUse() != null) {
-                String getUse = humanNameDt.getUse();
-                if (getUse.equals(NameUseEnum.USUAL)) {
-                    personName.setPreferred(true);
-                }
-                if (getUse.equals(NameUseEnum.OLD)) {
-                    personName.setPreferred(false);
-                }
-            }
-            if (humanNameDt.getSuffix() != null) {
-                List<StringDt> prefixes = humanNameDt.getSuffix();
-                if (prefixes.size() > 0) {
-                    StringDt prefix = prefixes.get(0);
-                    personName.setPrefix(valueOf(prefix));
-                }
-            }
-            if (humanNameDt.getSuffix() != null) {
-                List<StringDt> suffixes = humanNameDt.getSuffix();
-                if (suffixes.size() > 0) {
-                    StringDt suffix = suffixes.get(0);
-                    personName.setFamilyNameSuffix(valueOf(suffix));
-                }
-            }
+		omrsPerson.setUuid(valueOf(personFHIR.getId()));
 
-            List<StringDt> givenNames = humanNameDt.getGiven();
-            if (givenNames != null) {
-                StringDt givenName = givenNames.get(0);
-                personName.setGivenName(valueOf(givenName));
-            }
-            List<StringDt> familyNames = humanNameDt.getFamily();
-            if (familyNames != null) {
-                StringDt familyName = familyNames.get(0);
-                personName.setFamilyName(valueOf(familyName));
-            }
-        }
+		for (HumanNameDt humanNameDt : personFHIR.getName()) {
+			PersonName personName = new PersonName();
+			if (humanNameDt.getUse() != null) {
+				String getUse = humanNameDt.getUse();
+				if (getUse.equals(NameUseEnum.USUAL)) {
+					personName.setPreferred(true);
+				}
+				if (getUse.equals(NameUseEnum.OLD)) {
+					personName.setPreferred(false);
+				}
+			}
+			if (humanNameDt.getSuffix() != null) {
+				List<StringDt> prefixes = humanNameDt.getSuffix();
+				if (prefixes.size() > 0) {
+					StringDt prefix = prefixes.get(0);
+					personName.setPrefix(valueOf(prefix));
+				}
+			}
+			if (humanNameDt.getSuffix() != null) {
+				List<StringDt> suffixes = humanNameDt.getSuffix();
+				if (suffixes.size() > 0) {
+					StringDt suffix = suffixes.get(0);
+					personName.setFamilyNameSuffix(valueOf(suffix));
+				}
+			}
 
+			List<StringDt> givenNames = humanNameDt.getGiven();
+			if (givenNames != null) {
+				StringDt givenName = givenNames.get(0);
+				personName.setGivenName(valueOf(givenName));
+			}
+			List<StringDt> familyNames = humanNameDt.getFamily();
+			if (familyNames != null) {
+				StringDt familyName = familyNames.get(0);
+				personName.setFamilyName(valueOf(familyName));
+			}
+		}
 
-        PersonAddress address = new PersonAddress();
-        for (AddressDt fhirAddress : personFHIR.getAddress()) {
-            address.setCityVillage(fhirAddress.getCity());
-            address.setCountry(fhirAddress.getCountry());
-            address.setStateProvince(fhirAddress.getState());
-            address.setPostalCode(fhirAddress.getPostalCode());
-            List<StringDt> addressStrings = fhirAddress.getLine();
+		PersonAddress address = new PersonAddress();
+		for (AddressDt fhirAddress : personFHIR.getAddress()) {
+			address.setCityVillage(fhirAddress.getCity());
+			address.setCountry(fhirAddress.getCountry());
+			address.setStateProvince(fhirAddress.getState());
+			address.setPostalCode(fhirAddress.getPostalCode());
+			List<StringDt> addressStrings = fhirAddress.getLine();
 
-            if (addressStrings != null) {
-                address.setAddress1(valueOf(addressStrings.get(0)));
-                address.setAddress2(valueOf(addressStrings.get(1)));
-                address.setAddress3(valueOf(addressStrings.get(2)));
-                address.setAddress4(valueOf(addressStrings.get(3)));
-                address.setAddress5(valueOf(addressStrings.get(4)));
-            }
-            if (fhirAddress.getUse().equals(String.valueOf(AddressUseEnum.HOME))) {
-                address.setPreferred(true);
-            }
-            if (fhirAddress.getUse().equals(String.valueOf(AddressUseEnum.OLD))) {
-                address.setPreferred(false);
-            }
+			if (addressStrings != null) {
+				for (int i = 0; i < addressStrings.size(); i++) {
+					if(i == 0) {
+						address.setAddress1(valueOf(addressStrings.get(0)));
+					} else if(i == 1) {
+					address.setAddress2(valueOf(addressStrings.get(1)));
+					} else if(i == 2) {
+						address.setAddress3(valueOf(addressStrings.get(2)));
+					} else if(i == 3) {
+					address.setAddress4(valueOf(addressStrings.get(3)));
+					} else if(i == 4) {
+						address.setAddress5(valueOf(addressStrings.get(4)));
+					}
+				}
+			}
 
-        }
+			if (fhirAddress.getUse().equals(String.valueOf(AddressUseEnum.HOME))) {
+				address.setPreferred(true);
+			}
+			if (fhirAddress.getUse().equals(String.valueOf(AddressUseEnum.OLD))) {
+				address.setPreferred(false);
+			}
 
-        if (personFHIR.getGender().equals(String.valueOf(AdministrativeGenderEnum.MALE))) {
-            omrsPerson.setGender(FHIRConstants.MALE);
-        } else if (personFHIR.getGender().equals(String.valueOf(AdministrativeGenderEnum.FEMALE))) {
-            omrsPerson.setGender(FHIRConstants.FEMALE);
-        }
+		}
 
-        omrsPerson.setBirthdate(personFHIR.getBirthDate());
-        if (personFHIR.getActive()) {
-            omrsPerson.setVoided(false);
-        } else {
-            omrsPerson.setVoided(true);
-        }
+		if (personFHIR.getGender().equals(String.valueOf(AdministrativeGenderEnum.MALE))) {
+			omrsPerson.setGender(FHIRConstants.MALE);
+		} else if (personFHIR.getGender().equals(String.valueOf(AdministrativeGenderEnum.FEMALE))) {
+			omrsPerson.setGender(FHIRConstants.FEMALE);
+		}
 
-        return omrsPerson;
-    }
+		omrsPerson.setBirthdate(personFHIR.getBirthDate());
+		if (personFHIR.getActive()) {
+			omrsPerson.setVoided(false);
+		} else {
+			omrsPerson.setVoided(true);
+		}
+
+		return omrsPerson;
+	}
 }

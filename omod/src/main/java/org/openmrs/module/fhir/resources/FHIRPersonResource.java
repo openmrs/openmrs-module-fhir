@@ -50,8 +50,8 @@ public class FHIRPersonResource extends Resource {
 		return personService.searchPersonsByName(name.getValue());
 	}
 
-    public org.openmrs.Person createFHIRPerson(Person person){
+    public void createFHIRPerson(Person person){
         PersonService personService = Context.getService(PersonService.class);
-        return personService.createFHIRPerson(person);
+        personService.createFHIRPerson(person);
     }
 }
