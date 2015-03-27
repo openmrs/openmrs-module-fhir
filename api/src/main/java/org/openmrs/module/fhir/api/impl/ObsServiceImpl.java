@@ -73,7 +73,7 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 		Patient patient = Context.getPatientService().getPatientByUuid(patientUUid);
 		Concept concept;
 		List<Observation> obsList = new ArrayList<Observation>();
-		for(String conceptName : conceptNames) {
+		for (String conceptName : conceptNames) {
 			concept = Context.getConceptService().getConceptByMapping(conceptName, FHIRConstants.LOINC);
 			List<Obs> obs = Context.getObsService().getObservationsByPersonAndConcept(patient, concept);
 			for (Obs ob : obs) {

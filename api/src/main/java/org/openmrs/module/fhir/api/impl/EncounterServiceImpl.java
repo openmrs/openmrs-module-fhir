@@ -114,7 +114,7 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 	public List<Composition> searchEncounterCompositionByEncounterId(String encounterId) {
 		org.openmrs.Encounter omrsEncounter = Context.getEncounterService().getEncounterByUuid(encounterId);
 		List<Composition> encounterList = new ArrayList<Composition>();
-		if(omrsEncounter != null) {
+		if (omrsEncounter != null) {
 			encounterList.add(FHIREncounterUtil.generateComposition(omrsEncounter));
 		}
 		return encounterList;
@@ -123,22 +123,22 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 	@Override
 	public Bundle getEncounterOperationsById(String encounterId) {
 		org.openmrs.Encounter omsrEncounter = null;
-		omsrEncounter =  Context.getEncounterService().getEncounterByUuid(encounterId);
+		omsrEncounter = Context.getEncounterService().getEncounterByUuid(encounterId);
 		Bundle bundle = new Bundle();
-		if(omsrEncounter != null) {
+		if (omsrEncounter != null) {
 			Bundle.Entry encounter = bundle.addEntry();
 			encounter.setResource(FHIREncounterUtil.generateEncounter(omsrEncounter));
 
 			//Set observation resources
 			Bundle.Entry observation;
-			for(Obs obs : omsrEncounter.getAllObs(false)) {
+			for (Obs obs : omsrEncounter.getAllObs(false)) {
 				observation = bundle.addEntry();
 				observation.setResource(FHIRObsUtil.generateObs(obs));
 			}
 
 			//Set location
 			Bundle.Entry location;
-			if(omsrEncounter.getLocation() != null) {
+			if (omsrEncounter.getLocation() != null) {
 				location = bundle.addEntry();
 				location.setResource(FHIRLocationUtil.generateLocation(omsrEncounter.getLocation()));
 			}
@@ -149,7 +149,7 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 
 			//Set providers
 			Bundle.Entry provider;
-			for(EncounterProvider encounterProvider : omsrEncounter.getEncounterProviders()) {
+			for (EncounterProvider encounterProvider : omsrEncounter.getEncounterProviders()) {
 				provider = bundle.addEntry();
 				provider.setResource(FHIRPractitionerUtil.generatePractitioner(encounterProvider.getProvider()));
 			}

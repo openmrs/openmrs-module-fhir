@@ -16,7 +16,6 @@ package org.openmrs.module.fhir.providers;
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Encounter;
-import ca.uhn.fhir.model.primitive.DateDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Operation;
@@ -68,7 +67,7 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 		return encounterResource.searchEncountersById(id);
 	}
 
-	@Operation(name="$everything")
+	@Operation(name = "$everything")
 	public Bundle encounterInstanceOperation(@IdParam IdDt encounterId) {
 		return encounterResource.getEncounterOperationsById(encounterId);
 	}

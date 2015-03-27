@@ -81,7 +81,7 @@ public interface EncounterService extends OpenmrsService {
 	 * Get Encounter operations bundle resource
 	 *
 	 * @param encounterId the encounter id to be search encounters
-	 * return encounter resource bundle for operations
+	 *                    return encounter resource bundle for operations
 	 */
 	public Bundle getEncounterOperationsById(String encounterId);
 

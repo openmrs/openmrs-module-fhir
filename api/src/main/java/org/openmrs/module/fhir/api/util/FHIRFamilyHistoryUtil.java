@@ -81,7 +81,7 @@ public class FHIRFamilyHistoryUtil {
 				relationshipType = relationship.getRelationshipType().getbIsToA();
 			}
 			//Set related person name
-			if(relatedPerson.getPersonName() != null) {
+			if (relatedPerson.getPersonName() != null) {
 				PersonName relatedPersonName = relatedPerson.getPersonName();
 				StringBuilder relatedPersonNameDisplay = new StringBuilder();
 				relatedPersonNameDisplay.append(relatedPersonName.getGivenName());

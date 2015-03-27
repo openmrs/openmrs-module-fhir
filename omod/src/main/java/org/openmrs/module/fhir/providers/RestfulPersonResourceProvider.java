@@ -29,8 +29,7 @@ import ca.uhn.fhir.rest.param.DateParam;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.PersonService;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.resources.FHIRPersonResource;
 
 import java.util.List;
@@ -77,16 +76,16 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	/**
 	 * Search persons by name, birthYear and gender
 	 *
-	 * @param name Name of person to search
+	 * @param name      Name of person to search
 	 * @param birthYear The year of birth to restrict
-	 * @param gender The gender field to search on (Typically just "M" or "F")
+	 * @param gender    The gender field to search on (Typically just "M" or "F")
 	 * @return This method returns a list of Persons. This list may contain multiple matching resources, or it may also be
 	 * empty.
 	 */
 	@Search()
 	public List<Person> findPersonts(@RequiredParam(name = Person.SP_NAME) StringParam name,
-		@RequiredParam(name = Person.SP_BIRTHDATE) DateParam birthDate,
-		@RequiredParam(name = Person.SP_GENDER) StringParam gender) {
+	                                 @RequiredParam(name = Person.SP_BIRTHDATE) DateParam birthDate,
+	                                 @RequiredParam(name = Person.SP_GENDER) StringParam gender) {
 		Integer birthYear = birthDate.getValue().getYear(); // e.g. 2011-01-02
 		return personResource.searchPersons(name, birthYear, gender);
 	}
@@ -104,17 +103,17 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	}
 
 	/**
-	 * Create persons
+	 * Create person
 	 *
-	 * @param person fhir person   object
+	 * @param person fhir person object
 	 * @return This method returns a list of Persons. This list may contain multiple matching resources, or it may also be
 	 * empty.
 	 */
 	@Create
-    public MethodOutcome createFHIRPerson(@ResourceParam Person person){
-		personResource.createFHIRPerson(person);
+	public MethodOutcome createFHIRPerson(@ResourceParam Person person) {
+		person = personResource.createFHIRPerson(person);
 		MethodOutcome retVal = new MethodOutcome();
-		// This part is optional though:
+		retVal.setId(new IdDt(FHIRConstants.PERSON, person.getId().getIdPart()));
 		OperationOutcome outcome = new OperationOutcome();
 		outcome.addIssue().setDetails("Person is successfully created");
 		retVal.setOperationOutcome(outcome);

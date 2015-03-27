@@ -60,7 +60,7 @@ public class FHIRRESTServer extends RestfulServer {
 		this.setFhirContext(FhirContext.forDstu2());
 		setResourceProviders(resourceProviders);
 		setServerName(FHIROmodConstants.OPENMRS_FHIR_SERVER_NAME);
-		if(FHIRUtils.isCustomNarrativesEnabled()) {
+		if (FHIRUtils.isCustomNarrativesEnabled()) {
 			String propFile = FHIRUtils.gettCustomNarrativesPropertyPath();
 			CustomThymeleafNarrativeGenerator generator = new CustomThymeleafNarrativeGenerator(propFile);
 			getFhirContext().setNarrativeGenerator(generator);

@@ -34,7 +34,7 @@ public interface ObsService extends OpenmrsService {
 	/**
 	 * Search observations by patient and concepts
 	 *
-	 * @param patientUUid patient uuid
+	 * @param patientUUid  patient uuid
 	 * @param conceptNames names of the concepts
 	 * @return fhir obs resource list
 	 */

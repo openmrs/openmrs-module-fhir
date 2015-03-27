@@ -27,8 +27,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
-	protected static final String ENCOUNTER_INITIAL_DATA_XML = "org/openmrs/api/include/EncounterServiceTest-initialData.xml";
-	protected static final String VISIT_INITIAL_DATA_XML = "org/openmrs/api/include/VisitServiceTest-includeVisitsAndTypeToAutoClose.xml";
+
+	protected static final String ENCOUNTER_INITIAL_DATA_XML = "org/openmrs/api/include/EncounterServiceTest-initialData"
+	                                                           + ".xml";
+	protected static final String VISIT_INITIAL_DATA_XML =
+			"org/openmrs/api/include/VisitServiceTest-includeVisitsAndTypeToAutoClose.xml";
 
 	public EncounterService getService() {
 		return Context.getService(EncounterService.class);

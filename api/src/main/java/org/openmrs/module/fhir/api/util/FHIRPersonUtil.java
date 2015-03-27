@@ -30,6 +30,8 @@ import org.openmrs.api.context.Context;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static java.lang.String.valueOf;
 
@@ -155,8 +157,7 @@ public class FHIRPersonUtil {
 
 		org.openmrs.Person omrsPerson = new org.openmrs.Person();
 
-		omrsPerson.setUuid(valueOf(personFHIR.getId()));
-
+		Set<PersonName> names = new TreeSet<PersonName>();
 		for (HumanNameDt humanNameDt : personFHIR.getName()) {
 			PersonName personName = new PersonName();
 			if (humanNameDt.getUse() != null) {
@@ -193,10 +194,14 @@ public class FHIRPersonUtil {
 				StringDt familyName = familyNames.get(0);
 				personName.setFamilyName(valueOf(familyName));
 			}
+			names.add(personName);
 		}
+		omrsPerson.setNames(names);
 
-		PersonAddress address = new PersonAddress();
+		Set<PersonAddress> addresses = new TreeSet<PersonAddress>();
+		PersonAddress address;
 		for (AddressDt fhirAddress : personFHIR.getAddress()) {
+			address = new PersonAddress();
 			address.setCityVillage(fhirAddress.getCity());
 			address.setCountry(fhirAddress.getCountry());
 			address.setStateProvince(fhirAddress.getState());
@@ -205,15 +210,15 @@ public class FHIRPersonUtil {
 
 			if (addressStrings != null) {
 				for (int i = 0; i < addressStrings.size(); i++) {
-					if(i == 0) {
+					if (i == 0) {
 						address.setAddress1(valueOf(addressStrings.get(0)));
-					} else if(i == 1) {
-					address.setAddress2(valueOf(addressStrings.get(1)));
-					} else if(i == 2) {
+					} else if (i == 1) {
+						address.setAddress2(valueOf(addressStrings.get(1)));
+					} else if (i == 2) {
 						address.setAddress3(valueOf(addressStrings.get(2)));
-					} else if(i == 3) {
-					address.setAddress4(valueOf(addressStrings.get(3)));
-					} else if(i == 4) {
+					} else if (i == 3) {
+						address.setAddress4(valueOf(addressStrings.get(3)));
+					} else if (i == 4) {
 						address.setAddress5(valueOf(addressStrings.get(4)));
 					}
 				}
@@ -225,12 +230,13 @@ public class FHIRPersonUtil {
 			if (fhirAddress.getUse().equals(String.valueOf(AddressUseEnum.OLD))) {
 				address.setPreferred(false);
 			}
-
+			addresses.add(address);
 		}
+		omrsPerson.setAddresses(addresses);
 
-		if (personFHIR.getGender().equals(String.valueOf(AdministrativeGenderEnum.MALE))) {
+		if (personFHIR.getGender().equalsIgnoreCase(String.valueOf(AdministrativeGenderEnum.MALE))) {
 			omrsPerson.setGender(FHIRConstants.MALE);
-		} else if (personFHIR.getGender().equals(String.valueOf(AdministrativeGenderEnum.FEMALE))) {
+		} else if (personFHIR.getGender().equalsIgnoreCase(String.valueOf(AdministrativeGenderEnum.FEMALE))) {
 			omrsPerson.setGender(FHIRConstants.FEMALE);
 		}
 

@@ -14,7 +14,6 @@
 package org.openmrs.module.fhir.addressstrategy;
 
 import ca.uhn.fhir.rest.server.IServerAddressStrategy;
-import org.apache.commons.lang3.StringUtils;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 
 import javax.servlet.ServletContext;

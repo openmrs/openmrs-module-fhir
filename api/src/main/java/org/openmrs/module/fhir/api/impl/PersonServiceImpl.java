@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class PersonServiceImpl implements PersonService{
+public class PersonServiceImpl implements PersonService {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 
@@ -56,7 +56,7 @@ public class PersonServiceImpl implements PersonService{
 
 	@Override
 	public List<Person> searchPersonById(String id) {
-		org.openmrs.Person omrsPerson =  Context.getPersonService().getPersonByUuid(id);
+		org.openmrs.Person omrsPerson = Context.getPersonService().getPersonByUuid(id);
 		List<Person> personList = new ArrayList<Person>();
 		if (omrsPerson != null) {
 			personList.add(FHIRPersonUtil.generatePerson(omrsPerson));
@@ -84,12 +84,12 @@ public class PersonServiceImpl implements PersonService{
 		return fhirPersonsList;
 	}
 
-    @Override
-    public org.openmrs.Person createFHIRPerson(Person person) {
-        org.openmrs.Person omrsPerson = FHIRPersonUtil.generateOpenMRSPerson(person);
-	    org.openmrs.api.PersonService personService = Context.getPersonService();
-	    personService.savePerson(omrsPerson);
-	    return omrsPerson;
-    }
+	@Override
+	public Person createFHIRPerson(Person person) {
+		org.openmrs.Person omrsPerson = FHIRPersonUtil.generateOpenMRSPerson(person);
+		org.openmrs.api.PersonService personService = Context.getPersonService();
+		omrsPerson = personService.savePerson(omrsPerson);
+		return FHIRPersonUtil.generatePerson(omrsPerson);
+	}
 	
 }

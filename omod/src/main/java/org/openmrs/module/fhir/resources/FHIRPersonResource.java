@@ -15,10 +15,9 @@ package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.model.dstu2.resource.Person;
 import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.param.StringParam;
+import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
-
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.PersonService;
 
@@ -50,8 +49,8 @@ public class FHIRPersonResource extends Resource {
 		return personService.searchPersonsByName(name.getValue());
 	}
 
-    public void createFHIRPerson(Person person){
-        PersonService personService = Context.getService(PersonService.class);
-        personService.createFHIRPerson(person);
-    }
+	public Person createFHIRPerson(Person person) {
+		PersonService personService = Context.getService(PersonService.class);
+		return personService.createFHIRPerson(person);
+	}
 }
