@@ -17,7 +17,6 @@ import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Encounter;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.primitive.DateDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Operation;
@@ -83,7 +82,13 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 		return encounterResource.searchEncountersByPatientIdentifier(identifier);
 	}
 
-	@Operation(name="$everything")
+	/**
+	 * Implementation of $everything operation which retunrs content of a encounter
+	 *
+	 * @param encounterId if of the encounter
+	 * @return bundle
+	 */
+	@Operation(name = "$everything")
 	public Bundle encounterInstanceOperation(@IdParam IdDt encounterId) {
 		return encounterResource.getEncounterOperationsById(encounterId);
 	}

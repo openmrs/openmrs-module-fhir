@@ -48,7 +48,7 @@ public class FHIRObservationResource extends Resource {
 	public List<Observation> searchObsByPatientAndConcept(ReferenceParam person, TokenOrListParam names) {
 		ObsService obsService = Context.getService(ObsService.class);
 		List<String> conceptNames = new ArrayList<String>();
-		for(BaseCodingDt baseCodingDt : names.getListAsCodings()) {
+		for (BaseCodingDt baseCodingDt : names.getListAsCodings()) {
 			conceptNames.add(baseCodingDt.getValueAsQueryToken());
 		}
 		return obsService.searchObsByPatientAndConcept(person.getIdPart(), conceptNames);

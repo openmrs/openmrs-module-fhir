@@ -18,6 +18,7 @@ import ca.uhn.fhir.model.dstu2.resource.Person;
 import java.util.List;
 
 public interface PersonService {
+
 	/**
 	 * Get fhir perso resource by uuid
 	 *
@@ -37,9 +38,9 @@ public interface PersonService {
 	/**
 	 * Search all persons for given attributes
 	 *
-	 * @param name Name of person to search
+	 * @param name      Name of person to search
 	 * @param birthYear The year of birth to restrict
-	 * @param gender The gender field to search on (Typically just "M" or "F")
+	 * @param gender    The gender field to search on (Typically just "M" or "F")
 	 * @return persons list
 	 */
 	List<Person> searchPersons(String name, Integer birthYear, String gender);
@@ -51,5 +52,13 @@ public interface PersonService {
 	 * @return fhir persons resource list
 	 */
 	List<Person> searchPersonsByName(String name);
-	
+
+	/**
+	 * creates a oms Person from FHIR personn
+	 *
+	 * @param person
+	 * @return
+	 */
+	Person createFHIRPerson(Person person);
+
 }

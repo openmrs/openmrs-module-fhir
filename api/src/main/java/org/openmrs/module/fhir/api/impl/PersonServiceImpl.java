@@ -14,7 +14,6 @@
 package org.openmrs.module.fhir.api.impl;
 
 import ca.uhn.fhir.model.dstu2.resource.Person;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
@@ -24,9 +23,9 @@ import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;;
+import java.util.Set;
 
-public class PersonServiceImpl implements PersonService{
+public class PersonServiceImpl implements PersonService {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 
@@ -57,7 +56,7 @@ public class PersonServiceImpl implements PersonService{
 
 	@Override
 	public List<Person> searchPersonById(String id) {
-		org.openmrs.Person omrsPerson =  Context.getPersonService().getPersonByUuid(id);
+		org.openmrs.Person omrsPerson = Context.getPersonService().getPersonByUuid(id);
 		List<Person> personList = new ArrayList<Person>();
 		if (omrsPerson != null) {
 			personList.add(FHIRPersonUtil.generatePerson(omrsPerson));
@@ -83,6 +82,14 @@ public class PersonServiceImpl implements PersonService{
 			fhirPersonsList.add(FHIRPersonUtil.generatePerson(person));
 		}
 		return fhirPersonsList;
+	}
+
+	@Override
+	public Person createFHIRPerson(Person person) {
+		org.openmrs.Person omrsPerson = FHIRPersonUtil.generateOpenMRSPerson(person);
+		org.openmrs.api.PersonService personService = Context.getPersonService();
+		omrsPerson = personService.savePerson(omrsPerson);
+		return FHIRPersonUtil.generatePerson(omrsPerson);
 	}
 	
 }

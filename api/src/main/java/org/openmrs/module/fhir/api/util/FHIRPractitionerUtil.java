@@ -21,7 +21,6 @@ import ca.uhn.fhir.model.dstu2.valueset.AddressUseEnum;
 import ca.uhn.fhir.model.dstu2.valueset.AdministrativeGenderEnum;
 import ca.uhn.fhir.model.dstu2.valueset.NameUseEnum;
 import ca.uhn.fhir.model.primitive.DateDt;
-import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.StringDt;
 import org.openmrs.PersonAddress;
@@ -85,24 +84,24 @@ public class FHIRPractitionerUtil {
 			List<AddressDt> addressList = new ArrayList<AddressDt>();
 			AddressDt fhirAddress;
 			for (PersonAddress address : provider.getPerson().getAddresses()) {
-					fhirAddress = new AddressDt();
-					fhirAddress.setCity(address.getCityVillage());
-					fhirAddress.setCountry(address.getCountry());
-					fhirAddress.setState(address.getStateProvince());
-					fhirAddress.setPostalCode(address.getPostalCode());
-					List<StringDt> addressStrings = new ArrayList<StringDt>();
-					addressStrings.add(new StringDt(address.getAddress1()));
-					addressStrings.add(new StringDt(address.getAddress2()));
-					addressStrings.add(new StringDt(address.getAddress3()));
-					addressStrings.add(new StringDt(address.getAddress4()));
-					addressStrings.add(new StringDt(address.getAddress5()));
-					fhirAddress.setLine(addressStrings);
-					if (address.isPreferred()) {
-						fhirAddress.setUse(AddressUseEnum.HOME);
-					} else {
-						fhirAddress.setUse(AddressUseEnum.OLD);
-					}
-					addressList.add(fhirAddress);
+				fhirAddress = new AddressDt();
+				fhirAddress.setCity(address.getCityVillage());
+				fhirAddress.setCountry(address.getCountry());
+				fhirAddress.setState(address.getStateProvince());
+				fhirAddress.setPostalCode(address.getPostalCode());
+				List<StringDt> addressStrings = new ArrayList<StringDt>();
+				addressStrings.add(new StringDt(address.getAddress1()));
+				addressStrings.add(new StringDt(address.getAddress2()));
+				addressStrings.add(new StringDt(address.getAddress3()));
+				addressStrings.add(new StringDt(address.getAddress4()));
+				addressStrings.add(new StringDt(address.getAddress5()));
+				fhirAddress.setLine(addressStrings);
+				if (address.isPreferred()) {
+					fhirAddress.setUse(AddressUseEnum.HOME);
+				} else {
+					fhirAddress.setUse(AddressUseEnum.OLD);
+				}
+				addressList.add(fhirAddress);
 			}
 			practitioner.setAddress(addressList);
 			//Set gender in fhir practitioner object

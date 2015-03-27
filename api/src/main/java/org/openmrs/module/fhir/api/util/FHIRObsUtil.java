@@ -117,7 +117,7 @@ public class FHIRObsUtil {
 
 		for (ConceptMap map : mappings) {
 			//Set concept name as the display value and set concept uuid if name is empty
-			if(map.getConceptReferenceTerm() != null) {
+			if (map.getConceptReferenceTerm() != null) {
 				String display = map.getConceptReferenceTerm().getName();
 				if (display == null || display.isEmpty()) {
 					display = map.getConceptReferenceTerm().getUuid();
@@ -207,11 +207,12 @@ public class FHIRObsUtil {
 			datetime.setEnd(endDate);
 			observation.setValue(datetime);
 
-		} else if (FHIRConstants.CWE_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
+		} else if (FHIRConstants.CWE_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation()
+		)) {
 			Collection<ConceptMap> valueMappings = obs.getValueCoded().getConceptMappings();
 			List<CodingDt> values = new ArrayList<CodingDt>();
 			for (ConceptMap map : valueMappings) {
-				if(map.getConceptReferenceTerm() != null) {
+				if (map.getConceptReferenceTerm() != null) {
 					String display = map.getConceptReferenceTerm().getName();
 					if (display == null || display.isEmpty()) {
 						display = map.getConceptReferenceTerm().getUuid();
@@ -284,7 +285,7 @@ public class FHIRObsUtil {
 			observation.setRelated(relatedObs);
 		}
 
-		if(obs.getLocation() != null) {
+		if (obs.getLocation() != null) {
 			StringDt location = new StringDt();
 			location.setValue(FHIRConstants.LOCATION + "/" + obs.getLocation().getUuid());
 			ExtensionDt locationExt = new ExtensionDt(false, FHIRConstants.LOCATION_EXTENTION_URI, location);

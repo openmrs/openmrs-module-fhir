@@ -17,6 +17,7 @@ import ca.uhn.fhir.model.dstu2.resource.Person;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
 import org.openmrs.module.fhir.exception.FHIRValidationException;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
@@ -25,9 +26,10 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class PersonServiceTest extends BaseModuleContextSensitiveTest{
+public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 
-	protected static final String PERSOM_INITIAL_DATA_XML = "org/openmrs/api/include/PersonServiceTest-createPersonPurgeVoidTest.xml";
+	protected static final String PERSOM_INITIAL_DATA_XML =
+			"org/openmrs/api/include/PersonServiceTest-createPersonPurgeVoidTest.xml";
 
 	public PersonService getService() {
 		return Context.getService(PersonService.class);
@@ -78,5 +80,17 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest{
 		List<Person> persons = getService().searchPersonsByName(name);
 		assertNotNull(persons);
 		assertEquals(2, persons.size());
+	}
+
+	/**
+	 * @verifies generate oms person
+	 */
+	@Test
+	public void generateOpenMRSPerson_shouldGenerateOmsPerson() throws Exception {
+		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
+		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);
+		Person fhirPerson = FHIRPersonUtil.generatePerson(person);
+		fhirPerson = Context.getService(PersonService.class).createFHIRPerson(fhirPerson);
+		assertNotNull(fhirPerson);
 	}
 }

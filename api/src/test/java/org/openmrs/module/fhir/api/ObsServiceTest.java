@@ -35,7 +35,7 @@ import static org.junit.Assert.assertNotNull;
 public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 
 	protected static final String OBS_INITIAL_DATA_XML = "org/openmrs/api/include/ObsServiceTest-initial.xml";
-	protected static final String CONCEPT_CUSTOM_INITIAL_DATA_XML ="Concept_customTestData.xml";
+	protected static final String CONCEPT_CUSTOM_INITIAL_DATA_XML = "Concept_customTestData.xml";
 
 	public ObsService getService() {
 		return Context.getService(ObsService.class);
