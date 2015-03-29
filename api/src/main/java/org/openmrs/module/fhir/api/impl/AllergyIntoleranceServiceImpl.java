@@ -48,11 +48,11 @@ public class AllergyIntoleranceServiceImpl extends BaseOpenmrsService implements
 
 	@Override
 	public AllergyIntolerance getAllergyById(String uuid) {
-		return (AllergyIntolerance) AllergyStrategyUtil.getAllergyStrategy().getAllergyById(uuid);
+		return AllergyStrategyUtil.getAllergyStrategy().getAllergyById(uuid);
 	}
 
 	@Override
 	public List<AllergyIntolerance> searchAllergiesById(String uuid) {
-		return (List<AllergyIntolerance>) AllergyStrategyUtil.getAllergyStrategy().searchAllergyById(uuid);
+		return AllergyStrategyUtil.getAllergyStrategy().searchAllergyById(uuid);
 	}
 }

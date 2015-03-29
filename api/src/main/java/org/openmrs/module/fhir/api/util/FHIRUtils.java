@@ -98,7 +98,6 @@ public class FHIRUtils {
 		} else {
 			uri = FHIRConstants.PERSON + "/" + person.getUuid();
 		}
-
 		reference.setDisplay(nameDisplay.toString());
 		IdDt patientRef = new IdDt();
 		patientRef.setValue(uri);
