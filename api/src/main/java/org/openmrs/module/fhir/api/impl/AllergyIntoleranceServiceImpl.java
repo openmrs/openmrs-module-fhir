@@ -18,8 +18,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.AllergyIntoleranceService;
+import org.openmrs.module.fhir.api.allergy.AllergyStrategyUtil;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.strategy.AllergyStrategyInterface;
+
+import java.util.List;
 
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
@@ -29,8 +32,6 @@ public class AllergyIntoleranceServiceImpl extends BaseOpenmrsService implements
 	protected final Log log = LogFactory.getLog(this.getClass());
 
 	private FHIRDAO dao;
-
-	private AllergyStrategyInterface allergyStrategyInterface;
 
 	/**
 	 * @param dao the dao to set
@@ -46,12 +47,13 @@ public class AllergyIntoleranceServiceImpl extends BaseOpenmrsService implements
 		return dao;
 	}
 
-	/**
-	 * @see org.openmrs.module.fhir.api.AllergyIntoleranceService#getAllergyIntolerance(String)
-	 */
-	public AllergyIntolerance getAllergyIntolerance(String id) {
-		//TODO implement
-		return new AllergyIntolerance();
+	@Override
+	public AllergyIntolerance getAllergyById(String uuid) {
+		return (AllergyIntolerance) AllergyStrategyUtil.getAllergyStrategy().getAllergyById(uuid);
 	}
 
+	@Override
+	public List<AllergyIntolerance> searchAllergiesById(String uuid) {
+		return (List<AllergyIntolerance>) AllergyStrategyUtil.getAllergyStrategy().searchAllergyById(uuid);
+	}
 }

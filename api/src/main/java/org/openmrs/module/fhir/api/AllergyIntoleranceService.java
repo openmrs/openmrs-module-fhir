@@ -14,18 +14,13 @@
 package org.openmrs.module.fhir.api;
 
 import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
-import org.openmrs.api.OpenmrsService;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
-public interface AllergyIntoleranceService extends OpenmrsService {
+import java.util.List;
 
-	/**
-	 * Get allergy by id
-	 *
-	 * @param id allergy uuid
-	 * @return fhir allergy tolerence resource
-	 */
-	AllergyIntolerance getAllergyIntolerance(String id);
+public interface AllergyIntoleranceService {
+
+	AllergyIntolerance getAllergyById(String uuid);
+
+	List<AllergyIntolerance> searchAllergiesById(String uuid);
 
 }

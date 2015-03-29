@@ -17,28 +17,32 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
 import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.ValidationFailureException;
+import org.openmrs.Obs;
+import org.openmrs.module.allergyapi.Allergy;
 
 public class FHIRAllergyIntoleranceUtil {
 
-	public static AllergyIntolerance generatePractitioner() {
-		AllergyIntolerance allergyIntolerance = new AllergyIntolerance();
-
-		validate(allergyIntolerance);
-
-		return allergyIntolerance;
+	public static AllergyIntolerance generateAllergyTolerance(Obs obs) {
+		return null;
 	}
 
-	public static void validate(AllergyIntolerance allergyIntolerance) {
-		FhirContext ctx = new FhirContext();
+	public static AllergyIntolerance generateAllergyTolerance(Allergy allergy) {
+		return null;
+	}
 
-		// Request a validator and apply it
-		FhirValidator val = ctx.newValidator();
-		try {
-			val.validate(allergyIntolerance);
-		} catch (ValidationFailureException e) {
-			// We failed validation!
-			String results = ctx.newXmlParser().setPrettyPrint(true).encodeResourceToString(e.getOperationOutcome());
-		}
+	public static AllergyIntolerance generateAllergyTolerance(org.openmrs.activelist.Allergy allergy) {
+		return null;
+	}
 
+	public static Obs generateAllergyObs(AllergyIntolerance allergy) {
+		return null;
+	}
+
+	public static Allergy generateAllergyModuleAllergy(AllergyIntolerance allergy) {
+		return null;
+	}
+
+	public static org.openmrs.activelist.Allergy generateActiveListAllergy(AllergyIntolerance allergy) {
+		return null;
 	}
 }

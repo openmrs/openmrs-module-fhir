@@ -85,6 +85,11 @@
             <groupId>com.phloc</groupId>
             <artifactId>phloc-commons</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>allergyapi-api</artifactId>
+            <version>1.3</version>
+        </dependency>
     </dependencies>
 
     <build>

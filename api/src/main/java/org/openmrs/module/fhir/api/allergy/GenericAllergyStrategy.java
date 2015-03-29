@@ -11,14 +11,15 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.fhir.api.util;
+package org.openmrs.module.fhir.api.allergy;
 
-import org.openmrs.module.fhir.api.allergy.GenericAllergyStrategy;
-import org.openmrs.module.fhir.api.allergy.ObsAllergyStrategy;
+import java.util.List;
 
-public class StrategyUtil {
+public interface GenericAllergyStrategy<T> {
 
-	public GenericAllergyStrategy getAllergyStrategy() {
-		return new ObsAllergyStrategy();
-	}
+	T getAllergyById(String uuid);
+
+	List<T> searchAllergyById(String uuid);
+
+	List<T> searchAllergyByName(String name);
 }

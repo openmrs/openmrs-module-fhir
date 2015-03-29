@@ -51,7 +51,6 @@ public class FHIRActivator implements ModuleActivator {
 	 * @see ModuleActivator#started()
 	 */
 	public void started() {
-		StrategyUtil.strategize();
 		log.info("FHIR Module started");
 	}
 	

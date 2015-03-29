@@ -112,5 +112,16 @@
         <description>Set custom narratives property path</description>
     </globalProperty>
 
+    <globalProperty>
+        <property>${project.parent.artifactId}.allergy.allergyStrategy</property>
+        <defaultValue>ActiveListAllergyStrategy</defaultValue>
+        <description>Set allergy strategy</description>
+    </globalProperty>
+
+    <globalProperty>
+        <property>${project.parent.artifactId}.allergy.ObsAllergyStrategy.concept</property>
+        <defaultValue>1234</defaultValue>
+        <description>Concept id for allergy obs</description>
+    </globalProperty>
 </module>
 

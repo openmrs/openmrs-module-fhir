@@ -59,4 +59,12 @@ public class FHIRUtils {
 		urnBuilder.append(FHIRConstants.URN).append(":").append(type).append(":").append(value);
 		return urnBuilder.toString();
 	}
+
+	public static String getAllergyStrategy() {
+		return Context.getAdministrationService().getGlobalProperty("fhir.allergy.allergyStrategy");
+	}
+
+	public static String getObsAllergyStrategyConcept() {
+		return Context.getAdministrationService().getGlobalProperty("fhir.allergy.ObsAllergyStrategy.concept");
+	}
 }
