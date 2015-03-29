@@ -22,7 +22,6 @@ import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenOrListParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
-
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.ObsService;
 

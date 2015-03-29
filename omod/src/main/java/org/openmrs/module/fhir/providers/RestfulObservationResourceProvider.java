@@ -26,7 +26,6 @@ import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenOrListParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-
 import org.openmrs.module.fhir.resources.FHIRObservationResource;
 
 import java.util.List;

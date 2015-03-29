@@ -13,27 +13,31 @@
  */
 package org.openmrs.module.fhir.api.allergy;
 
+import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
 import org.openmrs.activelist.Allergy;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.util.FHIRAllergyIntoleranceUtil;
 
 import java.util.List;
 
 /**
  * Created by harsha on 3/29/15.
  */
-public class ActiveListAllergyStrategy implements GenericAllergyStrategy<Allergy> {
+public class ActiveListAllergyStrategy implements GenericAllergyStrategy {
 	
 	@Override
-	public Allergy getAllergyById(String uuid) {
+	public AllergyIntolerance getAllergyById(String uuid) {
+		Allergy allergy = (Allergy) Context.getActiveListService().getActiveListItemByUuid(uuid);
+		return FHIRAllergyIntoleranceUtil.generateAllergyTolerance(allergy);
+	}
+
+	@Override
+	public List<AllergyIntolerance> searchAllergyById(String uuid) {
 		return null;
 	}
 
 	@Override
-	public List<Allergy> searchAllergyById(String uuid) {
-		return null;
-	}
-
-	@Override
-	public List<Allergy> searchAllergyByName(String name) {
+	public List<AllergyIntolerance> searchAllergyByName(String name) {
 		return null;
 	}
 }

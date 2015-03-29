@@ -26,7 +26,6 @@ import ca.uhn.fhir.rest.annotation.Search;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-
 import org.openmrs.module.fhir.resources.FHIREncounterResource;
 
 import java.util.List;

@@ -20,7 +20,6 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.AllergyIntoleranceService;
 import org.openmrs.module.fhir.api.allergy.AllergyStrategyUtil;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
-import org.openmrs.module.fhir.strategy.AllergyStrategyInterface;
 
 import java.util.List;
 

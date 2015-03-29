@@ -14,7 +14,6 @@
 package org.openmrs.module.fhir.api.impl;
 
 import ca.uhn.fhir.model.dstu2.resource.Observation;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;

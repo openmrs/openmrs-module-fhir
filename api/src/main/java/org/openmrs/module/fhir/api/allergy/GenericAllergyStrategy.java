@@ -13,13 +13,15 @@
  */
 package org.openmrs.module.fhir.api.allergy;
 
+import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
+
 import java.util.List;
 
-public interface GenericAllergyStrategy<T> {
+public interface GenericAllergyStrategy {
 
-	T getAllergyById(String uuid);
+	AllergyIntolerance getAllergyById(String uuid);
 
-	List<T> searchAllergyById(String uuid);
+	List<AllergyIntolerance> searchAllergyById(String uuid);
 
-	List<T> searchAllergyByName(String name);
+	List<AllergyIntolerance> searchAllergyByName(String name);
 }

@@ -13,10 +13,7 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
-import ca.uhn.fhir.validation.FhirValidator;
-import ca.uhn.fhir.validation.ValidationFailureException;
 import org.openmrs.Obs;
 import org.openmrs.module.allergyapi.Allergy;
 
@@ -31,6 +28,10 @@ public class FHIRAllergyIntoleranceUtil {
 	}
 
 	public static AllergyIntolerance generateAllergyTolerance(org.openmrs.activelist.Allergy allergy) {
+		AllergyIntolerance allergyIntolerance = new AllergyIntolerance();
+		allergyIntolerance.setId(allergy.getUuid());
+		//Build and set patient reference
+		allergyIntolerance.setSubject(FHIRUtils.buildPatientOrPersonResourceReference(allergy.getPerson()));
 		return null;
 	}
 

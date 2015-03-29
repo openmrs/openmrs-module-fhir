@@ -15,12 +15,14 @@ package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
 import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.AllergyIntoleranceService;
 
 public class FHIRAllergyIntoleranceResource extends Resource {
 
 	public AllergyIntolerance getByUniqueId(IdDt id) {
-		throw new ResourceNotFoundException("Allergy is not found for the given Id " + id.getIdPart());
+		AllergyIntoleranceService allergyIntoleranceService = Context.getService(AllergyIntoleranceService.class);
+		return allergyIntoleranceService.getAllergyById(id.getIdPart());
 	}
 
 }

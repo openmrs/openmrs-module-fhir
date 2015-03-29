@@ -15,9 +15,13 @@ package org.openmrs.module.fhir.api.util;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.IResource;
+import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
+import ca.uhn.fhir.model.dstu2.resource.Person;
+import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.ValidationResult;
+import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.manager.FHIRContextFactory;
 
@@ -66,5 +70,39 @@ public class FHIRUtils {
 
 	public static String getObsAllergyStrategyConcept() {
 		return Context.getAdministrationService().getGlobalProperty("fhir.allergy.ObsAllergyStrategy.concept");
+	}
+
+	/**
+	 * This method accept person object and check whether there is a patient exist, if so it will build reference with
+	 * patient else it will contain person reference
+	 * @param person person ob
+	 * @return resource reference
+	 */
+	public static ResourceReferenceDt buildPatientOrPersonResourceReference(org.openmrs.Person person) {
+		ResourceReferenceDt reference = new ResourceReferenceDt();
+		PersonName name = person.getPersonName();
+		StringBuilder nameDisplay = new StringBuilder();
+		nameDisplay.append(name.getGivenName());
+		nameDisplay.append(" ");
+		nameDisplay.append(name.getFamilyName());
+		String uri;
+		if (Context.getPatientService().getPatientByUuid(person.getUuid()) != null) {
+			nameDisplay.append("(");
+			nameDisplay.append(FHIRConstants.IDENTIFIER);
+			nameDisplay.append(":");
+			nameDisplay.append(Context.getPatientService().getPatientByUuid(person.getUuid())
+					.getPatientIdentifier()
+					.getIdentifier());
+			nameDisplay.append(")");
+			uri = FHIRConstants.PATIENT + "/" + person.getUuid();
+		} else {
+			uri = FHIRConstants.PERSON + "/" + person.getUuid();
+		}
+
+		reference.setDisplay(nameDisplay.toString());
+		IdDt patientRef = new IdDt();
+		patientRef.setValue(uri);
+		reference.setReference(patientRef);
+		return reference;
 	}
 }

@@ -15,15 +15,20 @@ package org.openmrs.module.fhir.providers;
 
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.openmrs.module.fhir.resources.FHIRPatientResource;
+import org.openmrs.module.fhir.resources.FHIRAllergyIntoleranceResource;
 
 public class RestfulAllergyIntoleranceResourceProvider implements IResourceProvider {
-	
+
+	private FHIRAllergyIntoleranceResource allergyIntoleranceResource;
+
+	public RestfulAllergyIntoleranceResourceProvider() {
+		allergyIntoleranceResource = new FHIRAllergyIntoleranceResource();
+	}
+
 	@Override
 	public Class<? extends IResource> getResourceType() {
 		return AllergyIntolerance.class;
@@ -40,9 +45,6 @@ public class RestfulAllergyIntoleranceResourceProvider implements IResourceProvi
 	 */
 	@Read()
 	public AllergyIntolerance getResourceById(@IdParam IdDt theId) {
-		Patient result = null;
-		FHIRPatientResource patientResource = new FHIRPatientResource();
-		result = patientResource.getByUniqueId(theId);
-		return null;
+		return allergyIntoleranceResource.getByUniqueId(theId);
 	}
 }

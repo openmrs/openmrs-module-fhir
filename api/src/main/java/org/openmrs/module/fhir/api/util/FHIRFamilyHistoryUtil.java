@@ -34,35 +34,7 @@ public class FHIRFamilyHistoryUtil {
 		IdDt id = new IdDt();
 		id.setValue(person.getUuid());
 		familyHistory.setId(id);
-		ResourceReferenceDt personRef = new ResourceReferenceDt();
-		String personUri;
-		if (Context.getPatientService().getPatientByUuid(person.getUuid()) != null) {
-			personUri = FHIRConstants.PATIENT + "/" + person.getUuid();
-		} else {
-			personUri = FHIRConstants.PERSON + "/" + person.getUuid();
-		}
-
-		//Set person
-		IdDt personId = new IdDt();
-		personId.setValue(personUri);
-		personRef.setReference(personId);
-		//Set person name
-		PersonName name = person.getPersonName();
-		StringBuilder nameDisplay = new StringBuilder();
-		nameDisplay.append(name.getGivenName());
-		nameDisplay.append(" ");
-		nameDisplay.append(name.getFamilyName());
-		String uri;
-		if (Context.getPatientService().getPatientByUuid(person.getUuid()) != null) {
-			nameDisplay.append("(");
-			nameDisplay.append(FHIRConstants.IDENTIFIER);
-			nameDisplay.append(":");
-			nameDisplay.append(Context.getPatientService().getPatientByUuid(person.getUuid()).getPatientIdentifier()
-					.getIdentifier());
-			nameDisplay.append(")");
-		}
-		personRef.setDisplay(nameDisplay.toString());
-		familyHistory.setPatient(personRef);
+		familyHistory.setPatient(FHIRUtils.buildPatientOrPersonResourceReference(person));
 		FamilyHistory.Relation fhirRelation;
 		List<FamilyHistory.Relation> fhirRelations = new ArrayList<FamilyHistory.Relation>();
 		Person relatedPerson;
@@ -86,7 +58,7 @@ public class FHIRFamilyHistoryUtil {
 				StringBuilder relatedPersonNameDisplay = new StringBuilder();
 				relatedPersonNameDisplay.append(relatedPersonName.getGivenName());
 				relatedPersonNameDisplay.append(" ");
-				nameDisplay.append(name.getFamilyName());
+				relatedPersonNameDisplay.append(relatedPerson.getFamilyName());
 				fhirRelation.setName(relatedPersonNameDisplay.toString());
 			}
 			CodeableConceptDt relationType = new CodeableConceptDt();

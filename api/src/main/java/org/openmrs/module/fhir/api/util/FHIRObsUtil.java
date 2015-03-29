@@ -60,34 +60,7 @@ public class FHIRObsUtil {
 
 		//Set fhir observation comment
 		observation.setComments(obs.getComment());
-
-		//Build and set patient reference
-		ResourceReferenceDt patientReference = new ResourceReferenceDt();
-		PersonName name = obs.getPerson().getPersonName();
-		StringBuilder nameDisplay = new StringBuilder();
-		nameDisplay.append(name.getGivenName());
-		nameDisplay.append(" ");
-		nameDisplay.append(name.getFamilyName());
-		String uri;
-		if (Context.getPatientService().getPatientByUuid(obs.getPerson().getUuid()) != null) {
-			nameDisplay.append("(");
-			nameDisplay.append(FHIRConstants.IDENTIFIER);
-			nameDisplay.append(":");
-			nameDisplay.append(Context.getPatientService().getPatientByUuid(obs.getPerson().getUuid())
-					.getPatientIdentifier()
-					.getIdentifier());
-			nameDisplay.append(")");
-			uri = FHIRConstants.PATIENT + "/" + obs.getPerson().getUuid();
-		} else {
-			uri = FHIRConstants.PERSON + "/" + obs.getPerson().getUuid();
-		}
-
-		patientReference.setDisplay(nameDisplay.toString());
-		IdDt patientRef = new IdDt();
-		patientRef.setValue(uri);
-		patientReference.setReference(patientRef);
-		observation.setSubject(patientReference);
-
+		observation.setSubject(FHIRUtils.buildPatientOrPersonResourceReference(obs.getPerson()));
 		//Set fhir performers from openmrs providers
 		List<ResourceReferenceDt> performers = new ArrayList<ResourceReferenceDt>();
 		if (obs.getEncounter() != null) {
