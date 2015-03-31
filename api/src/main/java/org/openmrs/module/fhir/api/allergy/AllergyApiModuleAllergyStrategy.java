@@ -17,9 +17,6 @@ import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
 
 import java.util.List;
 
-/**
- * Created by harsha on 3/28/15.
- */
 public class AllergyApiModuleAllergyStrategy implements GenericAllergyStrategy {
 	
 	@Override

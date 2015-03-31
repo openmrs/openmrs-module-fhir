@@ -16,9 +16,6 @@ package org.openmrs.module.fhir.api.allergy;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 
-/**
- * Created by harsha on 3/29/15.
- */
 public class AllergyStrategyUtil {
 
 	public static GenericAllergyStrategy getAllergyStrategy() {

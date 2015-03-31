@@ -20,9 +20,6 @@ import org.openmrs.module.fhir.api.util.FHIRAllergyIntoleranceUtil;
 
 import java.util.List;
 
-/**
- * Created by harsha on 3/29/15.
- */
 public class ActiveListAllergyStrategy implements GenericAllergyStrategy {
 	
 	@Override
