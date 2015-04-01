@@ -13,12 +13,14 @@
  */
 package org.openmrs.module.fhir.resources;
 
+import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.PatientService;
 
 import java.util.List;
 
@@ -78,4 +80,8 @@ public class FHIRPatientResource extends Resource {
 			return patientService.searchPatients(false);
 		}
 	}
+
+    public Bundle getPatientOperationsById(IdDt id) {
+        return Context.getService(PatientService.class).getPatientOperationsById(id.getIdPart());
+    }
 }

@@ -14,12 +14,10 @@
 package org.openmrs.module.fhir.providers;
 
 import ca.uhn.fhir.model.api.IResource;
+import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.rest.annotation.IdParam;
-import ca.uhn.fhir.rest.annotation.Read;
-import ca.uhn.fhir.rest.annotation.RequiredParam;
-import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.annotation.*;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
@@ -137,4 +135,15 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	public List<Patient> searchPatientsByProvider(@RequiredParam(name = Patient.SP_CAREPROVIDER) ReferenceParam provider) {
 		throw new NotImplementedOperationException("Find patients by provider is not implemented yet");
 	}
+
+    /**
+     * Implementation of $everything operation which returns content of a patient
+     *
+     * @param patientId if of the patient
+     * @return bundle
+     */
+    @Operation(name = "$everything")
+    public Bundle patientInstanceOperation(@IdParam IdDt patientId) {
+        return patientResource.getPatientOperationsById(patientId);
+    }
 }

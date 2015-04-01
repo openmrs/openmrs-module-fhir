@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.fhir.api;
 
+import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,4 +83,12 @@ public interface PatientService extends OpenmrsService {
 	 * @return active patients list
 	 */
 	List<Patient> searchPatientsByName(String name);
+
+    /**
+     * Get patient operations bundle resource
+     *
+     * @param patientId the patient id to be search patients
+     * @return patient resource bundle for operations
+     */
+    public Bundle getPatientOperationsById(String patientId);
 }
