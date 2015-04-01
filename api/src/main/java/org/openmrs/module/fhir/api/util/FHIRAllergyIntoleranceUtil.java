@@ -15,13 +15,21 @@ package org.openmrs.module.fhir.api.util;
 
 import ca.uhn.fhir.model.api.IValueSetEnumBinder;
 import ca.uhn.fhir.model.dstu2.composite.BoundCodeableConceptDt;
+import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
+import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
+import ca.uhn.fhir.model.dstu2.resource.Substance;
 import ca.uhn.fhir.model.dstu2.valueset.AllergyIntoleranceCategoryEnum;
 import ca.uhn.fhir.model.dstu2.valueset.AllergyIntoleranceCriticalityEnum;
 import ca.uhn.fhir.model.dstu2.valueset.SubstanceTypeEnum;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
+import org.openmrs.ConceptMap;
 import org.openmrs.Obs;
 import org.openmrs.module.allergyapi.Allergy;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class FHIRAllergyIntoleranceUtil {
 
@@ -87,10 +95,38 @@ public class FHIRAllergyIntoleranceUtil {
 					break;
 			}
 		}
-		IValueSetEnumBinder<SubstanceTypeEnum> substaceV = SubstanceTypeEnum.VALUESET_BINDER;
-		substaceV.fromCodeString(allergy.getAllergen().getName().getName());
-		BoundCodeableConceptDt<SubstanceTypeEnum> substance = new BoundCodeableConceptDt<SubstanceTypeEnum>(substaceV);
-		allergyIntolerance.setSubstance(substance);
+		//Set allergen
+		Collection<ConceptMap> mappings = allergy.getAllergen().getConceptMappings();
+		List<CodingDt> dts = allergyIntolerance.getSubstance().getCoding();
+
+		for (ConceptMap map : mappings) {
+			//Set concept name as the display value and set concept uuid if name is empty
+			if (map.getConceptReferenceTerm() != null) {
+				String display = map.getConceptReferenceTerm().getName();
+				if (display == null || display.isEmpty()) {
+					display = map.getConceptReferenceTerm().getUuid();
+				}
+
+				//Set concept mappings of concept
+				if (FHIRConstants.CIEL.equalsIgnoreCase(map.getConceptReferenceTerm().getName())) {
+					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
+							FHIRConstants.ciel));
+				} else if (FHIRConstants.SNOMED.equalsIgnoreCase(map.getConceptReferenceTerm().getName())) {
+					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
+							FHIRConstants.snomed));
+				} else if (FHIRConstants.LOINC.equalsIgnoreCase(map.getConceptReferenceTerm().getName())) {
+					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
+							FHIRConstants.loinc));
+				} else {
+					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
+							FHIRConstants.other));
+				}
+			}
+		}
+		//Setting default omrs concept
+		dts.add(new CodingDt().setCode(allergy.getAllergen().getUuid()).setDisplay(allergy.getAllergen().getName().getName())
+				.setSystem(FHIRConstants.openmrs));
+		allergyIntolerance.getSubstance().setCoding(dts);
 		return allergyIntolerance;
 	}
 

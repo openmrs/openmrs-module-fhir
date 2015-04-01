@@ -46,12 +46,16 @@ public class AllergyIntoleranceServiceImpl extends BaseOpenmrsService implements
 		return dao;
 	}
 
-	@Override
+	/**
+	 * @see org.openmrs.module.fhir.api.AllergyIntoleranceService#getAllergyById(String)
+	 */
 	public AllergyIntolerance getAllergyById(String uuid) {
 		return AllergyStrategyUtil.getAllergyStrategy().getAllergyById(uuid);
 	}
 
-	@Override
+	/**
+	 * @see org.openmrs.module.fhir.api.AllergyIntoleranceService#searchAllergiesById(String)
+	 */
 	public List<AllergyIntolerance> searchAllergiesById(String uuid) {
 		return AllergyStrategyUtil.getAllergyStrategy().searchAllergyById(uuid);
 	}

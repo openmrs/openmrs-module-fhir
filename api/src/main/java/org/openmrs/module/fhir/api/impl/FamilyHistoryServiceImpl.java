@@ -47,23 +47,35 @@ public class FamilyHistoryServiceImpl extends BaseOpenmrsService implements Fami
 		return dao;
 	}
 
+	/**
+	 * @see org.openmrs.module.fhir.api.FamilyHistoryService#searchFamilyHistoryByPerson(String)
+	 */
 	public List<FamilyHistory> searchFamilyHistoryByPerson(String personId) {
 		Person person = Context.getPersonService().getPersonByUuid(personId);
-		List<Relationship> relationships = Context.getPersonService().getRelationshipsByPerson(person);
-		FamilyHistory history = FHIRFamilyHistoryUtil.generateFamilyHistory(relationships, person);
 		List<FamilyHistory> fhirFamilyHistory = new ArrayList<FamilyHistory>();
-		if (history != null) {
+		List<Relationship> relationships = null;
+		if (person != null) {
+			relationships = Context.getPersonService().getRelationshipsByPerson(person);
+		}
+		if (relationships != null && relationships.size() > 0) {
+			FamilyHistory history = FHIRFamilyHistoryUtil.generateFamilyHistory(relationships, person);
 			fhirFamilyHistory.add(history);
 		}
 		return fhirFamilyHistory;
 	}
 
+	/**
+	 * @see org.openmrs.module.fhir.api.FamilyHistoryService#getRelationshipById(String)
+	 */
 	public FamilyHistory getRelationshipById(String id) {
 		Person person = Context.getPersonService().getPersonByUuid(id);
 		List<Relationship> relationships = Context.getPersonService().getRelationshipsByPerson(person);
 		return FHIRFamilyHistoryUtil.generateFamilyHistory(relationships, person);
 	}
 
+	/**
+	 * @see org.openmrs.module.fhir.api.FamilyHistoryService#searchRelationshipsById(String)
+	 */
 	public List<FamilyHistory> searchRelationshipsById(String id) {
 		Person person = Context.getPersonService().getPersonByUuid(id);
 		List<FamilyHistory> familyHistories = new ArrayList<FamilyHistory>();

@@ -18,8 +18,13 @@ import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
+import ca.uhn.fhir.rest.annotation.RequiredParam;
+import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.openmrs.module.fhir.resources.FHIRAllergyIntoleranceResource;
+
+import java.util.List;
 
 public class RestfulAllergyIntoleranceResourceProvider implements IResourceProvider {
 
@@ -46,5 +51,15 @@ public class RestfulAllergyIntoleranceResourceProvider implements IResourceProvi
 	@Read()
 	public AllergyIntolerance getResourceById(@IdParam IdDt theId) {
 		return allergyIntoleranceResource.getByUniqueId(theId);
+	}
+
+	/**
+	 * Search allergies by unique id
+	 *
+	 * @param id object containing the requested id
+	 */
+	@Search()
+	public List<AllergyIntolerance> searchAllergiesByUniqueId(@RequiredParam(name = AllergyIntolerance.SP_RES_ID) TokenParam id) {
+		return allergyIntoleranceResource.searchAllergiessById(id);
 	}
 }

@@ -19,8 +19,20 @@ import java.util.List;
 
 public interface AllergyIntoleranceService {
 
+	/**
+	 * Get allergy tolerance by uuid
+	 *
+	 * @param uuid of the requesting allergy
+ 	 * @return allergy tolerance obj
+	 */
 	AllergyIntolerance getAllergyById(String uuid);
 
+	/**
+	 * Get allergy list by uuid
+	 *
+	 * @param uuid of the requesting allergies
+	 * @return allergy tolerance obj
+	 */
 	List<AllergyIntolerance> searchAllergiesById(String uuid);
 
 }
