@@ -86,7 +86,7 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	public List<Person> findPersonts(@RequiredParam(name = Person.SP_NAME) StringParam name,
 	                                 @RequiredParam(name = Person.SP_BIRTHDATE) DateParam birthDate,
 	                                 @RequiredParam(name = Person.SP_GENDER) StringParam gender) {
-		Integer birthYear = birthDate.getValue().getYear(); // e.g. 2011-01-02
+		Integer birthYear = 1900 + birthDate.getValue().getYear(); // e.g. 2011-01-02
 		return personResource.searchPersons(name, birthYear, gender);
 	}
 	
