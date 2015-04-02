@@ -14,12 +14,17 @@
 package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
+import ca.uhn.fhir.model.dstu2.resource.Encounter;
+import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.AllergyIntoleranceService;
+import org.openmrs.module.fhir.api.EncounterService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FHIRAllergyIntoleranceResource extends Resource {
@@ -33,7 +38,16 @@ public class FHIRAllergyIntoleranceResource extends Resource {
 		return allergyIntolerance;
 	}
 
-	public List<AllergyIntolerance> searchAllergiessById(TokenParam id) {
+	public List<AllergyIntolerance> searchAllergiesById(TokenParam id) {
 		return Context.getService(AllergyIntoleranceService.class).searchAllergiesById(id.getValue());
 	}
+
+    public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(ReferenceParam identifier) {
+        List<AllergyIntolerance> fhirAllergies = new ArrayList<AllergyIntolerance>();
+        String chain = identifier.getChain();
+        if (Patient.SP_IDENTIFIER.equals(chain)) {
+            fhirAllergies = Context.getService(AllergyIntoleranceService.class).searchAllergiesByPatientIdentifier(identifier.getValue());
+        }
+        return fhirAllergies;
+    }
 }
