@@ -24,4 +24,7 @@ public interface GenericAllergyStrategy {
 	List<AllergyIntolerance> searchAllergyById(String uuid);
 
 	List<AllergyIntolerance> searchAllergyByName(String name);
+
+    List<AllergyIntolerance> searchAllergiesByPatientIdentifier(String identifier);
+
 }

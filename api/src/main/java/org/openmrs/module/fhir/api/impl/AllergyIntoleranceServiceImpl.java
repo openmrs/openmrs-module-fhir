@@ -14,13 +14,17 @@
 package org.openmrs.module.fhir.api.impl;
 
 import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
+import ca.uhn.fhir.rest.param.ReferenceParam;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.AllergyIntoleranceService;
 import org.openmrs.module.fhir.api.allergy.AllergyStrategyUtil;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
+import org.openmrs.module.fhir.api.util.FHIREncounterUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,4 +63,11 @@ public class AllergyIntoleranceServiceImpl extends BaseOpenmrsService implements
 	public List<AllergyIntolerance> searchAllergiesById(String uuid) {
 		return AllergyStrategyUtil.getAllergyStrategy().searchAllergyById(uuid);
 	}
+
+    /**
+     * @see org.openmrs.module.fhir.api.AllergyIntoleranceService#searchAllergiesByPatientIdentifier(String)
+     */
+    public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(String identifier) {
+        return AllergyStrategyUtil.getAllergyStrategy().searchAllergiesByPatientIdentifier(identifier);
+    }
 }

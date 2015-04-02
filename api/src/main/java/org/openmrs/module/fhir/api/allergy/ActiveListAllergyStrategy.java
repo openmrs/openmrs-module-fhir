@@ -14,7 +14,11 @@
 package org.openmrs.module.fhir.api.allergy;
 
 import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
+import ca.uhn.fhir.rest.param.ReferenceParam;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.Person;
 import org.openmrs.activelist.ActiveListItem;
+import org.openmrs.activelist.ActiveListType;
 import org.openmrs.activelist.Allergy;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRAllergyIntoleranceUtil;
@@ -44,4 +48,17 @@ public class ActiveListAllergyStrategy implements GenericAllergyStrategy {
 	public List<AllergyIntolerance> searchAllergyByName(String name) {
 		return null;
 	}
+
+    public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(String identifier) {
+        org.openmrs.api.PatientService patientService = Context.getPatientService();
+        List<PatientIdentifierType> allPatientIdentifierTypes = patientService.getAllPatientIdentifierTypes();
+        List<org.openmrs.Patient> patientList = patientService.getPatients(null, identifier, allPatientIdentifierTypes,
+                true);
+        List<Allergy> omrsAllergies = Context.getActiveListService().getActiveListItems(Allergy.class, patientList.get(0), new ActiveListType(1));
+        List<AllergyIntolerance> allergies = new ArrayList<AllergyIntolerance>();
+        for(Allergy allergy : omrsAllergies) {
+            allergies.add(FHIRAllergyIntoleranceUtil.generateAllergyTolerance(allergy));
+        }
+        return allergies;
+    }
 }

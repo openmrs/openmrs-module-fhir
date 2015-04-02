@@ -15,11 +15,14 @@ package org.openmrs.module.fhir.providers;
 
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
+import ca.uhn.fhir.model.dstu2.resource.Encounter;
+import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.openmrs.module.fhir.resources.FHIRAllergyIntoleranceResource;
@@ -60,6 +63,18 @@ public class RestfulAllergyIntoleranceResourceProvider implements IResourceProvi
 	 */
 	@Search()
 	public List<AllergyIntolerance> searchAllergiesByUniqueId(@RequiredParam(name = AllergyIntolerance.SP_RES_ID) TokenParam id) {
-		return allergyIntoleranceResource.searchAllergiessById(id);
+		return allergyIntoleranceResource.searchAllergiesById(id);
 	}
+
+    /**
+     * Search allergies by patient identifier
+     *
+     * @param identifier object containing the patient identifier
+     */
+    @Search()
+    public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(
+            @RequiredParam(name=AllergyIntolerance.SP_PATIENT, chainWhitelist= {Patient.SP_IDENTIFIER}) ReferenceParam identifier) {
+        return allergyIntoleranceResource.searchAllergiesByPatientIdentifier(identifier);
+    }
+
 }
