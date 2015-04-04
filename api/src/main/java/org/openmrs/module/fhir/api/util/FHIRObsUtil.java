@@ -191,22 +191,19 @@ public class FHIRObsUtil {
 						display = map.getConceptReferenceTerm().getUuid();
 					}
 					//Set concept mappings of concept
-					if (FHIRConstants.CIEL.equalsIgnoreCase(map.getConceptReferenceTerm().getName())) {
+					if (FHIRConstants.CIEL.equalsIgnoreCase(map.getConceptReferenceTerm().getConceptSource().getName()
+					)) {
 						values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
-								.setSystem(
-										FHIRConstants.ciel));
-					} else if (FHIRConstants.SNOMED.equalsIgnoreCase(map.getConceptReferenceTerm().getName())) {
+								.setSystem(FHIRConstants.ciel));
+					} else if (FHIRConstants.SNOMED.equalsIgnoreCase(map.getConceptReferenceTerm().getConceptSource().getName())) {
 						values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
-								.setSystem(
-										FHIRConstants.snomed));
-					} else if (FHIRConstants.LOINC.equalsIgnoreCase(map.getConceptReferenceTerm().getName())) {
+								.setSystem(FHIRConstants.snomed));
+					} else if (FHIRConstants.LOINC.equalsIgnoreCase(map.getConceptReferenceTerm().getConceptSource().getName())) {
 						values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
-								.setSystem(
-										FHIRConstants.loinc));
+								.setSystem(FHIRConstants.loinc));
 					} else {
 						values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
-								.setSystem(
-										FHIRConstants.other));
+								.setSystem(FHIRConstants.other));
 					}
 				}
 			}
