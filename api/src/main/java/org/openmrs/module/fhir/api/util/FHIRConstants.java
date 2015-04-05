@@ -13,18 +13,32 @@
  */
 package org.openmrs.module.fhir.api.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public final class FHIRConstants {
 
-	public static Map<String, Map<String, String>>
-	static {
+	public static Map<String, ConceptSourceNameURIPair> conceptSourceMap = new HashMap<String, ConceptSourceNameURIPair>();
+	public static final String OPENMRS_URI = "http://openmrs.org";
 
-	}
 	//Concept source URIs
-	public static final String loinc = "http://loinc.org";
-	public static final String openmrs = "http://openmrs.org";
-	public static final String snomed = "http://snomed.info/sct";
-	public static final String ciel = "http://ciel.org";
-	public static final String other = "UNSPECIFIED";
+	public static final String LOINC_URI = "http://loinc.org";
+	public static final String SNOMED_URI = "http://snomed.info/sct";
+	public static final String CIEL_URI = "http://ciel.org";
+	public static final String ICD_10_WHO_URI = "http://www.who.int/classifications/icd/en/";
+	public static final String RX_NORM_URI = "http://www.nlm.nih.gov/research/umls/rxnorm/";
+	public static final String PIH_URI = "http://www.pih.org/";
+	public static final String PIH_MALAWI_URI = "http://www.pih.org/country/malawi";
+	public static final String AMPATH_URI = "http://ampath.com/";
+	public static final String MDRTB_URI = "org.openmrs.module.mdrtb";
+	public static final String HL7_2X_URI = "http://www.hl7.org/implement/standards";
+	public static final String BT_3_URI = "http://www.semantichealth.org/pubdoc.html";
+	public static final String ICPC2_URI = "http://www.who.int/classifications/icd/adaptations/icpc2/en/";
+	public static final String EMRAPI_URI = "org.openmrs.module.emrapi";
+	public static final String IMO_PROBLEM_URI = "https://www.e-imo.com/releases/problem-it";
+	public static final String IMP_PROCEDURE_URI = "https://www.e-imo.com/releases/problem-it";
+	public static final String NDF_RT_NUI_URI = "http://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/NDFRT/";
+	public static final String OTHER = "UNSPECIFIED";
 	//Concept Sources
 	public static final String LOINC = "LOINC";
 	public static final String CIEL = "CIEL";
@@ -39,7 +53,7 @@ public final class FHIRConstants {
 	public static final String SNOMED_MVP = "SNOMED MVP";
 	public static final String MDRTB = "org.openmrs.module.mdrtb";
 	public static final String HL7_2X = "HL7 2.x Route of Administration";
-	public static final String BT = "3BT";
+	public static final String BT_3 = "3BT";
 	public static final String ICPC2 = "ICPC2";
 	public static final String EMRAPI = "org.openmrs.module.emrapi";
 	public static final String IMO_PROBLEM = "IMO ProblemIT";
@@ -84,4 +98,26 @@ public final class FHIRConstants {
 	public static final String ACTIVE_LIST_ALLERGY_STRATEGY = "ActiveListAllergyStrategy";
 	public static final String ALLERGY_API_ALLERGY_STRATEGY = "AllergyApiModuleAllergyStrategy";
 	public static final String OBS_ALLERGY_STRATEGY = "ObsAllergyStrategy";
+
+	static {
+		conceptSourceMap.put(LOINC.toLowerCase(), new ConceptSourceNameURIPair(LOINC, LOINC_URI));
+		conceptSourceMap.put(CIEL.toLowerCase(), new ConceptSourceNameURIPair(CIEL, CIEL_URI));
+		conceptSourceMap.put(SNOMED.toLowerCase(), new ConceptSourceNameURIPair(SNOMED, SNOMED_URI));
+		conceptSourceMap.put(SNOMED_CT.toLowerCase(), new ConceptSourceNameURIPair(SNOMED_CT, SNOMED_URI));
+		conceptSourceMap.put(SNOMED_NP.toLowerCase(), new ConceptSourceNameURIPair(SNOMED_NP, SNOMED_URI));
+		conceptSourceMap.put(ICD_10_WHO.toLowerCase(), new ConceptSourceNameURIPair(ICD_10_WHO, ICD_10_WHO_URI));
+		conceptSourceMap.put(RX_NORM.toLowerCase(), new ConceptSourceNameURIPair(RX_NORM, RX_NORM_URI));
+		conceptSourceMap.put(PIH_MALAWI.toLowerCase(), new ConceptSourceNameURIPair(PIH_MALAWI, PIH_MALAWI_URI));
+		conceptSourceMap.put(PIH.toLowerCase(), new ConceptSourceNameURIPair(PIH, PIH_URI));
+		conceptSourceMap.put(AMPATH.toLowerCase(), new ConceptSourceNameURIPair(AMPATH, AMPATH_URI));
+		conceptSourceMap.put(SNOMED_MVP.toLowerCase(), new ConceptSourceNameURIPair(SNOMED_MVP, SNOMED_URI));
+		conceptSourceMap.put(HL7_2X.toLowerCase(), new ConceptSourceNameURIPair(HL7_2X, HL7_2X_URI));
+		conceptSourceMap.put(BT_3.toLowerCase(), new ConceptSourceNameURIPair(BT_3, BT_3_URI));
+		conceptSourceMap.put(ICPC2.toLowerCase(), new ConceptSourceNameURIPair(ICPC2, ICPC2_URI));
+		conceptSourceMap.put(EMRAPI.toLowerCase(), new ConceptSourceNameURIPair(EMRAPI, EMRAPI_URI));
+		conceptSourceMap.put(MDRTB.toLowerCase(), new ConceptSourceNameURIPair(MDRTB, MDRTB_URI));
+		conceptSourceMap.put(IMO_PROBLEM.toLowerCase(), new ConceptSourceNameURIPair(IMO_PROBLEM, IMO_PROBLEM_URI));
+		conceptSourceMap.put(IMP_PROCEDURE.toLowerCase(), new ConceptSourceNameURIPair(IMP_PROCEDURE, IMP_PROCEDURE_URI));
+		conceptSourceMap.put(NDF_RT_NUI.toLowerCase(), new ConceptSourceNameURIPair(NDF_RT_NUI, NDF_RT_NUI_URI));
+	}
 }

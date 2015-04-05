@@ -34,7 +34,6 @@ import org.openmrs.ConceptMap;
 import org.openmrs.ConceptNumeric;
 import org.openmrs.EncounterProvider;
 import org.openmrs.Obs;
-import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 
 import java.io.ByteArrayOutputStream;
@@ -88,30 +87,12 @@ public class FHIRObsUtil {
 		CodeableConceptDt dt = observation.getCode();
 		List<CodingDt> dts = new ArrayList<CodingDt>();
 
+		//Set codings from openmrs concept mappings
 		for (ConceptMap map : mappings) {
-			//Set concept name as the display value and set concept uuid if name is empty
-			if (map.getConceptReferenceTerm() != null) {
-				String display = map.getConceptReferenceTerm().getName();
-				if (display == null || display.isEmpty()) {
-					display = map.getConceptReferenceTerm().getUuid();
-				}
-
-				//Set concept mappings of concept
-				if (FHIRConstants.CIEL.equalsIgnoreCase(map.getConceptReferenceTerm().getConceptSource().getName())) {
-					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-							FHIRConstants.ciel));
-				} else if (FHIRConstants.SNOMED.equalsIgnoreCase(map.getConceptReferenceTerm().getConceptSource().getName())) {
-					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-							FHIRConstants.snomed));
-				} else if (FHIRConstants.LOINC.equalsIgnoreCase(map.getConceptReferenceTerm().getConceptSource().getName())) {
-					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-							FHIRConstants.loinc));
-				} else {
-					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-							FHIRConstants.other));
-				}
-			}
+			dts.add(FHIRUtils.getCodingDtByConceptMappings(map));
 		}
+		//Set openmrs concept
+		dts.add(FHIRUtils.getCodingDtByOpenMRSConcept(obs.getConcept()));
 		dt.setCoding(dts);
 
 		if (obs.getConcept().isNumeric()) {
@@ -184,29 +165,17 @@ public class FHIRObsUtil {
 		)) {
 			Collection<ConceptMap> valueMappings = obs.getValueCoded().getConceptMappings();
 			List<CodingDt> values = new ArrayList<CodingDt>();
+
+			//Set codings from openmrs concept mappings
 			for (ConceptMap map : valueMappings) {
-				if (map.getConceptReferenceTerm() != null) {
-					String display = map.getConceptReferenceTerm().getName();
-					if (display == null || display.isEmpty()) {
-						display = map.getConceptReferenceTerm().getUuid();
-					}
-					//Set concept mappings of concept
-					if (FHIRConstants.CIEL.equalsIgnoreCase(map.getConceptReferenceTerm().getConceptSource().getName()
-					)) {
-						values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
-								.setSystem(FHIRConstants.ciel));
-					} else if (FHIRConstants.SNOMED.equalsIgnoreCase(map.getConceptReferenceTerm().getConceptSource().getName())) {
-						values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
-								.setSystem(FHIRConstants.snomed));
-					} else if (FHIRConstants.LOINC.equalsIgnoreCase(map.getConceptReferenceTerm().getConceptSource().getName())) {
-						values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
-								.setSystem(FHIRConstants.loinc));
-					} else {
-						values.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display)
-								.setSystem(FHIRConstants.other));
-					}
+				if(map.getConceptReferenceTerm() != null) {
+					values.add(FHIRUtils.getCodingDtByConceptMappings(map));
 				}
 			}
+
+			//Set openmrs concept
+			values.add(FHIRUtils.getCodingDtByOpenMRSConcept(obs.getConcept()));
+
 			CodeableConceptDt codeableConceptDt = new CodeableConceptDt();
 			codeableConceptDt.setCoding(values);
 			observation.setValue(codeableConceptDt);

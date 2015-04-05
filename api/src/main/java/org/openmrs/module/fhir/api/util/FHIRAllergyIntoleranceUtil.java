@@ -13,21 +13,15 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import ca.uhn.fhir.model.api.IValueSetEnumBinder;
-import ca.uhn.fhir.model.dstu2.composite.BoundCodeableConceptDt;
-import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
-import ca.uhn.fhir.model.dstu2.resource.Substance;
 import ca.uhn.fhir.model.dstu2.valueset.AllergyIntoleranceCategoryEnum;
 import ca.uhn.fhir.model.dstu2.valueset.AllergyIntoleranceCriticalityEnum;
-import ca.uhn.fhir.model.dstu2.valueset.SubstanceTypeEnum;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import org.openmrs.ConceptMap;
 import org.openmrs.Obs;
 import org.openmrs.module.allergyapi.Allergy;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -111,22 +105,22 @@ public class FHIRAllergyIntoleranceUtil {
 				//Set concept mappings of concept
 				if (FHIRConstants.CIEL.equalsIgnoreCase(map.getConceptReferenceTerm().getName())) {
 					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-							FHIRConstants.ciel));
+							FHIRConstants.CIEL_URI));
 				} else if (FHIRConstants.SNOMED.equalsIgnoreCase(map.getConceptReferenceTerm().getName())) {
 					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-							FHIRConstants.snomed));
+							FHIRConstants.SNOMED_URI));
 				} else if (FHIRConstants.LOINC.equalsIgnoreCase(map.getConceptReferenceTerm().getName())) {
 					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-							FHIRConstants.loinc));
+							FHIRConstants.LOINC_URI));
 				} else {
 					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-							FHIRConstants.other));
+							FHIRConstants.OTHER));
 				}
 			}
 		}
 		//Setting default omrs concept
 		dts.add(new CodingDt().setCode(allergy.getAllergen().getUuid()).setDisplay(allergy.getAllergen().getName().getName())
-				.setSystem(FHIRConstants.openmrs));
+				.setSystem(FHIRConstants.OPENMRS_URI));
 		allergyIntolerance.getSubstance().setCoding(dts);
 		return allergyIntolerance;
 	}

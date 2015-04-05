@@ -15,12 +15,16 @@ package org.openmrs.module.fhir.api.util;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.IResource;
+import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu2.resource.Person;
+import ca.uhn.fhir.model.primitive.CodeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.ValidationResult;
+import org.openmrs.Concept;
+import org.openmrs.ConceptMap;
 import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.manager.FHIRContextFactory;
@@ -103,5 +107,32 @@ public class FHIRUtils {
 		patientRef.setValue(uri);
 		reference.setReference(patientRef);
 		return reference;
+	}
+
+	public static CodingDt getCodingDtByConceptMappings(ConceptMap conceptMap) {
+			//Set concept source concept name as the display value and set concept uuid if name is empty
+			String display = conceptMap.getConceptReferenceTerm().getName();
+			if (display == null || display.isEmpty()) {
+				display = conceptMap.getConceptReferenceTerm().getUuid();
+			}
+			//Get concept source name and uri pair if it available
+			ConceptSourceNameURIPair sourceNameURIPair = FHIRConstants.conceptSourceMap.get(conceptMap
+					.getConceptReferenceTerm().getConceptSource().getName().toLowerCase());
+			if(sourceNameURIPair != null) {
+				return new CodingDt().setCode(conceptMap.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem
+						(sourceNameURIPair.getConceptSourceURI());
+			}
+			return new CodingDt().setCode(conceptMap.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(conceptMap
+					.getConceptReferenceTerm().getConceptSource().getName());
+	}
+
+	public static CodingDt getCodingDtByOpenMRSConcept(Concept concept) {
+		//Set concept name as the display value and set concept uuid if name is empty
+		String display = concept.getName().getName();
+		if (display == null || display.isEmpty()) {
+			display = concept.getUuid();
+		}
+		return new CodingDt().setCode(concept.getUuid()).setDisplay(display).setSystem
+				(FHIRConstants.OPENMRS_URI);
 	}
 }
