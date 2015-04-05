@@ -15,11 +15,38 @@ package org.openmrs.module.fhir.api.util;
 
 public final class FHIRConstants {
 
+	public static Map<String, Map<String, String>>
+	static {
+
+	}
+	//Concept source URIs
 	public static final String loinc = "http://loinc.org";
 	public static final String openmrs = "http://openmrs.org";
 	public static final String snomed = "http://snomed.info/sct";
 	public static final String ciel = "http://ciel.org";
 	public static final String other = "UNSPECIFIED";
+	//Concept Sources
+	public static final String LOINC = "LOINC";
+	public static final String CIEL = "CIEL";
+	public static final String SNOMED = "SNOMED";
+	public static final String SNOMED_CT = "SNOMED CT";
+	public static final String SNOMED_NP = "SNOMED NP";
+	public static final String ICD_10_WHO = "ICD-10-WHO";
+	public static final String RX_NORM = "RxNORM";
+	public static final String PIH = "PIH";
+	public static final String PIH_MALAWI = "PIH Malawi";
+	public static final String AMPATH = "AMPATH";
+	public static final String SNOMED_MVP = "SNOMED MVP";
+	public static final String MDRTB = "org.openmrs.module.mdrtb";
+	public static final String HL7_2X = "HL7 2.x Route of Administration";
+	public static final String BT = "3BT";
+	public static final String ICPC2 = "ICPC2";
+	public static final String EMRAPI = "org.openmrs.module.emrapi";
+	public static final String IMO_PROBLEM = "IMO ProblemIT";
+	public static final String IMP_PROCEDURE = "IMO ProcedureIT";
+	public static final String NDF_RT_NUI = "NDF-RT NUI";
+
+
 	public static final String URN = "urn";
 	public static final String UUID = "uuid";
 	public static final String LOCATION = "Location";
@@ -28,10 +55,9 @@ public final class FHIRConstants {
 	public static final String PATIENT = "Patient";
 	public static final String PRACTITIONER = "Practitioner";
 	public static final String OBSERVATION = "Observation";
-	public static final String LOINC = "LOINC";
-	public static final String CIEL = "CIEL";
-	public static final String SNOMED = "SNOMED";
 	public static final String NUMERIC_CONCEPT_MEASURE_URI = "http://unitsofmeasure.org";
+
+	//HL47 Abbrevations
 	public static final String NM_HL7_ABBREVATION = "NM";
 	public static final String CWE_HL7_ABBREVATION = "CWE";
 	public static final String ST_HL7_ABBREVATION = "ST";

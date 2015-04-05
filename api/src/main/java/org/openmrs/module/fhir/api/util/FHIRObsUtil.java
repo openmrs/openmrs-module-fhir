@@ -97,13 +97,13 @@ public class FHIRObsUtil {
 				}
 
 				//Set concept mappings of concept
-				if (map.getConceptReferenceTerm().getConceptSource().getName().toLowerCase().contains(FHIRConstants.CIEL.toLowerCase())) {
+				if (FHIRConstants.CIEL.equalsIgnoreCase(map.getConceptReferenceTerm().getConceptSource().getName())) {
 					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
 							FHIRConstants.ciel));
-				} else if (map.getConceptReferenceTerm().getConceptSource().getName().toLowerCase().contains(FHIRConstants.SNOMED.toLowerCase())) {
+				} else if (FHIRConstants.SNOMED.equalsIgnoreCase(map.getConceptReferenceTerm().getConceptSource().getName())) {
 					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
 							FHIRConstants.snomed));
-				} else if (FHIRConstants.LOINC.equalsIgnoreCase(map.getConceptReferenceTerm().getConceptSource().getName().toLowerCase())) {
+				} else if (FHIRConstants.LOINC.equalsIgnoreCase(map.getConceptReferenceTerm().getConceptSource().getName())) {
 					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
 							FHIRConstants.loinc));
 				} else {
@@ -263,10 +263,9 @@ public class FHIRObsUtil {
 		}
 
 		if (obs.getEncounter() != null) {
-			StringDt encounter = new StringDt();
-			encounter.setValue(FHIRConstants.ENCOUNTER + "/" + obs.getLocation().getUuid());
-			ExtensionDt encounterExt = new ExtensionDt(false, FHIRConstants.ENCOUNTER_EXTENTION_URI, encounter);
-			observation.addUndeclaredExtension(encounterExt);
+			ResourceReferenceDt encounter = new ResourceReferenceDt();
+			encounter.setReference(FHIRConstants.ENCOUNTER + "/" + obs.getEncounter().getUuid());
+			observation.setEncounter(encounter);
 		}
 		return observation;
 	}
