@@ -17,12 +17,14 @@ import ca.uhn.fhir.model.base.composite.BaseCodingDt;
 import ca.uhn.fhir.model.dstu2.resource.Observation;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.param.DateParam;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenOrListParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.openmrs.api.context.Context;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import org.openmrs.module.fhir.api.ObsService;
 
 import java.util.ArrayList;
@@ -82,5 +84,10 @@ public class FHIRObservationResource extends Resource {
 		}
 		return fhirEncounters;
 	}
+
+    public void deleteObservation(IdDt id){
+        ObsService obsService = Context.getService(ObsService.class);
+        obsService.deleteObs(id.getIdPart());
+    }
 
 }

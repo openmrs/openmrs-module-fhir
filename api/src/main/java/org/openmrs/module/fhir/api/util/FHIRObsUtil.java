@@ -97,13 +97,13 @@ public class FHIRObsUtil {
 				}
 
 				//Set concept mappings of concept
-				if (FHIRConstants.CIEL.equalsIgnoreCase(map.getConceptReferenceTerm().getName())) {
+				if (map.getConceptReferenceTerm().getConceptSource().getName().toLowerCase().contains(FHIRConstants.CIEL.toLowerCase())) {
 					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
 							FHIRConstants.ciel));
-				} else if (FHIRConstants.SNOMED.equalsIgnoreCase(map.getConceptReferenceTerm().getName())) {
+				} else if (map.getConceptReferenceTerm().getConceptSource().getName().toLowerCase().contains(FHIRConstants.SNOMED.toLowerCase())) {
 					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
 							FHIRConstants.snomed));
-				} else if (FHIRConstants.LOINC.equalsIgnoreCase(map.getConceptReferenceTerm().getName())) {
+				} else if (FHIRConstants.LOINC.equalsIgnoreCase(map.getConceptReferenceTerm().getConceptSource().getName().toLowerCase())) {
 					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
 							FHIRConstants.loinc));
 				} else {

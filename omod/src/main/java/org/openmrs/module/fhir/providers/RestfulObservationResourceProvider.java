@@ -17,10 +17,8 @@ import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.resource.Observation;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.rest.annotation.IdParam;
-import ca.uhn.fhir.rest.annotation.Read;
-import ca.uhn.fhir.rest.annotation.RequiredParam;
-import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.annotation.*;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.DateParam;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenOrListParam;
@@ -60,7 +58,7 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	}
 
 	/**
-	 * Search obsservation by unique id
+	 * Search observation by unique id
 	 *
 	 * @param id object containing the requested id
 	 */
@@ -134,5 +132,15 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 		) {
 		return provider.searchObsByPatientIdentifier(identifier);
 	}
+
+    /**
+     * Delete observation by unique id
+     *
+     * @param theId object containing the id
+     */
+    @Delete()
+    public void deleteObservation(@IdParam IdDt theId) {
+        provider.deleteObservation(theId);
+    }
 
 }
