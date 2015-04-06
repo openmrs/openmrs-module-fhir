@@ -50,4 +50,13 @@ public class FHIRAllergyIntoleranceResource extends Resource {
         }
         return fhirAllergies;
     }
+    
+    public List<AllergyIntolerance> searchAllergiesByPatientName(ReferenceParam name) {
+        List<AllergyIntolerance> fhirAllergies = new ArrayList<AllergyIntolerance>();
+        String chain = name.getChain();
+        if (Patient.SP_NAME.equals(chain)) {
+            fhirAllergies = Context.getService(AllergyIntoleranceService.class).searchAllergiesByPatientIdentifier(name.getValue());
+        }
+        return fhirAllergies;
+    }
 }

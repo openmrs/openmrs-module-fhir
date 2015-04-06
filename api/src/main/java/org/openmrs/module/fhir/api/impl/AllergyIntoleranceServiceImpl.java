@@ -70,4 +70,11 @@ public class AllergyIntoleranceServiceImpl extends BaseOpenmrsService implements
     public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(String identifier) {
         return AllergyStrategyUtil.getAllergyStrategy().searchAllergiesByPatientIdentifier(identifier);
     }
+    
+    /**
+     * @see org.openmrs.module.fhir.api.AllergyIntoleranceService#searchAllergiesByPatientName(String)
+     */
+    public List<AllergyIntolerance> searchAllergiesByPatientName(String name){
+    	return AllergyStrategyUtil.getAllergyStrategy().searchAllergiesByPatientName(name);
+    }
 }
