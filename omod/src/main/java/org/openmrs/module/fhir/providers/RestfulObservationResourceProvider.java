@@ -18,7 +18,6 @@ import ca.uhn.fhir.model.dstu2.resource.Observation;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.*;
-import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.DateParam;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenOrListParam;
@@ -70,24 +69,24 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	/**
 	 * Search obsservation by patient and concept name
 	 *
-	 * @param name object containing the requested name
+	 * @param codes object containing the requested name
 	 */
 	@Search()
 	public List<Observation> searchObsByPatientAndConcept(@RequiredParam(name = Observation.SP_SUBJECT) ReferenceParam
 			                                                      person,
 	                                                      @RequiredParam(name = Observation.SP_CODE) TokenOrListParam
-			                                                      name) {
-		return provider.searchObsByPatientAndConcept(person, name);
+			                                                      codes) {
+		return provider.searchObsByPatientAndConcept(person, codes);
 	}
 
 	/**
-	 * Search obsservation by observation name
+	 * Search obsservation by observation code
 	 *
-	 * @param name object containing the requested name
+	 * @param code object containing the requested code
 	 */
 	@Search()
-	public List<Observation> searchObsByName(@RequiredParam(name = Observation.SP_CODE_VALUE_CONCEPT) TokenParam name) {
-		return provider.searchObsByName(name);
+	public List<Observation> searchObsByName(@RequiredParam(name = Observation.SP_CODE_VALUE_CONCEPT) TokenParam code) {
+		return provider.searchObsByCode(code);
 	}
 
 	/**

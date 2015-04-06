@@ -36,10 +36,10 @@ public interface ObsService extends OpenmrsService {
 	 * Search observations by patient and concepts
 	 *
 	 * @param patientUUid  patient uuid
-	 * @param conceptNames names of the concepts
+	 * @param conceptCodes names of the concepts
 	 * @return fhir obs resource list
 	 */
-	public List<Observation> searchObsByPatientAndConcept(String patientUUid, List<String> conceptNames);
+	public List<Observation> searchObsByPatientAndConcept(String patientUUid, List<String> conceptCodes);
 
 	/**
 	 * Search observations by patient and concepts

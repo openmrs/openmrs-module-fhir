@@ -46,18 +46,18 @@ public class FHIRObservationResource extends Resource {
 		return obsService.searchObsById(id.getValue());
 	}
 
-	public List<Observation> searchObsByPatientAndConcept(ReferenceParam person, TokenOrListParam names) {
+	public List<Observation> searchObsByPatientAndConcept(ReferenceParam person, TokenOrListParam codes) {
 		ObsService obsService = Context.getService(ObsService.class);
 		List<String> conceptNames = new ArrayList<String>();
-		for (BaseCodingDt baseCodingDt : names.getListAsCodings()) {
+		for (BaseCodingDt baseCodingDt : codes.getListAsCodings()) {
 			conceptNames.add(baseCodingDt.getValueAsQueryToken());
 		}
 		return obsService.searchObsByPatientAndConcept(person.getIdPart(), conceptNames);
 	}
 
-	public List<Observation> searchObsByName(TokenParam name) {
+	public List<Observation> searchObsByCode(TokenParam code) {
 		ObsService obsService = Context.getService(ObsService.class);
-		return obsService.searchObsByName(name.getValue());
+		return obsService.searchObsByName(code.getValue());
 	}
 
 	public List<Observation> searchObsByDate(DateParam date) {

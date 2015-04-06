@@ -63,7 +63,7 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void searchObsByPatientAndConcept_shouldReturnMatchingObservationList() {
 		String personUuid = "da7f524f-27ce-4bb2-86d6-6d1d05312bd5";
-		String conceptName = "3143-9";
+		String conceptCode = "3143-9";
 		List<String> concepts = new ArrayList<String>();
 		ConceptService conceptService = Context.getConceptService();
 		Concept concept = conceptService.getConcept(1);
@@ -72,7 +72,7 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		conceptMap.setConceptReferenceTerm(conceptService.getConceptReferenceTerm(558));
 		concept.addConceptMapping(conceptMap);
 		conceptService.saveConcept(concept);
-		concepts.add(conceptName);
+		concepts.add(conceptCode);
 		List<Observation> obs = getService().searchObsByPatientAndConcept(personUuid, concepts);
 		assertNotNull(obs);
 		assertEquals(2, obs.size());

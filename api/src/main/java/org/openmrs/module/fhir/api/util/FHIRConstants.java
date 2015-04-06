@@ -25,7 +25,7 @@ public final class FHIRConstants {
 	public static final String LOINC_URI = "http://loinc.org";
 	public static final String SNOMED_URI = "http://snomed.info/sct";
 	public static final String CIEL_URI = "http://ciel.org";
-	public static final String ICD_10_WHO_URI = "http://www.who.int/classifications/icd/en/";
+	public static final String ICD_10_WHO_URI = "http://hl7.org/fhir/sid/icd-10";
 	public static final String RX_NORM_URI = "http://www.nlm.nih.gov/research/umls/rxnorm/";
 	public static final String PIH_URI = "http://www.pih.org/";
 	public static final String PIH_MALAWI_URI = "http://www.pih.org/country/malawi";
@@ -85,8 +85,6 @@ public final class FHIRConstants {
 	public static final String BIT_HL7_ABBREVATION = "BIT";
 	public static final String LOCATION_EXTENTION_URI = "http://resources.openmrs.org/doc/fhir/profiles/vitalsigns"
 	                                                    + ".xml#location";
-	public static final String ENCOUNTER_EXTENTION_URI = "http://resources.openmrs.org/doc/fhir/profiles/vitalsigns"
-	                                                     + ".xml#encounter";
 	public static final String WEB_SERVICES_URI_PREFIX = "ws/rest";
 	public static final String PERSON = "person";
 	public static final String CONCEPT = "concept";
