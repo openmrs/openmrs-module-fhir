@@ -155,16 +155,18 @@ public class FHIRPersonUtil {
 	 */
 	public static org.openmrs.Person generateOpenMRSPerson(ca.uhn.fhir.model.dstu2.resource.Person personFHIR) {
 		org.openmrs.Person omrsPerson = new org.openmrs.Person();
-		omrsPerson.setUuid(personFHIR.getId().getIdPart());
+		if(personFHIR.getId()!=null){
+			omrsPerson.setUuid(personFHIR.getId().getIdPart());
+		}		
 		Set<PersonName> names = new TreeSet<PersonName>();
 		for (HumanNameDt humanNameDt : personFHIR.getName()) {
 			PersonName personName = new PersonName();
 			if (humanNameDt.getUse() != null) {
 				String getUse = humanNameDt.getUse();
-				if (getUse.equalsIgnoreCase(String.valueOf(NameUseEnum.USUAL))) {
+				if (String.valueOf(NameUseEnum.USUAL).equalsIgnoreCase(getUse)) {
 					personName.setPreferred(true);
 				}
-				if (getUse.equalsIgnoreCase(String.valueOf(NameUseEnum.OLD))) {
+				if (String.valueOf(NameUseEnum.OLD).equalsIgnoreCase(getUse)) {
 					personName.setPreferred(false);
 				}
 			}
@@ -223,10 +225,10 @@ public class FHIRPersonUtil {
 				}
 			}
 
-			if (fhirAddress.getUse().equalsIgnoreCase(String.valueOf(String.valueOf(AddressUseEnum.HOME)))) {
+			if (String.valueOf(AddressUseEnum.HOME).equalsIgnoreCase(fhirAddress.getUse())) {
 				address.setPreferred(true);
 			}
-			if (fhirAddress.getUse().equalsIgnoreCase(String.valueOf(String.valueOf(AddressUseEnum.OLD)))) {
+			if (String.valueOf(AddressUseEnum.OLD).equalsIgnoreCase(fhirAddress.getUse())) {
 				address.setPreferred(false);
 			}
 			addresses.add(address);

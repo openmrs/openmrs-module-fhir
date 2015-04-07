@@ -13,12 +13,12 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu2.resource.Person;
-
 import java.util.List;
 
-public interface PersonService {
+import ca.uhn.fhir.model.dstu2.resource.Person;
 
+public interface PersonService {
+	
 	/**
 	 * Get fhir perso resource by uuid
 	 *
@@ -26,7 +26,7 @@ public interface PersonService {
 	 * @return fhir patient resource and will return null if patient not found for the given id
 	 */
 	Person getPerson(String id);
-
+	
 	/**
 	 * Search persons by uuid
 	 *
@@ -38,9 +38,9 @@ public interface PersonService {
 	/**
 	 * Search all persons for given attributes
 	 *
-	 * @param name      Name of person to search
+	 * @param name Name of person to search
 	 * @param birthYear The year of birth to restrict
-	 * @param gender    The gender field to search on (Typically just "M" or "F")
+	 * @param gender The gender field to search on (Typically just "M" or "F")
 	 * @return persons list
 	 */
 	List<Person> searchPersons(String name, Integer birthYear, String gender);
@@ -52,7 +52,7 @@ public interface PersonService {
 	 * @return fhir persons resource list
 	 */
 	List<Person> searchPersonsByName(String name);
-
+	
 	/**
 	 * creates a oms Person from FHIR personn
 	 *
@@ -62,12 +62,12 @@ public interface PersonService {
 	Person createFHIRPerson(Person person);
 	
 	/**
-	 * update a oms Person from FHIR personn
+	 * update a OpenMRS Person from FHIR Person
 	 *
-	 * @param person
-	 * @param theId
-	 * @return
+	 * @param person the FHIR representation of the {@link}Person to be updated
+	 * @param theId the uuid of the Person to be updated
+	 * @return the updated FHIR {@link}Person Resource
 	 */
-	Person updateFHIRPerson(Person person,String theId);
-
+	Person updateFHIRPerson(Person person, String theId);
+	
 }

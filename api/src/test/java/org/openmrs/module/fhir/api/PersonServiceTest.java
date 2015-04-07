@@ -41,33 +41,32 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class PersonServiceTest extends BaseModuleContextSensitiveTest {
-
-	protected static final String PERSOM_INITIAL_DATA_XML =
-			"org/openmrs/api/include/PersonServiceTest-createPersonPurgeVoidTest.xml";
-
+	
+	protected static final String PERSOM_INITIAL_DATA_XML = "org/openmrs/api/include/PersonServiceTest-createPersonPurgeVoidTest.xml";
+	
 	public PersonService getService() {
 		return Context.getService(PersonService.class);
 	}
-
+	
 	@Before
 	public void runBeforeEachTest() throws Exception {
 		executeDataSet(PERSOM_INITIAL_DATA_XML);
 	}
-
+	
 	@Test
 	public void shouldSetupContext() {
 		assertNotNull(getService());
 	}
-
+	
 	@Test
 	public void getPerson_shouldReturnResourceIfExists() throws FHIRValidationException {
 		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
 		Person fhirPerson = getService().getPerson(personUuid);
 		assertNotNull(fhirPerson);
 		assertEquals(fhirPerson.getId().toString(), personUuid);
-
+		
 	}
-
+	
 	@Test
 	public void searchPatientsById_shouldReturnBundleIfExists() throws FHIRValidationException {
 		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
@@ -87,7 +86,7 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 		assertNotNull(persons);
 		assertEquals(1, persons.size());
 	}
-
+	
 	@Test
 	public void searchPersonsByName_shouldReturnBundle() {
 		String name = "Anet";
@@ -95,7 +94,7 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 		assertNotNull(persons);
 		assertEquals(2, persons.size());
 	}
-
+	
 	/**
 	 * @verifies generate oms person
 	 */
@@ -115,12 +114,12 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void updateperson_shouldGenerateOmsPerson() throws Exception {
 		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
-		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);		
-		Person fhirPerson = FHIRPersonUtil.generatePerson(person);	
+		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);
+		Person fhirPerson = FHIRPersonUtil.generatePerson(person);
 		String requestnUuid = "vvvv524f-27ce-4bb2-86d6-6d1d05312bd5";
 		IdDt uuid = new IdDt();
 		uuid.setValue(requestnUuid); // set a uuid which is not associated with any Person
-		fhirPerson.setId(uuid);		
+		fhirPerson.setId(uuid);
 		fhirPerson = Context.getService(PersonService.class).updateFHIRPerson(fhirPerson, requestnUuid);
 		org.openmrs.Person retrievedPerson = Context.getPersonService().getPersonByUuid(requestnUuid);
 		assertNotNull(retrievedPerson);
@@ -132,31 +131,27 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void updateperson_shouldUpdateOmsPerson() throws Exception {
 		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
-		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);		 
-		
+		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);
 		Person fhirPerson = FHIRPersonUtil.generatePerson(person);
 		person.setUuid(null);
-				
-		List<HumanNameDt> humanNames=new ArrayList<HumanNameDt>();
+		List<HumanNameDt> humanNames = new ArrayList<HumanNameDt>(); // add a new name to update
 		HumanNameDt fhirName = new HumanNameDt();
-		StringDt familyName = new StringDt(); //
+		StringDt familyName = new StringDt();
 		familyName.setValue("Bais");
 		List<StringDt> familyNames = new ArrayList<StringDt>();
 		familyNames.add(familyName);
-		fhirName.setFamily(familyNames);//
+		fhirName.setFamily(familyNames);
 		StringDt givenName = new StringDt();
 		givenName.setValue("cope");
 		List<StringDt> givenNames = new ArrayList<StringDt>();
 		givenNames.add(givenName);
 		fhirName.setGiven(givenNames);
-		fhirName.setUse(NameUseEnum.USUAL); ///
-		humanNames.add(fhirName); //
-		fhirPerson.setName(humanNames); //
-		
-		fhirPerson.setGender(AdministrativeGenderEnum.FEMALE);		
-		fhirPerson.setActive(false);
-		
-		List<AddressDt> addressList = new ArrayList<AddressDt>();
+		fhirName.setUse(NameUseEnum.USUAL);
+		humanNames.add(fhirName);
+		fhirPerson.setName(humanNames);
+		fhirPerson.setGender(AdministrativeGenderEnum.FEMALE); // change the gender
+		fhirPerson.setActive(false); // delete the person		
+		List<AddressDt> addressList = new ArrayList<AddressDt>(); // add a new address to update
 		AddressDt fhirAddress = new AddressDt();
 		fhirAddress.setCity("abc");
 		fhirAddress.setCountry("bcd");
@@ -169,35 +164,35 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 		addressStrings.add(new StringDt("stu"));
 		addressStrings.add(new StringDt("tuv"));
 		fhirAddress.setLine(addressStrings);
-	    fhirAddress.setUse(AddressUseEnum.HOME);
-		addressList.add(fhirAddress);			
+		fhirAddress.setUse(AddressUseEnum.HOME);
+		addressList.add(fhirAddress);
 		fhirPerson.setAddress(addressList);
-		
 		//update the person
-		fhirPerson = Context.getService(PersonService.class).updateFHIRPerson(fhirPerson,"dagh524f-27ce-4bb2-86d6-6d1d05312bd5");
-		//retreived the updated person
+		fhirPerson = Context.getService(PersonService.class).updateFHIRPerson(fhirPerson,personUuid);
+		//retreive the updated person
 		org.openmrs.Person updatedPerson = Context.getPersonService().getPersonByUuid(personUuid);
-		assertNotNull(updatedPerson);		
+		assertNotNull(updatedPerson);
+		// check whether each attribute updated correctly
 		for (PersonName name : updatedPerson.getNames()) {
 			if (name.isPreferred()) {
-				Assert.assertEquals(name.getGivenName(),"cope");
-				Assert.assertEquals(name.getFamilyName(),"Bais");
+				Assert.assertEquals(name.getGivenName(), "cope");
+				Assert.assertEquals(name.getFamilyName(), "Bais");
 			}
-		}		
-		for (PersonAddress addrss : updatedPerson.getAddresses()) {			
+		}
+		for (PersonAddress addrss : updatedPerson.getAddresses()) {
 			if (fhirAddress.getUse().equalsIgnoreCase(String.valueOf(String.valueOf(AddressUseEnum.HOME)))) {
-				Assert.assertEquals(addrss.getCityVillage(),"abc");
-				Assert.assertEquals(addrss.getCountry(),"bcd");
-				Assert.assertEquals(addrss.getStateProvince(),"cde");
-				Assert.assertEquals(addrss.getPostalCode(),"def");
-				Assert.assertEquals(addrss.getAddress1(),"pqr");
-				Assert.assertEquals(addrss.getAddress2(),"qrs");
-				Assert.assertEquals(addrss.getAddress3(),"rst");
-				Assert.assertEquals(addrss.getAddress4(),"stu");
-				Assert.assertEquals(addrss.getAddress5(),"tuv");
+				Assert.assertEquals(addrss.getCityVillage(), "abc");
+				Assert.assertEquals(addrss.getCountry(), "bcd");
+				Assert.assertEquals(addrss.getStateProvince(), "cde");
+				Assert.assertEquals(addrss.getPostalCode(), "def");
+				Assert.assertEquals(addrss.getAddress1(), "pqr");
+				Assert.assertEquals(addrss.getAddress2(), "qrs");
+				Assert.assertEquals(addrss.getAddress3(), "rst");
+				Assert.assertEquals(addrss.getAddress4(), "stu");
+				Assert.assertEquals(addrss.getAddress5(), "tuv");
 			}
-		}		
-		Assert.assertEquals(updatedPerson.getVoided(),false);		
-		Assert.assertEquals(updatedPerson.getGender(),"F");
+		}
+		Assert.assertEquals(updatedPerson.getVoided(), false);
+		Assert.assertEquals(updatedPerson.getGender(), "F");
 	}
 }
