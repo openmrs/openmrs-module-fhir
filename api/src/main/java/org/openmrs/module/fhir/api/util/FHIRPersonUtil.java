@@ -241,11 +241,12 @@ public class FHIRPersonUtil {
 
 		omrsPerson.setBirthdate(personFHIR.getBirthDate());
 		if (personFHIR.getActive()) {
-			omrsPerson.setVoided(false);
+			omrsPerson.setPersonVoided(false);
 		} else {
-			omrsPerson.setVoided(true);
+			omrsPerson.setPersonVoided(true);
+			omrsPerson.setPersonVoidReason("Deleted from FHIR module"); // deleted reason is compulsory
 		}
-
+		
 		return omrsPerson;
 	}
 }

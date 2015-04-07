@@ -32,6 +32,8 @@ import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 
 import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
+import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.openmrs.module.fhir.resources.FHIRPersonResource;
 
 import java.util.List;
@@ -140,7 +142,7 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 		   return retVal;		   
 	   }
 
-	   outcome.addIssue().setDetails("Person is successfully updated");
+	   outcome.addIssue().setDetails("Person is successfully updated"+FHIRPersonUtil.generateOpenMRSPerson(thePerson).getBirthdate());
 	   retVal.setOperationOutcome(outcome); 	    
 	   return retVal;
 	}
