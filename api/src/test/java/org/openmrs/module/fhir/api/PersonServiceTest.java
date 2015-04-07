@@ -13,7 +13,13 @@
  */
 package org.openmrs.module.fhir.api;
 
+import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
 import ca.uhn.fhir.model.dstu2.resource.Person;
+import ca.uhn.fhir.model.dstu2.valueset.NameUseEnum;
+import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.model.primitive.StringDt;
+
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
@@ -21,6 +27,7 @@ import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
 import org.openmrs.module.fhir.exception.FHIRValidationException;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -89,8 +96,58 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 	public void generateOpenMRSPerson_shouldGenerateOmsPerson() throws Exception {
 		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
 		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);
+		person.setUuid(""); // remove the uuid value from the Person. This will let this resource to be persist on the db with random uuid
 		Person fhirPerson = FHIRPersonUtil.generatePerson(person);
 		fhirPerson = Context.getService(PersonService.class).createFHIRPerson(fhirPerson);
 		assertNotNull(fhirPerson);
+	}
+	
+	/**
+	 * @verifies update Person, where there is no person associates with the uuid
+	 */
+	@Test
+	public void updateperson_shouldGenerateOmsPerson() throws Exception {
+		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
+		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);		
+		Person fhirPerson = FHIRPersonUtil.generatePerson(person);	
+		String requestnUuid = "vvvv524f-27ce-4bb2-86d6-6d1d05312bd5";
+		IdDt uuid = new IdDt();
+		uuid.setValue(requestnUuid); // set a uuid which is not associated with any Person
+		fhirPerson.setId(uuid);		
+		fhirPerson = Context.getService(PersonService.class).updateFHIRPerson(fhirPerson, requestnUuid);
+		org.openmrs.Person retrievedPerson = Context.getPersonService().getPersonByUuid(requestnUuid);
+		assertNotNull(retrievedPerson);
+	}
+	
+	/**
+	 * @verifies update Person
+	 */
+	@Test
+	public void updateperson_shouldUpdateOmsPerson() throws Exception {
+		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
+		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);
+		Person fhirPerson = FHIRPersonUtil.generatePerson(person);
+		person.setUuid("");      // should not need
+				
+		List<HumanNameDt> humanNames=new ArrayList<HumanNameDt>();
+		HumanNameDt fhirName = new HumanNameDt();
+		StringDt familyName = new StringDt(); //
+		familyName.setValue("Bais");
+		List<StringDt> familyNames = new ArrayList<StringDt>();
+		familyNames.add(familyName);
+		fhirName.setFamily(familyNames);//
+		StringDt givenName = new StringDt();
+		givenName.setValue("cope");
+		List<StringDt> givenNames = new ArrayList<StringDt>();
+		givenNames.add(givenName);
+		fhirName.setGiven(givenNames);
+		fhirName.setUse(NameUseEnum.USUAL); ///
+		humanNames.add(fhirName); //
+		fhirPerson.setName(humanNames); //
+
+		fhirPerson = Context.getService(PersonService.class).updateFHIRPerson(fhirPerson, personUuid);
+		
+		org.openmrs.Person person2 = Context.getPersonService().getPersonByUuid(personUuid);
+		assertNotNull(person2);
 	}
 }

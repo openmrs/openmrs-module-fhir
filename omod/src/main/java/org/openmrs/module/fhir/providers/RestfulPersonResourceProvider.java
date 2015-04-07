@@ -24,11 +24,13 @@ import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.DateParam;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.resources.FHIRPersonResource;
 
@@ -120,4 +122,26 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 		return retVal;
 	}
 
+	@Update
+	public MethodOutcome updatePatientConditional(
+	      @ResourceParam Person thePerson,
+	      @IdParam IdDt theId) {
+	   
+	   MethodOutcome retVal = new MethodOutcome();
+	   retVal.setId(new IdDt(FHIRConstants.PERSON, thePerson.getId().getIdPart()));		    
+	   OperationOutcome outcome = new OperationOutcome();
+	   
+	   try{
+		   Person person=personResource.updateFHIRPerson(thePerson,theId.getIdPart());
+	   }catch(Exception e){
+		   outcome.addIssue().setDetails("No Person is associated with the given UUID to update. Please"
+		   		+ " make sure you have set at lease one non-delete name to create a new Person with the given UUID"); 
+		   retVal.setOperationOutcome(outcome); 		    
+		   return retVal;		   
+	   }
+
+	   outcome.addIssue().setDetails("Person is successfully updated");
+	   retVal.setOperationOutcome(outcome); 	    
+	   return retVal;
+	}
 }

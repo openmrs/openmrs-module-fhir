@@ -60,5 +60,14 @@ public interface PersonService {
 	 * @return
 	 */
 	Person createFHIRPerson(Person person);
+	
+	/**
+	 * update a oms Person from FHIR personn
+	 *
+	 * @param person
+	 * @param theId
+	 * @return
+	 */
+	Person updateFHIRPerson(Person person,String theId);
 
 }

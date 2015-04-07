@@ -154,18 +154,17 @@ public class FHIRPersonUtil {
 	 * @should generate Oms Person
 	 */
 	public static org.openmrs.Person generateOpenMRSPerson(ca.uhn.fhir.model.dstu2.resource.Person personFHIR) {
-
 		org.openmrs.Person omrsPerson = new org.openmrs.Person();
-
+		omrsPerson.setUuid(personFHIR.getId().getIdPart());
 		Set<PersonName> names = new TreeSet<PersonName>();
 		for (HumanNameDt humanNameDt : personFHIR.getName()) {
 			PersonName personName = new PersonName();
 			if (humanNameDt.getUse() != null) {
 				String getUse = humanNameDt.getUse();
-				if (getUse.equals(NameUseEnum.USUAL)) {
+				if (getUse.equalsIgnoreCase(String.valueOf(NameUseEnum.USUAL))) {
 					personName.setPreferred(true);
 				}
-				if (getUse.equals(NameUseEnum.OLD)) {
+				if (getUse.equalsIgnoreCase(String.valueOf(NameUseEnum.OLD))) {
 					personName.setPreferred(false);
 				}
 			}
@@ -224,10 +223,10 @@ public class FHIRPersonUtil {
 				}
 			}
 
-			if (fhirAddress.getUse().equals(String.valueOf(AddressUseEnum.HOME))) {
+			if (fhirAddress.getUse().equalsIgnoreCase(String.valueOf(String.valueOf(AddressUseEnum.HOME)))) {
 				address.setPreferred(true);
 			}
-			if (fhirAddress.getUse().equals(String.valueOf(AddressUseEnum.OLD))) {
+			if (fhirAddress.getUse().equalsIgnoreCase(String.valueOf(String.valueOf(AddressUseEnum.OLD)))) {
 				address.setPreferred(false);
 			}
 			addresses.add(address);
