@@ -13,7 +13,9 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import ca.uhn.fhir.model.dstu2.resource.Person;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,30 +26,29 @@ import org.openmrs.module.fhir.api.PersonService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import ca.uhn.fhir.model.dstu2.resource.Person;
+import ca.uhn.fhir.model.primitive.IdDt;
 
 public class PersonServiceImpl implements PersonService {
-
+	
 	protected final Log log = LogFactory.getLog(this.getClass());
-
+	
 	private FHIRDAO dao;
-
+	
 	/**
 	 * @param dao the dao to set
 	 */
 	public void setDao(FHIRDAO dao) {
 		this.dao = dao;
 	}
-
+	
 	/**
 	 * @return the dao
 	 */
 	public FHIRDAO getDao() {
 		return dao;
 	}
-
+	
 	@Override
 	public Person getPerson(String id) {
 		org.openmrs.Person omrsPerson = Context.getPersonService().getPersonByUuid(id);
@@ -56,7 +57,7 @@ public class PersonServiceImpl implements PersonService {
 		}
 		return FHIRPersonUtil.generatePerson(omrsPerson);
 	}
-
+	
 	@Override
 	public List<Person> searchPersonById(String id) {
 		org.openmrs.Person omrsPerson = Context.getPersonService().getPersonByUuid(id);
@@ -76,7 +77,7 @@ public class PersonServiceImpl implements PersonService {
 		}
 		return fhirPersonsList;
 	}
-
+	
 	@Override
 	public List<Person> searchPersonsByName(String name) {
 		List<org.openmrs.Person> persons = Context.getPersonService().getPeople(name, null);
@@ -86,7 +87,7 @@ public class PersonServiceImpl implements PersonService {
 		}
 		return fhirPersonsList;
 	}
-
+	
 	@Override
 	public Person createFHIRPerson(Person person) {
 		org.openmrs.Person omrsPerson = FHIRPersonUtil.generateOpenMRSPerson(person);
@@ -96,60 +97,64 @@ public class PersonServiceImpl implements PersonService {
 	}
 	
 	@Override
-	public Person updateFHIRPerson(Person thePerson,String theId){
+	public Person updateFHIRPerson(Person thePerson, String theId) {
 		org.openmrs.api.PersonService personService = Context.getPersonService();
-		org.openmrs.Person retrievedPerson=personService.getPersonByUuid(theId);
-		if(retrievedPerson!=null){ // update person
+		org.openmrs.Person retrievedPerson = personService.getPersonByUuid(theId);
+		if (retrievedPerson != null) { // update person
 			org.openmrs.Person omrsPerson = FHIRPersonUtil.generateOpenMRSPerson(thePerson);
-			
-			Set<PersonName> all=retrievedPerson.getNames();
-			boolean needToSetPrefferedName=false; // indicate wheter any preffered names are in the request body. 
-			for(PersonName name: omrsPerson.getNames()){
-				if(name.getPreferred()){   // detecting any preffered names are in the request body
-					needToSetPrefferedName=true;
-				}
+			retrievedPerson = updatePersonAttributes(omrsPerson, retrievedPerson);
+			Context.getPersonService().savePerson(retrievedPerson);
+			return FHIRPersonUtil.generatePerson(retrievedPerson);
+		} else { // no person is associated with the given uuid. so create a new person with the given uuid
+			if (thePerson.getId() == null) { // since we need to PUT the Person to a specific URI, we need to set the uuid here, if it is not already set.
+				IdDt uuid = new IdDt();
+				uuid.setValue(theId);
+				thePerson.setId(uuid);
 			}
-			if(needToSetPrefferedName){  // unset the existing preffered name, 
-				for(PersonName name: all){
-					name.setPreferred(false);
-				}
-			}
-			for(PersonName name: omrsPerson.getNames()){
-				all.add(name);  // add all the new names to the person
-			}			
-			retrievedPerson.setNames(all);
-			
-			Set<PersonAddress> allAddress=retrievedPerson.getAddresses();
-			boolean needToSetHome=false;
-			for(PersonAddress address: omrsPerson.getAddresses()){
-				if(address.isPreferred()){
-					needToSetHome=true;
-				}
-			}
-			if(needToSetHome){
-				for(PersonAddress address: allAddress){
-					address.setPreferred(false);
-				}
-			}			
-			for(PersonAddress address1: omrsPerson.getAddresses()){
-				allAddress.add(address1);
-			}			
-			retrievedPerson.setAddresses(allAddress);
-			
-			retrievedPerson.setPersonVoided(omrsPerson.getVoided());
-			if(omrsPerson.getVoided()){
-				retrievedPerson.setPersonVoidReason("Deleted from FHIR module"); // deleted reason is compulsory
-			}			
-			
-			retrievedPerson.setBirthdate(omrsPerson.getBirthdate());
-			
-			retrievedPerson.setGender(omrsPerson.getGender());
-			
-			Context.getPersonService().savePerson(retrievedPerson);			
-			return FHIRPersonUtil.generatePerson(omrsPerson);
-		}else{ // no person is associated with the given uuid. so create a new person with the given uuid
-			return createFHIRPerson(thePerson); 
+			return createFHIRPerson(thePerson);
 		}
+	}
+	
+	public org.openmrs.Person updatePersonAttributes(org.openmrs.Person omrsPerson, org.openmrs.Person retrievedPerson) {
+		Set<PersonName> all = retrievedPerson.getNames();
+		boolean needToSetPrefferedName = false; // indicate wheter any preffered names are in the request body. 
+		for (PersonName name : omrsPerson.getNames()) {
+			if (name.getPreferred()) { // detecting any preffered names are in the request body
+				needToSetPrefferedName = true;
+			}
+		}
+		if (needToSetPrefferedName) { // unset the existing preffered name, 
+			for (PersonName name : all) {
+				name.setPreferred(false);
+			}
+		}
+		for (PersonName name : omrsPerson.getNames()) {
+			all.add(name); // add all the new names to the person
+		}
+		retrievedPerson.setNames(all);
+		Set<PersonAddress> allAddress = retrievedPerson.getAddresses();
+		boolean needToSetHome = false;
+		for (PersonAddress address : omrsPerson.getAddresses()) {
+			if (address.isPreferred()) {
+				needToSetHome = true;
+			}
+		}
+		if (needToSetHome) {
+			for (PersonAddress address : allAddress) {
+				address.setPreferred(false);
+			}
+		}
+		for (PersonAddress address1 : omrsPerson.getAddresses()) {
+			allAddress.add(address1);
+		}
+		retrievedPerson.setAddresses(allAddress);
+		retrievedPerson.setPersonVoided(omrsPerson.getVoided());
+		if (omrsPerson.getVoided()) {
+			retrievedPerson.setPersonVoidReason("Deleted from FHIR module"); // deleted reason is compulsory
+		}
+		retrievedPerson.setBirthdate(omrsPerson.getBirthdate());
+		retrievedPerson.setGender(omrsPerson.getGender());
+		return retrievedPerson;
 	}
 	
 }
