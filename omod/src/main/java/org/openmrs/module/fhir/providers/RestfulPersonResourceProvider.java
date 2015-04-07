@@ -142,7 +142,7 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 		   return retVal;		   
 	   }
 
-	   outcome.addIssue().setDetails("Person is successfully updated"+FHIRPersonUtil.generateOpenMRSPerson(thePerson).getBirthdate());
+	   outcome.addIssue().setDetails("Person is successfully updated");
 	   retVal.setOperationOutcome(outcome); 	    
 	   return retVal;
 	}
