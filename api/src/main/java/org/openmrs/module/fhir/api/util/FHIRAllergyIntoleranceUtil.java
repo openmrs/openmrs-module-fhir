@@ -46,6 +46,7 @@ public class FHIRAllergyIntoleranceUtil {
 		allergyIntolerance.setId(allergy.getUuid());
 		//Build and set patient reference
 		allergyIntolerance.setSubject(FHIRUtils.buildPatientOrPersonResourceReference(allergy.getPerson()));
+
 		//Set record date
 		DateTimeDt recordedDate = new DateTimeDt();
 		recordedDate.setValue(allergy.getStartDate());
