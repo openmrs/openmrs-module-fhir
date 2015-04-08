@@ -42,5 +42,10 @@ public interface AllergyIntoleranceService {
      */
     public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(String identifier);
 
-
+    /**
+     * Search allergies by patient name
+     * @param name to be search
+     * @return fhir allergy resource list
+     */
+    public List<AllergyIntolerance> searchAllergiesByPatientName(String name);
 }
