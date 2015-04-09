@@ -251,4 +251,52 @@ public class FHIRPersonUtil {
 		
 		return omrsPerson;
 	}
+	
+	/**
+	 * @param omrsPerson which contains OpenMRS Person who has the same attributes of the json request body
+	 * @param retrievedPerson the OpenMRS person which was read from the DB for the given uuid in the PUT request. 
+	 * @return OpenMRS person after copying all the attributes of the PUT request to the retrievedPerson
+	 * @should generate OpenMRS Person
+	 */
+	public static  org.openmrs.Person updatePersonAttributes(org.openmrs.Person omrsPerson, org.openmrs.Person retrievedPerson) {
+		Set<PersonName> all = retrievedPerson.getNames();
+		boolean needToSetPrefferedName = false; // indicate wheter any preffered names are in the request body. 
+		for (PersonName name : omrsPerson.getNames()) {
+			if (name.getPreferred()) { // detecting any preffered names are in the request body
+				needToSetPrefferedName = true;
+			}
+		}
+		if (needToSetPrefferedName) { // unset the existing preffered name, 
+			for (PersonName name : all) {
+				name.setPreferred(false);
+			}
+		}
+		for (PersonName name : omrsPerson.getNames()) {
+			all.add(name); // add all the new names to the person
+		}
+		retrievedPerson.setNames(all);
+		Set<PersonAddress> allAddress = retrievedPerson.getAddresses();
+		boolean needToSetHome = false;
+		for (PersonAddress address : omrsPerson.getAddresses()) {
+			if (address.isPreferred()) {
+				needToSetHome = true;
+			}
+		}
+		if (needToSetHome) {
+			for (PersonAddress address : allAddress) {
+				address.setPreferred(false);
+			}
+		}
+		for (PersonAddress address1 : omrsPerson.getAddresses()) {
+			allAddress.add(address1);
+		}
+		retrievedPerson.setAddresses(allAddress);
+		retrievedPerson.setPersonVoided(omrsPerson.getVoided());
+		if (omrsPerson.getVoided()) {
+			retrievedPerson.setPersonVoidReason("Deleted from FHIR module"); // deleted reason is compulsory
+		}
+		retrievedPerson.setBirthdate(omrsPerson.getBirthdate());
+		retrievedPerson.setGender(omrsPerson.getGender());
+		return retrievedPerson;
+	}
 }

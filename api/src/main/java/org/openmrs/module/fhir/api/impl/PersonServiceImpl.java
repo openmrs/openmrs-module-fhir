@@ -102,7 +102,7 @@ public class PersonServiceImpl implements PersonService {
 		org.openmrs.Person retrievedPerson = personService.getPersonByUuid(theId);
 		if (retrievedPerson != null) { // update person
 			org.openmrs.Person omrsPerson = FHIRPersonUtil.generateOpenMRSPerson(thePerson);
-			retrievedPerson = updatePersonAttributes(omrsPerson, retrievedPerson);
+			retrievedPerson = FHIRPersonUtil.updatePersonAttributes(omrsPerson, retrievedPerson);
 			Context.getPersonService().savePerson(retrievedPerson);
 			return FHIRPersonUtil.generatePerson(retrievedPerson);
 		} else { // no person is associated with the given uuid. so create a new person with the given uuid
@@ -114,47 +114,4 @@ public class PersonServiceImpl implements PersonService {
 			return createFHIRPerson(thePerson);
 		}
 	}
-	
-	public org.openmrs.Person updatePersonAttributes(org.openmrs.Person omrsPerson, org.openmrs.Person retrievedPerson) {
-		Set<PersonName> all = retrievedPerson.getNames();
-		boolean needToSetPrefferedName = false; // indicate wheter any preffered names are in the request body. 
-		for (PersonName name : omrsPerson.getNames()) {
-			if (name.getPreferred()) { // detecting any preffered names are in the request body
-				needToSetPrefferedName = true;
-			}
-		}
-		if (needToSetPrefferedName) { // unset the existing preffered name, 
-			for (PersonName name : all) {
-				name.setPreferred(false);
-			}
-		}
-		for (PersonName name : omrsPerson.getNames()) {
-			all.add(name); // add all the new names to the person
-		}
-		retrievedPerson.setNames(all);
-		Set<PersonAddress> allAddress = retrievedPerson.getAddresses();
-		boolean needToSetHome = false;
-		for (PersonAddress address : omrsPerson.getAddresses()) {
-			if (address.isPreferred()) {
-				needToSetHome = true;
-			}
-		}
-		if (needToSetHome) {
-			for (PersonAddress address : allAddress) {
-				address.setPreferred(false);
-			}
-		}
-		for (PersonAddress address1 : omrsPerson.getAddresses()) {
-			allAddress.add(address1);
-		}
-		retrievedPerson.setAddresses(allAddress);
-		retrievedPerson.setPersonVoided(omrsPerson.getVoided());
-		if (omrsPerson.getVoided()) {
-			retrievedPerson.setPersonVoidReason("Deleted from FHIR module"); // deleted reason is compulsory
-		}
-		retrievedPerson.setBirthdate(omrsPerson.getBirthdate());
-		retrievedPerson.setGender(omrsPerson.getGender());
-		return retrievedPerson;
-	}
-	
 }
