@@ -89,7 +89,8 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void searchObsByName_shouldReturnMatchingObservationList() {
 		String name = "Some concept name";
-		List<Observation> obs = getService().searchObsByName(name);
+		String system = null;
+		List<Observation> obs = getService().searchObsByCode(name, null);
 		assertNotNull(obs);
 		assertEquals(10, obs.size());
 	}

@@ -76,6 +76,9 @@ public class FHIRUtils {
 		return Context.getAdministrationService().getGlobalProperty("fhir.allergy.ObsAllergyStrategy.concept");
 	}
 
+	public static String getConceptCodingSystem() {
+		return Context.getAdministrationService().getGlobalProperty("fhir.concept.codingSystem");
+	}
 	/**
 	 * This method accept person object and check whether there is a patient exist, if so it will build reference with
 	 * patient else it will contain person reference

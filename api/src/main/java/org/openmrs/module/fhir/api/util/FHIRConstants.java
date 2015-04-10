@@ -19,6 +19,7 @@ import java.util.Map;
 public final class FHIRConstants {
 
 	public static Map<String, ConceptSourceNameURIPair> conceptSourceMap = new HashMap<String, ConceptSourceNameURIPair>();
+	public static Map<String, String> conceptSourceUroNameMap = new HashMap<String, String>();
 	public static final String OPENMRS_URI = "http://openmrs.org";
 
 	//Concept source URIs
@@ -117,5 +118,19 @@ public final class FHIRConstants {
 		conceptSourceMap.put(IMO_PROBLEM.toLowerCase(), new ConceptSourceNameURIPair(IMO_PROBLEM, IMO_PROBLEM_URI));
 		conceptSourceMap.put(IMP_PROCEDURE.toLowerCase(), new ConceptSourceNameURIPair(IMP_PROCEDURE, IMP_PROCEDURE_URI));
 		conceptSourceMap.put(NDF_RT_NUI.toLowerCase(), new ConceptSourceNameURIPair(NDF_RT_NUI, NDF_RT_NUI_URI));
+
+		conceptSourceUroNameMap.put(LOINC_URI, LOINC);
+		conceptSourceUroNameMap.put(CIEL_URI, LOINC);
+		conceptSourceUroNameMap.put(SNOMED_URI, LOINC);
+		conceptSourceUroNameMap.put(ICD_10_WHO_URI, LOINC);
+		conceptSourceUroNameMap.put(RX_NORM_URI, LOINC);
+		conceptSourceUroNameMap.put(PIH_MALAWI_URI, LOINC);
+		conceptSourceUroNameMap.put(PIH_URI, LOINC);
+		conceptSourceUroNameMap.put(HL7_2X_URI, LOINC);
+		conceptSourceUroNameMap.put(BT_3_URI, LOINC);
+		conceptSourceUroNameMap.put(ICPC2_URI, LOINC);
+		conceptSourceUroNameMap.put(IMO_PROBLEM_URI, LOINC);
+		conceptSourceUroNameMap.put(IMP_PROCEDURE_URI, LOINC);
+		conceptSourceUroNameMap.put(NDF_RT_NUI_URI, LOINC);
 	}
 }

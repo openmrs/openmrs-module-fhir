@@ -52,10 +52,10 @@ public interface ObsService extends OpenmrsService {
 	/**
 	 * Search observations by observation name
 	 *
-	 * @param name obs name
+	 * @param code obs name
 	 * @return fhir obs resource list
 	 */
-	public List<Observation> searchObsByName(String name);
+	public List<Observation> searchObsByCode(String code, String system);
 
 	/**
 	 * Search observations by observation date

@@ -24,8 +24,8 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.ObsService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
-import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRObsUtil;
+import org.openmrs.module.fhir.api.util.FHIRUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -73,8 +73,9 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 		Patient patient = Context.getPatientService().getPatientByUuid(patientUUid);
 		Concept concept;
 		List<Observation> obsList = new ArrayList<Observation>();
+		String codingSystem = FHIRUtils.getConceptCodingSystem();
 		for (String conceptName : conceptCodes) {
-			concept = Context.getConceptService().getConceptByMapping(conceptName, FHIRConstants.LOINC);
+			concept = Context.getConceptService().getConceptByMapping(conceptName, codingSystem);
 			List<Obs> obs = Context.getObsService().getObservationsByPersonAndConcept(patient, concept);
 			for (Obs ob : obs) {
 				obsList.add(FHIRObsUtil.generateObs(ob));
@@ -96,10 +97,11 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByName(String)
+	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByCode(String,String)
 	 */
-	public List<Observation> searchObsByName(String name) {
-		Concept concept = Context.getConceptService().getConcept(name);
+	public List<Observation> searchObsByCode(String code, String system) {
+		String codingSystem = FHIRUtils.getConceptCodingSystem();
+		Concept concept = Context.getConceptService().getConceptByMapping(code, codingSystem);
 		List<Concept> concepts = new ArrayList<Concept>();
 		concepts.add(concept);
 		List<Obs> omrsObs = Context.getObsService().getObservations(null, null, concepts, null, null, null, null, null,

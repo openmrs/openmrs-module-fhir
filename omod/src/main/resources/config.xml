@@ -123,5 +123,11 @@
         <defaultValue>1234</defaultValue>
         <description>Concept id for allergy obs</description>
     </globalProperty>
+
+    <globalProperty>
+        <property>${project.parent.artifactId}.concept.codingSystem</property>
+        <defaultValue>LOINC</defaultValue>
+        <description>Concept Coding System</description>
+    </globalProperty>
 </module>
 
