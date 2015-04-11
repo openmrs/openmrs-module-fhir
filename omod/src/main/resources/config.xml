@@ -126,7 +126,7 @@
 
     <globalProperty>
         <property>${project.parent.artifactId}.concept.codingSystem</property>
-        <defaultValue>LOINC</defaultValue>
+        <defaultValue>OPENMRS</defaultValue>
         <description>Concept Coding System</description>
     </globalProperty>
 </module>

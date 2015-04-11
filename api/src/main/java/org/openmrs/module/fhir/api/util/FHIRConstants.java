@@ -19,12 +19,15 @@ import java.util.Map;
 public final class FHIRConstants {
 
 	public static Map<String, ConceptSourceNameURIPair> conceptSourceMap = new HashMap<String, ConceptSourceNameURIPair>();
-	public static Map<String, String> conceptSourceUroNameMap = new HashMap<String, String>();
+	public static Map<String, String> conceptSourceURINameMap = new HashMap<String, String>();
 	public static final String OPENMRS_URI = "http://openmrs.org";
 
 	//Concept source URIs
 	public static final String LOINC_URI = "http://loinc.org";
-	public static final String SNOMED_URI = "http://snomed.info/sct";
+	public static final String SNOMED_CT_URI = "http://snomed.info/sct";
+	public static final String SNOMED_URI = "http://snomed.info";
+	public static final String SNOMED_NP_URI = "http://snomed.info/snp";
+	public static final String SNOMED_MVP_URI = "http://snomed.info/smvp";
 	public static final String CIEL_URI = "http://ciel.org";
 	public static final String ICD_10_WHO_URI = "http://hl7.org/fhir/sid/icd-10";
 	public static final String RX_NORM_URI = "http://www.nlm.nih.gov/research/umls/rxnorm/";
@@ -97,19 +100,20 @@ public final class FHIRConstants {
 	public static final String ACTIVE_LIST_ALLERGY_STRATEGY = "ActiveListAllergyStrategy";
 	public static final String ALLERGY_API_ALLERGY_STRATEGY = "AllergyApiModuleAllergyStrategy";
 	public static final String OBS_ALLERGY_STRATEGY = "ObsAllergyStrategy";
+	public static final String OPENMRS_CONCEPT_CODING_SYSTEM = "OPENMRS";
 
 	static {
 		conceptSourceMap.put(LOINC.toLowerCase(), new ConceptSourceNameURIPair(LOINC, LOINC_URI));
 		conceptSourceMap.put(CIEL.toLowerCase(), new ConceptSourceNameURIPair(CIEL, CIEL_URI));
 		conceptSourceMap.put(SNOMED.toLowerCase(), new ConceptSourceNameURIPair(SNOMED, SNOMED_URI));
-		conceptSourceMap.put(SNOMED_CT.toLowerCase(), new ConceptSourceNameURIPair(SNOMED_CT, SNOMED_URI));
-		conceptSourceMap.put(SNOMED_NP.toLowerCase(), new ConceptSourceNameURIPair(SNOMED_NP, SNOMED_URI));
+		conceptSourceMap.put(SNOMED_CT.toLowerCase(), new ConceptSourceNameURIPair(SNOMED_CT, SNOMED_CT_URI));
+		conceptSourceMap.put(SNOMED_NP.toLowerCase(), new ConceptSourceNameURIPair(SNOMED_NP, SNOMED_NP_URI));
 		conceptSourceMap.put(ICD_10_WHO.toLowerCase(), new ConceptSourceNameURIPair(ICD_10_WHO, ICD_10_WHO_URI));
 		conceptSourceMap.put(RX_NORM.toLowerCase(), new ConceptSourceNameURIPair(RX_NORM, RX_NORM_URI));
 		conceptSourceMap.put(PIH_MALAWI.toLowerCase(), new ConceptSourceNameURIPair(PIH_MALAWI, PIH_MALAWI_URI));
 		conceptSourceMap.put(PIH.toLowerCase(), new ConceptSourceNameURIPair(PIH, PIH_URI));
 		conceptSourceMap.put(AMPATH.toLowerCase(), new ConceptSourceNameURIPair(AMPATH, AMPATH_URI));
-		conceptSourceMap.put(SNOMED_MVP.toLowerCase(), new ConceptSourceNameURIPair(SNOMED_MVP, SNOMED_URI));
+		conceptSourceMap.put(SNOMED_MVP.toLowerCase(), new ConceptSourceNameURIPair(SNOMED_MVP, SNOMED_MVP_URI));
 		conceptSourceMap.put(HL7_2X.toLowerCase(), new ConceptSourceNameURIPair(HL7_2X, HL7_2X_URI));
 		conceptSourceMap.put(BT_3.toLowerCase(), new ConceptSourceNameURIPair(BT_3, BT_3_URI));
 		conceptSourceMap.put(ICPC2.toLowerCase(), new ConceptSourceNameURIPair(ICPC2, ICPC2_URI));
@@ -119,18 +123,24 @@ public final class FHIRConstants {
 		conceptSourceMap.put(IMP_PROCEDURE.toLowerCase(), new ConceptSourceNameURIPair(IMP_PROCEDURE, IMP_PROCEDURE_URI));
 		conceptSourceMap.put(NDF_RT_NUI.toLowerCase(), new ConceptSourceNameURIPair(NDF_RT_NUI, NDF_RT_NUI_URI));
 
-		conceptSourceUroNameMap.put(LOINC_URI, LOINC);
-		conceptSourceUroNameMap.put(CIEL_URI, LOINC);
-		conceptSourceUroNameMap.put(SNOMED_URI, LOINC);
-		conceptSourceUroNameMap.put(ICD_10_WHO_URI, LOINC);
-		conceptSourceUroNameMap.put(RX_NORM_URI, LOINC);
-		conceptSourceUroNameMap.put(PIH_MALAWI_URI, LOINC);
-		conceptSourceUroNameMap.put(PIH_URI, LOINC);
-		conceptSourceUroNameMap.put(HL7_2X_URI, LOINC);
-		conceptSourceUroNameMap.put(BT_3_URI, LOINC);
-		conceptSourceUroNameMap.put(ICPC2_URI, LOINC);
-		conceptSourceUroNameMap.put(IMO_PROBLEM_URI, LOINC);
-		conceptSourceUroNameMap.put(IMP_PROCEDURE_URI, LOINC);
-		conceptSourceUroNameMap.put(NDF_RT_NUI_URI, LOINC);
+		conceptSourceURINameMap.put(LOINC_URI, LOINC);
+		conceptSourceURINameMap.put(CIEL_URI, CIEL);
+		conceptSourceURINameMap.put(SNOMED_MVP_URI, SNOMED_MVP);
+		conceptSourceURINameMap.put(SNOMED_NP_URI, SNOMED_NP);
+		conceptSourceURINameMap.put(SNOMED_URI, SNOMED);
+		conceptSourceURINameMap.put(SNOMED_CT_URI, SNOMED_CT);
+		conceptSourceURINameMap.put(ICD_10_WHO_URI, ICD_10_WHO);
+		conceptSourceURINameMap.put(RX_NORM_URI, RX_NORM);
+		conceptSourceURINameMap.put(PIH_MALAWI_URI, PIH_MALAWI);
+		conceptSourceURINameMap.put(AMPATH_URI, AMPATH);
+		conceptSourceURINameMap.put(PIH_URI, PIH);
+		conceptSourceURINameMap.put(HL7_2X_URI, HL7_2X);
+		conceptSourceURINameMap.put(BT_3_URI, BT_3);
+		conceptSourceURINameMap.put(ICPC2_URI, ICPC2);
+		conceptSourceURINameMap.put(IMO_PROBLEM_URI, EMRAPI);
+		conceptSourceURINameMap.put(MDRTB_URI, MDRTB);
+		conceptSourceURINameMap.put(IMO_PROBLEM_URI, IMO_PROBLEM);
+		conceptSourceURINameMap.put(IMP_PROCEDURE_URI, IMP_PROCEDURE);
+		conceptSourceURINameMap.put(NDF_RT_NUI_URI, NDF_RT_NUI);
 	}
 }

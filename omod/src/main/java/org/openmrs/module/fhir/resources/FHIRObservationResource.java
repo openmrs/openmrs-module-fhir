@@ -26,7 +26,9 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.ObsService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FHIRObservationResource extends Resource {
 
@@ -46,16 +48,20 @@ public class FHIRObservationResource extends Resource {
 
 	public List<Observation> searchObsByPatientAndConcept(ReferenceParam person, TokenOrListParam codes) {
 		ObsService obsService = Context.getService(ObsService.class);
-		List<String> conceptNames = new ArrayList<String>();
+		Map<String, String> conceptNamesAndURIs = new HashMap<String, String>();
 		for (BaseCodingDt baseCodingDt : codes.getListAsCodings()) {
-			conceptNames.add(baseCodingDt.getValueAsQueryToken());
+			conceptNamesAndURIs.put(baseCodingDt.getValueAsQueryToken(), baseCodingDt.getSystemElement().getValue());
 		}
-		return obsService.searchObsByPatientAndConcept(person.getIdPart(), conceptNames);
+		return obsService.searchObsByPatientAndConcept(person.getIdPart(), conceptNamesAndURIs);
 	}
 
-	public List<Observation> searchObsByCode(TokenParam code) {
+	public List<Observation> searchObsByCode(TokenOrListParam codes) {
 		ObsService obsService = Context.getService(ObsService.class);
-		return obsService.searchObsByCode(code.getValue());
+		Map<String, String> conceptNamesAndURIs = new HashMap<String, String>();
+		for (BaseCodingDt baseCodingDt : codes.getListAsCodings()) {
+			conceptNamesAndURIs.put(baseCodingDt.getValueAsQueryToken(), baseCodingDt.getSystemElement().getValue());
+		}
+		return obsService.searchObsByCode(conceptNamesAndURIs);
 	}
 
 	public List<Observation> searchObsByDate(DateParam date) {

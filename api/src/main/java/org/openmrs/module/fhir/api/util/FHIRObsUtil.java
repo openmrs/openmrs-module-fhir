@@ -163,22 +163,24 @@ public class FHIRObsUtil {
 
 		} else if (FHIRConstants.CWE_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation()
 		)) {
-			Collection<ConceptMap> valueMappings = obs.getValueCoded().getConceptMappings();
-			List<CodingDt> values = new ArrayList<CodingDt>();
+			if(obs.getValueCoded() != null) {
+				Collection<ConceptMap> valueMappings = obs.getValueCoded().getConceptMappings();
+				List<CodingDt> values = new ArrayList<CodingDt>();
 
-			//Set codings from openmrs concept mappings
-			for (ConceptMap map : valueMappings) {
-				if(map.getConceptReferenceTerm() != null) {
-					values.add(FHIRUtils.getCodingDtByConceptMappings(map));
+				//Set codings from openmrs concept mappings
+				for (ConceptMap map : valueMappings) {
+					if (map.getConceptReferenceTerm() != null) {
+						values.add(FHIRUtils.getCodingDtByConceptMappings(map));
+					}
 				}
+
+				//Set openmrs concept
+				values.add(FHIRUtils.getCodingDtByOpenMRSConcept(obs.getConcept()));
+
+				CodeableConceptDt codeableConceptDt = new CodeableConceptDt();
+				codeableConceptDt.setCoding(values);
+				observation.setValue(codeableConceptDt);
 			}
-
-			//Set openmrs concept
-			values.add(FHIRUtils.getCodingDtByOpenMRSConcept(obs.getConcept()));
-
-			CodeableConceptDt codeableConceptDt = new CodeableConceptDt();
-			codeableConceptDt.setCoding(values);
-			observation.setValue(codeableConceptDt);
 		} else if (FHIRConstants.ED_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
 			AttachmentDt attachmentDt = new AttachmentDt();
 			attachmentDt.setUrl(obs.getValueComplex());

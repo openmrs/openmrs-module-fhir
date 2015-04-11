@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Transactional
 public interface ObsService extends OpenmrsService {
@@ -36,10 +37,10 @@ public interface ObsService extends OpenmrsService {
 	 * Search observations by patient and concepts
 	 *
 	 * @param patientUUid  patient uuid
-	 * @param conceptCodes names of the concepts
+	 * @param conceptNamesAndURIs names of the concepts with system uris in a map
 	 * @return fhir obs resource list
 	 */
-	public List<Observation> searchObsByPatientAndConcept(String patientUUid, List<String> conceptCodes);
+	public List<Observation> searchObsByPatientAndConcept(String patientUUid, Map<String, String> conceptNamesAndURIs);
 
 	/**
 	 * Search observations by patient and concepts
@@ -52,10 +53,10 @@ public interface ObsService extends OpenmrsService {
 	/**
 	 * Search observations by observation name
 	 *
-	 * @param code obs name
+	 * @param conceptNamesAndURIs obs codes and system uris
 	 * @return fhir obs resource list
 	 */
-	public List<Observation> searchObsByCode(String code, String system);
+	public List<Observation> searchObsByCode(Map<String, String> conceptNamesAndURIs);
 
 	/**
 	 * Search observations by observation date

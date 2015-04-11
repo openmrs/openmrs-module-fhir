@@ -18,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
+import org.openmrs.GlobalProperty;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
@@ -27,7 +28,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -64,7 +67,8 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 	public void searchObsByPatientAndConcept_shouldReturnMatchingObservationList() {
 		String personUuid = "da7f524f-27ce-4bb2-86d6-6d1d05312bd5";
 		String conceptCode = "3143-9";
-		List<String> concepts = new ArrayList<String>();
+		Context.getAdministrationService().saveGlobalProperty(new GlobalProperty("fhir.concept.codingSystem<", "LOINC"));
+		Map<String, String> concepts = new HashMap<String, String>();
 		ConceptService conceptService = Context.getConceptService();
 		Concept concept = conceptService.getConcept(1);
 		ConceptMap conceptMap = new ConceptMap();
@@ -72,7 +76,7 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		conceptMap.setConceptReferenceTerm(conceptService.getConceptReferenceTerm(558));
 		concept.addConceptMapping(conceptMap);
 		conceptService.saveConcept(concept);
-		concepts.add(conceptCode);
+		concepts.put(conceptCode, "http://loinc.org");
 		List<Observation> obs = getService().searchObsByPatientAndConcept(personUuid, concepts);
 		assertNotNull(obs);
 		assertEquals(2, obs.size());
@@ -87,12 +91,15 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void searchObsByName_shouldReturnMatchingObservationList() {
-		String name = "Some concept name";
-		String system = null;
-		List<Observation> obs = getService().searchObsByCode(name, null);
+	public void searchObsByCode_shouldReturnMatchingObservationList() {
+		String code1 = "4a5048b1-cf85-4c64-9339-7cab41e5e364";
+		String code2 = "95312123-e0c2-466d-b6b1-cb6e990d0d65";
+		Map<String, String> codes = new HashMap<String, String>();
+		codes.put(code1, null);
+		codes.put(code2, null);
+		List<Observation> obs = getService().searchObsByCode(codes);
 		assertNotNull(obs);
-		assertEquals(10, obs.size());
+		assertEquals(12, obs.size());
 	}
 
 	@Test

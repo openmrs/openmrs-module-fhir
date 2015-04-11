@@ -24,12 +24,14 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.ObsService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRObsUtil;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
@@ -66,16 +68,32 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByPatientAndConcept(String, java.util.List)
+	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByPatientAndConcept(String, java.util.Map)
 	 */
-	public List<Observation> searchObsByPatientAndConcept(String patientUUid, List<String> conceptCodes) {
-
+	public List<Observation> searchObsByPatientAndConcept(String patientUUid, Map<String, String> conceptNamesAndURIs) {
 		Patient patient = Context.getPatientService().getPatientByUuid(patientUUid);
 		Concept concept;
 		List<Observation> obsList = new ArrayList<Observation>();
 		String codingSystem = FHIRUtils.getConceptCodingSystem();
-		for (String conceptName : conceptCodes) {
-			concept = Context.getConceptService().getConceptByMapping(conceptName, codingSystem);
+		String systemName;
+		for (Map.Entry<String, String> entry : conceptNamesAndURIs.entrySet()) {
+			if(entry.getValue() == null || entry.getValue().isEmpty()) {
+				if (codingSystem == null || FHIRConstants.OPENMRS_CONCEPT_CODING_SYSTEM.equals(codingSystem)) {
+					concept = Context.getConceptService().getConceptByUuid(entry.getKey());
+				} else {
+					systemName = FHIRConstants.conceptSourceURINameMap.get(entry.getValue());
+					if(systemName == null || systemName.isEmpty()) {
+						return obsList;
+					}
+					concept = Context.getConceptService().getConceptByMapping(entry.getKey(), systemName);
+				}
+			} else {
+				systemName = FHIRConstants.conceptSourceURINameMap.get(entry.getValue());
+				if(systemName == null || systemName.isEmpty()) {
+					return obsList;
+				}
+				concept = Context.getConceptService().getConceptByMapping(entry.getKey(), systemName);
+			}
 			List<Obs> obs = Context.getObsService().getObservationsByPersonAndConcept(patient, concept);
 			for (Obs ob : obs) {
 				obsList.add(FHIRObsUtil.generateObs(ob));
@@ -97,18 +115,46 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByCode(String,String)
+	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByCode(java.util.Map)
 	 */
-	public List<Observation> searchObsByCode(String code, String system) {
+	public List<Observation> searchObsByCode(Map<String, String> conceptNamesAndURIs) {
 		String codingSystem = FHIRUtils.getConceptCodingSystem();
-		Concept concept = Context.getConceptService().getConceptByMapping(code, codingSystem);
-		List<Concept> concepts = new ArrayList<Concept>();
-		concepts.add(concept);
-		List<Obs> omrsObs = Context.getObsService().getObservations(null, null, concepts, null, null, null, null, null,
-				null, null, null, false);
 		List<Observation> obsList = new ArrayList<Observation>();
-		for (Obs obs : omrsObs) {
-			obsList.add(FHIRObsUtil.generateObs(obs));
+		List<Obs> omrsObs = new ArrayList<Obs>();
+		Concept concept = null;
+		String systemName;
+		//Check system uri specified and if so find system name and query appropriate concept
+		for (Map.Entry<String, String> entry : conceptNamesAndURIs.entrySet()) {
+			if(entry.getValue() == null || entry.getValue().isEmpty()) {
+				if (codingSystem == null || FHIRConstants.OPENMRS_CONCEPT_CODING_SYSTEM.equals(codingSystem)) {
+					concept = Context.getConceptService().getConceptByUuid(entry.getKey());
+				} else {
+					systemName = FHIRConstants.conceptSourceURINameMap.get(entry.getValue());
+					if(systemName == null || systemName.isEmpty()) {
+						return obsList;
+					}
+					concept = Context.getConceptService().getConceptByMapping(entry.getKey(), systemName);
+				}
+			} else {
+				systemName = FHIRConstants.conceptSourceURINameMap.get(entry.getValue());
+				if(systemName == null || systemName.isEmpty()) {
+					return obsList;
+				}
+				concept = Context.getConceptService().getConceptByMapping(entry.getKey(), systemName);
+			}
+
+			if(concept == null) {
+				return obsList;
+			}
+
+			List<Concept> concepts = new ArrayList<Concept>();
+			concepts.add(concept);
+			omrsObs = Context.getObsService().getObservations(null, null, concepts, null, null, null, null, null,
+					null, null, null, false);
+
+			for (Obs obs : omrsObs) {
+				obsList.add(FHIRObsUtil.generateObs(obs));
+			}
 		}
 		return obsList;
 	}

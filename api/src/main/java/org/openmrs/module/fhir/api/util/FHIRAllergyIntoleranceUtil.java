@@ -94,27 +94,11 @@ public class FHIRAllergyIntoleranceUtil {
 		Collection<ConceptMap> mappings = allergy.getAllergen().getConceptMappings();
 		List<CodingDt> dts = allergyIntolerance.getSubstance().getCoding();
 
-		for (ConceptMap map : mappings) {
-			//Set concept name as the display value and set concept uuid if name is empty
-			if (map.getConceptReferenceTerm() != null) {
-				String display = map.getConceptReferenceTerm().getName();
-				if (display == null || display.isEmpty()) {
-					display = map.getConceptReferenceTerm().getUuid();
-				}
-
-				//Set concept mappings of concept
-				if (FHIRConstants.CIEL.equalsIgnoreCase(map.getConceptReferenceTerm().getName())) {
-					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-							FHIRConstants.CIEL_URI));
-				} else if (FHIRConstants.SNOMED.equalsIgnoreCase(map.getConceptReferenceTerm().getName())) {
-					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-							FHIRConstants.SNOMED_URI));
-				} else if (FHIRConstants.LOINC.equalsIgnoreCase(map.getConceptReferenceTerm().getName())) {
-					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-							FHIRConstants.LOINC_URI));
-				} else {
-					dts.add(new CodingDt().setCode(map.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-							FHIRConstants.OTHER));
+		//Set concept codings
+		if(mappings != null && !mappings.isEmpty()) {
+			for (ConceptMap map : mappings) {
+				if (map.getConceptReferenceTerm() != null) {
+					dts.add(FHIRUtils.getCodingDtByConceptMappings(map));
 				}
 			}
 		}
