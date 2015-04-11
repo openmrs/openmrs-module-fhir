@@ -56,6 +56,6 @@ public class FHIRPersonResource extends Resource {
 
 	public Person updateFHIRPerson(Person person,String theId) {
 		PersonService personService = Context.getService(PersonService.class);
-		return personService.updateFHIRPerson(person,theId);
+		return personService.updateFHIRPerson(person, theId);
 	}
 }
