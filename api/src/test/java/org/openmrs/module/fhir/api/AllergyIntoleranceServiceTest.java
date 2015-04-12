@@ -85,5 +85,19 @@ public class AllergyIntoleranceServiceTest extends BaseModuleContextSensitiveTes
 		assertEquals(allergy.getId().toString(), allergyUuid);
 	}
 	
-	
+	/**
+	 * Test of searchAllergiesByPatientName method, of class AllergyIntoleranceService.
+	 */
+	@Test
+	public void searchAllergiesByPatientName_shouldReturnMatchingAllergyIntoleranceList() {
+		String patientName = "John";
+		String allergyUuid = "1234567987"; 
+		List<AllergyIntolerance> allergies = getService().searchAllergiesByPatientName(patientName);
+		assertNotNull(allergies);
+		assertEquals(1, allergies.size());
+		AllergyIntolerance allergy = allergies.get(0);
+		assertEquals(allergy.getId().toString(), allergyUuid);
+	}
+
+
 }
