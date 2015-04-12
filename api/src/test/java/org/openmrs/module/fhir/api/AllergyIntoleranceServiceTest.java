@@ -29,7 +29,7 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
  */
 public class AllergyIntoleranceServiceTest extends BaseModuleContextSensitiveTest {
 	
-	protected static final String ALLERGY_INITIAL_DATA_XML = "org/openmrs/api/include/AllergyIntoleranceServiceTest-initial.xml";
+	protected static final String ALLERGY_INITIAL_DATA_XML = "AllergyIntoleranceServiceTest-initialData.xml";
 	
 	protected static final String PAT_SEARCH_DATA_XML = "org/openmrs/api/include/PatientServiceTest-findPatients.xml";
 	
@@ -53,7 +53,7 @@ public class AllergyIntoleranceServiceTest extends BaseModuleContextSensitiveTes
 	 */
 	@Test
 	public void getAllergyByIds_shouldReturnAllergyIfExists() {
-		String allergyUuid = "1234567890";
+		String allergyUuid = "1234567987";
 		AllergyIntolerance allergy = getService().getAllergyById(allergyUuid);
 		assertNotNull(allergy);
 		assertEquals(allergy.getId().toString(), allergyUuid);
@@ -64,7 +64,7 @@ public class AllergyIntoleranceServiceTest extends BaseModuleContextSensitiveTes
 	 */
 	@Test
 	public void searchAllergiesById_shouldReturnMatchingAllergyIntoleranceList() {
-		String allergyUuid = "1234567890";
+		String allergyUuid = "1234567987";
 		List<AllergyIntolerance> fhirAllergies = getService().searchAllergiesById(allergyUuid);
 		assertNotNull(fhirAllergies);
 		assertEquals(fhirAllergies.get(0).getId().getIdPart(), allergyUuid);
@@ -75,22 +75,14 @@ public class AllergyIntoleranceServiceTest extends BaseModuleContextSensitiveTes
 	 */
 	@Test
 	public void searchAllergiesByPatientIdentifier_shouldReturnMatchingAllergyIntoleranceList() {
-		String patientUuid = "504c83c7-cfbf-4ae7-a4da-bdfa3236689f";
-		String identifierValue = "2";
-		List<AllergyIntolerance> patients = getService().searchAllergiesByPatientIdentifier(identifierValue);
-		assertNotNull(patients);
-		assertEquals(1, patients.size());
-		AllergyIntolerance fhirPatient = patients.get(0);
-		assertEquals(fhirPatient.getId().toString(), patientUuid);
-		boolean exist = false;
-		for (AllergyIntolerance patient : patients) {
-			for (IdentifierDt identifierDt : patient.getIdentifier()) {
-				if (identifierValue.equals(identifierDt.getValue())) {
-					exist = true;
-				}
-			}
-		}
-		assertTrue(exist);
+		String patientUuid = "61b38324-e2fd-4feb-95b7-9e9a2a4400df";
+		String allergyUuid = "1234567987";
+		String identifierValue = "1234";
+		List<AllergyIntolerance> allergies = getService().searchAllergiesByPatientIdentifier(identifierValue);
+		assertNotNull(allergies);
+		assertEquals(1, allergies.size());
+		AllergyIntolerance allergy = allergies.get(0);
+		assertEquals(allergy.getId().toString(), allergyUuid);
 	}
 	
 }

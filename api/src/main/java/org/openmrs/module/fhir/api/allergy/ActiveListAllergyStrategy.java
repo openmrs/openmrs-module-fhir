@@ -51,14 +51,17 @@ public class ActiveListAllergyStrategy implements GenericAllergyStrategy {
 
     public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(String identifier) {
         org.openmrs.api.PatientService patientService = Context.getPatientService();
-        List<PatientIdentifierType> allPatientIdentifierTypes = patientService.getAllPatientIdentifierTypes();
+	    List<AllergyIntolerance> allergies = new ArrayList<AllergyIntolerance>();
+	    List<PatientIdentifierType> allPatientIdentifierTypes = patientService.getAllPatientIdentifierTypes();
         List<org.openmrs.Patient> patientList = patientService.getPatients(null, identifier, allPatientIdentifierTypes,
-                true);
-        List<Allergy> omrsAllergies = Context.getActiveListService().getActiveListItems(Allergy.class, patientList.get(0), new ActiveListType(1));
-        List<AllergyIntolerance> allergies = new ArrayList<AllergyIntolerance>();
-        for(Allergy allergy : omrsAllergies) {
-            allergies.add(FHIRAllergyIntoleranceUtil.generateAllergyTolerance(allergy));
-        }
+		        true);
+	    if(patientList != null && !patientList.isEmpty()) {
+		    List<Allergy> omrsAllergies = Context.getActiveListService().getActiveListItems(Allergy.class, patientList.get(
+				    0), new ActiveListType(1));
+		    for (Allergy allergy : omrsAllergies) {
+			    allergies.add(FHIRAllergyIntoleranceUtil.generateAllergyTolerance(allergy));
+		    }
+	    }
         return allergies;
     }
     
