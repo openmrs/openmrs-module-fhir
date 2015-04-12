@@ -17,6 +17,7 @@ import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.exception.FHIRValidationException;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
@@ -143,5 +144,13 @@ public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 		List<Patient> patients = getService().searchPatients(false);
 		assertNotNull(patients);
 		assertEquals(2, patients.size());
+	}
+	
+	@Test
+	public void shouldFetchAllPatientsByName()
+	{ 
+		List<org.openmrs.Patient> patients = Context.getPatientService().getPatients("Jeannette", null,null , true);
+		assertNotNull(patients);
+		assertEquals(1, patients.size());
 	}
 }
