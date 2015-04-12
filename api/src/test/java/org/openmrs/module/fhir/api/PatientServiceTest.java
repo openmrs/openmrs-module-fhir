@@ -146,11 +146,5 @@ public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals(2, patients.size());
 	}
 	
-	@Test
-	public void shouldFetchAllPatientsByName()
-	{ 
-		List<org.openmrs.Patient> patients = Context.getPatientService().getPatients("Jeannette", null,null , true);
-		assertNotNull(patients);
-		assertEquals(1, patients.size());
-	}
+	
 }
