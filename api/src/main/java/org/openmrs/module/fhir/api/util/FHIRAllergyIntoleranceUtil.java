@@ -32,7 +32,65 @@ public class FHIRAllergyIntoleranceUtil {
 	}
 
 	public static AllergyIntolerance generateAllergyTolerance(Allergy allergy) {
-		return null;
+		AllergyIntolerance allergyIntolerance = new AllergyIntolerance();
+		allergyIntolerance.setId(allergy.getUuid());
+		//Build and set patient reference
+		allergyIntolerance.setSubject(FHIRUtils.buildPatientOrPersonResourceReference(allergy.getPatient()));
+
+		//Set record date
+		DateTimeDt recordedDate = new DateTimeDt();
+		recordedDate.setValue(allergy.getDateLastUpdated());
+		allergyIntolerance.setRecordedDate(recordedDate);
+
+		//Set critically
+		if (allergy.getSeverity() != null) {
+			if(allergy.getSeverity().equals(FHIRUtils.getMildSeverityConcept())) {
+				allergyIntolerance.setCriticality(AllergyIntoleranceCriticalityEnum.LOW_RISK);
+			} else if(allergy.getSeverity().equals(FHIRUtils.getModerateSeverityConcept())) {
+				allergyIntolerance.setCriticality(AllergyIntoleranceCriticalityEnum.LOW_RISK);
+			} else if(allergy.getSeverity().equals(FHIRUtils.getSevereSeverityConcept())) {
+				allergyIntolerance.setCriticality(AllergyIntoleranceCriticalityEnum.HIGH_RISK);
+			} else {
+				allergyIntolerance.setCriticality(AllergyIntoleranceCriticalityEnum.UNABLE_TO_DETERMINE);
+			}
+		}
+
+		//Set allergy category
+		if (allergy.getAllergen().getAllergenType() != null) {
+			switch (allergy.getAllergen().getAllergenType()) {
+				case DRUG:
+					allergyIntolerance.setCategory(AllergyIntoleranceCategoryEnum.MEDICATION);
+					break;
+				case ENVIRONMENTAL:
+					allergyIntolerance.setCategory(AllergyIntoleranceCategoryEnum.ENVIRONMENT);
+					break;
+				case FOOD:
+					allergyIntolerance.setCategory(AllergyIntoleranceCategoryEnum.FOOD);
+					break;
+				default:
+					allergyIntolerance.setCategory(AllergyIntoleranceCategoryEnum.ENVIRONMENT);
+					break;
+			}
+		}
+
+		//Set allergen
+		Collection<ConceptMap> mappings = allergy.getAllergen().getCodedAllergen().getConceptMappings();
+		List<CodingDt> dts = allergyIntolerance.getSubstance().getCoding();
+
+		//Set concept codings
+		if(mappings != null && !mappings.isEmpty()) {
+			for (ConceptMap map : mappings) {
+				if (map.getConceptReferenceTerm() != null) {
+					dts.add(FHIRUtils.getCodingDtByConceptMappings(map));
+				}
+			}
+		}
+
+		//Setting default omrs concept
+		dts.add(new CodingDt().setCode(allergy.getAllergen().getCodedAllergen().getUuid()).setDisplay(
+				allergy.getAllergen().getCodedAllergen().getName().getName()).setSystem(FHIRConstants.OPENMRS_URI));
+		allergyIntolerance.getSubstance().setCoding(dts);
+		return allergyIntolerance;
 	}
 
 	public static AllergyIntolerance generateAllergyTolerance(org.openmrs.activelist.Allergy allergy) {

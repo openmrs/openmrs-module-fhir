@@ -138,4 +138,25 @@ public class FHIRUtils {
 		return new CodingDt().setCode(concept.getUuid()).setDisplay(display).setSystem
 				(FHIRConstants.OPENMRS_URI);
 	}
+
+	private static Concept getConceptByGlobalProperty(String globalPropertyName) {
+		String globalProperty = Context.getAdministrationService().getGlobalProperty(globalPropertyName);
+		Concept concept = Context.getConceptService().getConceptByUuid(globalProperty);
+		if (concept == null) {
+			throw new IllegalStateException("Configuration required: " + globalPropertyName);
+		}
+		return concept;
+	}
+
+	public static Concept getMildSeverityConcept() {
+		return getConceptByGlobalProperty("allergy.concept.severity.mild");
+	}
+
+	public static Concept getModerateSeverityConcept() {
+		return getConceptByGlobalProperty("allergy.concept.severity.moderate");
+	}
+
+	public static Concept getSevereSeverityConcept() {
+		return getConceptByGlobalProperty("allergy.concept.severity.severe");
+	}
 }
