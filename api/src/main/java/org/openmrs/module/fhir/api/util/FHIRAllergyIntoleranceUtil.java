@@ -17,6 +17,7 @@ import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
 import ca.uhn.fhir.model.dstu2.valueset.AllergyIntoleranceCategoryEnum;
 import ca.uhn.fhir.model.dstu2.valueset.AllergyIntoleranceCriticalityEnum;
+import ca.uhn.fhir.model.dstu2.valueset.AllergyIntoleranceStatusEnum;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import org.openmrs.ConceptMap;
 import org.openmrs.Obs;
@@ -85,6 +86,9 @@ public class FHIRAllergyIntoleranceUtil {
 				}
 			}
 		}
+
+		//Set status
+		allergyIntolerance.setStatus(AllergyIntoleranceStatusEnum.CONFIRMED);
 
 		//Setting default omrs concept
 		dts.add(new CodingDt().setCode(allergy.getAllergen().getCodedAllergen().getUuid()).setDisplay(
@@ -160,6 +164,10 @@ public class FHIRAllergyIntoleranceUtil {
 				}
 			}
 		}
+
+		//Set status
+		allergyIntolerance.setStatus(AllergyIntoleranceStatusEnum.CONFIRMED);
+
 		//Setting default omrs concept
 		dts.add(new CodingDt().setCode(allergy.getAllergen().getUuid()).setDisplay(allergy.getAllergen().getName().getName())
 				.setSystem(FHIRConstants.OPENMRS_URI));

@@ -76,4 +76,19 @@ public class AllergyApiModuleAllergyStrategy implements GenericAllergyStrategy {
 		}
 		return allergies;
 	}
+
+	@Override
+	public List<AllergyIntolerance> searchAllergiesByPersonId(String uuid) {
+		org.openmrs.api.PatientService patientService = Context.getPatientService();
+		PatientService allergyService = Context.getService(PatientService.class);
+		Patient patient = patientService.getPatientByUuid(uuid);
+		List<AllergyIntolerance> allergies = new ArrayList<AllergyIntolerance>();
+		if (patient != null) {
+			List<org.openmrs.module.allergyapi.Allergy> omrsAllergies = allergyService.getAllergies(patient);
+			for (Allergy allergy : omrsAllergies) {
+				allergies.add(FHIRAllergyIntoleranceUtil.generateAllergyTolerance(allergy));
+			}
+		}
+		return allergies;
+	}
 }

@@ -72,8 +72,8 @@ public class FHIRUtils {
 		return Context.getAdministrationService().getGlobalProperty("fhir.allergy.allergyStrategy");
 	}
 
-	public static String getObsAllergyStrategyConcept() {
-		return Context.getAdministrationService().getGlobalProperty("fhir.allergy.ObsAllergyStrategy.concept");
+	public static String getObsAllergyStrategyConceptUuid() {
+		return Context.getAdministrationService().getGlobalProperty("fhir.allergy.ObsAllergyStrategy.concept.uuid");
 	}
 
 	public static String getConceptCodingSystem() {

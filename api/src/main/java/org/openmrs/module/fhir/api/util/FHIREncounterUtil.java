@@ -16,6 +16,7 @@ package org.openmrs.module.fhir.api.util;
 import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.composite.PeriodDt;
 import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
+import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Composition;
 import ca.uhn.fhir.model.dstu2.resource.Composition.Section;
 import ca.uhn.fhir.model.dstu2.resource.Encounter;
@@ -25,9 +26,11 @@ import ca.uhn.fhir.model.dstu2.valueset.EncounterStateEnum;
 import ca.uhn.fhir.model.dstu2.valueset.ParticipantTypeEnum;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
+import org.openmrs.Concept;
 import org.openmrs.EncounterProvider;
 import org.openmrs.Obs;
 import org.openmrs.PersonName;
+import org.openmrs.api.context.Context;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -220,5 +223,34 @@ public class FHIREncounterUtil {
 		patientReference.setReference(patientRef);
 		patientReference.setDisplay(nameDisplay.toString());
 		return patientReference;
+	}
+
+	/**
+	 * Filter which obs need to be added to the encounter everything operation. Because some openmrs installations store
+	 * allergies as obs. In that case we need to omit obs getting included in everything operation and return them in
+	 * patient everything operation
+	 *
+	 * @param encounter encounter containing obs
+	 * @param bundle bundle containg encounter everything contents
+	 * @return bundle with only required obs
+	 */
+	public static void addFilteredObs(org.openmrs.Encounter encounter, Bundle bundle) {
+		String strategy = FHIRUtils.getAllergyStrategy();
+		Bundle.Entry observation;
+		if(FHIRConstants.OBS_ALLERGY_STRATEGY.equals(strategy)) {
+			String allergyCode = FHIRUtils.getObsAllergyStrategyConceptUuid();
+			Concept concept = Context.getConceptService().getConceptByUuid(allergyCode);
+			for (Obs obs : encounter.getAllObs(false)) {
+				if(concept != null && !concept.equals(obs.getConcept())) {
+					observation = bundle.addEntry();
+					observation.setResource(FHIRObsUtil.generateObs(obs));
+				}
+			}
+		} else {
+			for (Obs obs : encounter.getAllObs(false)) {
+				observation = bundle.addEntry();
+				observation.setResource(FHIRObsUtil.generateObs(obs));
+			}
+		}
 	}
 }

@@ -28,4 +28,6 @@ public interface GenericAllergyStrategy {
     List<AllergyIntolerance> searchAllergiesByPatientIdentifier(String identifier);
   
     List<AllergyIntolerance> searchAllergiesByPatientName(String name);
+
+	List<AllergyIntolerance> searchAllergiesByPersonId(String uuid);
 }

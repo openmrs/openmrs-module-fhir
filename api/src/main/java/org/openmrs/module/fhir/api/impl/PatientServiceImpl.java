@@ -14,18 +14,23 @@
 package org.openmrs.module.fhir.api.impl;
 
 import ca.uhn.fhir.model.dstu2.resource.Bundle;
+import ca.uhn.fhir.model.dstu2.resource.FamilyHistory;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonName;
+import org.openmrs.Visit;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.module.fhir.api.EncounterService;
+import org.openmrs.module.fhir.api.FamilyHistoryService;
 import org.openmrs.module.fhir.api.PatientService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIREncounterUtil;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
+import org.openmrs.module.fhir.api.util.OMRSFHIRVisitUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -187,24 +192,35 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 		return Context.getPatientService().getPatients(query);
 	}
 
-    /**
-     * @see org.openmrs.module.fhir.api.PatientService#getPatientOperationsById(String)
-     */
-    public Bundle getPatientOperationsById(String patientId) {
-        org.openmrs.Patient omsrPatient = null;
-        omsrPatient = Context.getPatientService().getPatientByUuid(patientId);
-        Bundle bundle = new Bundle();
-        if (omsrPatient != null) {
-            Bundle.Entry patient = bundle.addEntry();
-            patient.setResource(FHIRPatientUtil.generatePatient(omsrPatient));
+	/**
+	 * @see org.openmrs.module.fhir.api.PatientService#getPatientOperationsById(String)
+	 */
+	public Bundle getPatientOperationsById(String patientId) {
+		org.openmrs.Patient omsrPatient = null;
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		FamilyHistoryService familyHistoryService = Context.getService(FamilyHistoryService.class);
+		omsrPatient = Context.getPatientService().getPatientByUuid(patientId);
+		Bundle bundle = new Bundle();
 
-            //Set Enconter resources
-            Bundle.Entry encounter;
-            for (Encounter enc : Context.getEncounterService().getEncountersByPatient(omsrPatient)) {
-                encounter = bundle.addEntry();
-                encounter.setResource(FHIREncounterUtil.generateEncounter(enc));
-            }
-        }
-        return bundle;
-    }
+		if (omsrPatient != null) {
+			Bundle.Entry patient = bundle.addEntry();
+			patient.setResource(FHIRPatientUtil.generatePatient(omsrPatient));
+
+			//Set Enconter resources using encounter everything operation
+			for (Encounter enc : Context.getEncounterService().getEncountersByPatient(omsrPatient)) {
+				encounterService.getEncounterOperationsById(enc.getUuid(), bundle);
+			}
+
+			//Set patients' relationships
+			for (FamilyHistory familyHistory : familyHistoryService.searchFamilyHistoryByPerson(omsrPatient.getUuid())) {
+				bundle.addEntry().setResource(familyHistory);
+			}
+
+			//Set visits
+			for(Visit visit : Context.getVisitService().getVisitsByPatient(omsrPatient)) {
+				bundle.addEntry().setResource(OMRSFHIRVisitUtil.generateEncounter(visit));
+			}
+		}
+		return bundle;
+	}
 }

@@ -48,4 +48,13 @@ public interface AllergyIntoleranceService {
      * @return fhir allergy resource list
      */
     public List<AllergyIntolerance> searchAllergiesByPatientName(String name);
-}
+
+	/**
+	 * Ger allergies by peron uuid
+	 *
+	 * @param personId uuid
+	 * @return
+	 */
+	public List<AllergyIntolerance> getAllergiesByPersonId(String personId);
+
+	}

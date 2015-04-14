@@ -31,6 +31,7 @@ import org.openmrs.module.fhir.api.util.FHIRLocationUtil;
 import org.openmrs.module.fhir.api.util.FHIRObsUtil;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 import org.openmrs.module.fhir.api.util.FHIRPractitionerUtil;
+import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.openmrs.module.fhir.api.util.OMRSFHIRVisitUtil;
 
 import java.util.ArrayList;
@@ -147,19 +148,18 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 	 * @see org.openmrs.module.fhir.api.EncounterService#getEncounterOperationsById(String)
 	 */
 	public Bundle getEncounterOperationsById(String encounterId) {
+		return  getEncounterOperationsById(encounterId, new Bundle());
+	}
+
+	public Bundle getEncounterOperationsById(String encounterId, Bundle bundle) {
 		org.openmrs.Encounter omsrEncounter = null;
 		omsrEncounter = Context.getEncounterService().getEncounterByUuid(encounterId);
-		Bundle bundle = new Bundle();
 		if (omsrEncounter != null) {
 			Bundle.Entry encounter = bundle.addEntry();
 			encounter.setResource(FHIREncounterUtil.generateEncounter(omsrEncounter));
 
-			//Set observation resources
-			Bundle.Entry observation;
-			for (Obs obs : omsrEncounter.getAllObs(false)) {
-				observation = bundle.addEntry();
-				observation.setResource(FHIRObsUtil.generateObs(obs));
-			}
+			//Set filtered obs if obs allergy strategy used
+			FHIREncounterUtil.addFilteredObs(omsrEncounter, bundle);
 
 			//Set location
 			Bundle.Entry location;
