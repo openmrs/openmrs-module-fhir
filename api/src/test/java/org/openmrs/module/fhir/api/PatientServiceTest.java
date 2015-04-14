@@ -14,6 +14,7 @@
 package org.openmrs.module.fhir.api;
 
 import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
+import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import org.junit.Before;
 import org.junit.Test;
@@ -152,5 +153,13 @@ public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 		List<org.openmrs.Patient> patients = Context.getPatientService().getPatients("Jeannette", null,null , true);
 		assertNotNull(patients);
 		assertEquals(1, patients.size());
+	}
+
+	@Test
+	public void getPatientEverything_shouldAllClinicalDataBelongsToPatient()
+	{
+		String returnedPatientUuid = "61b38324-e2fd-4feb-95b7-9e9a2a4400df";
+		Bundle patientContent = getService().getPatientOperationsById(returnedPatientUuid);
+		assertNotNull(patientContent);
 	}
 }

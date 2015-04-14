@@ -99,5 +99,5 @@ public interface EncounterService extends OpenmrsService {
 	 * @param bundle the provided bundle
 	 * @return contents of encounter resource bundle for operations
 	 */
-	public Bundle getEncounterOperationsById(String encounterId, Bundle bundle);
+	public Bundle getEncounterOperationsById(String encounterId, Bundle bundle,  boolean includePatient);
 }

@@ -148,10 +148,13 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 	 * @see org.openmrs.module.fhir.api.EncounterService#getEncounterOperationsById(String)
 	 */
 	public Bundle getEncounterOperationsById(String encounterId) {
-		return  getEncounterOperationsById(encounterId, new Bundle());
+		return  getEncounterOperationsById(encounterId, new Bundle(), true);
 	}
 
-	public Bundle getEncounterOperationsById(String encounterId, Bundle bundle) {
+	/**
+	 * @see org.openmrs.module.fhir.api.EncounterService#getEncounterOperationsById(String, ca.uhn.fhir.model.dstu2.resource.Bundle, boolean)
+	 */
+	public Bundle getEncounterOperationsById(String encounterId, Bundle bundle, boolean includePatient) {
 		org.openmrs.Encounter omsrEncounter = null;
 		omsrEncounter = Context.getEncounterService().getEncounterByUuid(encounterId);
 		if (omsrEncounter != null) {
@@ -169,8 +172,10 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 			}
 
 			//Set patient
-			Bundle.Entry patient = bundle.addEntry();
-			patient.setResource(FHIRPatientUtil.generatePatient(omsrEncounter.getPatient()));
+			if(includePatient) {
+				Bundle.Entry patient = bundle.addEntry();
+				patient.setResource(FHIRPatientUtil.generatePatient(omsrEncounter.getPatient()));
+			}
 
 			//Set providers
 			Bundle.Entry provider;

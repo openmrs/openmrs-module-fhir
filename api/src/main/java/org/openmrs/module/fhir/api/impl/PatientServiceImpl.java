@@ -208,7 +208,7 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 
 			//Set Enconter resources using encounter everything operation
 			for (Encounter enc : Context.getEncounterService().getEncountersByPatient(omsrPatient)) {
-				encounterService.getEncounterOperationsById(enc.getUuid(), bundle);
+				encounterService.getEncounterOperationsById(enc.getUuid(), bundle, false);
 			}
 
 			//Set patients' relationships
