@@ -78,7 +78,7 @@ public class FHIREncounterUtil {
 				providerNameDisplay.append(")");
 				author.setDisplay(providerNameDisplay.toString());
 				IdDt providerRef = new IdDt();
-				String providerUri = FHIRConstants.PRACTITIONER + "/" + provider.getUuid();
+				String providerUri = FHIRConstants.PRACTITIONER + "/" + provider.getProvider().getUuid();
 				providerRef.setValue(providerUri);
 				author.setReference(providerRef);
 				authors.add(author);
