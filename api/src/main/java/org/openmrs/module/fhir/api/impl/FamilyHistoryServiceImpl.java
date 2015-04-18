@@ -48,9 +48,9 @@ public class FamilyHistoryServiceImpl extends BaseOpenmrsService implements Fami
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.FamilyHistoryService#searchFamilyHistoryByPerson(String)
+	 * @see org.openmrs.module.fhir.api.FamilyHistoryService#searchFamilyHistoryByPersonId(String)
 	 */
-	public List<FamilyHistory> searchFamilyHistoryByPerson(String personId) {
+	public List<FamilyHistory> searchFamilyHistoryByPersonId(String personId) {
 		Person person = Context.getPersonService().getPersonByUuid(personId);
 		List<FamilyHistory> fhirFamilyHistory = new ArrayList<FamilyHistory>();
 		List<Relationship> relationships = null;

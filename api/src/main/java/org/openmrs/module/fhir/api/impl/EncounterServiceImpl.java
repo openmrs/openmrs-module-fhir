@@ -19,7 +19,6 @@ import ca.uhn.fhir.model.dstu2.resource.Encounter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.EncounterProvider;
-import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.api.context.Context;
@@ -28,10 +27,8 @@ import org.openmrs.module.fhir.api.EncounterService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIREncounterUtil;
 import org.openmrs.module.fhir.api.util.FHIRLocationUtil;
-import org.openmrs.module.fhir.api.util.FHIRObsUtil;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 import org.openmrs.module.fhir.api.util.FHIRPractitionerUtil;
-import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.openmrs.module.fhir.api.util.OMRSFHIRVisitUtil;
 
 import java.util.ArrayList;
@@ -120,9 +117,9 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.EncounterService#searchEncounterCompositionByPatient(String)
+	 * @see org.openmrs.module.fhir.api.EncounterService#searchEncounterCompositionByPatientId(String)
 	 */
-	public List<Composition> searchEncounterCompositionByPatient(String patientId) {
+	public List<Composition> searchEncounterCompositionByPatientId(String patientId) {
 		Patient patient = Context.getPatientService().getPatientByUuid(patientId);
 		List<org.openmrs.Encounter> omrsEncounters = Context.getEncounterService().getEncountersByPatient(patient);
 		List<Composition> fhirEncounters = new ArrayList<Composition>();

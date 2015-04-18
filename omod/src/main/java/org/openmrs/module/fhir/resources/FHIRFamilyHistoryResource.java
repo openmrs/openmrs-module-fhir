@@ -41,6 +41,6 @@ public class FHIRFamilyHistoryResource extends Resource {
 
 	public List<FamilyHistory> searchFamilyHistoryByPerson(ReferenceParam id) {
 		FamilyHistoryService familyHistoryService = Context.getService(FamilyHistoryService.class);
-		return familyHistoryService.searchFamilyHistoryByPerson(id.getIdPart());
+		return familyHistoryService.searchFamilyHistoryByPersonId(id.getIdPart());
 	}
 }

@@ -28,7 +28,7 @@ import org.openmrs.module.fhir.api.EncounterService;
 import org.openmrs.module.fhir.api.FamilyHistoryService;
 import org.openmrs.module.fhir.api.PatientService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
-import org.openmrs.module.fhir.api.util.FHIREncounterUtil;
+import org.openmrs.module.fhir.api.util.FHIRLocationUtil;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 import org.openmrs.module.fhir.api.util.OMRSFHIRVisitUtil;
 
@@ -212,14 +212,33 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 			}
 
 			//Set patients' relationships
-			for (FamilyHistory familyHistory : familyHistoryService.searchFamilyHistoryByPerson(omsrPatient.getUuid())) {
+			for (FamilyHistory familyHistory : familyHistoryService.searchFamilyHistoryByPersonId(omsrPatient.getUuid())) {
 				bundle.addEntry().setResource(familyHistory);
 			}
 
 			//Set visits
 			for(Visit visit : Context.getVisitService().getVisitsByPatient(omsrPatient)) {
 				bundle.addEntry().setResource(OMRSFHIRVisitUtil.generateEncounter(visit));
+				if(visit.getLocation() != null) {
+					bundle.addEntry().setResource(FHIRLocationUtil.generateLocation(visit.getLocation()));
+				}
 			}
+
+			//Filter resources for duplicates
+			List<Bundle.Entry> filteredList = new ArrayList<Bundle.Entry>();
+			boolean contains;
+			for(Bundle.Entry temp : bundle.getEntry()) {
+				contains = false;
+				for(Bundle.Entry filtered : filteredList) {
+					if(filtered.getResource().getId().getIdPart().equals(temp.getResource().getId().getIdPart())) {
+						contains = true;
+					}
+				}
+				if(!contains) {
+					filteredList.add(temp);
+				}
+			}
+			bundle.setEntry(filteredList);
 		}
 		return bundle;
 	}

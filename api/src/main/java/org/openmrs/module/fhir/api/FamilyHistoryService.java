@@ -28,7 +28,7 @@ public interface FamilyHistoryService extends OpenmrsService {
 	 * @param personId person id
 	 * @return fhir family history resource
 	 */
-	public List<FamilyHistory> searchFamilyHistoryByPerson(String personId);
+	public List<FamilyHistory> searchFamilyHistoryByPersonId(String personId);
 
 	/**
 	 * Get relationship by id

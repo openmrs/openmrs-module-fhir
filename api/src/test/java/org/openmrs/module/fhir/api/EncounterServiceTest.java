@@ -103,7 +103,7 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void searchEncounterCompositionByPatient_shouldReturnMarchingCompositionList() {
 		String personUuid = "4b3f42da-2029-4e47-9396-a1b6a969e802";
-		List<Composition> fhirCompositon = getService().searchEncounterCompositionByPatient(personUuid);
+		List<Composition> fhirCompositon = getService().searchEncounterCompositionByPatientId(personUuid);
 		assertNotNull(fhirCompositon);
 		assertEquals(2, fhirCompositon.size());
 	}
