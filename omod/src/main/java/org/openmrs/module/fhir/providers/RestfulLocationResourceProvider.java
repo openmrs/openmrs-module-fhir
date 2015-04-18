@@ -16,6 +16,7 @@ package org.openmrs.module.fhir.providers;
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.resource.Location;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
@@ -89,4 +90,16 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	public List<Location> searchLocationsByStatus(@RequiredParam(name = Location.SP_STATUS) TokenParam active) {
 		return locationResource.searchLocationsByStatus(active);
 	}
+	
+	/**
+	 * Delete Location by unique id
+	 *
+	 * @param theId object containing the id
+	 */
+	    @Delete()
+	    public void deleteObservation(@IdParam IdDt theId) 
+	    {
+	    	locationResource.deleteLocation(theId);
+	    }
+	
 }

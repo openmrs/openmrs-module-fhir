@@ -50,4 +50,10 @@ public class FHIRLocationResource extends Resource {
 	public List<Location> searchLocationsByName(StringParam name) {
 		return Context.getService(LocationService.class).searchLocationsByName(name.getValue());
 	}
+	
+	public void deleteLocation(IdDt id)
+	{
+		LocationService locationService = Context.getService(LocationService.class);
+		locationService.deleteLocation(id.getIdPart());
+    }
 }
