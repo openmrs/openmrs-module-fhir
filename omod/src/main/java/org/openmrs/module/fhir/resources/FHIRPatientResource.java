@@ -84,4 +84,9 @@ public class FHIRPatientResource extends Resource {
     public Bundle getPatientOperationsById(IdDt id) {
         return Context.getService(PatientService.class).getPatientOperationsById(id.getIdPart());
     }
+
+    public void deletePatient(IdDt id){
+        PatientService personService = Context.getService(PatientService.class);
+        personService.deletePatient(id.getIdPart());
+    }
 }

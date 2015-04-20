@@ -91,4 +91,11 @@ public interface PatientService extends OpenmrsService {
      * @return patient resource bundle for operations
      */
     public Bundle getPatientOperationsById(String patientId);
+
+    /**
+     * Delete patient by id
+     *
+     * @param id uuid of the patient
+     */
+    public void deletePatient(String id);
 }

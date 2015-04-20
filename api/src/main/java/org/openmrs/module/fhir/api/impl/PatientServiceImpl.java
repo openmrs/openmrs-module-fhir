@@ -242,4 +242,13 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 		}
 		return bundle;
 	}
+
+    /**
+     * @see org.openmrs.module.fhir.api.PatientService#deletePatient(String)
+     */
+    @Override
+    public void deletePatient(String id) {
+        org.openmrs.Patient patient = Context.getPatientService().getPatientByUuid(id);
+        Context.getPatientService().voidPatient(patient,"DELETED by FHIR request");
+    }
 }
