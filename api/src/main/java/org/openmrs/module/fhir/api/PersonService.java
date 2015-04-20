@@ -13,12 +13,14 @@
  */
 package org.openmrs.module.fhir.api;
 
+import ca.uhn.fhir.model.dstu2.resource.Person;
+import ca.uhn.fhir.rest.server.exceptions.NotModifiedException;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+
 import java.util.List;
 
-import ca.uhn.fhir.model.dstu2.resource.Person;
-
 public interface PersonService {
-	
+
 	/**
 	 * Get fhir perso resource by uuid
 	 *
@@ -26,7 +28,7 @@ public interface PersonService {
 	 * @return fhir patient resource and will return null if patient not found for the given id
 	 */
 	Person getPerson(String id);
-	
+
 	/**
 	 * Search persons by uuid
 	 *
@@ -34,7 +36,7 @@ public interface PersonService {
 	 * @return fhir patient resource list
 	 */
 	List<Person> searchPersonById(String id);
-	
+
 	/**
 	 * Search all persons for given attributes
 	 *
@@ -44,7 +46,7 @@ public interface PersonService {
 	 * @return persons list
 	 */
 	List<Person> searchPersons(String name, Integer birthYear, String gender);
-	
+
 	/**
 	 * Search persons by name
 	 *
@@ -52,7 +54,7 @@ public interface PersonService {
 	 * @return fhir persons resource list
 	 */
 	List<Person> searchPersonsByName(String name);
-	
+
 	/**
 	 * creates a oms Person from FHIR personn
 	 *
@@ -60,7 +62,7 @@ public interface PersonService {
 	 * @return
 	 */
 	Person createFHIRPerson(Person person);
-	
+
 	/**
 	 * update a OpenMRS Person from FHIR Person
 	 *
@@ -69,5 +71,11 @@ public interface PersonService {
 	 * @return the updated FHIR {@link}Person Resource
 	 */
 	Person updateFHIRPerson(Person person, String theId);
-	
+
+	/**
+	 * makes a Person retired
+	 *
+	 * @param theId the uuid of the Person to retire
+	 */
+	void retirePerson(String theId) throws ResourceNotFoundException, NotModifiedException;
 }

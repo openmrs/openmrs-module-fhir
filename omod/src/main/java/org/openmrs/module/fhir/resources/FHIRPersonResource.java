@@ -24,7 +24,7 @@ import org.openmrs.module.fhir.api.PersonService;
 import java.util.List;
 
 public class FHIRPersonResource extends Resource {
-	
+
 	public Person getByUniqueId(IdDt id) {
 		PersonService personService = Context.getService(PersonService.class);
 		Person fhirPerson = personService.getPerson(id.getIdPart());
@@ -33,17 +33,17 @@ public class FHIRPersonResource extends Resource {
 		}
 		return fhirPerson;
 	}
-	
+
 	public List<Person> searchByUniqueId(TokenParam id) {
 		PersonService personService = Context.getService(PersonService.class);
 		return personService.searchPersonById(id.getValue());
 	}
-	
+
 	public List<Person> searchPersons(StringParam name, Integer birthYear, StringParam gender) {
 		PersonService personService = Context.getService(PersonService.class);
 		return personService.searchPersons(name.getValue(), birthYear, gender.getValue());
 	}
-	
+
 	public List<Person> searchByName(StringParam name) {
 		PersonService personService = Context.getService(PersonService.class);
 		return personService.searchPersonsByName(name.getValue());
@@ -54,8 +54,19 @@ public class FHIRPersonResource extends Resource {
 		return personService.createFHIRPerson(person);
 	}
 
-	public Person updateFHIRPerson(Person person,String theId) {
+	public Person updateFHIRPerson(Person person, String theId) {
 		PersonService personService = Context.getService(PersonService.class);
 		return personService.updateFHIRPerson(person, theId);
+	}
+
+	/**
+	 * Retire person by unique id
+	 *
+	 * @param theId object containing the id
+	 * @throws ResourceNotFoundException when no person with given id is found
+	 */
+	public void deletePerson(IdDt theId) throws ResourceNotFoundException {
+		PersonService personService = Context.getService(PersonService.class);
+		personService.retirePerson(theId.getIdPart());
 	}
 }
