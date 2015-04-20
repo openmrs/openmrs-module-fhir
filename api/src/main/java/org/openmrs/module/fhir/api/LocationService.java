@@ -53,4 +53,10 @@ public interface LocationService extends OpenmrsService {
 	 * @return fhir location resource list
 	 */
 	public List<Location> searchLocationsByName(String name);
+	
+	/*
+	 * Delete location by id
+	 * @param id uuid of Location
+	 */
+	 public void deleteLocation(String id);
 }
