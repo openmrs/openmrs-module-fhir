@@ -126,11 +126,7 @@ public class PersonServiceImpl implements PersonService {
 		if (person == null) throw new ResourceNotFoundException(String.format("Person with id '%s' not found", id));
 		if (person.isPersonVoided()) return;
 		try {
-			person.setVoided(true);
-			person.setPersonVoidedBy(Context.getAuthenticatedUser());
-			person.setPersonVoidReason("Retired by FHIR Request");
-			person.setPersonDateVoided(new Date());
-			Context.getPersonService().voidPerson(person, "Retired by FHIR Request");
+			Context.getPersonService().voidPerson(person, "Voided by FHIR Request");
 		} catch (APIException apie) {
 			throw new MethodNotAllowedException(String.format("OpenMRS has failed to retire person '%s': %s", id, apie.getMessage()));
 		}
