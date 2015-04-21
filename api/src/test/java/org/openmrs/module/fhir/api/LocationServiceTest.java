@@ -23,6 +23,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class LocationServiceTest extends BaseModuleContextSensitiveTest {
 
@@ -75,5 +76,23 @@ public class LocationServiceTest extends BaseModuleContextSensitiveTest {
 		List<Location> locations = getService().searchLocationsByStatus(true);
 		assertNotNull(locations);
 		assertEquals(5, locations.size());
+	}
+	
+	@Test
+	public void deleteLocation_shouldDeleteTheSpecifiedLocation()
+	{
+		org.openmrs.api.LocationService locationService=Context.getLocationService();
+		org.openmrs.Location location=locationService.getLocation(6);
+		assertNotNull(location);
+		String Uuid=location.getUuid();
+		
+		org.openmrs.Location locationIsDeleted;
+		locationIsDeleted=locationService.getLocation(location.getLocationId());
+		assertNotNull(locationIsDeleted);
+		
+		getService().deleteLocation(Uuid);
+		
+		locationIsDeleted=locationService.getLocation(location.getLocationId());
+		assertNull(locationIsDeleted);
 	}
 }
