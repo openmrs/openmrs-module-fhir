@@ -183,4 +183,13 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 		}
 		return bundle;
 	}
+
+    /**
+     * @see org.openmrs.module.fhir.api.EncounterService#deleteEncounter(String)
+     */
+    @Override
+    public void deleteEncounter(String id) {
+        org.openmrs.Encounter encounter = Context.getEncounterService().getEncounterByUuid(id);
+        Context.getEncounterService().voidEncounter(encounter,"DELETED by FHIR request");
+    }
 }

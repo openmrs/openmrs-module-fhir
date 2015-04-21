@@ -100,4 +100,10 @@ public interface EncounterService extends OpenmrsService {
 	 * @return contents of encounter resource bundle for operations
 	 */
 	public Bundle getEncounterOperationsById(String encounterId, Bundle bundle,  boolean includePatient);
+
+    /**
+     *  Delete encounter by id
+     * @param idPart
+     */
+    void deleteEncounter(String id);
 }
