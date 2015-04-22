@@ -146,4 +146,13 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
     public Bundle patientInstanceOperation(@IdParam IdDt patientId) {
         return patientResource.getPatientOperationsById(patientId);
     }
+
+    /**
+     * Delete patient by unique id
+     * @param theId
+     */
+    @Delete
+    public void deletePatient(@IdParam IdDt theId){
+        patientResource.deletePatient(theId);
+    }
 }
