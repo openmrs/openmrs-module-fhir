@@ -33,7 +33,9 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 
@@ -117,5 +119,17 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		List<Observation> obs = getService().searchObsByPerson(personUuid);
 		assertNotNull(obs);
 		assertEquals(3, obs.size());
+	}
+	
+	@Test
+	public void deleteObs_shouldDeleteTheSpecifiedObs()
+	{
+		org.openmrs.api.ObsService obsService= Context.getObsService();
+		org.openmrs.Obs obs=obsService.getObs(9);
+		assertNotNull(obs);
+		String Uuid=obs.getUuid();
+		assertFalse(obs.isVoided());
+		getService().deleteObs(Uuid);
+		assertTrue(obs.isVoided());
 	}
 }
