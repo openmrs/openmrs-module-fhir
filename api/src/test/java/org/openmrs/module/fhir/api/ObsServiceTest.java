@@ -122,14 +122,14 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	public void deleteObs_shouldDeleteTheSpecifiedObs()
-	{
-		org.openmrs.api.ObsService obsService= Context.getObsService();
-		org.openmrs.Obs obs=obsService.getObs(9);
+	public void deleteObs_shouldDeleteTheSpecifiedObs() {
+		org.openmrs.api.ObsService obsService = Context.getObsService();
+		org.openmrs.Obs obs = obsService.getObs(9);
 		assertNotNull(obs);
-		String Uuid=obs.getUuid();
+		String Uuid = obs.getUuid();
 		assertFalse(obs.isVoided());
 		getService().deleteObs(Uuid);
+		obs = obsService.getObs(9);
 		assertTrue(obs.isVoided());
 	}
 }

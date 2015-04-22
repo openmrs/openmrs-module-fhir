@@ -42,6 +42,7 @@ public final class FHIRConstants {
 	public static final String IMO_PROBLEM_URI = "https://www.e-imo.com/releases/problem-it";
 	public static final String IMP_PROCEDURE_URI = "https://www.e-imo.com/releases/problem-it";
 	public static final String NDF_RT_NUI_URI = "http://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/NDFRT/";
+	public static final String UCUM_URI = "http://unitsofmeasure.org/";
 	public static final String OTHER = "UNSPECIFIED";
 	//Concept Sources
 	public static final String LOINC = "LOINC";
@@ -63,6 +64,7 @@ public final class FHIRConstants {
 	public static final String IMO_PROBLEM = "IMO ProblemIT";
 	public static final String IMP_PROCEDURE = "IMO ProcedureIT";
 	public static final String NDF_RT_NUI = "NDF-RT NUI";
+	public static final String UCUM = "UCUM";
 
 
 	public static final String URN = "urn";
@@ -122,6 +124,7 @@ public final class FHIRConstants {
 		conceptSourceMap.put(IMO_PROBLEM.toLowerCase(), new ConceptSourceNameURIPair(IMO_PROBLEM, IMO_PROBLEM_URI));
 		conceptSourceMap.put(IMP_PROCEDURE.toLowerCase(), new ConceptSourceNameURIPair(IMP_PROCEDURE, IMP_PROCEDURE_URI));
 		conceptSourceMap.put(NDF_RT_NUI.toLowerCase(), new ConceptSourceNameURIPair(NDF_RT_NUI, NDF_RT_NUI_URI));
+		conceptSourceMap.put(UCUM.toLowerCase(), new ConceptSourceNameURIPair(UCUM, UCUM_URI));
 
 		conceptSourceURINameMap.put(LOINC_URI, LOINC);
 		conceptSourceURINameMap.put(CIEL_URI, CIEL);
@@ -142,5 +145,6 @@ public final class FHIRConstants {
 		conceptSourceURINameMap.put(IMO_PROBLEM_URI, IMO_PROBLEM);
 		conceptSourceURINameMap.put(IMP_PROCEDURE_URI, IMP_PROCEDURE);
 		conceptSourceURINameMap.put(NDF_RT_NUI_URI, NDF_RT_NUI);
+		conceptSourceURINameMap.put(UCUM_URI, UCUM);
 	}
 }

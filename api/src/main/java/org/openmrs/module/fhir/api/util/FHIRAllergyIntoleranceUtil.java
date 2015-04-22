@@ -13,9 +13,11 @@
  */
 package org.openmrs.module.fhir.api.util;
 
+import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
 import ca.uhn.fhir.model.dstu2.valueset.AllergyIntoleranceCategoryEnum;
+import ca.uhn.fhir.model.dstu2.valueset.AllergyIntoleranceCertaintyEnum;
 import ca.uhn.fhir.model.dstu2.valueset.AllergyIntoleranceCriticalityEnum;
 import ca.uhn.fhir.model.dstu2.valueset.AllergyIntoleranceStatusEnum;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
@@ -24,6 +26,7 @@ import org.openmrs.Obs;
 import org.openmrs.module.allergyapi.Allergy;
 
 import java.util.Collection;
+import java.util.EventListener;
 import java.util.List;
 
 public class FHIRAllergyIntoleranceUtil {
@@ -157,7 +160,7 @@ public class FHIRAllergyIntoleranceUtil {
 		List<CodingDt> dts = allergyIntolerance.getSubstance().getCoding();
 
 		//Set concept codings
-		if(mappings != null && !mappings.isEmpty()) {
+		if (mappings != null && !mappings.isEmpty()) {
 			for (ConceptMap map : mappings) {
 				if (map.getConceptReferenceTerm() != null) {
 					dts.add(FHIRUtils.getCodingDtByConceptMappings(map));
@@ -172,6 +175,27 @@ public class FHIRAllergyIntoleranceUtil {
 		dts.add(new CodingDt().setCode(allergy.getAllergen().getUuid()).setDisplay(allergy.getAllergen().getName().getName())
 				.setSystem(FHIRConstants.OPENMRS_URI));
 		allergyIntolerance.getSubstance().setCoding(dts);
+
+		//Set adverse reaction details
+		if (allergy.getReaction() != null) {
+			AllergyIntolerance.Event event = allergyIntolerance.addEvent();
+			event.setCertainty(AllergyIntoleranceCertaintyEnum.LIKELY);
+			CodeableConceptDt manifest = event.getManifestationFirstRep();
+			List<CodingDt> manifestCodes = allergyIntolerance.getSubstance().getCoding();
+			//Set concept codings
+			Collection<ConceptMap> manifestMappings = allergy.getAllergen().getConceptMappings();
+			if (manifestMappings != null && !manifestMappings.isEmpty()) {
+				for (ConceptMap map : manifestMappings) {
+					if (map.getConceptReferenceTerm() != null) {
+						manifestCodes.add(FHIRUtils.getCodingDtByConceptMappings(map));
+					}
+				}
+			}
+			//Setting omrs concept
+			dts.add(new CodingDt().setCode(allergy.getReaction().getUuid()).setDisplay(allergy.getReaction().getName().getName())
+					.setSystem(FHIRConstants.OPENMRS_URI));
+			manifest.setCoding(manifestCodes);
+		}
 		return allergyIntolerance;
 	}
 
