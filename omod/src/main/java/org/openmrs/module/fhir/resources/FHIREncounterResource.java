@@ -55,4 +55,8 @@ public class FHIREncounterResource extends Resource {
 		return fhirEncounters;
 	}
 
+    public void deleteEncounter(IdDt theId) {
+        EncounterService encounterService = Context.getService(EncounterService.class);
+        encounterService.deleteEncounter(theId.getIdPart());
+    }
 }

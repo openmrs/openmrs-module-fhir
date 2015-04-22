@@ -23,6 +23,7 @@ import ca.uhn.fhir.rest.annotation.Operation;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
@@ -91,4 +92,13 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	public Bundle encounterInstanceOperation(@IdParam IdDt encounterId) {
 		return encounterResource.getEncounterOperationsById(encounterId);
 	}
+
+    /**
+     * Delete encounter by unique id
+     * @param theId
+     */
+    @Delete
+    public void deleteEncounter(@IdParam IdDt theId){
+        encounterResource.deleteEncounter(theId);
+    }
 }
