@@ -81,18 +81,12 @@ public class LocationServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void deleteLocation_shouldDeleteTheSpecifiedLocation()
 	{
-		org.openmrs.api.LocationService locationService=Context.getLocationService();
-		org.openmrs.Location location=locationService.getLocation(6);
+		org.openmrs.api.LocationService locationService = Context.getLocationService();
+		org.openmrs.Location location = locationService.getLocation(6);
 		assertNotNull(location);
-		String Uuid=location.getUuid();
-		
-		org.openmrs.Location locationIsDeleted;
-		locationIsDeleted=locationService.getLocation(location.getLocationId());
-		assertNotNull(locationIsDeleted);
-		
+		String Uuid = location.getUuid();
 		getService().deleteLocation(Uuid);
-		
-		locationIsDeleted=locationService.getLocation(location.getLocationId());
-		assertNull(locationIsDeleted);
+		location = locationService.getLocation(location.getLocationId());
+		assertNull(location);
 	}
 }

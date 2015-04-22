@@ -112,9 +112,7 @@ public class LocationServiceImpl extends BaseOpenmrsService implements LocationS
 	/**
 	 * @see org.openmrs.module.fhir.api.LocationService#deleteLocation(String)
 	 */
-	public void deleteLocation(String id) 
-	{
-		
+	public void deleteLocation(String id) {
 		org.openmrs.Location location=Context.getLocationService().getLocationByUuid(id);
 		Context.getLocationService().purgeLocation(location);
 	}
