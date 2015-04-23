@@ -14,16 +14,23 @@
 package org.openmrs.module.fhir.api;
 
 import ca.uhn.fhir.model.dstu2.resource.Location;
+import ca.uhn.fhir.model.dstu2.composite.AddressDt;
+import ca.uhn.fhir.model.dstu2.valueset.LocationStatusEnum;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.util.FHIRLocationUtil;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+
 
 public class LocationServiceTest extends BaseModuleContextSensitiveTest {
 
@@ -89,4 +96,53 @@ public class LocationServiceTest extends BaseModuleContextSensitiveTest {
 		location = locationService.getLocation(location.getLocationId());
 		assertNull(location);
 	}
+
+    @Test
+    public void updateLocationById_shouldAddResourceIfNotExistsElseUpdateExistingResource() {
+        String locationUuid = "f08ba64b-ea57-4a41-b33c-9dfc59b0c60a";
+        Location fhirLocation = getService().getLocation(locationUuid);
+        org.openmrs.Location omrsLocation = FHIRLocationUtil.generateOpenMRSLocation(fhirLocation, new ArrayList<String>());
+        assertNotNull(omrsLocation);
+        assertEquals(fhirLocation.getId().toString(), omrsLocation.getUuid().toString());
+        assertEquals(fhirLocation.getName(), omrsLocation.getName());
+        assertEquals(fhirLocation.getDescription(), omrsLocation.getDescription());
+        AddressDt fhirAddress = fhirLocation.getAddress();
+        assertEquals(fhirAddress.getCity(), omrsLocation.getCityVillage());
+        assertEquals(fhirAddress.getCountry(), omrsLocation.getCountry());
+        assertEquals(fhirAddress.getState(), omrsLocation.getStateProvince());
+        assertEquals(fhirAddress.getPostalCode(), omrsLocation.getPostalCode());
+        for (int i = 0; i < fhirAddress.getLine().size(); i++) {
+            switch (i + 1) {
+                case 1:
+                    assertEquals(fhirAddress.getLine().get(i).toString(), omrsLocation.getAddress1());
+                    break;
+                case 2:
+                    assertEquals(fhirAddress.getLine().get(i).toString(), omrsLocation.getAddress2());
+                    break;
+                case 3:
+                    assertEquals(fhirAddress.getLine().get(i).toString(), omrsLocation.getAddress3());
+                    break;
+                case 4:
+                    assertEquals(fhirAddress.getLine().get(i).toString(), omrsLocation.getAddress4());
+                    break;
+                case 5:
+                    assertEquals(fhirAddress.getLine().get(i).toString(), omrsLocation.getAddress5());
+                    break;
+            }
+
+        }
+        Location.Position position = fhirLocation.getPosition();
+        if (position.getLongitude() != null && position.getLatitude() != null) {
+            assertEquals(position.getLatitude().toString(), omrsLocation.getLatitude());
+            assertEquals(position.getLongitude().toString(), omrsLocation.getLongitude());
+        }
+        String status = fhirLocation.getStatus();
+        if (status.equalsIgnoreCase(LocationStatusEnum.ACTIVE.toString())) {
+            assertFalse(omrsLocation.getRetired());
+        } else if (status.equals((LocationStatusEnum.INACTIVE.toString()))) {
+            // throw error and return error message in response.? OR call locationServcice.retireLocation() instead of locationService.saveLocation()
+            assertFalse(omrsLocation.getRetired());
+        }
+    }
+
 }
