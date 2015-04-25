@@ -130,8 +130,11 @@ public class FHIRUtils {
 	}
 
 	public static CodingDt getCodingDtByOpenMRSConcept(Concept concept) {
+		String display = null;
 		//Set concept name as the display value and set concept uuid if name is empty
-		String display = concept.getName().getName();
+		if(concept.getName() != null) {
+			display = concept.getName().getName();
+		}
 		if (display == null || display.isEmpty()) {
 			display = concept.getUuid();
 		}
