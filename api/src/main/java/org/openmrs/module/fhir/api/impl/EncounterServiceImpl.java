@@ -16,11 +16,15 @@ package org.openmrs.module.fhir.api.impl;
 import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Composition;
 import ca.uhn.fhir.model.dstu2.resource.Encounter;
+import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.EncounterProvider;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
+import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.EncounterService;
@@ -190,6 +194,12 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
     @Override
     public void deleteEncounter(String id) {
         org.openmrs.Encounter encounter = Context.getEncounterService().getEncounterByUuid(id);
+        if(encounter==null)
+            throw new ResourceNotFoundException(Encounter.class,new IdDt("Encounter",id));
+        try{
         Context.getEncounterService().voidEncounter(encounter,"DELETED by FHIR request");
+        } catch(APIException ex){
+            throw new MethodNotAllowedException("The OpenMRS API refused to retire the Encounter with id : " + id + " via the FHIR request");
+        }
     }
 }

@@ -25,6 +25,8 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 
@@ -107,4 +109,14 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 		assertNotNull(fhirCompositon);
 		assertEquals(2, fhirCompositon.size());
 	}
+
+    @Test
+    public void deleteEncounter_shouldVoidEncounterIfExists(){
+        String encounterUuid = "430bbb70-6a9c-4e1e-badb-9d1034b1b5e9";
+        org.openmrs.Encounter encounter = Context.getEncounterService().getEncounterByUuid(encounterUuid);
+        assertNotNull(encounter);
+        assertFalse(encounter.isVoided());
+        getService().deleteEncounter(encounterUuid);
+        assertTrue(encounter.isVoided());
+    }
 }

@@ -105,5 +105,5 @@ public interface EncounterService extends OpenmrsService {
      *  Delete encounter by id
      * @param idPart
      */
-    void deleteEncounter(String id);
+    public void deleteEncounter(String id);
 }
