@@ -76,6 +76,10 @@ public interface PersonService {
 	 * makes a Person retired
 	 *
 	 * @param theId the uuid of the Person to retire
+	 * @should make person void
+	 * @should throw ResourceNotFoundException if person with given id not found
+	 * @should do nothing if person already void
+	 * @should throw MethodNotAllowedException if API has refused the operation
 	 */
 	void retirePerson(String theId) throws ResourceNotFoundException, NotModifiedException;
 }
