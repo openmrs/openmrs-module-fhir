@@ -28,6 +28,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 
@@ -162,4 +163,15 @@ public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 		Bundle patientContent = getService().getPatientOperationsById(returnedPatientUuid);
 		assertNotNull(patientContent);
 	}
+
+    @Test
+    public void deletePatient_ShouldRetirePatientIfExists(){
+        String patientUuid = "61b38324-e2fd-4feb-95b7-9e9a2a4400df";
+        org.openmrs.Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
+        assertNotNull(patient);
+        assertFalse(patient.isVoided());
+        getService().deletePatient(patientUuid);
+        assertTrue(patient.isVoided());
+
+    }
 }
