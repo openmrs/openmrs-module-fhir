@@ -226,12 +226,13 @@ public class FHIRObsUtil {
 			observation.setRelated(relatedObs);
 		}
 
-		if (obs.getLocation() != null) {
+		//As per discussions, obs location will be deprecated from openmrs. So it will no need of setting it
+		/*if (obs.getLocation() != null) {
 			StringDt location = new StringDt();
 			location.setValue(FHIRConstants.LOCATION + "/" + obs.getLocation().getUuid());
 			ExtensionDt locationExt = new ExtensionDt(false, FHIRConstants.LOCATION_EXTENTION_URI, location);
 			observation.addUndeclaredExtension(locationExt);
-		}
+		}*/
 
 		if (obs.getEncounter() != null) {
 			ResourceReferenceDt encounter = new ResourceReferenceDt();
