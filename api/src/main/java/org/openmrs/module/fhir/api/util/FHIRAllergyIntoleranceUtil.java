@@ -94,8 +94,12 @@ public class FHIRAllergyIntoleranceUtil {
 		allergyIntolerance.setStatus(AllergyIntoleranceStatusEnum.CONFIRMED);
 
 		//Setting default omrs concept
-		dts.add(new CodingDt().setCode(allergy.getAllergen().getCodedAllergen().getUuid()).setDisplay(
-				allergy.getAllergen().getCodedAllergen().getName().getName()).setSystem(FHIRConstants.OPENMRS_URI));
+		if(allergy.getAllergen().getCodedAllergen().getName() != null) {
+			dts.add(new CodingDt().setCode(allergy.getAllergen().getCodedAllergen().getUuid()).setDisplay(
+			allergy.getAllergen().getCodedAllergen().getName().getName()).setSystem(FHIRConstants.OPENMRS_URI));
+		} else {
+			dts.add(new CodingDt().setCode(allergy.getAllergen().getCodedAllergen().getUuid()).setSystem(FHIRConstants.OPENMRS_URI));
+		}
 		allergyIntolerance.getSubstance().setCoding(dts);
 		return allergyIntolerance;
 	}
@@ -172,8 +176,13 @@ public class FHIRAllergyIntoleranceUtil {
 		allergyIntolerance.setStatus(AllergyIntoleranceStatusEnum.CONFIRMED);
 
 		//Setting default omrs concept
-		dts.add(new CodingDt().setCode(allergy.getAllergen().getUuid()).setDisplay(allergy.getAllergen().getName().getName())
-				.setSystem(FHIRConstants.OPENMRS_URI));
+		if(allergy.getAllergen().getName() != null) {
+			dts.add(new CodingDt().setCode(allergy.getAllergen().getUuid()).setDisplay(
+					allergy.getAllergen().getName().getName())
+					.setSystem(FHIRConstants.OPENMRS_URI));
+		} else {
+			dts.add(new CodingDt().setCode(allergy.getAllergen().getUuid()).setSystem(FHIRConstants.OPENMRS_URI));
+		}
 		allergyIntolerance.getSubstance().setCoding(dts);
 
 		//Set adverse reaction details
@@ -192,8 +201,13 @@ public class FHIRAllergyIntoleranceUtil {
 				}
 			}
 			//Setting omrs concept
-			dts.add(new CodingDt().setCode(allergy.getReaction().getUuid()).setDisplay(allergy.getReaction().getName().getName())
-					.setSystem(FHIRConstants.OPENMRS_URI));
+			if(allergy.getReaction().getName() != null) {
+				dts.add(new CodingDt().setCode(allergy.getReaction().getUuid()).setDisplay(
+						allergy.getReaction().getName().getName())
+						.setSystem(FHIRConstants.OPENMRS_URI));
+			} else {
+				dts.add(new CodingDt().setCode(allergy.getReaction().getUuid()).setSystem(FHIRConstants.OPENMRS_URI));
+			}
 			manifest.setCoding(manifestCodes);
 		}
 		return allergyIntolerance;

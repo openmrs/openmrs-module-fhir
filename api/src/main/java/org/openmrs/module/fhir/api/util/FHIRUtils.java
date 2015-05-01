@@ -115,9 +115,10 @@ public class FHIRUtils {
 	public static CodingDt getCodingDtByConceptMappings(ConceptMap conceptMap) {
 			//Set concept source concept name as the display value and set concept uuid if name is empty
 			String display = conceptMap.getConceptReferenceTerm().getName();
-			if (display == null || display.isEmpty()) {
+			//Commented to omit setting concept uuid if concept name is null or empty
+			/*if (display == null || display.isEmpty()) {
 				display = conceptMap.getConceptReferenceTerm().getUuid();
-			}
+			}*/
 			//Get concept source name and uri pair if it available
 			ConceptSourceNameURIPair sourceNameURIPair = FHIRConstants.conceptSourceMap.get(conceptMap
 					.getConceptReferenceTerm().getConceptSource().getName().toLowerCase());
@@ -125,8 +126,14 @@ public class FHIRUtils {
 				return new CodingDt().setCode(conceptMap.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem
 						(sourceNameURIPair.getConceptSourceURI());
 			}
-			return new CodingDt().setCode(conceptMap.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(conceptMap
-					.getConceptReferenceTerm().getConceptSource().getName());
+			if(display != null && !display.isEmpty()) {
+				return new CodingDt().setCode(conceptMap.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
+						conceptMap
+								.getConceptReferenceTerm().getConceptSource().getName());
+			} else {
+				return new CodingDt().setCode(conceptMap.getConceptReferenceTerm().getCode()).setSystem(
+						conceptMap.getConceptReferenceTerm().getConceptSource().getName());
+		}
 	}
 
 	public static CodingDt getCodingDtByOpenMRSConcept(Concept concept) {
@@ -135,11 +142,16 @@ public class FHIRUtils {
 		if(concept.getName() != null) {
 			display = concept.getName().getName();
 		}
-		if (display == null || display.isEmpty()) {
+		//Commented out for omiiting setting concept uuid in display term
+		/*if (display == null || display.isEmpty()) {
 			display = concept.getUuid();
+		}*/
+
+		if(display != null && !display.isEmpty()) {
+			return new CodingDt().setCode(concept.getUuid()).setDisplay(display).setSystem(FHIRConstants.OPENMRS_URI);
+		} else {
+			return new CodingDt().setCode(concept.getUuid()).setSystem(FHIRConstants.OPENMRS_URI);
 		}
-		return new CodingDt().setCode(concept.getUuid()).setDisplay(display).setSystem
-				(FHIRConstants.OPENMRS_URI);
 	}
 
 	private static Concept getConceptByGlobalProperty(String globalPropertyName) {
