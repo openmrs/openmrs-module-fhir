@@ -16,12 +16,16 @@ package org.openmrs.module.fhir.api.impl;
 import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.FamilyHistory;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
+import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonName;
 import org.openmrs.Visit;
+import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.EncounterService;
@@ -249,6 +253,15 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
     @Override
     public void deletePatient(String id) {
         org.openmrs.Patient patient = Context.getPatientService().getPatientByUuid(id);
-        Context.getPatientService().voidPatient(patient,"DELETED by FHIR request");
+        // patient not found. return with 404
+        if(patient ==null){
+            throw new ResourceNotFoundException(Patient.class,new IdDt("Patient",id));
+        }
+        try {
+        patient = Context.getPatientService().voidPatient(patient,"DELETED by FHIR request");
+        } catch (APIException ex){
+            // refused to retire resource.  return with 405
+            throw new MethodNotAllowedException("The OpenMRS API refused to retire the Patient via the FHIR request.");
+        }
     }
 }
