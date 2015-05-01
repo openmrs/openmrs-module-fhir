@@ -55,5 +55,9 @@ public class FHIRLocationResource extends Resource {
 	{
 		LocationService locationService = Context.getService(LocationService.class);
 		locationService.deleteLocation(id.getIdPart());
+
+    public void updateLocationById(String id,Location location){
+        Context.getService(LocationService.class).updateLocationById(id,location);
+
     }
 }
