@@ -25,7 +25,7 @@ import org.openmrs.module.fhir.api.LocationService;
 import java.util.List;
 
 public class FHIRLocationResource extends Resource {
-
+	
 	public Location getByUniqueId(IdDt id) {
 		LocationService locationService = Context.getService(LocationService.class);
 		Location fhirLocation = locationService.getLocation(id.getIdPart());
@@ -34,11 +34,11 @@ public class FHIRLocationResource extends Resource {
 		}
 		return fhirLocation;
 	}
-
+	
 	public List<Location> searchLocationsById(TokenParam id) {
 		return Context.getService(LocationService.class).searchLocationsById(id.getValue());
 	}
-
+	
 	public List<Location> searchLocationsByStatus(TokenParam active) {
 		if (active != null && active.getValue().equalsIgnoreCase(LocationStatusEnum.ACTIVE.getCode())) {
 			return Context.getService(LocationService.class).searchLocationsByStatus(true);
@@ -46,18 +46,18 @@ public class FHIRLocationResource extends Resource {
 			return Context.getService(LocationService.class).searchLocationsByStatus(false);
 		}
 	}
-
+	
 	public List<Location> searchLocationsByName(StringParam name) {
 		return Context.getService(LocationService.class).searchLocationsByName(name.getValue());
 	}
 	
-	public void deleteLocation(IdDt id)
-	{
+	public void deleteLocation(IdDt id) {
 		LocationService locationService = Context.getService(LocationService.class);
 		locationService.deleteLocation(id.getIdPart());
-
-    public void updateLocationById(String id,Location location){
-        Context.getService(LocationService.class).updateLocationById(id,location);
-
-    }
+	}
+	
+	public void updateLocationById(String id, Location location) {
+		Context.getService(LocationService.class).updateLocationById(id, location);
+		
+	}
 }
