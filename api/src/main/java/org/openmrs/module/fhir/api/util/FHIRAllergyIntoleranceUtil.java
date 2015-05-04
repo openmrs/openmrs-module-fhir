@@ -24,6 +24,7 @@ import ca.uhn.fhir.model.primitive.DateTimeDt;
 import org.openmrs.ConceptMap;
 import org.openmrs.Obs;
 import org.openmrs.module.allergyapi.Allergy;
+import org.openmrs.module.allergyapi.AllergyReaction;
 
 import java.util.Collection;
 import java.util.EventListener;
@@ -78,29 +79,65 @@ public class FHIRAllergyIntoleranceUtil {
 		}
 
 		//Set allergen
-		Collection<ConceptMap> mappings = allergy.getAllergen().getCodedAllergen().getConceptMappings();
-		List<CodingDt> dts = allergyIntolerance.getSubstance().getCoding();
+		if(allergy.getAllergen().getCodedAllergen() != null) {
+			Collection<ConceptMap> mappings = allergy.getAllergen().getCodedAllergen().getConceptMappings();
+			List<CodingDt> dts = allergyIntolerance.getSubstance().getCoding();
 
-		//Set concept codings
-		if(mappings != null && !mappings.isEmpty()) {
-			for (ConceptMap map : mappings) {
-				if (map.getConceptReferenceTerm() != null) {
-					dts.add(FHIRUtils.getCodingDtByConceptMappings(map));
+			//Set concept codings
+			if (mappings != null && !mappings.isEmpty()) {
+				for (ConceptMap map : mappings) {
+					if (map.getConceptReferenceTerm() != null) {
+						dts.add(FHIRUtils.getCodingDtByConceptMappings(map));
+					}
 				}
 			}
-		}
 
+			//Setting default omrs concept
+			if (allergy.getAllergen().getCodedAllergen().getName() != null) {
+				dts.add(new CodingDt().setCode(allergy.getAllergen().getCodedAllergen().getUuid()).setDisplay(
+						allergy.getAllergen().getCodedAllergen().getName().getName()).setSystem(FHIRConstants.OPENMRS_URI));
+			} else {
+				dts.add(new CodingDt().setCode(allergy.getAllergen().getCodedAllergen().getUuid()).setSystem(
+						FHIRConstants.OPENMRS_URI));
+			}
+			allergyIntolerance.getSubstance().setCoding(dts);
+		}
 		//Set status
 		allergyIntolerance.setStatus(AllergyIntoleranceStatusEnum.CONFIRMED);
 
-		//Setting default omrs concept
-		if(allergy.getAllergen().getCodedAllergen().getName() != null) {
-			dts.add(new CodingDt().setCode(allergy.getAllergen().getCodedAllergen().getUuid()).setDisplay(
-			allergy.getAllergen().getCodedAllergen().getName().getName()).setSystem(FHIRConstants.OPENMRS_URI));
-		} else {
-			dts.add(new CodingDt().setCode(allergy.getAllergen().getCodedAllergen().getUuid()).setSystem(FHIRConstants.OPENMRS_URI));
+		//Set adverse reaction details
+		if (allergy.getReactions().size() > 0) {
+			List<CodingDt> dts = allergyIntolerance.getSubstance().getCoding();
+			for (AllergyReaction reaction : allergy.getReactions()) {
+				AllergyIntolerance.Event event = allergyIntolerance.addEvent();
+				event.setCertainty(AllergyIntoleranceCertaintyEnum.LIKELY);
+				CodeableConceptDt manifest = event.getManifestationFirstRep();
+				List<CodingDt> manifestCodes = manifest.getCoding();
+
+				//Set concept codings
+				if(reaction.getReaction() != null) { //TODO need to think about how non coded reactions going to represent
+					Collection<ConceptMap> conceptMappings = reaction.getReaction().getConceptMappings();
+					if (conceptMappings != null && !conceptMappings.isEmpty()) {
+						for (ConceptMap map : conceptMappings) {
+							if (map.getConceptReferenceTerm() != null) {
+								manifestCodes.add(FHIRUtils.getCodingDtByConceptMappings(map));
+							}
+						}
+					}
+					//Setting omrs concept
+					if (reaction.getReaction().getName() != null) {
+						dts.add(new CodingDt().setCode(reaction.getReaction().getUuid()).setDisplay(
+								reaction.getReaction().getName().getName())
+								.setSystem(FHIRConstants.OPENMRS_URI));
+					} else {
+						dts.add(new CodingDt().setCode(reaction.getReaction().getUuid()).setSystem(
+								FHIRConstants.OPENMRS_URI));
+					}
+				}
+				manifest.setCoding(manifestCodes);
+
+			}
 		}
-		allergyIntolerance.getSubstance().setCoding(dts);
 		return allergyIntolerance;
 	}
 
@@ -190,7 +227,7 @@ public class FHIRAllergyIntoleranceUtil {
 			AllergyIntolerance.Event event = allergyIntolerance.addEvent();
 			event.setCertainty(AllergyIntoleranceCertaintyEnum.LIKELY);
 			CodeableConceptDt manifest = event.getManifestationFirstRep();
-			List<CodingDt> manifestCodes = allergyIntolerance.getSubstance().getCoding();
+			List<CodingDt> manifestCodes = manifest.getCoding();
 			//Set concept codings
 			Collection<ConceptMap> manifestMappings = allergy.getAllergen().getConceptMappings();
 			if (manifestMappings != null && !manifestMappings.isEmpty()) {
