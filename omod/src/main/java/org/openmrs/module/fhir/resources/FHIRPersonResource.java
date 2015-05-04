@@ -29,7 +29,7 @@ public class FHIRPersonResource extends Resource {
 		PersonService personService = Context.getService(PersonService.class);
 		Person fhirPerson = personService.getPerson(id.getIdPart());
 		if (fhirPerson == null) {
-			throw new ResourceNotFoundException("Practitioner is not found for the given Id " + id.getIdPart());
+			throw new ResourceNotFoundException("Person is not found for the given Id " + id.getIdPart());
 		}
 		return fhirPerson;
 	}
