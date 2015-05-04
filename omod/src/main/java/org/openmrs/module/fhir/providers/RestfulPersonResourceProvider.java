@@ -63,7 +63,7 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	 * @param id object contaning the requested person
 	 */
 	@Search()
-	public List<Person> searchPractitionerByUniqueId(@RequiredParam(name = Practitioner.SP_RES_ID) TokenParam id) {
+	public List<Person> searchPractitionerByUniqueId(@RequiredParam(name = Person.SP_RES_ID) TokenParam id) {
 		return personResource.searchByUniqueId(id);
 	}
 

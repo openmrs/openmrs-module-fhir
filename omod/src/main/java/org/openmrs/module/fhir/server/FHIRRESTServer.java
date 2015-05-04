@@ -22,6 +22,7 @@ import org.openmrs.module.fhir.addressstrategy.OpenMRSFHIRRequestAddressStrategy
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.openmrs.module.fhir.providers.RestfulAllergyIntoleranceResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulCompositionResourceProvider;
+import org.openmrs.module.fhir.providers.RestfulConditionResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulEncounterResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulFamilyHistoryResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulLocationResourceProvider;
@@ -56,6 +57,7 @@ public class FHIRRESTServer extends RestfulServer {
 		resourceProviders.add(new RestfulLocationResourceProvider());
 		resourceProviders.add(new RestfulObservationResourceProvider());
 		resourceProviders.add(new RestfulPractitionerResourceProvider());
+		resourceProviders.add(new RestfulConditionResourceProvider());
 		//Removing composition since we now not support for it
 		//resourceProviders.add(new RestfulCompositionResourceProvider());
 		resourceProviders.add(new RestfulPersonResourceProvider());

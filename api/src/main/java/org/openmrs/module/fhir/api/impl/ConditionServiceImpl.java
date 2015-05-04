@@ -16,20 +16,53 @@ package org.openmrs.module.fhir.api.impl;
 import ca.uhn.fhir.model.dstu2.resource.Condition;
 import ca.uhn.fhir.rest.server.exceptions.NotModifiedException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.ConditionService;
+import org.openmrs.module.fhir.api.db.FHIRDAO;
+import org.openmrs.module.fhir.api.util.FHIRConditionUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ConditionServiceImpl implements ConditionService {
-	
+
+	protected final Log log = LogFactory.getLog(this.getClass());
+
+	private FHIRDAO dao;
+
+	/**
+	 * @param dao the dao to set
+	 */
+	public void setDao(FHIRDAO dao) {
+		this.dao = dao;
+	}
+
+	/**
+	 * @return the dao
+	 */
+	public FHIRDAO getDao() {
+		return dao;
+	}
+
 	@Override
 	public Condition getCondition(String id) {
-		return null;
+		org.openmrs.Condition condition = Context.getService(org.openmrs.api.ConditionService.class).getConditionByUuid(id);
+		if (condition == null) {
+			return null;
+		}
+		return FHIRConditionUtil.generateFHIRCondition(condition);
 	}
 
 	@Override
 	public List<Condition> searchConditionById(String id) {
-		return null;
+		org.openmrs.Condition condition = Context.getService(org.openmrs.api.ConditionService.class).getConditionByUuid(id);
+		List<Condition> conditionList = new ArrayList<Condition>();
+		if (condition != null) {
+			conditionList.add(FHIRConditionUtil.generateFHIRCondition(condition));
+		}
+		return conditionList;
 	}
 
 	@Override
