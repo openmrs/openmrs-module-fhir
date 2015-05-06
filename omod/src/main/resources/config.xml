@@ -129,5 +129,10 @@
         <defaultValue>OPENMRS</defaultValue>
         <description>Concept Coding System</description>
     </globalProperty>
+
+    <privilege>
+        <name>View FHIR Client</name>
+        <description>Gives access to FHIR rest client</description>
+    </privilege>
 </module>
 
