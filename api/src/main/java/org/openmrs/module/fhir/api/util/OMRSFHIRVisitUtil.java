@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.fhir.api.util;
 
+import ca.uhn.fhir.model.api.ExtensionDt;
 import ca.uhn.fhir.model.dstu2.composite.PeriodDt;
 import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu2.resource.Encounter;
@@ -20,6 +21,8 @@ import ca.uhn.fhir.model.dstu2.valueset.EncounterClassEnum;
 import ca.uhn.fhir.model.dstu2.valueset.EncounterStateEnum;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.model.primitive.StringDt;
+import org.apache.commons.collections.CollectionUtils;
 import org.openmrs.PersonName;
 import org.openmrs.Visit;
 
@@ -28,6 +31,13 @@ import java.util.List;
 
 public class OMRSFHIRVisitUtil {
 
+	/**
+	 * Generates FHIR encounter out of Visit
+	 * Sets visits encounters as an extension of FHIR encounter with list of encounter ids
+	 *
+	 * @param omrsVisit Visit to generate fhir Encounter from
+	 * @return FHIR encounter object
+	 */
 	public static Encounter generateEncounter(Visit omrsVisit) {
 		Encounter encounter = new Encounter();
 
@@ -98,6 +108,16 @@ public class OMRSFHIRVisitUtil {
 			locations.add(location);
 			encounter.setLocation(locations);
 		}
+
+		if (CollectionUtils.isNotEmpty(omrsVisit.getEncounters())){
+			for (org.openmrs.Encounter omrsEncounter : omrsVisit.getEncounters()){
+				StringDt encounterDt = new StringDt();
+				encounterDt.setValue(FHIRConstants.ENCOUNTER + "/" + omrsEncounter.getUuid());
+				ExtensionDt encounterExt = new ExtensionDt(false, FHIRConstants.ENCOUNTER_EXTENSION_URI, encounterDt);
+				encounter.addUndeclaredExtension(encounterExt);
+			}
+		}
+
 		//TODO uncomment the validation and check what's going wrong
 		//FHIRUtils.validate(encounter);
 		return encounter;
