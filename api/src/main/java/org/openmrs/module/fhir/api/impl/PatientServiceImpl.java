@@ -14,7 +14,7 @@
 package org.openmrs.module.fhir.api.impl;
 
 import ca.uhn.fhir.model.dstu2.resource.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.FamilyHistory;
+import ca.uhn.fhir.model.dstu2.resource.FamilyMemberHistory;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
@@ -216,7 +216,7 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 			}
 
 			//Set patients' relationships
-			for (FamilyHistory familyHistory : familyHistoryService.searchFamilyHistoryByPersonId(omsrPatient.getUuid())) {
+			for (FamilyMemberHistory familyHistory : familyHistoryService.searchFamilyHistoryByPersonId(omsrPatient.getUuid())) {
 				bundle.addEntry().setResource(familyHistory);
 			}
 

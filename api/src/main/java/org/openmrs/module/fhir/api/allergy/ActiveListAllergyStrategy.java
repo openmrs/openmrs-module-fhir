@@ -14,10 +14,8 @@
 package org.openmrs.module.fhir.api.allergy;
 
 import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
-import ca.uhn.fhir.rest.param.ReferenceParam;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
-import org.openmrs.Person;
 import org.openmrs.activelist.ActiveListItem;
 import org.openmrs.activelist.ActiveListType;
 import org.openmrs.activelist.Allergy;

@@ -48,11 +48,11 @@ public class FHIRPatientUtil {
 		for (PatientIdentifier identifier : omrsPatient.getActiveIdentifiers()) {
 			String urn = FHIRUtils.buildURN(FHIRConstants.UUID, identifier.getIdentifierType().getUuid());
 			if (identifier.isPreferred()) {
-				patient.addIdentifier().setUse(IdentifierUseEnum.USUAL).setSystem(urn).setValue(identifier.getIdentifier())
-						.setLabel(identifier.getIdentifierType().getName());
+				patient.addIdentifier().setUse(IdentifierUseEnum.USUAL).setSystem(identifier.getIdentifierType().getName())
+						.setValue(identifier.getIdentifier());
 			} else {
-				patient.addIdentifier().setUse(IdentifierUseEnum.SECONDARY).setSystem(urn).setValue(
-						identifier.getIdentifier()).setLabel(identifier.getIdentifierType().getName());
+				patient.addIdentifier().setUse(IdentifierUseEnum.SECONDARY).setSystem(identifier.getIdentifierType()
+						.getName()).setValue(identifier.getIdentifier());
 			}
 		}
 
@@ -86,6 +86,7 @@ public class FHIRPatientUtil {
 				prefixes.add(prefix);
 				fhirName.setSuffix(prefixes);
 			}
+
 			//TODO needs to set catagory appropriately
 			if (name.isPreferred()) {
 				fhirName.setUse(NameUseEnum.USUAL);

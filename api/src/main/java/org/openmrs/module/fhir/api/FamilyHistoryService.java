@@ -13,7 +13,7 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu2.resource.FamilyHistory;
+import ca.uhn.fhir.model.dstu2.resource.FamilyMemberHistory;
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +28,7 @@ public interface FamilyHistoryService extends OpenmrsService {
 	 * @param personId person id
 	 * @return fhir family history resource
 	 */
-	public List<FamilyHistory> searchFamilyHistoryByPersonId(String personId);
+	public List<FamilyMemberHistory> searchFamilyHistoryByPersonId(String personId);
 
 	/**
 	 * Get relationship by id
@@ -36,7 +36,7 @@ public interface FamilyHistoryService extends OpenmrsService {
 	 * @param id the id of the relationship
 	 * @return fhir family history resource
 	 */
-	public FamilyHistory getRelationshipById(String id);
+	public FamilyMemberHistory getRelationshipById(String id);
 
 	/**
 	 * Search relationship by id
@@ -44,5 +44,5 @@ public interface FamilyHistoryService extends OpenmrsService {
 	 * @param id the id of the relationship
 	 * @return fhir family history resource
 	 */
-	public List<FamilyHistory> searchRelationshipsById(String id);
+	public List<FamilyMemberHistory> searchRelationshipsById(String id);
 }

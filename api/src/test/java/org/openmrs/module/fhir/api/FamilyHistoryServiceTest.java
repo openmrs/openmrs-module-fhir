@@ -13,7 +13,7 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu2.resource.FamilyHistory;
+import ca.uhn.fhir.model.dstu2.resource.FamilyMemberHistory;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
@@ -41,24 +41,24 @@ public class FamilyHistoryServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void searchFamilyHistoryByPerson__shouldReturnResourceIfExists() {
 		String personUuid = "da7f524f-27ce-4bb2-86d6-6d1d05312bd5";
-		List<FamilyHistory> fhirFamilyHistoryList = getService().searchRelationshipsById(personUuid);
-		assertNotNull(fhirFamilyHistoryList);
-		assertEquals(1, fhirFamilyHistoryList.size());
+		List<FamilyMemberHistory> memberHistory = getService().searchRelationshipsById(personUuid);
+		assertNotNull(memberHistory);
+		assertEquals(3, memberHistory.size());
 	}
 
 	@Test
 	public void getRelationshipById_shouldReturnResourceIfExists() {
 		String personUuid = "da7f524f-27ce-4bb2-86d6-6d1d05312bd5";
-		FamilyHistory fhirFamilyHitory = getService().getRelationshipById(personUuid);
-		assertNotNull(fhirFamilyHitory);
-		assertEquals(fhirFamilyHitory.getId().toString(), personUuid);
+		FamilyMemberHistory memberHistory = getService().getRelationshipById(personUuid);
+		assertNotNull(memberHistory);
+		assertEquals(memberHistory.getId().toString(), personUuid);
 	}
 
 	@Test
 	public void searchFamilyHistoryByPerson_shouldReturnBundle() {
 		String personUuid = "da7f524f-27ce-4bb2-86d6-6d1d05312bd5";
-		List<FamilyHistory> fhirFamilyHistoryList = getService().searchFamilyHistoryByPersonId(personUuid);
-		assertNotNull(fhirFamilyHistoryList);
-		assertEquals(1, fhirFamilyHistoryList.size());
+		List<FamilyMemberHistory> memberHistorie = getService().searchFamilyHistoryByPersonId(personUuid);
+		assertNotNull(memberHistorie);
+		assertEquals(3, memberHistorie.size());
 	}
 }

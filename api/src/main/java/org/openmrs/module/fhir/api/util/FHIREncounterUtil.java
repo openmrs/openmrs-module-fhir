@@ -24,6 +24,7 @@ import ca.uhn.fhir.model.dstu2.valueset.CompositionStatusEnum;
 import ca.uhn.fhir.model.dstu2.valueset.EncounterClassEnum;
 import ca.uhn.fhir.model.dstu2.valueset.EncounterStateEnum;
 import ca.uhn.fhir.model.dstu2.valueset.ParticipantTypeEnum;
+import ca.uhn.fhir.model.primitive.CodeDt;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import org.openmrs.Concept;
@@ -55,9 +56,8 @@ public class FHIREncounterUtil {
 		composition.setStatus(CompositionStatusEnum.FINAL);
 
 		//Set document confidentiality
-		CodingDt confidentialityCode = new CodingDt();
-		confidentialityCode.setCode(FHIRConstants.CONFIDENTIALITY_CODING_R);
-		confidentialityCode.setDisplay(FHIRConstants.CONFIDENTIALITY_CODING_VALUE_RESTRICTED);
+		CodeDt confidentialityCode = new CodeDt();
+		confidentialityCode.setValue(FHIRConstants.CONFIDENTIALITY_CODING_R);
 		composition.setConfidentiality(confidentialityCode);
 
 		//Set composition subject as patient resource

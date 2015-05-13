@@ -19,10 +19,10 @@ import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.primitive.DateDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import org.openmrs.ConceptMap;
+import org.openmrs.Condition;
 
 import java.util.Collection;
 import java.util.List;
-import org.openmrs.Condition;
 
 public class FHIRConditionUtil {
 
@@ -34,7 +34,7 @@ public class FHIRConditionUtil {
 
 		//Set patient reference
 		ResourceReferenceDt patient = FHIRUtils.buildPatientOrPersonResourceReference(condition.getPatient());
-		fhirCondition.setSubject(patient);
+		fhirCondition.setPatient(patient);
 
 		//Set on set date
 		DateDt dateDt = new DateDt();

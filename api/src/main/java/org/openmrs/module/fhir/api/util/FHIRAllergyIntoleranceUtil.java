@@ -27,7 +27,6 @@ import org.openmrs.module.allergyapi.Allergy;
 import org.openmrs.module.allergyapi.AllergyReaction;
 
 import java.util.Collection;
-import java.util.EventListener;
 import java.util.List;
 
 public class FHIRAllergyIntoleranceUtil {
@@ -40,7 +39,7 @@ public class FHIRAllergyIntoleranceUtil {
 		AllergyIntolerance allergyIntolerance = new AllergyIntolerance();
 		allergyIntolerance.setId(allergy.getUuid());
 		//Build and set patient reference
-		allergyIntolerance.setSubject(FHIRUtils.buildPatientOrPersonResourceReference(allergy.getPatient()));
+		allergyIntolerance.setPatient(FHIRUtils.buildPatientOrPersonResourceReference(allergy.getPatient()));
 
 		//Set record date
 		DateTimeDt recordedDate = new DateTimeDt();
@@ -145,7 +144,7 @@ public class FHIRAllergyIntoleranceUtil {
 		AllergyIntolerance allergyIntolerance = new AllergyIntolerance();
 		allergyIntolerance.setId(allergy.getUuid());
 		//Build and set patient reference
-		allergyIntolerance.setSubject(FHIRUtils.buildPatientOrPersonResourceReference(allergy.getPerson()));
+		allergyIntolerance.setPatient(FHIRUtils.buildPatientOrPersonResourceReference(allergy.getPerson()));
 
 		//Set record date
 		DateTimeDt recordedDate = new DateTimeDt();

@@ -14,7 +14,7 @@
 package org.openmrs.module.fhir.providers;
 
 import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu2.resource.FamilyHistory;
+import ca.uhn.fhir.model.dstu2.resource.FamilyMemberHistory;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
@@ -37,7 +37,7 @@ public class RestfulFamilyHistoryResourceProvider implements IResourceProvider {
 
 	@Override
 	public Class<? extends IResource> getResourceType() {
-		return FamilyHistory.class;
+		return FamilyMemberHistory.class;
 	}
 
 	/**
@@ -50,8 +50,8 @@ public class RestfulFamilyHistoryResourceProvider implements IResourceProvider {
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read()
-	public FamilyHistory getResourceById(@IdParam IdDt theId) {
-		FamilyHistory result = null;
+	public FamilyMemberHistory getResourceById(@IdParam IdDt theId) {
+		FamilyMemberHistory result = null;
 		result = familyHistoryResource.getByUniqueId(theId);
 		return result;
 	}
@@ -62,7 +62,7 @@ public class RestfulFamilyHistoryResourceProvider implements IResourceProvider {
 	 * @param id object containing the requested id
 	 */
 	@Search()
-	public List<FamilyHistory> searchFamilyHistoryByUniqueId(@RequiredParam(name = FamilyHistory.SP_RES_ID) TokenParam id) {
+	public List<FamilyMemberHistory> searchFamilyHistoryByUniqueId(@RequiredParam(name = FamilyMemberHistory.SP_RES_ID) TokenParam id) {
 		return familyHistoryResource.searchFamilyHistoryByUniqueId(id);
 	}
 
@@ -72,8 +72,8 @@ public class RestfulFamilyHistoryResourceProvider implements IResourceProvider {
 	 * @param person object containing the requested patient id
 	 */
 	@Search()
-	public List<FamilyHistory> searchFamilyHistoryByPerson(
-			@RequiredParam(name = FamilyHistory.SP_PATIENT) ReferenceParam person) {
+	public List<FamilyMemberHistory> searchFamilyHistoryByPerson(
+			@RequiredParam(name = FamilyMemberHistory.SP_PATIENT) ReferenceParam person) {
 		return familyHistoryResource.searchFamilyHistoryByPerson(person);
 	}
 }

@@ -21,7 +21,6 @@ import ca.uhn.fhir.rest.server.RestfulServer;
 import org.openmrs.module.fhir.addressstrategy.OpenMRSFHIRRequestAddressStrategy;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.openmrs.module.fhir.providers.RestfulAllergyIntoleranceResourceProvider;
-import org.openmrs.module.fhir.providers.RestfulCompositionResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulConditionResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulEncounterResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulFamilyHistoryResourceProvider;

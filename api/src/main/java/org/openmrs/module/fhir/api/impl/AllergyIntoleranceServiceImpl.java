@@ -14,17 +14,13 @@
 package org.openmrs.module.fhir.api.impl;
 
 import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
-import ca.uhn.fhir.rest.param.ReferenceParam;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.AllergyIntoleranceService;
 import org.openmrs.module.fhir.api.allergy.AllergyStrategyUtil;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
-import org.openmrs.module.fhir.api.util.FHIREncounterUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

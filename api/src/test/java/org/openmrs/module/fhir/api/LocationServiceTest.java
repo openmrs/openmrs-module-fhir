@@ -13,8 +13,8 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu2.resource.Location;
 import ca.uhn.fhir.model.dstu2.composite.AddressDt;
+import ca.uhn.fhir.model.dstu2.resource.Location;
 import ca.uhn.fhir.model.dstu2.valueset.LocationStatusEnum;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,14 +22,13 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRLocationUtil;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 
 
 public class LocationServiceTest extends BaseModuleContextSensitiveTest {

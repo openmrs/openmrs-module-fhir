@@ -139,7 +139,7 @@ public class FHIRPersonUtil {
 			IdDt patientRef = new IdDt();
 			patientRef.setValue(uri);
 			other.setReference(patientRef);
-			link.setOther(other);
+			link.setTarget(other);
 			links.add(link);
 			person.setLink(links);
 		}

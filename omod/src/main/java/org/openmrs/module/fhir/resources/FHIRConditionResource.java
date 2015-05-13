@@ -14,13 +14,11 @@
 package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.model.dstu2.resource.Condition;
-import ca.uhn.fhir.model.dstu2.resource.Person;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.ConditionService;
-import org.openmrs.module.fhir.api.PersonService;
 
 import java.util.List;
 
