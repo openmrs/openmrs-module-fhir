@@ -19,6 +19,7 @@ import ca.uhn.fhir.model.dstu2.resource.Encounter;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import java.util.List;
@@ -119,4 +120,39 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
         getService().deleteEncounter(encounterUuid);
         assertTrue(encounter.isVoided());
     }
+
+	@Test
+	public void searchEncounterByEncounterIdAndPartOfNone_shouldReturnsEncounterWithoutParentVisitOrVisit() {
+		String visitUuid = "4c48b0c0-1ade-11e1-9c71-00248140a5eb";
+		List<Encounter> fhirEncounters = getService().searchEncountersByEncounterIdAndPartOf(visitUuid, FHIRConstants.NONE);
+		assertNotNull(fhirEncounters);
+		assertEquals(1, fhirEncounters.size());
+	}
+
+	@Test
+	public void searchEncounterByEncounterIdAndPartOf_shouldReturnsEncounterWithoutParentVisitOrVisit() {
+		String encounterUuid = "7fffd6b9-0970-4967-88c7-0b7b50f12bc6";
+		String visitUuid = "7fffd6b9-0970-4967-88c7-0b7b50f12ab9";
+		List<Encounter> fhirEncounters = getService().searchEncountersByEncounterIdAndPartOf(encounterUuid, visitUuid);
+		assertNotNull(fhirEncounters);
+		assertEquals(1, fhirEncounters.size());
+	}
+
+	@Test
+	public void searchEncounterByPatientIdentifierAndPartOfNone_shouldReturnsEncounterWithoutParentVisitOrVisit() {
+		String patientIdentifier = "1234";
+		List<Encounter> fhirEncounters = getService().searchEncountersByPatientIdentifierAndPartOf(patientIdentifier,
+				FHIRConstants.NONE);
+		assertNotNull(fhirEncounters);
+		assertEquals(7, fhirEncounters.size());
+	}
+
+	@Test
+	public void searchEncounterByPatientIdentifierAndPartOf_shouldReturnsEncounterWithoutParentVisitOrVisit() {
+		String patientIdentifier = "12345";
+		String visitUuid = "7fffd6b9-0970-4967-88c7-0b7b50f12ab9";
+		List<Encounter> fhirEncounters = getService().searchEncountersByPatientIdentifierAndPartOf(patientIdentifier, visitUuid);
+		assertNotNull(fhirEncounters);
+		assertEquals(1, fhirEncounters.size());
+	}
 }

@@ -55,6 +55,22 @@ public class FHIREncounterResource extends Resource {
 		return fhirEncounters;
 	}
 
+	public List<Encounter> searchEncountersByPatientIdentifierAndPartOf(ReferenceParam identifier, ReferenceParam partOf) {
+		List<Encounter> fhirEncounters = new ArrayList<Encounter>();
+
+		String chain = identifier.getChain();
+		if (Patient.SP_IDENTIFIER.equals(chain)) {
+			fhirEncounters = Context.getService(EncounterService.class).searchEncountersByPatientIdentifier(identifier.getValue());
+		}
+		return fhirEncounters;
+	}
+
+	public List<Encounter> searchEncountersByIdAndPartOf(TokenParam identifier, ReferenceParam partOf) {
+		List<Encounter> fhirEncounters = new ArrayList<Encounter>();
+		fhirEncounters = Context.getService(EncounterService.class).searchEncountersByPatientIdentifier(identifier.getValue());
+		return fhirEncounters;
+	}
+
     public void deleteEncounter(IdDt theId) {
         EncounterService encounterService = Context.getService(EncounterService.class);
         encounterService.deleteEncounter(theId.getIdPart());

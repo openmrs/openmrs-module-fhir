@@ -23,12 +23,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.EncounterProvider;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.Visit;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.EncounterService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIREncounterUtil;
 import org.openmrs.module.fhir.api.util.FHIRLocationUtil;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
@@ -202,4 +204,71 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
             throw new MethodNotAllowedException("The OpenMRS API refused to retire the Encounter with id : " + id + " via the FHIR request");
         }
     }
+
+	/**
+	 * @see org.openmrs.module.fhir.api.EncounterService#searchEncountersByPatientIdentifierAndPartOf(String, String)
+	 */
+	@Override
+	public List<Encounter> searchEncountersByPatientIdentifierAndPartOf(String patientIdentifier, String partOf) {
+		org.openmrs.api.PatientService patientService = Context.getPatientService();
+		List<PatientIdentifierType> allPatientIdentifierTypes = patientService.getAllPatientIdentifierTypes();
+		List<org.openmrs.Patient> patientList = patientService.getPatients(null, patientIdentifier, allPatientIdentifierTypes,
+				true);
+		List<Encounter> fhirEncountersList = new ArrayList<Encounter>();
+
+		for(Patient patient : patientList) {
+			List<org.openmrs.Encounter> encounters = Context.getEncounterService().getEncountersByPatient(patient);
+			for (org.openmrs.Encounter encounter : encounters) {
+				if (encounter.getVisit() == null) {
+					if (FHIRConstants.NONE.equalsIgnoreCase(partOf)) {
+						fhirEncountersList.add(FHIREncounterUtil.generateEncounter(encounter));
+					}
+				} else {
+					if (encounter.getVisit().getUuid().equals(partOf)) {
+						fhirEncountersList.add(FHIREncounterUtil.generateEncounter(encounter));
+					}
+				}
+			}
+		}
+
+		for(Patient patient : patientList) {
+			List<Visit> visits = Context.getVisitService().getVisitsByPatient(patient);
+			if (FHIRConstants.NONE.equalsIgnoreCase(partOf)) {
+				for (Visit visit : visits) {
+					fhirEncountersList.add(OMRSFHIRVisitUtil.generateEncounter(visit));
+				}
+			}
+		}
+		return fhirEncountersList;
+	}
+
+	/**
+	 * @see org.openmrs.module.fhir.api.EncounterService#searchEncountersByEncounterIdAndPartOf(String, String)
+	 */
+	@Override
+	public List<Encounter> searchEncountersByEncounterIdAndPartOf(String encounterId, String partOf) {
+		org.openmrs.Encounter encounter = Context.getEncounterService().getEncounterByUuid(encounterId);
+		List<Encounter> fhirEncountersList = new ArrayList<Encounter>();
+		if(encounter != null) {
+			if (encounter.getVisit() == null) {
+				if (FHIRConstants.NONE.equalsIgnoreCase(partOf)) {
+					fhirEncountersList.add(FHIREncounterUtil.generateEncounter(encounter));
+				}
+			} else {
+				if (encounter.getVisit().getUuid().equals(partOf)) {
+					fhirEncountersList.add(FHIREncounterUtil.generateEncounter(encounter));
+				}
+			}
+		}
+
+		if(fhirEncountersList.size() == 0) {
+			Visit visit = Context.getVisitService().getVisitByUuid(encounterId);
+			if(visit != null) {
+				if (FHIRConstants.NONE.equalsIgnoreCase(partOf)) {
+					fhirEncountersList.add(OMRSFHIRVisitUtil.generateEncounter(visit));
+				}
+			}
+		}
+		return fhirEncountersList;
+	}
 }

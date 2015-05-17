@@ -103,6 +103,7 @@ public final class FHIRConstants {
 	public static final String ALLERGY_API_ALLERGY_STRATEGY = "AllergyApiModuleAllergyStrategy";
 	public static final String OBS_ALLERGY_STRATEGY = "ObsAllergyStrategy";
 	public static final String OPENMRS_CONCEPT_CODING_SYSTEM = "OPENMRS";
+	public static final String NONE = "none";
 
 	static {
 		conceptSourceMap.put(LOINC.toLowerCase(), new ConceptSourceNameURIPair(LOINC, LOINC_URI));

@@ -103,7 +103,28 @@ public interface EncounterService extends OpenmrsService {
 
     /**
      *  Delete encounter by id
-     * @param idPart
+     * @param id the encounter id
      */
     public void deleteEncounter(String id);
+
+	/**
+	 * Search encounters by patient identifier and part of which is the top level visit
+	 *
+	 * @param patientIdentifier the patient identifier
+	 * @param partOf the top level visit id or none for indicate return all visits and encounters which doesn't have top
+	 *                  level visit
+	 * @return fhir encounter list
+	 */
+	public List<Encounter> searchEncountersByPatientIdentifierAndPartOf(String patientIdentifier, String partOf);
+
+	/**
+	 * Search encounters by encounter id and part of which is the top level visit
+	 *
+	 * @param encounterId the encounter id
+	 * @param partOf the top level visit id or none for indicate return all visits and encounters which doesn't have top
+	 *                  level visit
+	 * @return fhir encounter list
+	 */
+	public List<Encounter> searchEncountersByEncounterIdAndPartOf(String encounterId, String partOf);
+
 }
