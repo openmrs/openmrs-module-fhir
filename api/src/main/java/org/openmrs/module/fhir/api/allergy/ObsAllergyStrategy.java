@@ -34,11 +34,15 @@ public class ObsAllergyStrategy implements GenericAllergyStrategy {
 		return null;
 	}
 
-    @Override
-    public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(String identifier) { return null; }
-    
-    @Override
-    public List<AllergyIntolerance> searchAllergiesByPatientName(String name) { return null; }
+	@Override
+	public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(String identifier) {
+		return null;
+	}
+
+	@Override
+	public List<AllergyIntolerance> searchAllergiesByPatientName(String name) {
+		return null;
+	}
 
 	@Override
 	public List<AllergyIntolerance> searchAllergiesByPersonId(String uuid) {

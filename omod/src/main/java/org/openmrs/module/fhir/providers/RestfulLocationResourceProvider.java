@@ -100,35 +100,35 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	 *
 	 * @param theId object containing the id
 	 */
-	    @Delete()
-	    public void deleteLocation(@IdParam IdDt theId)
-	    {
-	    	locationResource.deleteLocation(theId);
-	    }
+	@Delete()
+	public void deleteLocation(@IdParam IdDt theId) {
+		locationResource.deleteLocation(theId);
+	}
 	
-    /**
-     * Update location by id.
-     *
-     * @param theLocation    {@link ca.uhn.fhir.model.dstu2.resource.Location} object provided by the {@link ca.uhn.fhir.rest.server.RestfulServer}
-     * @param theId          Only one of theId or theConditional will have a value and the other will be null,
-     *                       depending on the URL passed into the server
-     * @param theConditional This will have a value like "Patient?identifier=system%7C00001
-     * @return This object contains the identity of the created resource.
-     */
-    @Update()
-    public MethodOutcome updateLocationById(@ResourceParam Location theLocation,
-                                            @IdParam IdDt theId,
-                                            @ConditionalUrlParam String theConditional) {
-        MethodOutcome methodOutcome = new MethodOutcome();
-        String id = null;
-        if (theConditional != null) {
-            int startIndex = theConditional.lastIndexOf('=');
-            id = theConditional.substring(startIndex+1);
-        } else {
-            id = theId.getIdPart();
-        }
-        locationResource.updateLocationById(id, theLocation);
-        return methodOutcome;
-    }
+	/**
+	 * Update location by id.
+	 *
+	 * @param theLocation    {@link ca.uhn.fhir.model.dstu2.resource.Location} object provided by the {@link ca.uhn.fhir
+	 *                       .rest.server.RestfulServer}
+	 * @param theId          Only one of theId or theConditional will have a value and the other will be null,
+	 *                       depending on the URL passed into the server
+	 * @param theConditional This will have a value like "Patient?identifier=system%7C00001
+	 * @return This object contains the identity of the created resource.
+	 */
+	@Update()
+	public MethodOutcome updateLocationById(@ResourceParam Location theLocation,
+	                                        @IdParam IdDt theId,
+	                                        @ConditionalUrlParam String theConditional) {
+		MethodOutcome methodOutcome = new MethodOutcome();
+		String id = null;
+		if (theConditional != null) {
+			int startIndex = theConditional.lastIndexOf('=');
+			id = theConditional.substring(startIndex + 1);
+		} else {
+			id = theId.getIdPart();
+		}
+		locationResource.updateLocationById(id, theLocation);
+		return methodOutcome;
+	}
 
 }

@@ -35,13 +35,13 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 
 	private FHIRObservationResource provider;
 
+	public RestfulObservationResourceProvider() {
+		provider = new FHIRObservationResource();
+	}
+
 	@Override
 	public Class<? extends IResource> getResourceType() {
 		return Observation.class;
-	}
-
-	public RestfulObservationResourceProvider() {
-		provider = new FHIRObservationResource();
 	}
 
 	/**
@@ -131,19 +131,20 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 */
 	@Search()
 	public List<Observation> searchEncountersByPatientIdentifier(
-		@RequiredParam(name=Observation.SP_PATIENT, chainWhitelist= {Patient.SP_IDENTIFIER}) ReferenceParam identifier
-		) {
+			@RequiredParam(name = Observation.SP_PATIENT, chainWhitelist = {
+					Patient.SP_IDENTIFIER }) ReferenceParam identifier
+	) {
 		return provider.searchObsByPatientIdentifier(identifier);
 	}
 
-    /**
-     * Delete observation by unique id
-     *
-     * @param theId object containing the id
-     */
-    @Delete()
-    public void deleteObservation(@IdParam IdDt theId) {
-        provider.deleteObservation(theId);
-    }
+	/**
+	 * Delete observation by unique id
+	 *
+	 * @param theId object containing the id
+	 */
+	@Delete()
+	public void deleteObservation(@IdParam IdDt theId) {
+		provider.deleteObservation(theId);
+	}
 
 }

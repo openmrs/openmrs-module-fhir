@@ -162,7 +162,7 @@ public class FHIRObsUtil {
 
 		} else if (FHIRConstants.CWE_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation()
 		)) {
-			if(obs.getValueCoded() != null) {
+			if (obs.getValueCoded() != null) {
 				Collection<ConceptMap> valueMappings = obs.getValueCoded().getConceptMappings();
 				List<CodingDt> values = new ArrayList<CodingDt>();
 

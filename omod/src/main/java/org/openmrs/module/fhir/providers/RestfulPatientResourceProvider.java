@@ -141,23 +141,24 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 		throw new NotImplementedOperationException("Find patients by provider is not implemented yet");
 	}
 
-    /**
-     * Implementation of $everything operation which returns content of a patient
-     *
-     * @param patientId if of the patient
-     * @return bundle
-     */
-    @Operation(name = "$everything")
-    public Bundle patientInstanceOperation(@IdParam IdDt patientId) {
-        return patientResource.getPatientOperationsById(patientId);
-    }
+	/**
+	 * Implementation of $everything operation which returns content of a patient
+	 *
+	 * @param patientId if of the patient
+	 * @return bundle
+	 */
+	@Operation(name = "$everything")
+	public Bundle patientInstanceOperation(@IdParam IdDt patientId) {
+		return patientResource.getPatientOperationsById(patientId);
+	}
 
-    /**
-     * Delete patient by unique id
-     * @param theId
-     */
-    @Delete
-    public void deletePatient(@IdParam IdDt theId){
-        patientResource.deletePatient(theId);
-    }
+	/**
+	 * Delete patient by unique id
+	 *
+	 * @param theId
+	 */
+	@Delete
+	public void deletePatient(@IdParam IdDt theId) {
+		patientResource.deletePatient(theId);
+	}
 }

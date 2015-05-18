@@ -24,7 +24,6 @@ import ca.uhn.fhir.rest.annotation.Operation;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.Search;
-import ca.uhn.fhir.rest.gclient.ReferenceClientParam;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
@@ -78,8 +77,9 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	 */
 	@Search()
 	public List<Encounter> searchEncountersByPatientIdentifier(
-		@RequiredParam(name=Encounter.SP_PATIENT, chainWhitelist= {Patient.SP_IDENTIFIER}) ReferenceParam identifier
-		) {
+			@RequiredParam(name = Encounter.SP_PATIENT, chainWhitelist = { Patient.SP_IDENTIFIER }) ReferenceParam
+					identifier
+	) {
 		return encounterResource.searchEncountersByPatientIdentifier(identifier);
 	}
 
@@ -87,12 +87,12 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	 * Search encounters by patient identifier and encounter part of
 	 *
 	 * @param patientIdentifier the patient identifier
-	 * @param partOf  the top level visit
+	 * @param partOf            the top level visit
 	 */
 	@Search()
 	public List<Encounter> searchEncountersByPatientIdentifierAndPartOf(
-			@RequiredParam(name=Encounter.SP_PATIENT, chainWhitelist= {Patient.SP_IDENTIFIER}) ReferenceParam
-					patientIdentifier , @RequiredParam(name = Encounter.SP_PART_OF) ReferenceParam partOf) {
+			@RequiredParam(name = Encounter.SP_PATIENT, chainWhitelist = { Patient.SP_IDENTIFIER }) ReferenceParam
+					patientIdentifier, @RequiredParam(name = Encounter.SP_PART_OF) ReferenceParam partOf) {
 		return encounterResource.searchEncountersByPatientIdentifierAndPartOf(patientIdentifier, partOf);
 	}
 
@@ -100,12 +100,12 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	 * Search encounters by patient identifier and encounter part of
 	 *
 	 * @param encounterId the encounter id
-	 * @param partOf the top level visit
+	 * @param partOf      the top level visit
 	 */
 	@Search()
 	public List<Encounter> searchEncountersByIdAndPartOf(
-			@RequiredParam(name=Encounter.SP_RES_ID) TokenParam
-					encounterId , @RequiredParam(name = Encounter.SP_PART_OF) ReferenceParam partOf) {
+			@RequiredParam(name = Encounter.SP_RES_ID) TokenParam
+					encounterId, @RequiredParam(name = Encounter.SP_PART_OF) ReferenceParam partOf) {
 		return encounterResource.searchEncountersByIdAndPartOf(encounterId, partOf);
 	}
 
@@ -120,12 +120,13 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 		return encounterResource.getEncounterOperationsById(encounterId);
 	}
 
-    /**
-     * Delete encounter by unique id
-     * @param theId
-     */
-    @Delete
-    public void deleteEncounter(@IdParam IdDt theId){
-        encounterResource.deleteEncounter(theId);
-    }
+	/**
+	 * Delete encounter by unique id
+	 *
+	 * @param theId
+	 */
+	@Delete
+	public void deleteEncounter(@IdParam IdDt theId) {
+		encounterResource.deleteEncounter(theId);
+	}
 }

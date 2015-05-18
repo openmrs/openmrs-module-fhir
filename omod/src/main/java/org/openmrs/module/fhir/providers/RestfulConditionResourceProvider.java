@@ -44,7 +44,7 @@ public class RestfulConditionResourceProvider implements IResourceProvider {
 	 * operations should return a single resource instance.
 	 *
 	 * @param theId The read operation takes one parameter, which must be of type IdDt and must be
-	 * annotated with the "@Read.IdParam" annotation.
+	 *              annotated with the "@Read.IdParam" annotation.
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read()

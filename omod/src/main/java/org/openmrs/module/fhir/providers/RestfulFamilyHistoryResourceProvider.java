@@ -62,7 +62,8 @@ public class RestfulFamilyHistoryResourceProvider implements IResourceProvider {
 	 * @param id object containing the requested id
 	 */
 	@Search()
-	public List<FamilyMemberHistory> searchFamilyHistoryByUniqueId(@RequiredParam(name = FamilyMemberHistory.SP_RES_ID) TokenParam id) {
+	public List<FamilyMemberHistory> searchFamilyHistoryByUniqueId(
+			@RequiredParam(name = FamilyMemberHistory.SP_RES_ID) TokenParam id) {
 		return familyHistoryResource.searchFamilyHistoryByUniqueId(id);
 	}
 

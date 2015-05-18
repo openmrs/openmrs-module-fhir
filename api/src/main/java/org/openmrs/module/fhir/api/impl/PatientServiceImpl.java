@@ -49,17 +49,17 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 	private FHIRDAO dao;
 
 	/**
-	 * @param dao the dao to set
-	 */
-	public void setDao(FHIRDAO dao) {
-		this.dao = dao;
-	}
-
-	/**
 	 * @return the dao
 	 */
 	public FHIRDAO getDao() {
 		return dao;
+	}
+
+	/**
+	 * @param dao the dao to set
+	 */
+	public void setDao(FHIRDAO dao) {
+		this.dao = dao;
 	}
 
 	/**
@@ -216,14 +216,15 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 			}
 
 			//Set patients' relationships
-			for (FamilyMemberHistory familyHistory : familyHistoryService.searchFamilyHistoryByPersonId(omsrPatient.getUuid())) {
+			for (FamilyMemberHistory familyHistory : familyHistoryService.searchFamilyHistoryByPersonId(
+					omsrPatient.getUuid())) {
 				bundle.addEntry().setResource(familyHistory);
 			}
 
 			//Set visits
-			for(Visit visit : Context.getVisitService().getVisitsByPatient(omsrPatient)) {
+			for (Visit visit : Context.getVisitService().getVisitsByPatient(omsrPatient)) {
 				bundle.addEntry().setResource(OMRSFHIRVisitUtil.generateEncounter(visit));
-				if(visit.getLocation() != null) {
+				if (visit.getLocation() != null) {
 					bundle.addEntry().setResource(FHIRLocationUtil.generateLocation(visit.getLocation()));
 				}
 			}
@@ -231,14 +232,14 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 			//Filter resources for duplicates
 			List<Bundle.Entry> filteredList = new ArrayList<Bundle.Entry>();
 			boolean contains;
-			for(Bundle.Entry temp : bundle.getEntry()) {
+			for (Bundle.Entry temp : bundle.getEntry()) {
 				contains = false;
-				for(Bundle.Entry filtered : filteredList) {
-					if(filtered.getResource().getId().getIdPart().equals(temp.getResource().getId().getIdPart())) {
+				for (Bundle.Entry filtered : filteredList) {
+					if (filtered.getResource().getId().getIdPart().equals(temp.getResource().getId().getIdPart())) {
 						contains = true;
 					}
 				}
-				if(!contains) {
+				if (!contains) {
 					filteredList.add(temp);
 				}
 			}
@@ -247,21 +248,21 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 		return bundle;
 	}
 
-    /**
-     * @see org.openmrs.module.fhir.api.PatientService#deletePatient(String)
-     */
-    @Override
-    public void deletePatient(String id) {
-        org.openmrs.Patient patient = Context.getPatientService().getPatientByUuid(id);
-        // patient not found. return with 404
-        if(patient ==null){
-            throw new ResourceNotFoundException(Patient.class,new IdDt("Patient",id));
-        }
-        try {
-        patient = Context.getPatientService().voidPatient(patient,"DELETED by FHIR request");
-        } catch (APIException ex){
-            // refused to retire resource.  return with 405
-            throw new MethodNotAllowedException("The OpenMRS API refused to retire the Patient via the FHIR request.");
-        }
-    }
+	/**
+	 * @see org.openmrs.module.fhir.api.PatientService#deletePatient(String)
+	 */
+	@Override
+	public void deletePatient(String id) {
+		org.openmrs.Patient patient = Context.getPatientService().getPatientByUuid(id);
+		// patient not found. return with 404
+		if (patient == null) {
+			throw new ResourceNotFoundException(Patient.class, new IdDt("Patient", id));
+		}
+		try {
+			patient = Context.getPatientService().voidPatient(patient, "DELETED by FHIR request");
+		} catch (APIException ex) {
+			// refused to retire resource.  return with 405
+			throw new MethodNotAllowedException("The OpenMRS API refused to retire the Patient via the FHIR request.");
+		}
+	}
 }

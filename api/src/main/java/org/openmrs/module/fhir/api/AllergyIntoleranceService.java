@@ -23,7 +23,7 @@ public interface AllergyIntoleranceService {
 	 * Get allergy tolerance by uuid
 	 *
 	 * @param uuid of the requesting allergy
- 	 * @return allergy tolerance obj
+	 * @return allergy tolerance obj
 	 */
 	AllergyIntolerance getAllergyById(String uuid);
 
@@ -35,19 +35,21 @@ public interface AllergyIntoleranceService {
 	 */
 	List<AllergyIntolerance> searchAllergiesById(String uuid);
 
-    /**
-     * Search allergies by patient identifier
-     * @param identifier to be search
-     * @return fhir allergy resource list
-     */
-    public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(String identifier);
+	/**
+	 * Search allergies by patient identifier
+	 *
+	 * @param identifier to be search
+	 * @return fhir allergy resource list
+	 */
+	public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(String identifier);
 
-    /**
-     * Search allergies by patient name
-     * @param name to be search
-     * @return fhir allergy resource list
-     */
-    public List<AllergyIntolerance> searchAllergiesByPatientName(String name);
+	/**
+	 * Search allergies by patient name
+	 *
+	 * @param name to be search
+	 * @return fhir allergy resource list
+	 */
+	public List<AllergyIntolerance> searchAllergiesByPatientName(String name);
 
 	/**
 	 * Ger allergies by peron uuid
@@ -57,4 +59,4 @@ public interface AllergyIntoleranceService {
 	 */
 	public List<AllergyIntolerance> getAllergiesByPersonId(String personId);
 
-	}
+}

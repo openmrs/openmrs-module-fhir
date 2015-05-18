@@ -29,15 +29,14 @@ import org.openmrs.module.fhir.api.manager.FHIRContextFactory;
 
 public class FHIRUtils {
 
-	private static FhirContext ctx = FHIRContextFactory.getFHIRContext();
-	private static FhirValidator val = ctx.newValidator();
-
 	public static final String CONTENT_TYPE_APPLICATION_XML_FHIR = "application/xml+fhir";
 	public static final String CONTENT_TYPE_APPLICATION_JSON_FHIR = "application/json+fhir";
 	public static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
 	public static final String CONTENT_TYPE_APPLICATION_XML = "application/xml";
 	public static final String PATIENT_IDENTIFIER_TYPE_REST_RESOURCE_URI = "/ws/rest/v1/patientidentifiertype/";
 	public static final String PATIENT_PHONE_NUMBER_ATTRIBUTE = "Telephone Number";
+	private static FhirContext ctx = FHIRContextFactory.getFHIRContext();
+	private static FhirValidator val = ctx.newValidator();
 
 	public static String getFHIRBaseUrl() {
 		return Context.getAdministrationService().getGlobalProperty("fhir.baseUrl");
@@ -77,9 +76,11 @@ public class FHIRUtils {
 	public static String getConceptCodingSystem() {
 		return Context.getAdministrationService().getGlobalProperty("fhir.concept.codingSystem");
 	}
+
 	/**
 	 * This method accept person object and check whether there is a patient exist, if so it will build reference with
 	 * patient else it will contain person reference
+	 *
 	 * @param person person ob
 	 * @return resource reference
 	 */
@@ -111,33 +112,33 @@ public class FHIRUtils {
 	}
 
 	public static CodingDt getCodingDtByConceptMappings(ConceptMap conceptMap) {
-			//Set concept source concept name as the display value and set concept uuid if name is empty
-			String display = conceptMap.getConceptReferenceTerm().getName();
-			//Commented to omit setting concept uuid if concept name is null or empty
+		//Set concept source concept name as the display value and set concept uuid if name is empty
+		String display = conceptMap.getConceptReferenceTerm().getName();
+		//Commented to omit setting concept uuid if concept name is null or empty
 			/*if (display == null || display.isEmpty()) {
 				display = conceptMap.getConceptReferenceTerm().getUuid();
 			}*/
-			//Get concept source name and uri pair if it available
-			ConceptSourceNameURIPair sourceNameURIPair = FHIRConstants.conceptSourceMap.get(conceptMap
-					.getConceptReferenceTerm().getConceptSource().getName().toLowerCase());
-			if(sourceNameURIPair != null) {
-				return new CodingDt().setCode(conceptMap.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem
-						(sourceNameURIPair.getConceptSourceURI());
-			}
-			if(display != null && !display.isEmpty()) {
-				return new CodingDt().setCode(conceptMap.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-						conceptMap
-								.getConceptReferenceTerm().getConceptSource().getName());
-			} else {
-				return new CodingDt().setCode(conceptMap.getConceptReferenceTerm().getCode()).setSystem(
-						conceptMap.getConceptReferenceTerm().getConceptSource().getName());
+		//Get concept source name and uri pair if it available
+		ConceptSourceNameURIPair sourceNameURIPair = FHIRConstants.conceptSourceMap.get(conceptMap
+				.getConceptReferenceTerm().getConceptSource().getName().toLowerCase());
+		if (sourceNameURIPair != null) {
+			return new CodingDt().setCode(conceptMap.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem
+					(sourceNameURIPair.getConceptSourceURI());
+		}
+		if (display != null && !display.isEmpty()) {
+			return new CodingDt().setCode(conceptMap.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
+					conceptMap
+							.getConceptReferenceTerm().getConceptSource().getName());
+		} else {
+			return new CodingDt().setCode(conceptMap.getConceptReferenceTerm().getCode()).setSystem(
+					conceptMap.getConceptReferenceTerm().getConceptSource().getName());
 		}
 	}
 
 	public static CodingDt getCodingDtByOpenMRSConcept(Concept concept) {
 		String display = null;
 		//Set concept name as the display value and set concept uuid if name is empty
-		if(concept.getName() != null) {
+		if (concept.getName() != null) {
 			display = concept.getName().getName();
 		}
 		//Commented out for omiiting setting concept uuid in display term
@@ -145,7 +146,7 @@ public class FHIRUtils {
 			display = concept.getUuid();
 		}*/
 
-		if(display != null && !display.isEmpty()) {
+		if (display != null && !display.isEmpty()) {
 			return new CodingDt().setCode(concept.getUuid()).setDisplay(display).setSystem(FHIRConstants.OPENMRS_URI);
 		} else {
 			return new CodingDt().setCode(concept.getUuid()).setSystem(FHIRConstants.OPENMRS_URI);

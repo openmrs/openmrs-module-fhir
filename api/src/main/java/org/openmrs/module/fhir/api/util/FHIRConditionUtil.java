@@ -42,7 +42,7 @@ public class FHIRConditionUtil {
 		fhirCondition.setDateAsserted(dateDt);
 
 		//Set condtion concept
-		if(condition.getConcept() != null) {
+		if (condition.getConcept() != null) {
 			CodeableConceptDt conceptDt = fhirCondition.getCode();
 			//Set allergen
 			Collection<ConceptMap> mappings = condition.getConcept().getConceptMappings();

@@ -14,6 +14,7 @@
 package org.openmrs.module.fhir.api.util;
 
 public class ConceptSourceNameURIPair {
+
 	private String conceptSourceName;
 	private String conceptSourceURI;
 

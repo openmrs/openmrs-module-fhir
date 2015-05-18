@@ -155,9 +155,9 @@ public class FHIRPersonUtil {
 	 */
 	public static org.openmrs.Person generateOpenMRSPerson(ca.uhn.fhir.model.dstu2.resource.Person personFHIR) {
 		org.openmrs.Person omrsPerson = new org.openmrs.Person();
-		if(personFHIR.getId()!=null){
+		if (personFHIR.getId() != null) {
 			omrsPerson.setUuid(personFHIR.getId().getIdPart());
-		}		
+		}
 		Set<PersonName> names = new TreeSet<PersonName>();
 		for (HumanNameDt humanNameDt : personFHIR.getName()) {
 			PersonName personName = new PersonName();
@@ -253,12 +253,13 @@ public class FHIRPersonUtil {
 	}
 	
 	/**
-	 * @param omrsPerson which contains OpenMRS Person who has the same attributes of the json request body
-	 * @param retrievedPerson the OpenMRS person which was read from the DB for the given uuid in the PUT request. 
+	 * @param omrsPerson      which contains OpenMRS Person who has the same attributes of the json request body
+	 * @param retrievedPerson the OpenMRS person which was read from the DB for the given uuid in the PUT request.
 	 * @return OpenMRS person after copying all the attributes of the PUT request to the retrievedPerson
 	 * @should generate OpenMRS Person
 	 */
-	public static  org.openmrs.Person updatePersonAttributes(org.openmrs.Person omrsPerson, org.openmrs.Person retrievedPerson) {
+	public static org.openmrs.Person updatePersonAttributes(org.openmrs.Person omrsPerson,
+	                                                        org.openmrs.Person retrievedPerson) {
 		Set<PersonName> all = retrievedPerson.getNames();
 		boolean needToSetPrefferedName = false; // indicate wheter any preffered names are in the request body. 
 		for (PersonName name : omrsPerson.getNames()) {

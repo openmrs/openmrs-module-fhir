@@ -86,7 +86,6 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals(3, fhirEncounters.size());
 	}
 
-
 	@Test
 	public void searchEncounterComposition_shouldReturnMatchingComposition() {
 		String encounterUuid = "33d70956-b359-452a-b3da-b69c8ab459ce";
@@ -111,15 +110,15 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals(2, fhirCompositon.size());
 	}
 
-    @Test
-    public void deleteEncounter_shouldVoidEncounterIfExists(){
-        String encounterUuid = "430bbb70-6a9c-4e1e-badb-9d1034b1b5e9";
-        org.openmrs.Encounter encounter = Context.getEncounterService().getEncounterByUuid(encounterUuid);
-        assertNotNull(encounter);
-        assertFalse(encounter.isVoided());
-        getService().deleteEncounter(encounterUuid);
-        assertTrue(encounter.isVoided());
-    }
+	@Test
+	public void deleteEncounter_shouldVoidEncounterIfExists() {
+		String encounterUuid = "430bbb70-6a9c-4e1e-badb-9d1034b1b5e9";
+		org.openmrs.Encounter encounter = Context.getEncounterService().getEncounterByUuid(encounterUuid);
+		assertNotNull(encounter);
+		assertFalse(encounter.isVoided());
+		getService().deleteEncounter(encounterUuid);
+		assertTrue(encounter.isVoided());
+	}
 
 	@Test
 	public void searchEncounterByEncounterIdAndPartOfNone_shouldReturnsEncounterWithoutParentVisitOrVisit() {
@@ -151,7 +150,8 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 	public void searchEncounterByPatientIdentifierAndPartOf_shouldReturnsEncounterWithoutParentVisitOrVisit() {
 		String patientIdentifier = "12345";
 		String visitUuid = "7fffd6b9-0970-4967-88c7-0b7b50f12ab9";
-		List<Encounter> fhirEncounters = getService().searchEncountersByPatientIdentifierAndPartOf(patientIdentifier, visitUuid);
+		List<Encounter> fhirEncounters = getService().searchEncountersByPatientIdentifierAndPartOf(patientIdentifier,
+				visitUuid);
 		assertNotNull(fhirEncounters);
 		assertEquals(1, fhirEncounters.size());
 	}

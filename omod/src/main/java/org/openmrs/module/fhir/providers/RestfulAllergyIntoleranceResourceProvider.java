@@ -61,29 +61,32 @@ public class RestfulAllergyIntoleranceResourceProvider implements IResourceProvi
 	 * @param id object containing the requested id
 	 */
 	@Search()
-	public List<AllergyIntolerance> searchAllergiesByUniqueId(@RequiredParam(name = AllergyIntolerance.SP_RES_ID) TokenParam id) {
+	public List<AllergyIntolerance> searchAllergiesByUniqueId(
+			@RequiredParam(name = AllergyIntolerance.SP_RES_ID) TokenParam id) {
 		return allergyIntoleranceResource.searchAllergiesById(id);
 	}
 
-    /**
-     * Search allergies by patient identifier
-     *
-     * @param identifier object containing the patient identifier
-     */
-    @Search()
-    public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(
-            @RequiredParam(name=AllergyIntolerance.SP_PATIENT, chainWhitelist= {Patient.SP_IDENTIFIER}) ReferenceParam identifier) {
-        return allergyIntoleranceResource.searchAllergiesByPatientIdentifier(identifier);
-    }
-    
-    /**
-     * Search allergies by patient name
-     *
-     * @param name object containing the patient name
-     */
-    @Search()
-    public List<AllergyIntolerance> searchAllergiesByPatientName(
-            @RequiredParam(name=AllergyIntolerance.SP_PATIENT, chainWhitelist= {Patient.SP_NAME}) ReferenceParam name) {
-        return allergyIntoleranceResource.searchAllergiesByPatientName(name);
-    }
+	/**
+	 * Search allergies by patient identifier
+	 *
+	 * @param identifier object containing the patient identifier
+	 */
+	@Search()
+	public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(
+			@RequiredParam(name = AllergyIntolerance.SP_PATIENT, chainWhitelist = {
+					Patient.SP_IDENTIFIER }) ReferenceParam identifier) {
+		return allergyIntoleranceResource.searchAllergiesByPatientIdentifier(identifier);
+	}
+
+	/**
+	 * Search allergies by patient name
+	 *
+	 * @param name object containing the patient name
+	 */
+	@Search()
+	public List<AllergyIntolerance> searchAllergiesByPatientName(
+			@RequiredParam(name = AllergyIntolerance.SP_PATIENT, chainWhitelist = { Patient.SP_NAME }) ReferenceParam
+					name) {
+		return allergyIntoleranceResource.searchAllergiesByPatientName(name);
+	}
 }

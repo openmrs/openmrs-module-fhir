@@ -33,17 +33,17 @@ public class AllergyIntoleranceServiceImpl extends BaseOpenmrsService implements
 	private FHIRDAO dao;
 
 	/**
-	 * @param dao the dao to set
-	 */
-	public void setDao(FHIRDAO dao) {
-		this.dao = dao;
-	}
-
-	/**
 	 * @return the dao
 	 */
 	public FHIRDAO getDao() {
 		return dao;
+	}
+
+	/**
+	 * @param dao the dao to set
+	 */
+	public void setDao(FHIRDAO dao) {
+		this.dao = dao;
 	}
 
 	/**
@@ -60,21 +60,21 @@ public class AllergyIntoleranceServiceImpl extends BaseOpenmrsService implements
 		return AllergyStrategyUtil.getAllergyStrategy().searchAllergyById(uuid);
 	}
 
-    /**
-     * @see org.openmrs.module.fhir.api.AllergyIntoleranceService#searchAllergiesByPatientIdentifier(String)
-     */
-    public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(String identifier) {
-        return AllergyStrategyUtil.getAllergyStrategy().searchAllergiesByPatientIdentifier(identifier);
-    }
-    
-    /**
-     * @see org.openmrs.module.fhir.api.AllergyIntoleranceService#searchAllergiesByPatientName(String)
-     */
-    public List<AllergyIntolerance> searchAllergiesByPatientName(String name){
-    	return AllergyStrategyUtil.getAllergyStrategy().searchAllergiesByPatientName(name);
-    }
+	/**
+	 * @see org.openmrs.module.fhir.api.AllergyIntoleranceService#searchAllergiesByPatientIdentifier(String)
+	 */
+	public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(String identifier) {
+		return AllergyStrategyUtil.getAllergyStrategy().searchAllergiesByPatientIdentifier(identifier);
+	}
 
-	public List<AllergyIntolerance> getAllergiesByPersonId(String personId){
+	/**
+	 * @see org.openmrs.module.fhir.api.AllergyIntoleranceService#searchAllergiesByPatientName(String)
+	 */
+	public List<AllergyIntolerance> searchAllergiesByPatientName(String name) {
+		return AllergyStrategyUtil.getAllergyStrategy().searchAllergiesByPatientName(name);
+	}
+
+	public List<AllergyIntolerance> getAllergiesByPersonId(String personId) {
 		return AllergyStrategyUtil.getAllergyStrategy().searchAllergiesByPatientName(personId);
 	}
 }

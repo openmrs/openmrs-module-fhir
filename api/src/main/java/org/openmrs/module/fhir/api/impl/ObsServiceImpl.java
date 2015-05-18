@@ -43,17 +43,17 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	private FHIRDAO dao;
 
 	/**
-	 * @param dao the dao to set
-	 */
-	public void setDao(FHIRDAO dao) {
-		this.dao = dao;
-	}
-
-	/**
 	 * @return the dao
 	 */
 	public FHIRDAO getDao() {
 		return dao;
+	}
+
+	/**
+	 * @param dao the dao to set
+	 */
+	public void setDao(FHIRDAO dao) {
+		this.dao = dao;
 	}
 
 	/**
@@ -77,19 +77,19 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 		String codingSystem = FHIRUtils.getConceptCodingSystem();
 		String systemName;
 		for (Map.Entry<String, String> entry : conceptNamesAndURIs.entrySet()) {
-			if(entry.getValue() == null || entry.getValue().isEmpty()) {
+			if (entry.getValue() == null || entry.getValue().isEmpty()) {
 				if (codingSystem == null || FHIRConstants.OPENMRS_CONCEPT_CODING_SYSTEM.equals(codingSystem)) {
 					concept = Context.getConceptService().getConceptByUuid(entry.getKey());
 				} else {
 					systemName = FHIRConstants.conceptSourceURINameMap.get(entry.getValue());
-					if(systemName == null || systemName.isEmpty()) {
+					if (systemName == null || systemName.isEmpty()) {
 						return obsList;
 					}
 					concept = Context.getConceptService().getConceptByMapping(entry.getKey(), systemName);
 				}
 			} else {
 				systemName = FHIRConstants.conceptSourceURINameMap.get(entry.getValue());
-				if(systemName == null || systemName.isEmpty()) {
+				if (systemName == null || systemName.isEmpty()) {
 					return obsList;
 				}
 				concept = Context.getConceptService().getConceptByMapping(entry.getKey(), systemName);
@@ -125,25 +125,25 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 		String systemName;
 		//Check system uri specified and if so find system name and query appropriate concept
 		for (Map.Entry<String, String> entry : conceptNamesAndURIs.entrySet()) {
-			if(entry.getValue() == null || entry.getValue().isEmpty()) {
+			if (entry.getValue() == null || entry.getValue().isEmpty()) {
 				if (codingSystem == null || FHIRConstants.OPENMRS_CONCEPT_CODING_SYSTEM.equals(codingSystem)) {
 					concept = Context.getConceptService().getConceptByUuid(entry.getKey());
 				} else {
 					systemName = FHIRConstants.conceptSourceURINameMap.get(entry.getValue());
-					if(systemName == null || systemName.isEmpty()) {
+					if (systemName == null || systemName.isEmpty()) {
 						return obsList;
 					}
 					concept = Context.getConceptService().getConceptByMapping(entry.getKey(), systemName);
 				}
 			} else {
 				systemName = FHIRConstants.conceptSourceURINameMap.get(entry.getValue());
-				if(systemName == null || systemName.isEmpty()) {
+				if (systemName == null || systemName.isEmpty()) {
 					return obsList;
 				}
 				concept = Context.getConceptService().getConceptByMapping(entry.getKey(), systemName);
 			}
 
-			if(concept == null) {
+			if (concept == null) {
 				return obsList;
 			}
 
@@ -209,19 +209,19 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 		List<Observation> fhirObsList = new ArrayList<Observation>();
 
 		List<Obs> ormsObs = Context.getObsService().getObservations(identifier);
-		for (Obs obs: ormsObs) {
+		for (Obs obs : ormsObs) {
 			fhirObsList.add(FHIRObsUtil.generateObs(obs));
 		}
 		return fhirObsList;
 	}
 
-    /**
-     * @see org.openmrs.module.fhir.api.ObsService#deleteObs(String)
-     */
-    @Override
-    public void deleteObs(String id) {
-        Obs obs = Context.getObsService().getObsByUuid(id);
-        Context.getObsService().voidObs(obs, "DELETED by FHIR Request");
-    }
+	/**
+	 * @see org.openmrs.module.fhir.api.ObsService#deleteObs(String)
+	 */
+	@Override
+	public void deleteObs(String id) {
+		Obs obs = Context.getObsService().getObsByUuid(id);
+		Context.getObsService().voidObs(obs, "DELETED by FHIR Request");
+	}
 
 }

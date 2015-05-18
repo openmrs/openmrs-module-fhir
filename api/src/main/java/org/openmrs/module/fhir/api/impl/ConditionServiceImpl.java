@@ -33,17 +33,17 @@ public class ConditionServiceImpl implements ConditionService {
 	private FHIRDAO dao;
 
 	/**
-	 * @param dao the dao to set
-	 */
-	public void setDao(FHIRDAO dao) {
-		this.dao = dao;
-	}
-
-	/**
 	 * @return the dao
 	 */
 	public FHIRDAO getDao() {
 		return dao;
+	}
+
+	/**
+	 * @param dao the dao to set
+	 */
+	public void setDao(FHIRDAO dao) {
+		this.dao = dao;
 	}
 
 	@Override

@@ -28,16 +28,16 @@ public class HibernateFHIRDAO implements FHIRDAO {
 	private SessionFactory sessionFactory;
 	
 	/**
-	 * @param sessionFactory the sessionFactory to set
-	 */
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
-
-	/**
 	 * @return the sessionFactory
 	 */
 	public SessionFactory getSessionFactory() {
 		return sessionFactory;
+	}
+
+	/**
+	 * @param sessionFactory the sessionFactory to set
+	 */
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
 	}
 }

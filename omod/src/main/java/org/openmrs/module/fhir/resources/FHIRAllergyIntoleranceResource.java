@@ -30,7 +30,7 @@ public class FHIRAllergyIntoleranceResource extends Resource {
 	public AllergyIntolerance getByUniqueId(IdDt id) {
 		AllergyIntoleranceService allergyIntoleranceService = Context.getService(AllergyIntoleranceService.class);
 		AllergyIntolerance allergyIntolerance = allergyIntoleranceService.getAllergyById(id.getIdPart());
-		if(allergyIntolerance == null) {
+		if (allergyIntolerance == null) {
 			throw new ResourceNotFoundException("AllergyIntolerance is not found for the given Id " + id.getIdPart());
 		}
 		return allergyIntolerance;
@@ -40,21 +40,23 @@ public class FHIRAllergyIntoleranceResource extends Resource {
 		return Context.getService(AllergyIntoleranceService.class).searchAllergiesById(id.getValue());
 	}
 
-    public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(ReferenceParam identifier) {
-        List<AllergyIntolerance> fhirAllergies = new ArrayList<AllergyIntolerance>();
-        String chain = identifier.getChain();
-        if (Patient.SP_IDENTIFIER.equals(chain)) {
-            fhirAllergies = Context.getService(AllergyIntoleranceService.class).searchAllergiesByPatientIdentifier(identifier.getValue());
-        }
-        return fhirAllergies;
-    }
-    
-    public List<AllergyIntolerance> searchAllergiesByPatientName(ReferenceParam name) {
-        List<AllergyIntolerance> fhirAllergies = new ArrayList<AllergyIntolerance>();
-        String chain = name.getChain();
-        if (Patient.SP_NAME.equals(chain)) {
-            fhirAllergies = Context.getService(AllergyIntoleranceService.class).searchAllergiesByPatientName(name.getValue());
-        }
-        return fhirAllergies;
-    }
+	public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(ReferenceParam identifier) {
+		List<AllergyIntolerance> fhirAllergies = new ArrayList<AllergyIntolerance>();
+		String chain = identifier.getChain();
+		if (Patient.SP_IDENTIFIER.equals(chain)) {
+			fhirAllergies = Context.getService(AllergyIntoleranceService.class).searchAllergiesByPatientIdentifier(
+					identifier.getValue());
+		}
+		return fhirAllergies;
+	}
+
+	public List<AllergyIntolerance> searchAllergiesByPatientName(ReferenceParam name) {
+		List<AllergyIntolerance> fhirAllergies = new ArrayList<AllergyIntolerance>();
+		String chain = name.getChain();
+		if (Patient.SP_NAME.equals(chain)) {
+			fhirAllergies = Context.getService(AllergyIntoleranceService.class).searchAllergiesByPatientName(
+					name.getValue());
+		}
+		return fhirAllergies;
+	}
 }

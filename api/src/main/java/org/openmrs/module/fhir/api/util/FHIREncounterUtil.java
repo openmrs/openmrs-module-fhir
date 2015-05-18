@@ -13,7 +13,6 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.composite.PeriodDt;
 import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu2.resource.Bundle;
@@ -231,17 +230,17 @@ public class FHIREncounterUtil {
 	 * patient everything operation
 	 *
 	 * @param encounter encounter containing obs
-	 * @param bundle bundle containg encounter everything contents
+	 * @param bundle    bundle containg encounter everything contents
 	 * @return bundle with only required obs
 	 */
 	public static void addFilteredObs(org.openmrs.Encounter encounter, Bundle bundle) {
 		String strategy = FHIRUtils.getAllergyStrategy();
 		Bundle.Entry observation;
-		if(FHIRConstants.OBS_ALLERGY_STRATEGY.equals(strategy)) {
+		if (FHIRConstants.OBS_ALLERGY_STRATEGY.equals(strategy)) {
 			String allergyCode = FHIRUtils.getObsAllergyStrategyConceptUuid();
 			Concept concept = Context.getConceptService().getConceptByUuid(allergyCode);
 			for (Obs obs : encounter.getAllObs(false)) {
-				if(concept != null && !concept.equals(obs.getConcept())) {
+				if (concept != null && !concept.equals(obs.getConcept())) {
 					observation = bundle.addEntry();
 					observation.setResource(FHIRObsUtil.generateObs(obs));
 				}

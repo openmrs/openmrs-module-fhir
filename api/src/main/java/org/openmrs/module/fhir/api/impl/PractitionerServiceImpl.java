@@ -37,17 +37,17 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 	private FHIRDAO dao;
 
 	/**
-	 * @param dao the dao to set
-	 */
-	public void setDao(FHIRDAO dao) {
-		this.dao = dao;
-	}
-
-	/**
 	 * @return the dao
 	 */
 	public FHIRDAO getDao() {
 		return dao;
+	}
+
+	/**
+	 * @param dao the dao to set
+	 */
+	public void setDao(FHIRDAO dao) {
+		this.dao = dao;
 	}
 
 	/**
@@ -92,8 +92,9 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 		List<Provider> omrsProviders = searchProvidersByQuery(givenName);
 		List<Practitioner> practitioners = new ArrayList<Practitioner>();
 		for (Provider provider : omrsProviders) {
-			if(provider.getPerson() != null) {
-				//Search through the provider given name for check whether given name exist in the returned provider resource
+			if (provider.getPerson() != null) {
+				//Search through the provider given name for check whether given name exist in the returned provider
+				// resource
 
 				if (givenName.equalsIgnoreCase(provider.getPerson().getGivenName())) {
 					practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
@@ -117,7 +118,7 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 		List<Practitioner> practitioners = new ArrayList<Practitioner>();
 		for (Provider provider : omrsProviders) {
 			//Search through the provider family name for check whether family name exist in the returned provider resource
-			if(provider.getPerson() != null) {
+			if (provider.getPerson() != null) {
 				if (familyName.equalsIgnoreCase(provider.getPerson().getFamilyName())) {
 					practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
 				} else {

@@ -43,7 +43,8 @@ import static org.junit.Assert.fail;
 
 public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 
-	protected static final String PERSOM_INITIAL_DATA_XML = "org/openmrs/api/include/PersonServiceTest-createPersonPurgeVoidTest.xml";
+	protected static final String PERSOM_INITIAL_DATA_XML =
+			"org/openmrs/api/include/PersonServiceTest-createPersonPurgeVoidTest.xml";
 
 	public PersonService getService() {
 		return Context.getService(PersonService.class);
@@ -103,7 +104,9 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 	public void generateOpenMRSPerson_shouldGenerateOmsPerson() throws Exception {
 		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
 		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);
-		person.setUuid(""); // remove the uuid value from the Person. This will let this resource to be persist on the db with random uuid
+		person.setUuid(
+				""); // remove the uuid value from the Person. This will let this resource to be persist on the db with
+		// random uuid
 		Person fhirPerson = FHIRPersonUtil.generatePerson(person);
 		fhirPerson = Context.getService(PersonService.class).createFHIRPerson(fhirPerson);
 		assertNotNull(fhirPerson);

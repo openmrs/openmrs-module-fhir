@@ -35,7 +35,7 @@ public interface ObsService extends OpenmrsService {
 	/**
 	 * Search observations by patient and concepts
 	 *
-	 * @param patientUUid  patient uuid
+	 * @param patientUUid         patient uuid
 	 * @param conceptNamesAndURIs names of the concepts with system uris in a map
 	 * @return fhir obs resource list
 	 */
@@ -88,12 +88,12 @@ public interface ObsService extends OpenmrsService {
 	*/
 	public List<Observation> searchObsByPatientIdentifier(String identifier);
 
-    /**
-     * Delete observation by id
-     *
-     * @param id uuid of the observation
-     * @return observation fhir resource
-     */
-    public void deleteObs(String id);
+	/**
+	 * Delete observation by id
+	 *
+	 * @param id uuid of the observation
+	 * @return observation fhir resource
+	 */
+	public void deleteObs(String id);
 
 }

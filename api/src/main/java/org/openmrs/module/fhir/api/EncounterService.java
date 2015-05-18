@@ -54,10 +54,11 @@ public interface EncounterService extends OpenmrsService {
 	public List<Encounter> searchEncounterById(String id);
 
 	/**
-	* Search encounters by patient identifier
-	* @param identifier to be search
-	* @return fhir encounter resource list
-	*/
+	 * Search encounters by patient identifier
+	 *
+	 * @param identifier to be search
+	 * @return fhir encounter resource list
+	 */
 	public List<Encounter> searchEncountersByPatientIdentifier(String identifier);
 
 	/**
@@ -96,23 +97,25 @@ public interface EncounterService extends OpenmrsService {
 	 * Get Encounter operations bundle resource with providing external bundle resource
 	 *
 	 * @param encounterId the encounter id to be search encounters
-	 * @param bundle the provided bundle
+	 * @param bundle      the provided bundle
 	 * @return contents of encounter resource bundle for operations
 	 */
-	public Bundle getEncounterOperationsById(String encounterId, Bundle bundle,  boolean includePatient);
+	public Bundle getEncounterOperationsById(String encounterId, Bundle bundle, boolean includePatient);
 
-    /**
-     *  Delete encounter by id
-     * @param id the encounter id
-     */
-    public void deleteEncounter(String id);
+	/**
+	 * Delete encounter by id
+	 *
+	 * @param id the encounter id
+	 */
+	public void deleteEncounter(String id);
 
 	/**
 	 * Search encounters by patient identifier and part of which is the top level visit
 	 *
 	 * @param patientIdentifier the patient identifier
-	 * @param partOf the top level visit id or none for indicate return all visits and encounters which doesn't have top
-	 *                  level visit
+	 * @param partOf            the top level visit id or none for indicate return all visits and encounters which doesn't
+	 *                          have top
+	 *                          level visit
 	 * @return fhir encounter list
 	 */
 	public List<Encounter> searchEncountersByPatientIdentifierAndPartOf(String patientIdentifier, String partOf);
@@ -121,8 +124,9 @@ public interface EncounterService extends OpenmrsService {
 	 * Search encounters by encounter id and part of which is the top level visit
 	 *
 	 * @param encounterId the encounter id
-	 * @param partOf the top level visit id or none for indicate return all visits and encounters which doesn't have top
-	 *                  level visit
+	 * @param partOf      the top level visit id or none for indicate return all visits and encounters which doesn't have
+	 *                    top
+	 *                    level visit
 	 * @return fhir encounter list
 	 */
 	public List<Encounter> searchEncountersByEncounterIdAndPartOf(String encounterId, String partOf);

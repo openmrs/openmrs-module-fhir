@@ -53,7 +53,7 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	 * operations should return a single resource instance.
 	 *
 	 * @param theId The read operation takes one parameter, which must be of type IdDt and must be
-	 * annotated with the "@Read.IdParam" annotation.
+	 *              annotated with the "@Read.IdParam" annotation.
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read()
@@ -76,9 +76,9 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	/**
 	 * Search persons by name, birthYear and gender
 	 *
-	 * @param name Name of person to search
+	 * @param name      Name of person to search
 	 * @param birthYear The year of birth to restrict
-	 * @param gender The gender field to search on (Typically just "M" or "F")
+	 * @param gender    The gender field to search on (Typically just "M" or "F")
 	 * @return This method returns a list of Persons. This list may contain multiple matching
 	 * resources, or it may also be empty.
 	 */
@@ -130,7 +130,8 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 			outcome.addIssue()
 					.setDetails(
 							"No Person is associated with the given UUID to update. Please"
-									+ " make sure you have set at lease one non-delete name, Gender and Birthdate to create a new Person with the given UUID");
+							+ " make sure you have set at lease one non-delete name, Gender and Birthdate to create a new "
+							+ "Person with the given UUID");
 			retVal.setOperationOutcome(outcome);
 			return retVal;
 		}

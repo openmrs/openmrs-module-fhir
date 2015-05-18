@@ -34,17 +34,17 @@ public class FamilyHistoryServiceImpl extends BaseOpenmrsService implements Fami
 	private FHIRDAO dao;
 
 	/**
-	 * @param dao the dao to set
-	 */
-	public void setDao(FHIRDAO dao) {
-		this.dao = dao;
-	}
-
-	/**
 	 * @return the dao
 	 */
 	public FHIRDAO getDao() {
 		return dao;
+	}
+
+	/**
+	 * @param dao the dao to set
+	 */
+	public void setDao(FHIRDAO dao) {
+		this.dao = dao;
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class FamilyHistoryServiceImpl extends BaseOpenmrsService implements Fami
 			relationships = Context.getPersonService().getRelationshipsByPerson(person);
 		}
 		if (relationships != null && relationships.size() > 0) {
-			for(Relationship relationship : relationships) {
+			for (Relationship relationship : relationships) {
 				fhirFamilyHistory.add(FHIRFamilyHistoryUtil.generateFamilyHistory(relationship, person));
 			}
 		}
@@ -82,7 +82,7 @@ public class FamilyHistoryServiceImpl extends BaseOpenmrsService implements Fami
 		List<FamilyMemberHistory> familyHistories = new ArrayList<FamilyMemberHistory>();
 		List<Relationship> relationships = Context.getPersonService().getRelationshipsByPerson(person);
 		if (relationships != null) {
-			for(Relationship relationship : relationships) {
+			for (Relationship relationship : relationships) {
 				familyHistories.add(FHIRFamilyHistoryUtil.generateFamilyHistory(relationship, person));
 			}
 		}

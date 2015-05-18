@@ -17,5 +17,5 @@ public class FHIROmodConstants {
 
 	public static final String OPENMRS_FHIR_SERVER_NAME = "OpenMRS FHIR Server";
 	public static final String OPENMRS_FHIR_SERVER_VERSION = "0.9-SNAPSHOT";
-	public static final String OPENMRS_FHIR_SERVER_DES= "OpenMRS FHIR Resources";
+	public static final String OPENMRS_FHIR_SERVER_DES = "OpenMRS FHIR Resources";
 }

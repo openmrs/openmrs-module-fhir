@@ -89,9 +89,9 @@ public class FHIRObservationResource extends Resource {
 		return fhirEncounters;
 	}
 
-    public void deleteObservation(IdDt id){
-        ObsService obsService = Context.getService(ObsService.class);
-        obsService.deleteObs(id.getIdPart());
-    }
+	public void deleteObservation(IdDt id) {
+		ObsService obsService = Context.getService(ObsService.class);
+		obsService.deleteObs(id.getIdPart());
+	}
 
 }

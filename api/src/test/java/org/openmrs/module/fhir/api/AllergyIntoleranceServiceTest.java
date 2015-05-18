@@ -26,7 +26,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- *
  * @author leonard
  */
 public class AllergyIntoleranceServiceTest extends BaseModuleContextSensitiveTest {
@@ -93,13 +92,12 @@ public class AllergyIntoleranceServiceTest extends BaseModuleContextSensitiveTes
 	@Test
 	public void searchAllergiesByPatientName_shouldReturnMatchingAllergyIntoleranceList() {
 		String patientName = "John";
-		String allergyUuid = "1234567987"; 
+		String allergyUuid = "1234567987";
 		List<AllergyIntolerance> allergies = getService().searchAllergiesByPatientName(patientName);
 		assertNotNull(allergies);
 		assertEquals(1, allergies.size());
 		AllergyIntolerance allergy = allergies.get(0);
 		assertEquals(allergy.getId().toString(), allergyUuid);
 	}
-
 
 }

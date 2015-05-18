@@ -68,7 +68,7 @@ public class AllergyApiModuleAllergyStrategy implements GenericAllergyStrategy {
 		PatientService allergyService = Context.getService(PatientService.class);
 		List<org.openmrs.Patient> patientList = patientService.getPatients(name, null, null, true);
 		List<AllergyIntolerance> allergies = new ArrayList<AllergyIntolerance>();
-		for(Patient patient : patientList) {
+		for (Patient patient : patientList) {
 			List<org.openmrs.module.allergyapi.Allergy> omrsAllergies = allergyService.getAllergies(patient);
 			for (Allergy allergy : omrsAllergies) {
 				allergies.add(FHIRAllergyIntoleranceAllergyAPIUtil.generateAllergyTolerance(allergy));

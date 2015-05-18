@@ -50,7 +50,8 @@ public class FHIREncounterResource extends Resource {
 
 		String chain = identifier.getChain();
 		if (Patient.SP_IDENTIFIER.equals(chain)) {
-			fhirEncounters = Context.getService(EncounterService.class).searchEncountersByPatientIdentifier(identifier.getValue());
+			fhirEncounters = Context.getService(EncounterService.class).searchEncountersByPatientIdentifier(
+					identifier.getValue());
 		}
 		return fhirEncounters;
 	}
@@ -73,8 +74,8 @@ public class FHIREncounterResource extends Resource {
 		return fhirEncounters;
 	}
 
-    public void deleteEncounter(IdDt theId) {
-        EncounterService encounterService = Context.getService(EncounterService.class);
-        encounterService.deleteEncounter(theId.getIdPart());
-    }
+	public void deleteEncounter(IdDt theId) {
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		encounterService.deleteEncounter(theId.getIdPart());
+	}
 }

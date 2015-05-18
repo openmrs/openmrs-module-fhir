@@ -40,9 +40,9 @@ public interface PersonService {
 	/**
 	 * Search all persons for given attributes
 	 *
-	 * @param name Name of person to search
+	 * @param name      Name of person to search
 	 * @param birthYear The year of birth to restrict
-	 * @param gender The gender field to search on (Typically just "M" or "F")
+	 * @param gender    The gender field to search on (Typically just "M" or "F")
 	 * @return persons list
 	 */
 	List<Person> searchPersons(String name, Integer birthYear, String gender);
@@ -67,7 +67,7 @@ public interface PersonService {
 	 * update a OpenMRS Person from FHIR Person
 	 *
 	 * @param person the FHIR representation of the {@link}Person to be updated
-	 * @param theId the uuid of the Person to be updated
+	 * @param theId  the uuid of the Person to be updated
 	 * @return the updated FHIR {@link}Person Resource
 	 */
 	Person updateFHIRPerson(Person person, String theId);

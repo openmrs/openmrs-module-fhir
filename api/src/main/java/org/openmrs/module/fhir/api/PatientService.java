@@ -42,7 +42,7 @@ public interface PatientService extends OpenmrsService {
 	/**
 	 * Search patient by identifier and identifier type id
 	 *
-	 * @param identifierValue  identifier to be search
+	 * @param identifierValue    identifier to be search
 	 * @param identifierTypeName name of the patient identifier type
 	 * @return fhir patient resource list
 	 */
@@ -84,18 +84,18 @@ public interface PatientService extends OpenmrsService {
 	 */
 	List<Patient> searchPatientsByName(String name);
 
-    /**
-     * Get patient operations bundle resource
-     *
-     * @param patientId the patient id to be search patients
-     * @return patient resource bundle for operations
-     */
-    public Bundle getPatientOperationsById(String patientId);
+	/**
+	 * Get patient operations bundle resource
+	 *
+	 * @param patientId the patient id to be search patients
+	 * @return patient resource bundle for operations
+	 */
+	public Bundle getPatientOperationsById(String patientId);
 
-    /**
-     * Delete patient by id
-     *
-     * @param id uuid of the patient
-     */
-    public void deletePatient(String id);
+	/**
+	 * Delete patient by id
+	 *
+	 * @param id uuid of the patient
+	 */
+	public void deletePatient(String id);
 }

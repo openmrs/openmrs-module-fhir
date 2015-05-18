@@ -37,17 +37,17 @@ public class PersonServiceImpl implements PersonService {
 	private FHIRDAO dao;
 
 	/**
-	 * @param dao the dao to set
-	 */
-	public void setDao(FHIRDAO dao) {
-		this.dao = dao;
-	}
-
-	/**
 	 * @return the dao
 	 */
 	public FHIRDAO getDao() {
 		return dao;
+	}
+
+	/**
+	 * @param dao the dao to set
+	 */
+	public void setDao(FHIRDAO dao) {
+		this.dao = dao;
 	}
 
 	@Override
@@ -107,7 +107,9 @@ public class PersonServiceImpl implements PersonService {
 			Context.getPersonService().savePerson(retrievedPerson);
 			return FHIRPersonUtil.generatePerson(retrievedPerson);
 		} else { // no person is associated with the given uuid. so create a new person with the given uuid
-			if (thePerson.getId() == null) { // since we need to PUT the Person to a specific URI, we need to set the uuid here, if it is not already set.
+			if (thePerson.getId()
+			    == null) { // since we need to PUT the Person to a specific URI, we need to set the uuid here, if it is not
+				// already set.
 				IdDt uuid = new IdDt();
 				uuid.setValue(theId);
 				thePerson.setId(uuid);
@@ -122,12 +124,17 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	public void retirePerson(String id) throws ResourceNotFoundException, NotModifiedException {
 		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(id);
-		if (person == null) throw new ResourceNotFoundException(String.format("Person with id '%s' not found", id));
-		if (person.isPersonVoided()) return;
+		if (person == null) {
+			throw new ResourceNotFoundException(String.format("Person with id '%s' not found", id));
+		}
+		if (person.isPersonVoided()) {
+			return;
+		}
 		try {
 			Context.getPersonService().voidPerson(person, "Voided by FHIR Request");
 		} catch (APIException apie) {
-			throw new MethodNotAllowedException(String.format("OpenMRS has failed to retire person '%s': %s", id, apie.getMessage()));
+			throw new MethodNotAllowedException(String.format("OpenMRS has failed to retire person '%s': %s", id,
+					apie.getMessage()));
 		}
 	}
 }
