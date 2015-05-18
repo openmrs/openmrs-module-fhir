@@ -18,6 +18,8 @@ import java.util.Map;
 
 public final class FHIRConstants {
 
+	public static Map<String, ConceptSourceNameURIPair> conceptSourceMap = new HashMap<String, ConceptSourceNameURIPair>();
+	public static Map<String, String> conceptSourceURINameMap = new HashMap<String, String>();
 	public static final String OPENMRS_URI = "http://openmrs.org";
 	//Concept source URIs
 	public static final String LOINC_URI = "http://loinc.org";
@@ -62,6 +64,7 @@ public final class FHIRConstants {
 	public static final String IMP_PROCEDURE = "IMO ProcedureIT";
 	public static final String NDF_RT_NUI = "NDF-RT NUI";
 	public static final String UCUM = "UCUM";
+
 	public static final String URN = "urn";
 	public static final String UUID = "uuid";
 	public static final String LOCATION = "Location";
@@ -71,6 +74,7 @@ public final class FHIRConstants {
 	public static final String PRACTITIONER = "Practitioner";
 	public static final String OBSERVATION = "Observation";
 	public static final String NUMERIC_CONCEPT_MEASURE_URI = "http://unitsofmeasure.org";
+
 	//HL47 Abbrevations
 	public static final String NM_HL7_ABBREVATION = "NM";
 	public static final String CWE_HL7_ABBREVATION = "CWE";
@@ -98,6 +102,7 @@ public final class FHIRConstants {
 	public static final String OBS_ALLERGY_STRATEGY = "ObsAllergyStrategy";
 	public static final String OPENMRS_CONCEPT_CODING_SYSTEM = "OPENMRS";
 	public static final String NONE = "none";
+
 	static {
 		conceptSourceMap.put(LOINC.toLowerCase(), new ConceptSourceNameURIPair(LOINC, LOINC_URI));
 		conceptSourceMap.put(CIEL.toLowerCase(), new ConceptSourceNameURIPair(CIEL, CIEL_URI));
@@ -141,6 +146,4 @@ public final class FHIRConstants {
 		conceptSourceURINameMap.put(NDF_RT_NUI_URI, NDF_RT_NUI);
 		conceptSourceURINameMap.put(UCUM_URI, UCUM);
 	}
-	public static Map<String, ConceptSourceNameURIPair> conceptSourceMap = new HashMap<String, ConceptSourceNameURIPair>();
-	public static Map<String, String> conceptSourceURINameMap = new HashMap<String, String>();
 }
