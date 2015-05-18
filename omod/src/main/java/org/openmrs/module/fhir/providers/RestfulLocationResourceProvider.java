@@ -101,7 +101,7 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	 * @param theId object containing the id
 	 */
 	    @Delete()
-	    public void deleteObservation(@IdParam IdDt theId) 
+	    public void deleteLocation(@IdParam IdDt theId)
 	    {
 	    	locationResource.deleteLocation(theId);
 	    }

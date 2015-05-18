@@ -84,77 +84,79 @@ public class FHIRLocationUtil {
 		return location;
 	}
 
-    /**
-     * @param location the fhir location
-     * @return The equivalent {@link org.openmrs.Location} instance
-     */
-    public static org.openmrs.Location generateOpenMRSLocation(Location location,List<String> errors) {
-        org.openmrs.Location omrsLocation;
-        //Set resource id (uuid)
-        IdDt id = location.getId();
-        omrsLocation = Context.getLocationService().getLocationByUuid(id.getIdPart());
-        if (omrsLocation == null) {
-            // No location found to be updated, creating new location. Should respond with 201 Http Code acc to specification
-            omrsLocation = new org.openmrs.Location();
-        }
-        //Set name and location description
-        omrsLocation.setName(location.getName());
-        location.setDescription(omrsLocation.getDescription());
+	/**
+	 * @param location the fhir location
+	 * @return The equivalent {@link org.openmrs.Location} instance
+	 */
+	public static org.openmrs.Location generateOpenMRSLocation(Location location, List<String> errors) {
+		org.openmrs.Location omrsLocation;
+		//Set resource id (uuid)
+		IdDt id = location.getId();
+		omrsLocation = Context.getLocationService().getLocationByUuid(id.getIdPart());
+		if (omrsLocation == null) {
+			// No location found to be updated, creating new location. Should respond with 201 Http Code acc to
+			// specification
+			omrsLocation = new org.openmrs.Location();
+		}
+		//Set name and location description
+		omrsLocation.setName(location.getName());
+		location.setDescription(omrsLocation.getDescription());
 
-        //Set address
-        AddressDt address = location.getAddress();
-        omrsLocation.setCityVillage(address.getCity());
-        omrsLocation.setCountry(address.getCountry());
-        omrsLocation.setStateProvince(address.getState());
-        omrsLocation.setPostalCode(address.getPostalCode());
-        List<StringDt> addressStrings = address.getLine();
-        for (int i = 0; i < addressStrings.size(); i++) {
-            switch (i + 1) {
-                case 1:
-                    omrsLocation.setAddress1(addressStrings.get(i).toString());
-                    break;
-                case 2:
-                    omrsLocation.setAddress2(addressStrings.get(i).toString());
-                    break;
-                case 3:
-                    omrsLocation.setAddress3(addressStrings.get(i).toString());
-                    break;
-                case 4:
-                    omrsLocation.setAddress4(addressStrings.get(i).toString());
-                    break;
-                case 5:
-                    omrsLocation.setAddress5(addressStrings.get(i).toString());
-                    break;
-            }
-        }
+		//Set address
+		AddressDt address = location.getAddress();
+		omrsLocation.setCityVillage(address.getCity());
+		omrsLocation.setCountry(address.getCountry());
+		omrsLocation.setStateProvince(address.getState());
+		omrsLocation.setPostalCode(address.getPostalCode());
+		List<StringDt> addressStrings = address.getLine();
+		for (int i = 0; i < addressStrings.size(); i++) {
+			switch (i + 1) {
+				case 1:
+					omrsLocation.setAddress1(addressStrings.get(i).toString());
+					break;
+				case 2:
+					omrsLocation.setAddress2(addressStrings.get(i).toString());
+					break;
+				case 3:
+					omrsLocation.setAddress3(addressStrings.get(i).toString());
+					break;
+				case 4:
+					omrsLocation.setAddress4(addressStrings.get(i).toString());
+					break;
+				case 5:
+					omrsLocation.setAddress5(addressStrings.get(i).toString());
+					break;
+			}
+		}
 
-        Position position = location.getPosition();
-        BigDecimal latitute = position.getLatitude();
-        BigDecimal longitute = position.getLongitude();
-        if (latitute != null && longitute != null) {
-            omrsLocation.setLatitude(latitute.toString());
-            omrsLocation.setLongitude(longitute.toString());
-        }
-        String status = location.getStatus().toString();
-        if (status.equalsIgnoreCase(LocationStatusEnum.ACTIVE.toString())) {
-            omrsLocation.setRetired(false);
-        } else if (status.equalsIgnoreCase((LocationStatusEnum.INACTIVE.toString()))) {
-            // throw error and return error message in response.? OR call locationServcice.retireLocation() instead of locationService.saveLocation()
-            errors.add("Status cannot be set to 'inactive' with the fhir update operation. Retiring resource may require a Delete verb");
-            omrsLocation.setRetired(true);
-        }
+		Position position = location.getPosition();
+		BigDecimal latitute = position.getLatitude();
+		BigDecimal longitute = position.getLongitude();
+		if (latitute != null && longitute != null) {
+			omrsLocation.setLatitude(latitute.toString());
+			omrsLocation.setLongitude(longitute.toString());
+		}
+		String status = location.getStatus().toString();
+		if (status.equalsIgnoreCase(LocationStatusEnum.ACTIVE.toString())) {
+			omrsLocation.setRetired(false);
+		} else if (status.equalsIgnoreCase((LocationStatusEnum.INACTIVE.toString()))) {
+			// throw error and return error message in response.? OR call locationServcice.retireLocation() instead of
+			// locationService.saveLocation()
+			errors.add(
+					"Status cannot be set to 'inactive' with the fhir update operation. Retiring resource may require a "
+					+ "Delete verb");
+			omrsLocation.setRetired(true);
+		}
 
-        ResourceReferenceDt parent = location.getPartOf();
-        if (parent != null) {
-            String parentName = parent.getDisplay().toString();
-            String parentUuid = parent.getReference().getIdPart();
-            org.openmrs.Location omrsLocationParent = Context.getLocationService().getLocationByUuid(parentUuid);
-            if (omrsLocationParent != null)
-                omrsLocation.setParentLocation(omrsLocationParent);
-            else
-                //send error message for location uuid for parent not valid
-                errors.add("No parent found with uuid : " + parentUuid);
-        }
-        return omrsLocation;
-    }
+		ResourceReferenceDt parent = location.getPartOf();
+		if (parent != null) {
+			String parentName = parent.getDisplay().toString();
+			String parentUuid = parent.getReference().getIdPart();
+			org.openmrs.Location omrsLocationParent = Context.getLocationService().getLocationByUuid(parentUuid);
+			if (omrsLocationParent != null) {
+				omrsLocation.setParentLocation(omrsLocationParent);
+			}
+		}
+		return omrsLocation;
+	}
 }

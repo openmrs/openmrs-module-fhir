@@ -48,7 +48,7 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 
 	@Test
 	public void getFHIREncounterFromOmrsEncounter_shouldReturnResourceIfExists() {
-		String encounterUuid = "33d70956-b359-452a-b3da-b69c8ab459ce";
+		String encounterUuid = "430bbb70-6a9c-4e1e-badb-9d1034b1b5e9";
 		Encounter fhirEncounter = getService().getEncounter(encounterUuid);
 		assertNotNull(fhirEncounter);
 		assertEquals(fhirEncounter.getId().toString(), encounterUuid);

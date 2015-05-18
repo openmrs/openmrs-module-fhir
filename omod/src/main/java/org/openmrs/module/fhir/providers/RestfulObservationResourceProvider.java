@@ -86,7 +86,7 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	/**
 	 * Search obsservation by observation code
 	 *
-	 * @param code object containing the requested code
+	 * @param theCodings object containing the requested code
 	 */
 	@Search()
 	public List<Observation> searchObsByCode(@RequiredParam(name = Observation.SP_CODE) TokenOrListParam theCodings) {
