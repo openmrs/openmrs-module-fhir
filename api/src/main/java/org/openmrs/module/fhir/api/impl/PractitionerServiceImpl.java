@@ -55,7 +55,7 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 	 */
 	public Practitioner getPractitioner(String id) {
 		Provider omrsProvider = Context.getProviderService().getProviderByUuid(id);
-		if (omrsProvider == null) {
+		if (omrsProvider == null || omrsProvider.isRetired()) {
 			return null;
 		}
 		return FHIRPractitionerUtil.generatePractitioner(omrsProvider);
@@ -67,7 +67,7 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 	public List<Practitioner> searchPractitionersById(String id) {
 		Provider omrsProvider = Context.getProviderService().getProviderByUuid(id);
 		List<Practitioner> practitioners = new ArrayList<Practitioner>();
-		if (omrsProvider != null) {
+		if (omrsProvider != null && !omrsProvider.isRetired()) {
 			practitioners.add(FHIRPractitionerUtil.generatePractitioner(omrsProvider));
 		}
 		return practitioners;
@@ -92,13 +92,16 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 		List<Provider> omrsProviders = searchProvidersByQuery(givenName);
 		List<Practitioner> practitioners = new ArrayList<Practitioner>();
 		for (Provider provider : omrsProviders) {
-			//Search through the provider given name for check whether given name exist in the returned provider resource
-			if (givenName.equalsIgnoreCase(provider.getPerson().getGivenName())) {
-				practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
-			} else {
-				for (PersonName personName : provider.getPerson().getNames()) {
-					if (givenName.equalsIgnoreCase(personName.getGivenName())) {
-						practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
+			if(provider.getPerson() != null) {
+				//Search through the provider given name for check whether given name exist in the returned provider resource
+
+				if (givenName.equalsIgnoreCase(provider.getPerson().getGivenName())) {
+					practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
+				} else {
+					for (PersonName personName : provider.getPerson().getNames()) {
+						if (givenName.equalsIgnoreCase(personName.getGivenName())) {
+							practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
+						}
 					}
 				}
 			}
@@ -114,12 +117,14 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 		List<Practitioner> practitioners = new ArrayList<Practitioner>();
 		for (Provider provider : omrsProviders) {
 			//Search through the provider family name for check whether family name exist in the returned provider resource
-			if (familyName.equalsIgnoreCase(provider.getPerson().getFamilyName())) {
-				practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
-			} else {
-				for (PersonName personName : provider.getPerson().getNames()) {
-					if (familyName.equalsIgnoreCase(personName.getFamilyName())) {
-						practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
+			if(provider.getPerson() != null) {
+				if (familyName.equalsIgnoreCase(provider.getPerson().getFamilyName())) {
+					practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
+				} else {
+					for (PersonName personName : provider.getPerson().getNames()) {
+						if (familyName.equalsIgnoreCase(personName.getFamilyName())) {
+							practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
+						}
 					}
 				}
 			}

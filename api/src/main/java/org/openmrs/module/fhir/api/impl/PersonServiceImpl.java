@@ -53,7 +53,7 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	public Person getPerson(String id) {
 		org.openmrs.Person omrsPerson = Context.getPersonService().getPersonByUuid(id);
-		if (omrsPerson == null) {
+		if (omrsPerson == null || omrsPerson.isVoided()) {
 			return null;
 		}
 		return FHIRPersonUtil.generatePerson(omrsPerson);
@@ -63,7 +63,7 @@ public class PersonServiceImpl implements PersonService {
 	public List<Person> searchPersonById(String id) {
 		org.openmrs.Person omrsPerson = Context.getPersonService().getPersonByUuid(id);
 		List<Person> personList = new ArrayList<Person>();
-		if (omrsPerson != null) {
+		if (omrsPerson != null && !omrsPerson.isVoided()) {
 			personList.add(FHIRPersonUtil.generatePerson(omrsPerson));
 		}
 		return personList;

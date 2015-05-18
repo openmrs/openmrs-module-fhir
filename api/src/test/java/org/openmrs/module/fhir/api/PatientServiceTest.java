@@ -92,8 +92,8 @@ public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 	public void searchPatientsByIdentifierAndIdentifierType_shouldReturnBundle() {
 		String returned_patientUuid = "61b38324-e2fd-4feb-95b7-9e9a2a4400df";
 		String identifierValue = "1234";
-		String identifierUuid = "c5576187-9a67-43a7-9b7c-04db22851211";
-		List<Patient> patients = getService().searchPatientsByIdentifier(identifierValue, identifierUuid);
+		String identifierTypeName = "Test Identifier Type";
+		List<Patient> patients = getService().searchPatientsByIdentifier(identifierValue, identifierTypeName);
 		assertNotNull(patients);
 		assertEquals(1, patients.size());
 		Patient fhirPatient = patients.get(0);

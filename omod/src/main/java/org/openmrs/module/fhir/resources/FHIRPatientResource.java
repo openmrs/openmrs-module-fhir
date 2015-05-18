@@ -48,7 +48,7 @@ public class FHIRPatientResource extends Resource {
 		org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
 				org.openmrs.module.fhir.api.PatientService.class);
 		if (identifier.getSystem() != null && !identifier.getSystem().isEmpty()) {
-			return patientService.searchPatientsByIdentifier(identifier.getValue(), identifier.getSystem().split(":")[2]);
+			return patientService.searchPatientsByIdentifier(identifier.getValue(), identifier.getSystem());
 		}
 		return patientService.searchPatientsByIdentifier(identifier.getValue());
 	}

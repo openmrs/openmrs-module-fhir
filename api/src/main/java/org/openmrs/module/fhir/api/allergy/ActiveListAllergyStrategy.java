@@ -29,7 +29,7 @@ public class ActiveListAllergyStrategy implements GenericAllergyStrategy {
 
 	public AllergyIntolerance getAllergyById(String uuid) {
 		ActiveListItem allergy = Context.getActiveListService().getActiveListItemByUuid(uuid);
-		if (allergy == null) {
+		if (allergy == null || allergy.isVoided()) {
 			return null;
 		}
 		return FHIRAllergyIntoleranceUtil.generateAllergyTolerance((Allergy) allergy);
@@ -38,7 +38,7 @@ public class ActiveListAllergyStrategy implements GenericAllergyStrategy {
 	public List<AllergyIntolerance> searchAllergyById(String uuid) {
 		ActiveListItem allergy = Context.getActiveListService().getActiveListItemByUuid(uuid);
 		List<AllergyIntolerance> allergies = new ArrayList<AllergyIntolerance>();
-		if (allergy != null) {
+		if (allergy != null && !allergy.isVoided()) {
 			allergies.add(FHIRAllergyIntoleranceUtil.generateAllergyTolerance((Allergy) allergy));
 		}
 		return allergies;

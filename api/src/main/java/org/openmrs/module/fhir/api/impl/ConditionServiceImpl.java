@@ -49,7 +49,7 @@ public class ConditionServiceImpl implements ConditionService {
 	@Override
 	public Condition getCondition(String id) {
 		org.openmrs.Condition condition = Context.getService(org.openmrs.api.ConditionService.class).getConditionByUuid(id);
-		if (condition == null) {
+		if (condition == null || condition.isVoided()) {
 			return null;
 		}
 		return FHIRConditionUtil.generateFHIRCondition(condition);

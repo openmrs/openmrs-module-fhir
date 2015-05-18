@@ -55,7 +55,7 @@ public class LocationServiceImpl extends BaseOpenmrsService implements LocationS
 	public Location getLocation(String id) {
 
 		org.openmrs.Location omrsLocation = Context.getLocationService().getLocationByUuid(id);
-		if (omrsLocation == null) {
+		if (omrsLocation == null || omrsLocation.isRetired()) {
 			return null;
 		}
 		return FHIRLocationUtil.generateLocation(omrsLocation);
@@ -69,7 +69,7 @@ public class LocationServiceImpl extends BaseOpenmrsService implements LocationS
 
 		org.openmrs.Location omrsLocation = Context.getLocationService().getLocationByUuid(id);
 		List<Location> locationList = new ArrayList<Location>();
-		if (omrsLocation != null) {
+		if (omrsLocation != null && !omrsLocation.isRetired()) {
 			locationList.add(FHIRLocationUtil.generateLocation(omrsLocation));
 		}
 		return locationList;

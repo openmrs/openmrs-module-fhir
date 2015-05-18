@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.fhir.api.util;
 
+import ca.uhn.fhir.model.dstu2.composite.AgeDt;
 import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.composite.QuantityDt;
@@ -82,7 +83,7 @@ public class FHIRFamilyHistoryUtil {
 		}
 
 		if (relatedPerson.getAge() != null) {
-			QuantityDt age = new QuantityDt();
+			AgeDt age = new AgeDt();
 			age.setValue(relatedPerson.getAge());
 			familyMemberHistory.setAge(age);
 		}

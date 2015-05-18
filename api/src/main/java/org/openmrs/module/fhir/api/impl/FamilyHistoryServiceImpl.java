@@ -54,7 +54,7 @@ public class FamilyHistoryServiceImpl extends BaseOpenmrsService implements Fami
 		Person person = Context.getPersonService().getPersonByUuid(personId);
 		List<FamilyMemberHistory> fhirFamilyHistory = new ArrayList<FamilyMemberHistory>();
 		List<Relationship> relationships = null;
-		if (person != null) {
+		if (person != null && !person.isVoided()) {
 			relationships = Context.getPersonService().getRelationshipsByPerson(person);
 		}
 		if (relationships != null && relationships.size() > 0) {

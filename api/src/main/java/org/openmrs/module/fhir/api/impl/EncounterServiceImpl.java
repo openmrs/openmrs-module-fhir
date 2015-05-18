@@ -70,9 +70,9 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 	public Encounter getEncounter(String id) {
 
 		org.openmrs.Encounter omrsEncounter = Context.getEncounterService().getEncounterByUuid(id);
-		if (omrsEncounter == null) {
+		if (omrsEncounter == null || omrsEncounter.isVoided()) {
 			Visit visit = Context.getVisitService().getVisitByUuid(id);
-			if (visit != null) {
+			if (visit != null && !visit.isVoided()) {
 				return OMRSFHIRVisitUtil.generateEncounter(visit);
 			} else {
 				return null;

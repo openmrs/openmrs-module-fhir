@@ -121,7 +121,7 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	}
 
 	@Update
-	public MethodOutcome updatePatientConditional(@ResourceParam Person thePerson, @IdParam IdDt theId) {
+	public MethodOutcome updatePersonConditional(@ResourceParam Person thePerson, @IdParam IdDt theId) {
 		MethodOutcome retVal = new MethodOutcome();
 		OperationOutcome outcome = new OperationOutcome();
 		try {

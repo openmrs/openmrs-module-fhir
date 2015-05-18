@@ -67,7 +67,7 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 	 */
 	public Patient getPatient(String id) {
 		org.openmrs.Patient omrsPatient = Context.getPatientService().getPatientByUuid(id);
-		if (omrsPatient == null) {
+		if (omrsPatient == null || omrsPatient.isVoided()) {
 			return null;
 		}
 		return FHIRPatientUtil.generatePatient(omrsPatient);
@@ -80,7 +80,7 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 	public List<Patient> searchPatientsById(String id) {
 		org.openmrs.Patient omrsPatient = Context.getPatientService().getPatientByUuid(id);
 		List<Patient> patientList = new ArrayList<Patient>();
-		if (omrsPatient != null) {
+		if (omrsPatient != null && !omrsPatient.isVoided()) {
 			patientList.add(FHIRPatientUtil.generatePatient(omrsPatient));
 		}
 		return patientList;
@@ -89,10 +89,10 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 	/**
 	 * @see org.openmrs.module.fhir.api.PatientService#searchPatientsByIdentifier(String, String)
 	 */
-	public List<Patient> searchPatientsByIdentifier(String identifierValue, String identifierTypeId) {
+	public List<Patient> searchPatientsByIdentifier(String identifierValue, String identifierTypeName) {
 		org.openmrs.api.PatientService patientService = Context.getPatientService();
 		List<PatientIdentifierType> patientIdentifierTypes = new ArrayList<PatientIdentifierType>();
-		patientIdentifierTypes.add(patientService.getPatientIdentifierTypeByUuid(identifierTypeId));
+		patientIdentifierTypes.add(patientService.getPatientIdentifierTypeByName(identifierTypeName));
 		List<org.openmrs.Patient> patientList = patientService.getPatients(null, identifierValue, patientIdentifierTypes,
 				true);
 		List<Patient> fhirPatientList = new ArrayList<Patient>();

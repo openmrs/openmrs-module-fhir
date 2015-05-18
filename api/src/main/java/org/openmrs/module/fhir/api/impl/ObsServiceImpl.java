@@ -61,7 +61,7 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	 */
 	public Observation getObs(String id) {
 		Obs omrsObs = Context.getObsService().getObsByUuid(id);
-		if (omrsObs == null) {
+		if (omrsObs == null || omrsObs.isVoided()) {
 			return null;
 		}
 		return FHIRObsUtil.generateObs(omrsObs);
@@ -108,7 +108,7 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	public List<Observation> searchObsById(String id) {
 		Obs omrsObs = Context.getObsService().getObsByUuid(id);
 		List<Observation> obsList = new ArrayList<Observation>();
-		if (omrsObs != null) {
+		if (omrsObs != null && !omrsObs.isVoided()) {
 			obsList.add(FHIRObsUtil.generateObs(omrsObs));
 		}
 		return obsList;
