@@ -20,7 +20,7 @@ import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.allergyapi.Allergy;
 import org.openmrs.module.allergyapi.api.PatientService;
-import org.openmrs.module.fhir.api.util.FHIRAllergyIntoleranceUtil;
+import org.openmrs.module.fhir.api.util.FHIRAllergyIntoleranceAllergyAPIUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +55,7 @@ public class AllergyApiModuleAllergyStrategy implements GenericAllergyStrategy {
 			for (Patient patient : patientList) {
 				omrsAllergies = allergyService.getAllergies(patient);
 				for (org.openmrs.module.allergyapi.Allergy allergy : omrsAllergies) {
-					allergies.add(FHIRAllergyIntoleranceUtil.generateAllergyTolerance(allergy));
+					allergies.add(FHIRAllergyIntoleranceAllergyAPIUtil.generateAllergyTolerance(allergy));
 				}
 			}
 		}
@@ -71,7 +71,7 @@ public class AllergyApiModuleAllergyStrategy implements GenericAllergyStrategy {
 		for(Patient patient : patientList) {
 			List<org.openmrs.module.allergyapi.Allergy> omrsAllergies = allergyService.getAllergies(patient);
 			for (Allergy allergy : omrsAllergies) {
-				allergies.add(FHIRAllergyIntoleranceUtil.generateAllergyTolerance(allergy));
+				allergies.add(FHIRAllergyIntoleranceAllergyAPIUtil.generateAllergyTolerance(allergy));
 			}
 		}
 		return allergies;
@@ -86,7 +86,7 @@ public class AllergyApiModuleAllergyStrategy implements GenericAllergyStrategy {
 		if (patient != null) {
 			List<org.openmrs.module.allergyapi.Allergy> omrsAllergies = allergyService.getAllergies(patient);
 			for (Allergy allergy : omrsAllergies) {
-				allergies.add(FHIRAllergyIntoleranceUtil.generateAllergyTolerance(allergy));
+				allergies.add(FHIRAllergyIntoleranceAllergyAPIUtil.generateAllergyTolerance(allergy));
 			}
 		}
 		return allergies;

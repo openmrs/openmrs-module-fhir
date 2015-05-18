@@ -20,7 +20,7 @@ import org.openmrs.activelist.ActiveListItem;
 import org.openmrs.activelist.ActiveListType;
 import org.openmrs.activelist.Allergy;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.util.FHIRAllergyIntoleranceUtil;
+import org.openmrs.module.fhir.api.util.FHIRAllergyIntoleranceActiveListItemUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,14 +32,14 @@ public class ActiveListAllergyStrategy implements GenericAllergyStrategy {
 		if (allergy == null || allergy.isVoided()) {
 			return null;
 		}
-		return FHIRAllergyIntoleranceUtil.generateAllergyTolerance((Allergy) allergy);
+		return FHIRAllergyIntoleranceActiveListItemUtil.generateAllergyTolerance((Allergy) allergy);
 	}
 
 	public List<AllergyIntolerance> searchAllergyById(String uuid) {
 		ActiveListItem allergy = Context.getActiveListService().getActiveListItemByUuid(uuid);
 		List<AllergyIntolerance> allergies = new ArrayList<AllergyIntolerance>();
 		if (allergy != null && !allergy.isVoided()) {
-			allergies.add(FHIRAllergyIntoleranceUtil.generateAllergyTolerance((Allergy) allergy));
+			allergies.add(FHIRAllergyIntoleranceActiveListItemUtil.generateAllergyTolerance((Allergy) allergy));
 		}
 		return allergies;
 	}
@@ -58,7 +58,7 @@ public class ActiveListAllergyStrategy implements GenericAllergyStrategy {
 			List<Allergy> omrsAllergies = Context.getActiveListService().getActiveListItems(Allergy.class, patientList.get(
 					0), new ActiveListType(1));
 			for (Allergy allergy : omrsAllergies) {
-				allergies.add(FHIRAllergyIntoleranceUtil.generateAllergyTolerance(allergy));
+				allergies.add(FHIRAllergyIntoleranceActiveListItemUtil.generateAllergyTolerance(allergy));
 			}
 		}
 		return allergies;
@@ -72,7 +72,7 @@ public class ActiveListAllergyStrategy implements GenericAllergyStrategy {
 			List<Allergy> omrsAllergies = Context.getActiveListService().getActiveListItems(Allergy.class, patient, new
 					ActiveListType(1));
 			for (Allergy allergy : omrsAllergies) {
-				allergies.add(FHIRAllergyIntoleranceUtil.generateAllergyTolerance(allergy));
+				allergies.add(FHIRAllergyIntoleranceActiveListItemUtil.generateAllergyTolerance(allergy));
 			}
 		}
 		return allergies;
@@ -87,7 +87,7 @@ public class ActiveListAllergyStrategy implements GenericAllergyStrategy {
 			List<Allergy> omrsAllergies = Context.getActiveListService().getActiveListItems(Allergy.class, patient, new
 					ActiveListType(1));
 			for (Allergy allergy : omrsAllergies) {
-				allergies.add(FHIRAllergyIntoleranceUtil.generateAllergyTolerance(allergy));
+				allergies.add(FHIRAllergyIntoleranceActiveListItemUtil.generateAllergyTolerance(allergy));
 			}
 		}
 		return allergies;

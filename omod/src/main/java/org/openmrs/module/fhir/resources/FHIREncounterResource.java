@@ -60,14 +60,16 @@ public class FHIREncounterResource extends Resource {
 
 		String chain = identifier.getChain();
 		if (Patient.SP_IDENTIFIER.equals(chain)) {
-			fhirEncounters = Context.getService(EncounterService.class).searchEncountersByPatientIdentifier(identifier.getValue());
+			fhirEncounters = Context.getService(EncounterService.class).searchEncountersByPatientIdentifierAndPartOf
+					(identifier.getValue(), partOf.getIdPart());
 		}
 		return fhirEncounters;
 	}
 
 	public List<Encounter> searchEncountersByIdAndPartOf(TokenParam identifier, ReferenceParam partOf) {
 		List<Encounter> fhirEncounters = new ArrayList<Encounter>();
-		fhirEncounters = Context.getService(EncounterService.class).searchEncountersByPatientIdentifier(identifier.getValue());
+		fhirEncounters = Context.getService(EncounterService.class).searchEncountersByEncounterIdAndPartOf(identifier
+				.getValue(), partOf.getIdPart());
 		return fhirEncounters;
 	}
 

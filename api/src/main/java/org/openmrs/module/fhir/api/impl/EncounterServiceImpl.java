@@ -102,10 +102,24 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 	 * @see org.openmrs.module.fhir.api.EncounterService#searchEncountersByPatientIdentifier(String)
 	 */
 	public List<Encounter> searchEncountersByPatientIdentifier(String identifier) {
-		List<org.openmrs.Encounter> encounters = Context.getEncounterService().getEncountersByPatientIdentifier(identifier);
+		org.openmrs.api.PatientService patientService = Context.getPatientService();
+		List<PatientIdentifierType> allPatientIdentifierTypes = patientService.getAllPatientIdentifierTypes();
+		List<org.openmrs.Patient> patientList = patientService.getPatients(null, identifier, allPatientIdentifierTypes,
+				true);
 		List<Encounter> fhirEncountersList = new ArrayList<Encounter>();
-		for (org.openmrs.Encounter encounter: encounters) {
-			fhirEncountersList.add(FHIREncounterUtil.generateEncounter(encounter));
+
+		for(Patient patient : patientList) {
+			List<org.openmrs.Encounter> encounters = Context.getEncounterService().getEncountersByPatient(patient);
+			for (org.openmrs.Encounter encounter : encounters) {
+				fhirEncountersList.add(FHIREncounterUtil.generateEncounter(encounter));
+			}
+		}
+
+		for(Patient patient : patientList) {
+			List<Visit> visits = Context.getVisitService().getVisitsByPatient(patient);
+			for (Visit visit : visits) {
+				fhirEncountersList.add(OMRSFHIRVisitUtil.generateEncounter(visit));
+			}
 		}
 		return fhirEncountersList;
 	}
@@ -196,12 +210,15 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
     @Override
     public void deleteEncounter(String id) {
         org.openmrs.Encounter encounter = Context.getEncounterService().getEncounterByUuid(id);
-        if(encounter==null)
-            throw new ResourceNotFoundException(Encounter.class,new IdDt("Encounter",id));
-        try{
-        Context.getEncounterService().voidEncounter(encounter,"DELETED by FHIR request");
-        } catch(APIException ex){
-            throw new MethodNotAllowedException("The OpenMRS API refused to retire the Encounter with id : " + id + " via the FHIR request");
+        if(encounter==null) {
+	        Visit visit = Context.getVisitService().getVisitByUuid(id);
+	        if (visit == null) {
+		        throw new ResourceNotFoundException(Encounter.class, new IdDt("Encounter", id));
+	        } else {
+		        Context.getVisitService().voidVisit(visit, "DELETED by FHIR request");
+	        }
+        } else {
+	        Context.getEncounterService().voidEncounter(encounter,"DELETED by FHIR request");
         }
     }
 

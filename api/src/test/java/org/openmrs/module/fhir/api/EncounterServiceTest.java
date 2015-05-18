@@ -83,7 +83,7 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 		String identifier = "12345";
 		List<Encounter> fhirEncounters = getService().searchEncountersByPatientIdentifier(identifier);
 		assertNotNull(fhirEncounters);
-		assertEquals(2, fhirEncounters.size());
+		assertEquals(3, fhirEncounters.size());
 	}
 
 
