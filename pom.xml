@@ -230,6 +230,8 @@
                     <configuration>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                         <tagNameFormat>${project.version}</tagNameFormat>
+                        <remoteTagging>false</remoteTagging>
+                        <suppressCommitBeforeTag>false</suppressCommitBeforeTag>
                     </configuration>
                 </plugin>
             </plugins>
