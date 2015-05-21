@@ -229,7 +229,7 @@
                     <version>2.5</version>
                     <configuration>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
-                        <suppressCommitBeforeTag>false</suppressCommitBeforeTag>
+                        <tagNameFormat>${project.version}</tagNameFormat>
                     </configuration>
                 </plugin>
             </plugins>
