@@ -298,6 +298,8 @@ public class FHIRPersonUtil {
 		}
 		retrievedPerson.setBirthdate(omrsPerson.getBirthdate());
 		retrievedPerson.setGender(omrsPerson.getGender());
+		retrievedPerson.getActiveAttributes().get(0).setValue("Test");
+		retrievedPerson.getActiveAttributes().get(1).setValue("Test");
 		return retrievedPerson;
 	}
 }

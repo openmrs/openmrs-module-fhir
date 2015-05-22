@@ -143,7 +143,7 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 		List<Encounter> fhirEncounters = getService().searchEncountersByPatientIdentifierAndPartOf(patientIdentifier,
 				FHIRConstants.NONE);
 		assertNotNull(fhirEncounters);
-		assertEquals(7, fhirEncounters.size());
+		assertEquals(8, fhirEncounters.size());
 	}
 
 	@Test

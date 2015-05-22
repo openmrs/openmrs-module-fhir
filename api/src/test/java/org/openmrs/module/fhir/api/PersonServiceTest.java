@@ -137,7 +137,6 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
 		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);
 		Person fhirPerson = FHIRPersonUtil.generatePerson(person);
-		person.setUuid(null);
 		List<HumanNameDt> humanNames = new ArrayList<HumanNameDt>(); // add a new name to update
 		HumanNameDt fhirName = new HumanNameDt();
 		StringDt familyName = new StringDt();
@@ -154,7 +153,6 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 		humanNames.add(fhirName);
 		fhirPerson.setName(humanNames);
 		fhirPerson.setGender(AdministrativeGenderEnum.FEMALE); // change the gender
-		fhirPerson.setActive(false); // delete the person		
 		List<AddressDt> addressList = new ArrayList<AddressDt>(); // add a new address to update
 		AddressDt fhirAddress = new AddressDt();
 		fhirAddress.setCity("abc");
@@ -184,7 +182,7 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 			}
 		}
 		for (PersonAddress addrss : updatedPerson.getAddresses()) {
-			if (fhirAddress.getUse().equalsIgnoreCase(String.valueOf(String.valueOf(AddressUseEnum.HOME)))) {
+			if ("abc".equalsIgnoreCase(addrss.getCityVillage())) {
 				Assert.assertEquals(addrss.getCityVillage(), "abc");
 				Assert.assertEquals(addrss.getCountry(), "bcd");
 				Assert.assertEquals(addrss.getStateProvince(), "cde");
