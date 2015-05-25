@@ -66,7 +66,7 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	/**
 	 * Search person by unique id
 	 *
-	 * @param id object contaning the requested person
+	 * @param id object containing the requested person
 	 */
 	@Search()
 	public List<Person> searchPractitionerByUniqueId(@RequiredParam(name = Person.SP_RES_ID) TokenParam id) {
@@ -83,7 +83,7 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	 * resources, or it may also be empty.
 	 */
 	@Search()
-	public List<Person> findPersonts(@RequiredParam(name = Person.SP_NAME) StringParam name,
+	public List<Person> findPersons(@RequiredParam(name = Person.SP_NAME) StringParam name,
 	                                 @RequiredParam(name = Person.SP_BIRTHDATE) DateParam birthDate,
 	                                 @RequiredParam(name = Person.SP_GENDER) StringParam gender) {
 		Integer birthYear = 1900 + birthDate.getValue().getYear(); // e.g. 2011-01-02
@@ -98,7 +98,7 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	 * resources, or it may also be empty.
 	 */
 	@Search()
-	public List<Person> findPersontsByName(@RequiredParam(name = Person.SP_NAME) StringParam name) {
+	public List<Person> findPersonsByName(@RequiredParam(name = Person.SP_NAME) StringParam name) {
 		return personResource.searchByName(name);
 	}
 
