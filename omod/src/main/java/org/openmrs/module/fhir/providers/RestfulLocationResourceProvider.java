@@ -15,8 +15,10 @@ package org.openmrs.module.fhir.providers;
 
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.resource.Location;
+import ca.uhn.fhir.model.dstu2.resource.OperationOutcome;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.ConditionalUrlParam;
+import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
@@ -28,6 +30,8 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+
+import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.resources.FHIRLocationResource;
 
 import java.util.List;
@@ -129,6 +133,23 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 		}
 		locationResource.updateLocationById(id, theLocation);
 		return methodOutcome;
+	}
+	
+	/**
+	 * Create Location
+	 *
+	 * @param location fhir Location object
+	 * @return Method outcome object which contains the identity of the created resource.
+	 */
+	@Create
+	public MethodOutcome createFHIRPerson(@ResourceParam Location location) {
+		location=locationResource.createLocation(location);
+		MethodOutcome retVal = new MethodOutcome();
+		retVal.setId(new IdDt(FHIRConstants.LOCATION, location.getId().getIdPart()));
+		OperationOutcome outcome = new OperationOutcome();
+		outcome.addIssue().setDetails("Location is successfully created");
+		retVal.setOperationOutcome(outcome);
+		return retVal;
 	}
 
 }

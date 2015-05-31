@@ -100,7 +100,7 @@ public class FHIRLocationUtil {
 		}
 		//Set name and location description
 		omrsLocation.setName(location.getName());
-		location.setDescription(omrsLocation.getDescription());
+		omrsLocation.setDescription(location.getDescription());
 
 		//Set address
 		AddressDt address = location.getAddress();
