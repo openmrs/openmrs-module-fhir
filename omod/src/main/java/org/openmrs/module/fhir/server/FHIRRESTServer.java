@@ -18,10 +18,12 @@ import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
 import ca.uhn.fhir.rest.server.EncodingEnum;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
+
 import org.openmrs.module.fhir.addressstrategy.OpenMRSFHIRRequestAddressStrategy;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.openmrs.module.fhir.providers.RestfulAllergyIntoleranceResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulConditionResourceProvider;
+import org.openmrs.module.fhir.providers.RestfulDiagnosticReportResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulEncounterResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulFamilyHistoryResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulLocationResourceProvider;
@@ -32,6 +34,7 @@ import org.openmrs.module.fhir.providers.RestfulPractitionerResourceProvider;
 import org.openmrs.module.fhir.util.FHIROmodConstants;
 
 import javax.servlet.ServletException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +60,7 @@ public class FHIRRESTServer extends RestfulServer {
 		resourceProviders.add(new RestfulObservationResourceProvider());
 		resourceProviders.add(new RestfulPractitionerResourceProvider());
 		resourceProviders.add(new RestfulConditionResourceProvider());
+		resourceProviders.add(new RestfulDiagnosticReportResourceProvider());
 		//Removing composition since we now not support for it
 		//resourceProviders.add(new RestfulCompositionResourceProvider());
 		resourceProviders.add(new RestfulPersonResourceProvider());
