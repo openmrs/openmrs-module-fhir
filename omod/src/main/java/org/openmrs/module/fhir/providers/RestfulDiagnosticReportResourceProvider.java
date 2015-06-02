@@ -60,9 +60,9 @@ public class RestfulDiagnosticReportResourceProvider implements IResourceProvide
 	@Create
 	public MethodOutcome createFHIRDiagnosticReport(@ResourceParam DiagnosticReport diagReport) {
 		System.out.println("DiagReport: createFHIRDiagnosticReport");
-		diagReport = diagReportResource.createFHIRDiagReport(diagReport);
+		//diagReport = diagReportResource.createFHIRDiagReport(diagReport);
 		MethodOutcome retVal = new MethodOutcome();
-		retVal.setId(new IdDt(FHIRConstants.PERSON, diagReport.getId().getIdPart()));
+		//retVal.setId(new IdDt(FHIRConstants.PERSON, diagReport.getId().getIdPart()));
 		OperationOutcome outcome = new OperationOutcome();
 		outcome.addIssue().setDetails("Diagnostic Report is successfully created");
 		retVal.setOperationOutcome(outcome);

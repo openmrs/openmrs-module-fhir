@@ -111,9 +111,10 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	 */
 	@Create
 	public MethodOutcome createFHIRPerson(@ResourceParam Person person) {
-		person = personResource.createFHIRPerson(person);
+		System.out.println("RESTfulPerson: createFHIRPerson.");
+		//person = personResource.createFHIRPerson(person);
 		MethodOutcome retVal = new MethodOutcome();
-		retVal.setId(new IdDt(FHIRConstants.PERSON, person.getId().getIdPart()));
+		//retVal.setId(new IdDt(FHIRConstants.PERSON, person.getId().getIdPart()));
 		OperationOutcome outcome = new OperationOutcome();
 		outcome.addIssue().setDetails("Person is successfully created");
 		retVal.setOperationOutcome(outcome);

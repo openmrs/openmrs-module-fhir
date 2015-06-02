@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
+import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
 import ca.uhn.fhir.model.dstu2.resource.Person;
 import ca.uhn.fhir.model.primitive.IdDt;
@@ -30,6 +31,8 @@ import org.openmrs.module.fhir.api.DiagnosticReportService;
 import org.openmrs.module.fhir.api.ObsService;
 import org.openmrs.module.fhir.api.PersonService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
+import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportTemplate;
+import org.openmrs.module.fhir.api.util.FHIRDiagnosticReportUtil;
 import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
 
 import java.util.ArrayList;
@@ -65,12 +68,17 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 	}
 	
 	@Override
-	public DiagnosticReport createFHIRDiagReport(DiagnosticReport diagReport) {
-		//org.openmrs.Person omrsPerson = FHIRPersonUtil.generateOpenMRSPerson(person);
-		//org.openmrs.api.PersonService personService = Context.getPersonService();
-		//omrsPerson = personService.savePerson(omrsPerson);
-		//return FHIRPersonUtil.generatePerson(omrsPerson);
-		return null;
+	public DiagnosticReport createFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
+		List<CodingDt> codingList = diagnosticReport.getServiceCategory().getCoding();
+		DiagnosticReportTemplate omrsDiagnosticReport = null;
+		String handler = "DEFAULT";
+		if (!codingList.isEmpty()) {
+			handler = codingList.get(0).getCode();
+		}
+		omrsDiagnosticReport = FHIRDiagnosticReportUtil.generateOpenMRSDiagnosticReport("DEFAULT", diagnosticReport);
+		// Create resource in OpenMRS Database
+		
+		return FHIRDiagnosticReportUtil.generateFHIRDiagnosticReport(handler, omrsDiagnosticReport);
 	}
 	
 	/**

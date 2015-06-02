@@ -46,9 +46,9 @@ public class FHIRDiagnosticReportResource extends Resource {
 		return fhirDiagnosticReport;
 	}
 	
-	public DiagnosticReport createFHIRDiagReport(DiagnosticReport diagReport) {
+	public DiagnosticReport createFHIRDiagReport(DiagnosticReport diagnosticReport) {
 		DiagnosticReportService diagnosticReportService = Context.getService(DiagnosticReportService.class);
-		return diagnosticReportService.createFHIRDiagReport(diagReport);
+		return diagnosticReportService.createFHIRDiagnosticReport(diagnosticReport);
 	}
 	
 	public void deleteDiagnosticReport(IdDt id) {

@@ -31,12 +31,12 @@ public interface DiagnosticReportService {
 	DiagnosticReport getDiagnosticReport(String id);
 	
 	/**
-	 * creates OpenMRS objects from FHIR Diagnostic Report
+	 * Creates OpenMRS objects from FHIR Diagnostic Report
 	 *
 	 * @param diagReport
 	 * @return
 	 */
-	DiagnosticReport createFHIRDiagReport(DiagnosticReport diagReport);
+	DiagnosticReport createFHIRDiagnosticReport(DiagnosticReport diagReport);
 	
 	/**
 	 * Delete Diagnostic Report by id
