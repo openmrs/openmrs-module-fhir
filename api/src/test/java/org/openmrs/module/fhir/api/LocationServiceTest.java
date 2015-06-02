@@ -143,4 +143,18 @@ public class LocationServiceTest extends BaseModuleContextSensitiveTest {
 		}
 	}
 
+	/**
+	 * @verifies create omrs location
+	 */
+	@Test
+	public void createOpenMRSLocation() throws Exception {
+		String locationUuid = "6f42abbc-caac-40ae-a94e-9277ea15c125";
+		org.openmrs.Location omrsLocation=Context.getLocationService().getLocationByUuid(locationUuid);
+		omrsLocation.setUuid("");// remove the uuid value from the Location. This will let this resource to be persist on the db with
+		// random uuid
+		Location fhirLocation = FHIRLocationUtil.generateLocation(omrsLocation);	
+		fhirLocation.setName("New Location Test Name");
+		fhirLocation = Context.getService(LocationService.class).createLocation(fhirLocation);
+		assertNotNull(fhirLocation);
+	}
 }

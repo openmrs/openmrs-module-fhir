@@ -60,4 +60,10 @@ public class FHIRLocationResource extends Resource {
 		Context.getService(LocationService.class).updateLocationById(id, location);
 		
 	}
+	
+	public Location createLocation(Location location) {
+		return Context.getService(LocationService.class).createLocation(location);
+	}
+
+
 }

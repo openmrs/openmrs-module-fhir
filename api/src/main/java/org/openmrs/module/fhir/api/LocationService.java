@@ -68,5 +68,12 @@ public interface LocationService extends OpenmrsService {
 	 * @param location representation of location fhir resource
 	 */
 	public void updateLocationById(String id, Location location);
+	
+	/**
+	 * Create location 
+	 *
+	 * @param location representation of location fhir resource
+	 */
+	public Location createLocation(Location location);
 
 }
