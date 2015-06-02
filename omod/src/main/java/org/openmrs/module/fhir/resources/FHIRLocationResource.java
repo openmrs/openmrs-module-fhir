@@ -63,7 +63,6 @@ public class FHIRLocationResource extends Resource {
 	
 	public Location createLocation(Location location) {
 		return Context.getService(LocationService.class).createLocation(location);
-		
 	}
 
 
