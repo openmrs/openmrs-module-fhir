@@ -37,25 +37,24 @@ import org.openmrs.module.fhir.resources.FHIRLocationResource;
 import java.util.List;
 
 public class RestfulLocationResourceProvider implements IResourceProvider {
-
+	
 	private FHIRLocationResource locationResource;
-
+	
 	public RestfulLocationResourceProvider() {
 		this.locationResource = new FHIRLocationResource();
 	}
-
+	
 	@Override
 	public Class<? extends IResource> getResourceType() {
 		return Location.class;
 	}
-
+	
 	/**
-	 * The "@Read" annotation indicates that this method supports the
-	 * read operation. Read operations should return a single resource
-	 * instance.
+	 * The "@Read" annotation indicates that this method supports the read operation. Read
+	 * operations should return a single resource instance.
 	 *
-	 * @param theId The read operation takes one parameter, which must be of type
-	 *              IdDt and must be annotated with the "@Read.IdParam" annotation.
+	 * @param theId The read operation takes one parameter, which must be of type IdDt and must be
+	 *            annotated with the "@Read.IdParam" annotation.
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read()
@@ -64,7 +63,7 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 		result = locationResource.getByUniqueId(theId);
 		return result;
 	}
-
+	
 	/**
 	 * Search locations by unique id
 	 *
@@ -74,25 +73,25 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	public List<Location> searchLocationsByUniqueId(@RequiredParam(name = Location.SP_RES_ID) TokenParam id) {
 		return locationResource.searchLocationsById(id);
 	}
-
+	
 	/**
 	 * Get locations by name
 	 *
 	 * @param name name of the location
-	 * @return This method returns a list of locations. This list may contain multiple matching resources, or it may also be
-	 * empty.
+	 * @return This method returns a list of locations. This list may contain multiple matching
+	 *         resources, or it may also be empty.
 	 */
 	@Search()
 	public List<Location> findLocationsByName(@RequiredParam(name = Location.SP_NAME) StringParam name) {
 		return locationResource.searchLocationsByName(name);
 	}
-
+	
 	/**
 	 * Search location by status
 	 *
 	 * @param active search term
-	 * @return This method returns a list of locations. This list may contain multiple matching resources, or it may also be
-	 * empty.
+	 * @return This method returns a list of locations. This list may contain multiple matching
+	 *         resources, or it may also be empty.
 	 */
 	@Search()
 	public List<Location> searchLocationsByStatus(@RequiredParam(name = Location.SP_STATUS) TokenParam active) {
@@ -112,16 +111,15 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	/**
 	 * Update location by id.
 	 *
-	 * @param theLocation    {@link ca.uhn.fhir.model.dstu2.resource.Location} object provided by the {@link ca.uhn.fhir
-	 *                       .rest.server.RestfulServer}
-	 * @param theId          Only one of theId or theConditional will have a value and the other will be null,
-	 *                       depending on the URL passed into the server
+	 * @param theLocation {@link ca.uhn.fhir.model.dstu2.resource.Location} object provided by the
+	 *            {@link ca.uhn.fhir .rest.server.RestfulServer}
+	 * @param theId Only one of theId or theConditional will have a value and the other will be
+	 *            null, depending on the URL passed into the server
 	 * @param theConditional This will have a value like "Patient?identifier=system%7C00001
 	 * @return This object contains the identity of the created resource.
 	 */
 	@Update()
-	public MethodOutcome updateLocationById(@ResourceParam Location theLocation,
-	                                        @IdParam IdDt theId,
+	public MethodOutcome updateLocationById(@ResourceParam Location theLocation, @IdParam IdDt theId,
 	                                        @ConditionalUrlParam String theConditional) {
 		MethodOutcome methodOutcome = new MethodOutcome();
 		String id = null;
@@ -142,14 +140,14 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	 * @return Method outcome object which contains the identity of the created resource.
 	 */
 	@Create
-	public MethodOutcome createFHIRPerson(@ResourceParam Location location) {
-		location=locationResource.createLocation(location);
+	public MethodOutcome createFHIRLocation(@ResourceParam Location location) {
+		location = locationResource.createLocation(location);
 		MethodOutcome retVal = new MethodOutcome();
 		retVal.setId(new IdDt(FHIRConstants.LOCATION, location.getId().getIdPart()));
 		OperationOutcome outcome = new OperationOutcome();
-		outcome.addIssue().setDetails("Location is successfully created");
+		outcome.addIssue().setDetails("The request cannot be processed due to the following issues");
 		retVal.setOperationOutcome(outcome);
 		return retVal;
 	}
-
+	
 }
