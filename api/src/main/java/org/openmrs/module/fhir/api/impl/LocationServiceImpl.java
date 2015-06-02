@@ -145,7 +145,7 @@ public class LocationServiceImpl extends BaseOpenmrsService implements LocationS
 		List<String> errors = new ArrayList<String>();
 		omrsLocation = FHIRLocationUtil.generateOpenMRSLocation(location, errors);
 		if (!errors.isEmpty()) {
-			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to following issues \n");
+			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
 			for (int i = 0; i < errors.size(); i++) {
 				errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
 			}

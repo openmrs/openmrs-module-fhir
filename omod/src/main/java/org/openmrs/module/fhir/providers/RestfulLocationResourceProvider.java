@@ -145,7 +145,7 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 		MethodOutcome retVal = new MethodOutcome();
 		retVal.setId(new IdDt(FHIRConstants.LOCATION, location.getId().getIdPart()));
 		OperationOutcome outcome = new OperationOutcome();
-		outcome.addIssue().setDetails("The request cannot be processed due to the following issues");
+		outcome.addIssue().setDetails("Location is successfully created");
 		retVal.setOperationOutcome(outcome);
 		return retVal;
 	}
