@@ -43,6 +43,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.naming.InvalidNameException;
+
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.DiagnosticReportService}.
  */
@@ -82,10 +84,10 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 		if (!codingList.isEmpty()) {
 			handler = codingList.get(0).getCode();
 		}
-		omrsDiagnosticReport = getHandler(handler).generateOpenMRSDiagnosticReport(diagnosticReport);
+		omrsDiagnosticReport = FHIRDiagnosticReportUtil.generateOpenMRSDiagnosticReport(getHandler(handler), diagnosticReport);
 		// Create resource in OpenMRS Database
 		
-		return FHIRDiagnosticReportUtil.generateFHIRDiagnosticReport(handler, omrsDiagnosticReport);
+		return FHIRDiagnosticReportUtil.generateFHIRDiagnosticReport(getHandler(handler), omrsDiagnosticReport);
 	}
 	
 	/**
@@ -110,7 +112,13 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 			return;
 		}
 		for (Map.Entry<String, DiagnosticReportHandler> entry : newHandlers.entrySet()) {
-			registerHandler(entry.getKey(), entry.getValue());
+			try {
+	            FHIRDiagnosticReportUtil.getServiceCode(entry.getKey());
+	            registerHandler(entry.getKey(), entry.getValue());
+            }
+            catch (InvalidNameException e) {
+	            log.error("Unable to register Handler.", e);
+            }
 		}
 	}
 	

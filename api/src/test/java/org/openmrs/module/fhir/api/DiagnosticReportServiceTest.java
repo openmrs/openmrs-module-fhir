@@ -46,7 +46,7 @@ public class DiagnosticReportServiceTest extends BaseModuleContextSensitiveTest 
 	 */
 	@Test
 	@Verifies(value = "should have default laboratory and radiology handlers registered by spring", method = "getHandler(String)")
-	public void getHandler_shouldHaveDefaultImageAndTextHandlersRegisteredBySpring() throws Exception {
+	public void getHandler_shouldHaveDefaultLaboratoryAndRadiologyHandlersRegisteredBySpring() throws Exception {
 		DiagnosticReportService service = getService();
 		
 		DiagnosticReportHandler laboratoryHandler = service.getHandler("LaboratoryHandler");

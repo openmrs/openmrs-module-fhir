@@ -34,25 +34,46 @@ import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportTemplate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.naming.InvalidNameException;
+
 import static java.lang.String.valueOf;
 
 public class FHIRDiagnosticReportUtil {
 	
-	private static Map<String, DiagnosticReportHandler> handlers = null;
-	
-	public static DiagnosticReport generateFHIRDiagnosticReport(String handler, DiagnosticReportTemplate omrsDiagnosticReport) {
-		return handlers.get(handler).generateFHIRDiagnosticReport(omrsDiagnosticReport);
+	public static DiagnosticReport generateFHIRDiagnosticReport(DiagnosticReportHandler handler,
+	                                                            DiagnosticReportTemplate omrsDiagnosticReport) {
+		DiagnosticReport diagnosticReport = new DiagnosticReport();
+		diagnosticReport = handler.generateFHIRDiagnosticReport(omrsDiagnosticReport, diagnosticReport);
+		return diagnosticReport;
 	}
 	
-	public static DiagnosticReportTemplate generateOpenMRSDiagnosticReport(String handler,
+	public static DiagnosticReportTemplate generateOpenMRSDiagnosticReport(DiagnosticReportHandler handler,
 	                                                                       DiagnosticReport fhirDiagnosticReport) {
-		return handlers.get(handler).generateOpenMRSDiagnosticReport(fhirDiagnosticReport);
+		DiagnosticReportTemplate omrsDiagnosticReport = new DiagnosticReportTemplate();
+		omrsDiagnosticReport = handler.generateOpenMRSDiagnosticReport(fhirDiagnosticReport, omrsDiagnosticReport);
+		return omrsDiagnosticReport;
+	}
+	
+	public static String getServiceCode(String handlerName) throws InvalidNameException {
+		HashMap<String, String> diagnosticServices = new HashMap<String, String>();
+		diagnosticServices.put("LaboratoryHandler", "LAB");
+		diagnosticServices.put("RadiologyHandler", "RAD");
+		diagnosticServices.put("BloodBankHandler", "BLB");
+		diagnosticServices.put("CATScanHandler", "CT");
+		
+		if (diagnosticServices.containsKey(handlerName)) {
+			return diagnosticServices.get(handlerName);
+		} else {
+			throw new InvalidNameException(
+			        "<Handler Name should be one of 'Description' value in http://hl7.org/fhir/v2/0074/> + Handler");
+		}
 	}
 	
 }
