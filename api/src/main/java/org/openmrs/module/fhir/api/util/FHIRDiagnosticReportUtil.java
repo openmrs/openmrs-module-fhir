@@ -50,27 +50,9 @@ public class FHIRDiagnosticReportUtil {
 		return handlers.get(handler).generateFHIRDiagnosticReport(omrsDiagnosticReport);
 	}
 	
-	public static DiagnosticReportTemplate generateOpenMRSDiagnosticReport(String handler, DiagnosticReport fhirDiagnosticReport) {
+	public static DiagnosticReportTemplate generateOpenMRSDiagnosticReport(String handler,
+	                                                                       DiagnosticReport fhirDiagnosticReport) {
 		return handlers.get(handler).generateOpenMRSDiagnosticReport(fhirDiagnosticReport);
 	}
 	
-	public DiagnosticReportHandler getHandler(String key) {
-		return handlers.get(key);
-	}
-	
-	public Map<String, DiagnosticReportHandler> getHandlers() throws APIException {
-		if (handlers == null) {
-			handlers = new LinkedHashMap<String, DiagnosticReportHandler>();
-		}
-		
-		return handlers;
-	}
-	
-	public void registerHandler(String key, DiagnosticReportHandler handler) throws APIException {
-		getHandlers().put(key, handler);
-	}
-	
-	public void removeHandler(String key) {
-		handlers.remove(key);
-	}
 }

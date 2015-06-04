@@ -7,4 +7,6 @@ public interface DiagnosticReportHandler {
 	public DiagnosticReport generateFHIRDiagnosticReport(DiagnosticReportTemplate omrsDiagnosticReport);
 	
 	public DiagnosticReportTemplate generateOpenMRSDiagnosticReport(DiagnosticReport fhirDiagnosticReport);
+	
+	public String getId();
 }

@@ -31,12 +31,15 @@ import org.openmrs.module.fhir.api.DiagnosticReportService;
 import org.openmrs.module.fhir.api.ObsService;
 import org.openmrs.module.fhir.api.PersonService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
+import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportTemplate;
 import org.openmrs.module.fhir.api.util.FHIRDiagnosticReportUtil;
 import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -47,6 +50,8 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 	protected final Log log = LogFactory.getLog(this.getClass());
 	
 	private FHIRDAO dao;
+	
+	private static Map<String, DiagnosticReportHandler> handlers = null;
 	
 	/**
 	 * @return the dao
@@ -87,4 +92,30 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 	@Override
 	public void deleteDiagnosticReport(String id) {
 	}
+	
+	public DiagnosticReportHandler getHandler(String key) {
+		return handlers.get(key);
+	}
+	
+	public Map<String, DiagnosticReportHandler> getHandlers() throws APIException {
+		if (handlers == null) {
+			handlers = new LinkedHashMap<String, DiagnosticReportHandler>();
+		}
+		
+		return handlers;
+	}
+	
+	public void registerHandler(String key, DiagnosticReportHandler handler) throws APIException {
+		getHandlers().put(key, handler);
+	}
+	
+	public void removeHandler(String key) {
+		handlers.remove(key);
+	}
+
+	@Override
+    public void setHandlers(Map<String, DiagnosticReportHandler> handlers) throws APIException {
+	    // TODO Auto-generated method stub
+	    
+    }
 }

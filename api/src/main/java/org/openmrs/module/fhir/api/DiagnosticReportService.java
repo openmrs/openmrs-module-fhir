@@ -19,6 +19,10 @@ import ca.uhn.fhir.rest.server.exceptions.NotModifiedException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 
 import java.util.List;
+import java.util.Map;
+
+import org.openmrs.api.APIException;
+import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
 
 public interface DiagnosticReportService {
 
@@ -45,4 +49,18 @@ public interface DiagnosticReportService {
 	 * @return Diagnostic Report FHIR resource
 	 */
 	public void deleteDiagnosticReport(String id);
+	
+	public DiagnosticReportHandler getHandler(String key);
+
+    public void setHandlers(Map<String, DiagnosticReportHandler> handlers) throws APIException;
+
+    /**
+     * Gets the handlers map registered
+     *
+     * @return map of keys to handlers
+     * @since 1.5
+     * @throws APIException
+     * @should never return null
+     */
+    public Map<String, DiagnosticReportHandler> getHandlers() throws APIException;
 }

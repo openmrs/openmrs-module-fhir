@@ -18,4 +18,8 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 	    return null;
     }
 	
+	@Override
+    public String getId() {
+        return "lab data";
+    }
 }
