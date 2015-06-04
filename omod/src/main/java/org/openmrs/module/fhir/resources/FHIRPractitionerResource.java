@@ -51,18 +51,24 @@ public class FHIRPractitionerResource extends Resource {
 	public List<Practitioner> searchByGivenName(StringParam givenName) {
 		org.openmrs.module.fhir.api.PractitionerService patientService = Context.getService(
 				org.openmrs.module.fhir.api.PractitionerService.class);
-		return patientService.searchPractitionersByGivenName(givenName.getValue());
+		return patientService.searchPractitionersByGivenName(givenName.getValue()); /// ??
 	}
 
 	public List<Practitioner> searchByFamilyName(StringParam familyName) {
 		org.openmrs.module.fhir.api.PractitionerService patientService = Context.getService(
 				org.openmrs.module.fhir.api.PractitionerService.class);
-		return patientService.searchPractitionersByFamilyName(familyName.getValue());
+		return patientService.searchPractitionersByFamilyName(familyName.getValue()); //// ??
 	}
 
 	public List<Practitioner> searchByName(StringParam name) {
-		org.openmrs.module.fhir.api.PractitionerService patientService = Context.getService(
+		org.openmrs.module.fhir.api.PractitionerService patientService = Context.getService( // the reference is wrong :)
 				org.openmrs.module.fhir.api.PractitionerService.class);
-		return patientService.searchPractitionersByName(name.getValue());
+		return patientService.searchPractitionersByName(name.getValue()); // IS THIS SHOUDL BE PATIENT SERVICE?????????????
+	}
+	
+	public Practitioner createFHIRPractitioner(Practitioner practitioner) {
+		org.openmrs.module.fhir.api.PractitionerService practitionerService = Context.getService(
+				org.openmrs.module.fhir.api.PractitionerService.class);
+		return practitionerService.createFHIRPractitioner(practitioner);
 	}
 }

@@ -14,15 +14,22 @@
 package org.openmrs.module.fhir.providers;
 
 import ca.uhn.fhir.model.api.IResource;
+import ca.uhn.fhir.model.dstu2.resource.OperationOutcome;
+import ca.uhn.fhir.model.dstu2.resource.Person;
 import ca.uhn.fhir.model.dstu2.resource.Practitioner;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
+import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+
+import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.resources.FHIRPractitionerResource;
 
 import java.util.List;
@@ -117,5 +124,21 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	public List<Practitioner> findPractitionersByGivenName(
 			@RequiredParam(name = Practitioner.SP_GIVEN) StringParam givenName) {
 		return practitionerResource.searchByGivenName(givenName);
+	}
+	
+	/**
+	 * Create Practitioner
+	 *
+	 * @param practitioner fhir practitioner object
+	 */
+	@Create
+	public MethodOutcome createFHIRPractitioner(@ResourceParam Practitioner practitioner) {
+		practitioner = practitionerResource.createFHIRPractitioner(practitioner);
+		MethodOutcome retVal = new MethodOutcome();
+		retVal.setId(new IdDt(FHIRConstants.PERSON, practitioner.getId().getIdPart()));
+		OperationOutcome outcome = new OperationOutcome();
+		outcome.addIssue().setDetails("Practitioner is successfully created");
+		retVal.setOperationOutcome(outcome);
+		return retVal;
 	}
 }

@@ -80,4 +80,12 @@ public interface PractitionerService extends OpenmrsService {
 	 * @return fhir practitioner resource list
 	 */
 	List<Practitioner> searchPractitionersByIdentifier(String identifier);
+	
+	/**
+	 * Create Practitioner
+	 *
+	 * @param practitioner the practitioner to be created
+	 * @return fhir practitioner resource list
+	 */
+	Practitioner createFHIRPractitioner(Practitioner practitioner);
 }

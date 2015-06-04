@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.fhir.api.util;
 
+import static java.lang.String.valueOf;
 import ca.uhn.fhir.model.dstu2.composite.AddressDt;
 import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
 import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
@@ -23,12 +24,18 @@ import ca.uhn.fhir.model.dstu2.valueset.NameUseEnum;
 import ca.uhn.fhir.model.primitive.DateDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.StringDt;
+
+import org.openmrs.Person;
 import org.openmrs.PersonAddress;
 import org.openmrs.PersonName;
 import org.openmrs.Provider;
+import org.openmrs.api.context.Context;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class FHIRPractitionerUtil {
 
@@ -129,5 +136,87 @@ public class FHIRPractitionerUtil {
 		}
 		FHIRUtils.validate(practitioner);
 		return practitioner;
+	}
+	
+	public static Person generateOpenMRSPerson(Practitioner practitioner) {	
+		Person omrsPerson=new Person();
+		HumanNameDt humanNameDt= practitioner.getName();
+		PersonName nam=new PersonName();		
+		List<StringDt> givenNames = humanNameDt.getGiven();
+		if (givenNames != null) {
+			StringDt givenName = givenNames.get(0);
+			nam.setGivenName(valueOf(givenName));
+		}	
+		List<StringDt> familyNames = humanNameDt.getGiven();
+		if (familyNames != null) {
+			StringDt familyName = givenNames.get(0);
+			nam.setFamilyName(valueOf(familyName));
+		}		
+		nam.setPreferred(true);		
+		if (humanNameDt.getPrefix() != null) {
+			List<StringDt> prefixes = humanNameDt.getPrefix();
+			if (prefixes.size() > 0) {
+				StringDt prefix = prefixes.get(0);
+				nam.setPrefix(valueOf(prefix));
+			}
+		}
+		if (humanNameDt.getSuffix() != null) {
+			List<StringDt> suffixes = humanNameDt.getSuffix();
+			if (suffixes.size() > 0) {
+				StringDt suffix = suffixes.get(0);
+				nam.setFamilyNameSuffix(valueOf(suffix));
+			}
+		}
+		Set<PersonName> names = new TreeSet<PersonName>();
+		names.add(nam);
+		omrsPerson.setNames(names);
+		
+		Set<PersonAddress> addresses = new TreeSet<PersonAddress>();
+		PersonAddress address;
+		for (AddressDt fhirAddress : practitioner.getAddress()) {
+			address = new PersonAddress();
+			address.setCityVillage(fhirAddress.getCity());
+			address.setCountry(fhirAddress.getCountry());
+			address.setStateProvince(fhirAddress.getState());
+			address.setPostalCode(fhirAddress.getPostalCode());
+			List<StringDt> addressStrings = fhirAddress.getLine();
+			if (addressStrings != null) {
+				for (int i = 0; i < addressStrings.size(); i++) {
+					if (i == 0) {
+						address.setAddress1(valueOf(addressStrings.get(0)));
+					} else if (i == 1) {
+						address.setAddress2(valueOf(addressStrings.get(1)));
+					} else if (i == 2) {
+						address.setAddress3(valueOf(addressStrings.get(2)));
+					} else if (i == 3) {
+						address.setAddress4(valueOf(addressStrings.get(3)));
+					} else if (i == 4) {
+						address.setAddress5(valueOf(addressStrings.get(4)));
+					}
+				}
+			}
+			if (String.valueOf(AddressUseEnum.HOME).equalsIgnoreCase(fhirAddress.getUse())) {
+				address.setPreferred(true);
+			}
+			if (String.valueOf(AddressUseEnum.OLD).equalsIgnoreCase(fhirAddress.getUse())) {
+				address.setPreferred(false);
+			}
+			addresses.add(address);
+		}
+		omrsPerson.setAddresses(addresses);
+
+		if (practitioner.getGender().equalsIgnoreCase(String.valueOf(AdministrativeGenderEnum.MALE))) {
+			omrsPerson.setGender(FHIRConstants.MALE);
+		} else if (practitioner.getGender().equalsIgnoreCase(String.valueOf(AdministrativeGenderEnum.FEMALE))) {
+			omrsPerson.setGender(FHIRConstants.FEMALE);
+		}
+		omrsPerson.setBirthdate(practitioner.getBirthDate());
+		
+		Set<Person> personList=Context.getPersonService().getSimilarPeople(nam.getFullName(), 1900+omrsPerson.getBirthdate().getYear(), omrsPerson.getGender()); // filter Persons
+		for(Person prsn: personList){ // Do we go for additional attributes like address? What if still we find duplicates
+			
+		}
+		return omrsPerson; // Person to be assiciate with the Practitioner
+		
 	}
 }
