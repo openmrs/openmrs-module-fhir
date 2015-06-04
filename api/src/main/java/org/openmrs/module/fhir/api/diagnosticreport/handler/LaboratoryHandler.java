@@ -5,21 +5,22 @@ import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportTemplate;
 
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
 
-
 public class LaboratoryHandler extends AbstractHandler implements DiagnosticReportHandler {
-
-	@Override
-    public DiagnosticReport generateFHIRDiagnosticReport(DiagnosticReportTemplate omrsDiagnosticReport) {
-	    return null;
-    }
-
-	@Override
-    public DiagnosticReportTemplate generateOpenMRSDiagnosticReport(DiagnosticReport fhirDiagnosticReport) {
-	    return null;
-    }
 	
 	@Override
-    public String getId() {
-        return "lab data";
-    }
+	public DiagnosticReport generateFHIRDiagnosticReport(DiagnosticReportTemplate omrsDiagnosticReport) {
+		return null;
+	}
+	
+	@Override
+	public DiagnosticReportTemplate generateOpenMRSDiagnosticReport(DiagnosticReport fhirDiagnosticReport) {
+		return null;
+	}
+	
+	@Override
+	public String getId() {
+		/* Laboratory 
+		   Refer: http://hl7.org/fhir/v2/0074*/
+		return "LAB";
+	}
 }

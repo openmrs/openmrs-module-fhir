@@ -20,6 +20,8 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 
     @Override
     public String getId() {
-        return "radiology data";
+    	/* Radiology 
+    	   Refer: http://hl7.org/fhir/v2/0074*/
+    	return "RAD";
     }
 }

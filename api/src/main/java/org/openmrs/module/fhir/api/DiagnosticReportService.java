@@ -25,12 +25,13 @@ import org.openmrs.api.APIException;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
 
 public interface DiagnosticReportService {
-
+	
 	/**
 	 * Get FHIR Diagnostic Report resource by uuid
 	 *
 	 * @param id uuid of the Diagnostic Report
-	 * @return FHIR Diagnostic Report resource and will return null if patient not found for the given id
+	 * @return FHIR Diagnostic Report resource and will return null if patient not found for the
+	 *         given id
 	 */
 	DiagnosticReport getDiagnosticReport(String id);
 	
@@ -50,17 +51,60 @@ public interface DiagnosticReportService {
 	 */
 	public void deleteDiagnosticReport(String id);
 	
-	public DiagnosticReportHandler getHandler(String key);
-
-    public void setHandlers(Map<String, DiagnosticReportHandler> handlers) throws APIException;
-
-    /**
-     * Gets the handlers map registered
-     *
-     * @return map of keys to handlers
-     * @since 1.5
-     * @throws APIException
-     * @should never return null
-     */
-    public Map<String, DiagnosticReportHandler> getHandlers() throws APIException;
+	/**
+	 * Get the DiagnosticReportHandler that has been registered with the given key
+	 * 
+	 * @param key that has been registered with a handler class
+	 * @return Object representing the handler for the given key
+	 */
+	public DiagnosticReportHandler getHandler(String key) throws APIException;
+	
+	/**
+	 * <u>Add</u> the given map to this service's handlers. This method registers each
+	 * DiagnosticReportHandler to this service. If the given String key exists, that handler is
+	 * overwritten with the given handler For most situations, this map is set via spring, see the
+	 * moduleApplicationContext.xml file to add more handlers.
+	 *
+	 * @param handlers Map of class to handler object
+	 * @throws APIException
+	 */
+	public void setHandlers(Map<String, DiagnosticReportHandler> handlers) throws APIException;
+	
+	/**
+	 * Gets the handlers map registered
+	 *
+	 * @return map of keys to handlers
+	 * @throws APIException
+	 * @should never return null
+	 */
+	public Map<String, DiagnosticReportHandler> getHandlers() throws APIException;
+	
+	/**
+	 * Registers the given handler with the given key If the given String key exists, that handler
+	 * is overwritten with the given handler
+	 *
+	 * @param key the key name to use for this handler
+	 * @param handler the class to register with this key
+	 * @throws APIException
+	 */
+	public void registerHandler(String key, DiagnosticReportHandler handler) throws APIException;
+	
+	/**
+	 * Convenience method for {@link #registerHandler(String, DiagnosticReportHandler)}
+	 * 
+	 * @param key the key name to use for this handler
+	 * @param handlerClass the class to register with this key
+	 * @throws APIException
+	 * @should load handler and register key
+	 */
+	public void registerHandler(String key, String handlerClass) throws APIException;
+	
+	/**
+	 * Remove the handler associated with the key from list of available handlers
+	 * 
+	 * @param key the key of the handler to unregister
+	 * @should remove handler with matching key
+	 * @should not fail with invalid key
+	 */
+	public void removeHandler(String key) throws APIException;
 }

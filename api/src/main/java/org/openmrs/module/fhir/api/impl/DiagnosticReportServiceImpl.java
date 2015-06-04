@@ -35,6 +35,7 @@ import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportTemplate;
 import org.openmrs.module.fhir.api.util.FHIRDiagnosticReportUtil;
 import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
+import org.openmrs.util.OpenmrsClassLoader;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -93,10 +94,35 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 	public void deleteDiagnosticReport(String id) {
 	}
 	
+	/****************************************************************
+	 * Handler Implementation
+	 ***************************************************************/
+	@Override
 	public DiagnosticReportHandler getHandler(String key) {
 		return handlers.get(key);
 	}
 	
+	@Override
+	public void setHandlers(Map<String, DiagnosticReportHandler> newHandlers) throws APIException {
+		if (newHandlers == null) {
+			DiagnosticReportServiceImpl.setStaticHandlers(null);
+			return;
+		}
+		for (Map.Entry<String, DiagnosticReportHandler> entry : newHandlers.entrySet()) {
+			registerHandler(entry.getKey(), entry.getValue());
+		}
+	}
+	
+	/**
+	 * Sets handlers using static method
+	 *
+	 * @param currentHandlers
+	 */
+	private static void setStaticHandlers(Map<String, DiagnosticReportHandler> currentHandlers) {
+		DiagnosticReportServiceImpl.handlers = currentHandlers;
+	}
+	
+	@Override
 	public Map<String, DiagnosticReportHandler> getHandlers() throws APIException {
 		if (handlers == null) {
 			handlers = new LinkedHashMap<String, DiagnosticReportHandler>();
@@ -105,17 +131,29 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 		return handlers;
 	}
 	
+	@Override
 	public void registerHandler(String key, DiagnosticReportHandler handler) throws APIException {
 		getHandlers().put(key, handler);
 	}
 	
+	/**
+	 * @see org.openmrs.api.DiagnosticReport#registerHandler(String, String)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public void registerHandler(String key, String handlerClass) throws APIException {
+		try {
+			Class loadedClass = OpenmrsClassLoader.getInstance().loadClass(handlerClass);
+			registerHandler(key, (DiagnosticReportHandler) loadedClass.newInstance());
+			
+		}
+		catch (Exception e) {
+			throw new APIException("Unable.load.and.instantiate.handler", null, e);
+		}
+	}
+	
+	@Override
 	public void removeHandler(String key) {
 		handlers.remove(key);
 	}
-
-	@Override
-    public void setHandlers(Map<String, DiagnosticReportHandler> handlers) throws APIException {
-	    // TODO Auto-generated method stub
-	    
-    }
 }

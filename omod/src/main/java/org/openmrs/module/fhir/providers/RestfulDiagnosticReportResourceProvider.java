@@ -81,7 +81,7 @@ public class RestfulDiagnosticReportResourceProvider implements IResourceProvide
 	public DiagnosticReport getResourceById(@IdParam IdDt theId) {
 		System.out.println("DiagReport : getResourceByID");
 		DiagnosticReport result = null;
-		// result = personResource.getByUniqueId(theId);
+		result = diagReportResource.getByUniqueId(theId);
 		return result;
 	}
 }

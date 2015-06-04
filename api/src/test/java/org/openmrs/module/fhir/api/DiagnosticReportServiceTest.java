@@ -51,12 +51,11 @@ public class DiagnosticReportServiceTest extends BaseModuleContextSensitiveTest 
 		
 		DiagnosticReportHandler laboratoryHandler = service.getHandler("LaboratoryHandler");
 		assertNotNull(laboratoryHandler);
-		System.out.println(laboratoryHandler.getId());
-		laboratoryHandler.generateOpenMRSDiagnosticReport(null); //do stuff
+		assertEquals("LAB", laboratoryHandler.getId());
 		
 		DiagnosticReportHandler radiologyHandler = service.getHandler("RadiologyHandler");
 		assertNotNull(radiologyHandler);
-		System.out.println(radiologyHandler.getId());
+		assertEquals("RAD", radiologyHandler.getId());
 	}
 	
 }
