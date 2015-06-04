@@ -25,5 +25,9 @@ local.properties
 .settings/
 .loadpath
 
+### Sublime Text ###
+*.sublime-project
+*.sublime-workspace
+
 # Mac OS files
 .DS_Store
