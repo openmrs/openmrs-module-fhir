@@ -77,11 +77,12 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 	public DiagnosticReport createFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
 		List<CodingDt> codingList = diagnosticReport.getServiceCategory().getCoding();
 		DiagnosticReportTemplate omrsDiagnosticReport = null;
+		// If serviceCategory is not present in the DiagnosticReport, then use "DEFAULT"
 		String handler = "DEFAULT";
 		if (!codingList.isEmpty()) {
 			handler = codingList.get(0).getCode();
 		}
-		omrsDiagnosticReport = FHIRDiagnosticReportUtil.generateOpenMRSDiagnosticReport("DEFAULT", diagnosticReport);
+		omrsDiagnosticReport = getHandler(handler).generateOpenMRSDiagnosticReport(diagnosticReport);
 		// Create resource in OpenMRS Database
 		
 		return FHIRDiagnosticReportUtil.generateFHIRDiagnosticReport(handler, omrsDiagnosticReport);

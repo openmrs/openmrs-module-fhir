@@ -39,10 +39,10 @@ import org.openmrs.module.fhir.resources.FHIRDiagnosticReportResource;
 
 public class RestfulDiagnosticReportResourceProvider implements IResourceProvider {
 	
-	private FHIRDiagnosticReportResource diagReportResource;
+	private FHIRDiagnosticReportResource diagnosticReportResource;
 	
 	public RestfulDiagnosticReportResourceProvider() {
-		diagReportResource = new FHIRDiagnosticReportResource();
+		diagnosticReportResource = new FHIRDiagnosticReportResource();
 	}
 	
 	@Override
@@ -58,11 +58,11 @@ public class RestfulDiagnosticReportResourceProvider implements IResourceProvide
 	 *         matching resources, or it may also be empty.
 	 */
 	@Create
-	public MethodOutcome createFHIRDiagnosticReport(@ResourceParam DiagnosticReport diagReport) {
-		System.out.println("DiagReport: createFHIRDiagnosticReport");
-		//diagReport = diagReportResource.createFHIRDiagReport(diagReport);
+	public MethodOutcome createFHIRDiagnosticReport(@ResourceParam DiagnosticReport diagnosticReport) {
+		System.out.println("DiagnosticReport: createFHIRDiagnosticReport");
+		diagnosticReport = diagnosticReportResource.createFHIRDiagnosticReport(diagnosticReport);
 		MethodOutcome retVal = new MethodOutcome();
-		//retVal.setId(new IdDt(FHIRConstants.PERSON, diagReport.getId().getIdPart()));
+		retVal.setId(new IdDt(FHIRConstants.PERSON, diagnosticReport.getId().getIdPart()));
 		OperationOutcome outcome = new OperationOutcome();
 		outcome.addIssue().setDetails("Diagnostic Report is successfully created");
 		retVal.setOperationOutcome(outcome);
@@ -79,9 +79,9 @@ public class RestfulDiagnosticReportResourceProvider implements IResourceProvide
 	 */
 	@Read()
 	public DiagnosticReport getResourceById(@IdParam IdDt theId) {
-		System.out.println("DiagReport : getResourceByID");
+		System.out.println("DiagnosticReport : getResourceByID");
 		DiagnosticReport result = null;
-		result = diagReportResource.getByUniqueId(theId);
+		result = diagnosticReportResource.getByUniqueId(theId);
 		return result;
 	}
 }
