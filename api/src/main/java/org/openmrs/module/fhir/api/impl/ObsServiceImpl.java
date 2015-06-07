@@ -223,5 +223,15 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 		Obs obs = Context.getObsService().getObsByUuid(id);
 		Context.getObsService().voidObs(obs, "DELETED by FHIR Request");
 	}
+	
+	/**
+	 * @see org.openmrs.module.fhir.api.ObsService#deleteObs(String)
+	 */
+	@Override
+	public Observation createFHIRObservation(Observation observation){
+		Obs obs=FHIRObsUtil.generateOpenMRSObs(observation);
+		obs=Context.getObsService().saveObs(obs,"CREATED by FHIR Request");
+		return FHIRObsUtil.generateObs(obs);
+	}
 
 }
