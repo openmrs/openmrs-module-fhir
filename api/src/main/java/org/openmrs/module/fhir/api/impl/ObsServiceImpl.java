@@ -14,6 +14,8 @@
 package org.openmrs.module.fhir.api.impl;
 
 import ca.uhn.fhir.model.dstu2.resource.Observation;
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -25,6 +27,7 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.ObsService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.module.fhir.api.util.FHIRLocationUtil;
 import org.openmrs.module.fhir.api.util.FHIRObsUtil;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 
@@ -225,11 +228,19 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	}
 	
 	/**
-	 * @see org.openmrs.module.fhir.api.ObsService#deleteObs(String)
+	 * @see org.openmrs.module.fhir.api.ObsService#createFHIRObservation(Observation)
 	 */
 	@Override
-	public Observation createFHIRObservation(Observation observation){
-		Obs obs=FHIRObsUtil.generateOpenMRSObs(observation);
+	public Observation createFHIRObservation(Observation observation){		
+		List<String> errors = new ArrayList<String>();
+		Obs obs=FHIRObsUtil.generateOpenMRSObs(observation,errors);
+		if (!errors.isEmpty()) {
+			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
+			for (int i = 0; i < errors.size(); i++) {
+				errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
+			}
+			throw new UnprocessableEntityException(errorMessage.toString());
+		}
 		obs=Context.getObsService().saveObs(obs,"CREATED by FHIR Request");
 		return FHIRObsUtil.generateObs(obs);
 	}
