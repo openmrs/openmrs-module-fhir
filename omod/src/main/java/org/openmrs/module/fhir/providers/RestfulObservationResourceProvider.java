@@ -156,9 +156,9 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	public MethodOutcome createFHIRObservation(@ResourceParam Observation observation) {
 		observation = provider.createFHIRObservation(observation);
 		MethodOutcome retVal = new MethodOutcome();
-		retVal.setId(new IdDt(FHIRConstants.PERSON, observation.getId().getIdPart()));
+		retVal.setId(new IdDt(FHIRConstants.OBSERVATION, observation.getId().getIdPart()));
 		OperationOutcome outcome = new OperationOutcome();
-		outcome.addIssue().setDetails("Observation is successfully created");
+		outcome.addIssue().setDetails("Observation is successfully created"+observation.getId().getIdPart());
 		retVal.setOperationOutcome(outcome);
 		return retVal;
 	}

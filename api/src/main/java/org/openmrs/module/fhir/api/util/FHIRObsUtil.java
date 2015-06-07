@@ -27,7 +27,6 @@ import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.InstantDt;
 import ca.uhn.fhir.model.primitive.StringDt;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -36,7 +35,6 @@ import org.openmrs.ConceptNumeric;
 import org.openmrs.EncounterProvider;
 import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -244,15 +242,20 @@ public class FHIRObsUtil {
 		return observation;
 	}
 	
-	public static Obs F(Observation observation) {
+	public static Obs generateOpenMRSObs(Observation observation, List<String> errors) {
 		Obs obs = new Obs();
 		
-		ResourceReferenceDt subjectref = observation.getSubject(); // subject can be null, handle that, and abort
-		IdDt id = subjectref.getReference();
-		String uri = id.getValue();
-		String[] paths = uri.split("/");
-		String patientUuid = paths[1];
-		obs.setPerson(Context.getPersonService().getPersonByUuid(patientUuid));
+		obs.setComment(observation.getComments());
+		if (observation.getSubject() != null) {
+			ResourceReferenceDt subjectref = observation.getSubject();
+			IdDt id = subjectref.getReference();
+			String uri = id.getValue();
+			String[] paths = uri.split("/");
+			String patientUuid = paths[1];
+			obs.setPerson(Context.getPersonService().getPersonByUuid(patientUuid));
+		} else {
+			errors.add("Subject cannot be null");
+		}
 		
 		DateTimeDt dateApplies = (DateTimeDt) observation.getApplies();
 		obs.setObsDatetime(dateApplies.getValue());
@@ -283,7 +286,6 @@ public class FHIRObsUtil {
 			obs.setEncounter(Context.getEncounterService().getEncounterByUuid(encounterUuid));
 			
 		}
-		
 		return obs;
 	}
 }
