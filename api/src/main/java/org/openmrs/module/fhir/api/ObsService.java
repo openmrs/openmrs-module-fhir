@@ -13,13 +13,14 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu2.resource.Observation;
-import org.openmrs.api.OpenmrsService;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import org.openmrs.api.OpenmrsService;
+import org.springframework.transaction.annotation.Transactional;
+
+import ca.uhn.fhir.model.dstu2.resource.Observation;
 
 @Transactional
 public interface ObsService extends OpenmrsService {
@@ -28,16 +29,16 @@ public interface ObsService extends OpenmrsService {
 	 * Get observation by id
 	 *
 	 * @param id uuid of the observation
-	 * @return observation fhir resource
+	 * @return fhir observation resource
 	 */
 	public Observation getObs(String id);
 
 	/**
 	 * Search observations by patient and concepts
 	 *
-	 * @param patientUUid         patient uuid
+	 * @param patientUUid patient uuid
 	 * @param conceptNamesAndURIs names of the concepts with system uris in a map
-	 * @return fhir obs resource list
+	 * @return fhir Observation resource list
 	 */
 	public List<Observation> searchObsByPatientAndConcept(String patientUUid, Map<String, String> conceptNamesAndURIs);
 
@@ -45,7 +46,7 @@ public interface ObsService extends OpenmrsService {
 	 * Search observations by patient and concepts
 	 *
 	 * @param id obs uuid
-	 * @return fhir obs resource list
+	 * @return fhir Observation resource list
 	 */
 	public List<Observation> searchObsById(String id);
 
@@ -53,7 +54,7 @@ public interface ObsService extends OpenmrsService {
 	 * Search observations by observation name
 	 *
 	 * @param conceptNamesAndURIs obs codes and system uris
-	 * @return fhir obs resource list
+	 * @return fhir Observation resource list
 	 */
 	public List<Observation> searchObsByCode(Map<String, String> conceptNamesAndURIs);
 
@@ -61,7 +62,7 @@ public interface ObsService extends OpenmrsService {
 	 * Search observations by observation date
 	 *
 	 * @param date obs date
-	 * @return fhir obs resource list
+	 * @return fhir Observation resource list
 	 */
 	public List<Observation> searchObsByDate(Date date);
 
@@ -69,7 +70,7 @@ public interface ObsService extends OpenmrsService {
 	 * Search observations by person
 	 *
 	 * @param personUuid person uuid of the person which observations needs to search for
-	 * @return fhir obs resource list
+	 * @return fhir Observation resource list
 	 */
 	public List<Observation> searchObsByPerson(String personUuid);
 
@@ -77,23 +78,42 @@ public interface ObsService extends OpenmrsService {
 	 * Search observations by value concept
 	 *
 	 * @param conceptName value concept name
-	 * @return fhir obs resource list
+	 * @return fhir Observation resource list
 	 */
 	public List<Observation> searchObsByValueConcept(String conceptName);
 
-	/* Search observations by patient identifier
-	*
-	* @param identifier to be search
-	* @return fhir observation resource list
-	*/
+	/**
+	 * Search observations by patient identifier *
+	 * 
+	 * @param identifier to be search
+	 * @return fhir observation resource list
+	 */
 	public List<Observation> searchObsByPatientIdentifier(String identifier);
 
 	/**
 	 * Delete observation by id
 	 *
+<<<<<<< HEAD
 	 * @param id uuid of the observation
-	 * @return observation fhir resource
+=======
+	 * @param id uuid of the observation 
+	 * @return observation fhir resource    // RETRUN??? THIS IS A VOID RESOURCE
+>>>>>>> 95b78a7703f3ce78e264b5cb2fee81ddd8dd7e85
 	 */
 	public void deleteObs(String id);
+	
+	/**
+<<<<<<< HEAD
+	 * create observation
+	 * 
+	 * @param observation the observation representation
+	 * @return created fhir observation resource
+=======
+	 * create observation by id
+	 *
+	 * @param observation the observation representation
+>>>>>>> 95b78a7703f3ce78e264b5cb2fee81ddd8dd7e85
+	 */
+	public Observation createFHIRObservation(Observation observation);
 
 }

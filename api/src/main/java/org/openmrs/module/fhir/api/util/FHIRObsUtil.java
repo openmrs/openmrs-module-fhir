@@ -13,6 +13,24 @@
  */
 package org.openmrs.module.fhir.api.util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
+import org.openmrs.ConceptMap;
+import org.openmrs.ConceptNumeric;
+import org.openmrs.EncounterProvider;
+import org.openmrs.Obs;
+import org.openmrs.api.context.Context;
+
 import ca.uhn.fhir.model.dstu2.composite.AttachmentDt;
 import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu2.composite.CodingDt;
@@ -27,27 +45,13 @@ import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.InstantDt;
 import ca.uhn.fhir.model.primitive.StringDt;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.openmrs.ConceptMap;
-import org.openmrs.ConceptNumeric;
-import org.openmrs.EncounterProvider;
-import org.openmrs.Obs;
-import org.openmrs.api.context.Context;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class FHIRObsUtil {
-
+	
 	private static final Log log = LogFactory.getLog(FHIRObsUtil.class);
-
+	
 	public static Observation generateObs(Obs obs) {
-
+		
 		Observation observation = new Observation();
 		//Set observation id
 		observation.setId(obs.getUuid());
@@ -55,7 +59,7 @@ public class FHIRObsUtil {
 		InstantDt instant = new InstantDt();
 		instant.setValue(obs.getDateCreated());
 		observation.setIssued(instant);
-
+		
 		//Set fhir observation comment
 		observation.setComments(obs.getComment());
 		observation.setSubject(FHIRUtils.buildPatientOrPersonResourceReference(obs.getPerson()));
@@ -80,12 +84,12 @@ public class FHIRObsUtil {
 			}
 		}
 		observation.setPerformer(performers);
-
+		
 		//Set concepts
 		Collection<ConceptMap> mappings = obs.getConcept().getConceptMappings();
 		CodeableConceptDt dt = observation.getCode();
 		List<CodingDt> dts = new ArrayList<CodingDt>();
-
+		
 		//Set codings from openmrs concept mappings
 		for (ConceptMap map : mappings) {
 			dts.add(FHIRUtils.getCodingDtByConceptMappings(map));
@@ -93,7 +97,7 @@ public class FHIRObsUtil {
 		//Set openmrs concept
 		dts.add(FHIRUtils.getCodingDtByOpenMRSConcept(obs.getConcept()));
 		dt.setCoding(dts);
-
+		
 		if (obs.getConcept().isNumeric()) {
 			ConceptNumeric cn = Context.getConceptService().getConceptNumeric(obs.getConcept().getId());
 			QuantityDt quantity = new QuantityDt();
@@ -123,14 +127,13 @@ public class FHIRObsUtil {
 			}
 			referenceRanges.add(referenceRange);
 			observation.setReferenceRange(referenceRanges);
-
+			
 		} else if (FHIRConstants.ST_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
 			StringDt value = new StringDt();
 			value.setValue(obs.getValueAsString(Context.getLocale()));
 			observation.setValue(value);
-
-		} else if (FHIRConstants.BIT_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation()
-		)) {
+			
+		} else if (FHIRConstants.BIT_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
 			CodeableConceptDt codeableConceptDt = new CodeableConceptDt();
 			List<CodingDt> codingDts = new ArrayList<CodingDt>();
 			CodingDt codingDt = new CodingDt();
@@ -138,7 +141,7 @@ public class FHIRObsUtil {
 			codingDts.add(codingDt);
 			codeableConceptDt.setCoding(codingDts);
 			observation.setValue(codeableConceptDt);
-
+			
 		} else if (FHIRConstants.TS_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
 			PeriodDt datetime = new PeriodDt();
 			DateTimeDt startDate = new DateTimeDt();
@@ -148,10 +151,10 @@ public class FHIRObsUtil {
 			datetime.setStart(startDate);
 			datetime.setEnd(endDate);
 			observation.setValue(datetime);
-
+			
 		} else if (FHIRConstants.DT_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
 			PeriodDt datetime = new PeriodDt();
-
+			
 			DateTimeDt startDate = new DateTimeDt();
 			startDate.setValue(obs.getValueDate());
 			DateTimeDt endDate = new DateTimeDt();
@@ -159,23 +162,22 @@ public class FHIRObsUtil {
 			datetime.setStart(startDate);
 			datetime.setEnd(endDate);
 			observation.setValue(datetime);
-
-		} else if (FHIRConstants.CWE_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation()
-		)) {
+			
+		} else if (FHIRConstants.CWE_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
 			if (obs.getValueCoded() != null) {
 				Collection<ConceptMap> valueMappings = obs.getValueCoded().getConceptMappings();
 				List<CodingDt> values = new ArrayList<CodingDt>();
-
+				
 				//Set codings from openmrs concept mappings
 				for (ConceptMap map : valueMappings) {
 					if (map.getConceptReferenceTerm() != null) {
 						values.add(FHIRUtils.getCodingDtByConceptMappings(map));
 					}
 				}
-
+				
 				//Set openmrs concept
 				values.add(FHIRUtils.getCodingDtByOpenMRSConcept(obs.getConcept()));
-
+				
 				CodeableConceptDt codeableConceptDt = new CodeableConceptDt();
 				codeableConceptDt.setCoding(values);
 				observation.setValue(codeableConceptDt);
@@ -188,7 +190,8 @@ public class FHIRObsUtil {
 			try {
 				os = new ObjectOutputStream(out);
 				os.writeObject(obs.getComplexData().getData());
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				log.error("Error while converting object data to stream");
 				attachmentDt.setData(out.toByteArray());
 			}
@@ -198,14 +201,14 @@ public class FHIRObsUtil {
 			value.setValue(obs.getValueAsString(Context.getLocale()));
 			observation.setValue(value);
 		}
-
+		
 		observation.setStatus(ObservationStatusEnum.FINAL);
 		observation.setReliability(ObservationReliabilityEnum.OK);
-
+		
 		DateTimeDt dateApplies = new DateTimeDt();
 		dateApplies.setValue(obs.getObsDatetime());
 		observation.setApplies(dateApplies);
-
+		
 		//Set reference observations
 		if (obs.getGroupMembers() != null && !obs.getGroupMembers().isEmpty()) {
 			List<Observation.Related> relatedObs = new ArrayList<Observation.Related>();
@@ -220,11 +223,11 @@ public class FHIRObsUtil {
 				String obsUri = FHIRConstants.OBSERVATION + "/" + obs.getUuid();
 				providerRef.setValue(obsUri);
 				resourceReferenceDt.setReference(providerRef);
-				related.setTarget(resourceReferenceDt);
+				related.setTarget(resourceReferenceDt); // 	NEED A FIX HERE, ALWAYS EMPTY
 			}
 			observation.setRelated(relatedObs);
 		}
-
+		
 		//As per discussions, obs location will be deprecated from openmrs. So it will no need of setting it
 		/*if (obs.getLocation() != null) {
 			StringDt location = new StringDt();
@@ -232,12 +235,64 @@ public class FHIRObsUtil {
 			ExtensionDt locationExt = new ExtensionDt(false, FHIRConstants.LOCATION_EXTENTION_URI, location);
 			observation.addUndeclaredExtension(locationExt);
 		}*/
-
+		
 		if (obs.getEncounter() != null) {
 			ResourceReferenceDt encounter = new ResourceReferenceDt();
 			encounter.setReference(FHIRConstants.ENCOUNTER + "/" + obs.getEncounter().getUuid());
 			observation.setEncounter(encounter);
 		}
 		return observation;
+	}
+	
+	public static Obs generateOpenMRSObs(Observation observation, List<String> errors) {
+		Obs obs = new Obs();
+		
+		obs.setComment(observation.getComments());
+		if (observation.getSubject() != null) {
+			ResourceReferenceDt subjectref = observation.getSubject();
+			IdDt id = subjectref.getReference();
+			String patientUuid = id.getIdPart();
+			obs.setPerson(Context.getPersonService().getPersonByUuid(patientUuid));
+		} else {
+			errors.add("Subject cannot be null");
+		}
+		
+		DateTimeDt dateApplies = (DateTimeDt) observation.getApplies();
+		obs.setObsDatetime(dateApplies.getValue());
+		
+		Date instant = observation.getIssued();
+		obs.setDateCreated(instant);
+		
+		String conceptUuid = null;
+		try {
+			CodeableConceptDt dt = observation.getCode();
+			List<CodingDt> dts = dt.getCoding();
+			CodingDt coding = dts.get(0);
+			conceptUuid = coding.getCode();
+		}
+		catch (NullPointerException e) {
+			errors.add("Code cannot be empty");
+		}
+		Concept concept = Context.getConceptService().getConceptByUuid(conceptUuid);
+		obs.setConcept(concept);
+		if (concept != null) {
+			if (concept.isNumeric()) {
+				QuantityDt quantity = (QuantityDt) observation.getValue();
+				BigDecimal bd = quantity.getValue();
+				double doubleValue = bd.doubleValue();
+				obs.setValueNumeric(doubleValue);
+			}
+		} else {
+			errors.add("Couldn't find a concept for the given uuid");
+		}
+		
+		if (observation.getEncounter() != null) {
+			ResourceReferenceDt encounter = observation.getEncounter();
+			IdDt ref = encounter.getReference();
+			String encounterUuid = ref.getIdPart();
+			obs.setEncounter(Context.getEncounterService().getEncounterByUuid(encounterUuid));
+			
+		}
+		return obs;
 	}
 }
