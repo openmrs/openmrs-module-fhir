@@ -14,22 +14,30 @@
 package org.openmrs.module.fhir.api;
 
 import ca.uhn.fhir.model.dstu2.resource.Observation;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
 import org.openmrs.GlobalProperty;
+import org.openmrs.Location;
+import org.openmrs.Obs;
+import org.openmrs.Person;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.util.FHIRObsUtil;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.validation.constraints.AssertTrue;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -40,6 +48,8 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 
 	protected static final String OBS_INITIAL_DATA_XML = "org/openmrs/api/include/ObsServiceTest-initial.xml";
 	protected static final String CONCEPT_CUSTOM_INITIAL_DATA_XML = "Concept_customTestData.xml";
+	protected static final String PERSOM_INITIAL_DATA_XML =
+			"org/openmrs/api/include/PersonServiceTest-createPersonPurgeVoidTest.xml";
 
 	public ObsService getService() {
 		return Context.getService(ObsService.class);
@@ -49,6 +59,7 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 	public void runBeforeEachTest() throws Exception {
 		executeDataSet(OBS_INITIAL_DATA_XML);
 		executeDataSet(CONCEPT_CUSTOM_INITIAL_DATA_XML);
+		executeDataSet(PERSOM_INITIAL_DATA_XML);
 	}
 
 	@Test
@@ -130,5 +141,47 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		getService().deleteObs(Uuid);
 		obs = obsService.getObs(9);
 		assertTrue(obs.isVoided());
+	}
+	
+	@Test
+	public void createObs_shouldCreatedObs() {
+		
+		Person p=Context.getPersonService().getPersonByUuid("dagh524f-27ce-4bb2-86d6-6d1d05312bd5");
+		if(p==null){
+			assertEquals("kk","fghj");
+		}
+		
+		Obs obsn=new Obs(p, Context.getConceptService().getConceptByUuid("4a5048b1-cf85-4c64-9339-7cab41e5e364"), new Date(),null);
+		//if(obs.getConcept().isNumeric()){
+			obsn.setValueNumeric(8d);
+		//}
+
+		//obsn.setId(13);
+		obsn.setVoided(false);
+	//	assertEquals(obsn.getPerson().getId().intValue(),6);
+		
+		
+		//new ob
+		/*obsn.setPerson(obs.getPerson());
+		obsn.setObsDatetime(obs.getObsDatetime());
+		obsn.setDateCreated(obs.getDateCreated());
+		obsn.setConcept(obs.getConcept());
+		obsn.setValueNumeric(obs.getValueNumeric());
+		obsn.setCreator(obs.getCreator());
+		obsn.setId(88);
+		obsn.setValueNumeric(5d);*/
+	//	obsn.setId(66);
+		
+		
+
+		/*Obs newObs=FHIRObsUtil.generateOpenMRSObs(observation, new ArrayList<String>());
+		assertEquals(newObs.getUuid(),"fghj");*/
+		
+		Obs newObs=Context.getObsService().saveObs(obsn, "hhh");
+		assertNotNull(newObs);
+		assertEquals(newObs.getConcept().getName(), obsn.getConcept().getName());
+		assertEquals(newObs.getPerson().getNames(), obsn.getPerson().getNames());
+		assertEquals(newObs.getLocation().getName(), obsn.getLocation().getName());
+		assertEquals(newObs.getValueNumeric(), obsn.getValueNumeric());		
 	}
 }
