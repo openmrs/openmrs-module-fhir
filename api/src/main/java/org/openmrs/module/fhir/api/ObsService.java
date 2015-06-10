@@ -93,15 +93,26 @@ public interface ObsService extends OpenmrsService {
 	/**
 	 * Delete observation by id
 	 *
+<<<<<<< HEAD
 	 * @param id uuid of the observation
+=======
+	 * @param id uuid of the observation 
+	 * @return observation fhir resource    // RETRUN??? THIS IS A VOID RESOURCE
+>>>>>>> 95b78a7703f3ce78e264b5cb2fee81ddd8dd7e85
 	 */
 	public void deleteObs(String id);
 	
 	/**
+<<<<<<< HEAD
 	 * create observation
 	 * 
 	 * @param observation the observation representation
 	 * @return created fhir observation resource
+=======
+	 * create observation by id
+	 *
+	 * @param observation the observation representation
+>>>>>>> 95b78a7703f3ce78e264b5cb2fee81ddd8dd7e85
 	 */
 	public Observation createFHIRObservation(Observation observation);
 
