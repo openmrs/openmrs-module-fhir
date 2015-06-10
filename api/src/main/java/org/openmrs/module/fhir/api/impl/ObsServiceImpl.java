@@ -13,8 +13,10 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import ca.uhn.fhir.model.dstu2.resource.Observation;
-import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,14 +29,11 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.ObsService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
-import org.openmrs.module.fhir.api.util.FHIRLocationUtil;
 import org.openmrs.module.fhir.api.util.FHIRObsUtil;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import ca.uhn.fhir.model.dstu2.resource.Observation;
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
@@ -71,7 +70,8 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByPatientAndConcept(String, java.util.Map)
+	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByPatientAndConcept(String,
+	 *      java.util.Map)
 	 */
 	public List<Observation> searchObsByPatientAndConcept(String patientUUid, Map<String, String> conceptNamesAndURIs) {
 		Patient patient = Context.getPatientService().getPatientByUuid(patientUUid);
@@ -152,8 +152,8 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 
 			List<Concept> concepts = new ArrayList<Concept>();
 			concepts.add(concept);
-			omrsObs = Context.getObsService().getObservations(null, null, concepts, null, null, null, null, null,
-					null, null, null, false);
+			omrsObs = Context.getObsService().getObservations(null, null, concepts, null, null, null, null, null, null,
+			    null, null, false);
 
 			for (Obs obs : omrsObs) {
 				obsList.add(FHIRObsUtil.generateObs(obs));
@@ -166,8 +166,8 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByDate(java.util.Date)
 	 */
 	public List<Observation> searchObsByDate(Date date) {
-		List<Obs> omrsObs = Context.getObsService().getObservations(null, null, null, null, null, null, null, null,
-				null, date, date, false);
+		List<Obs> omrsObs = Context.getObsService().getObservations(null, null, null, null, null, null, null, null, null,
+		    date, date, false);
 		List<Observation> obsList = new ArrayList<Observation>();
 		for (Obs obs : omrsObs) {
 			obsList.add(FHIRObsUtil.generateObs(obs));
@@ -196,8 +196,7 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 		List<Concept> conceptsAnswers = new ArrayList<Concept>();
 		conceptsAnswers.add(concept);
 		List<Obs> omrsObs = Context.getObsService().getObservations(null, null, null, conceptsAnswers, null, null, null,
-				null,
-				null, null, null, false);
+		    null, null, null, null, false);
 		List<Observation> obsList = new ArrayList<Observation>();
 		for (Obs obs : omrsObs) {
 			obsList.add(FHIRObsUtil.generateObs(obs));
@@ -231,9 +230,9 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	 * @see org.openmrs.module.fhir.api.ObsService#createFHIRObservation(Observation)
 	 */
 	@Override
-	public Observation createFHIRObservation(Observation observation){		
+	public Observation createFHIRObservation(Observation observation) {
 		List<String> errors = new ArrayList<String>();
-		Obs obs=FHIRObsUtil.generateOpenMRSObs(observation,errors);
+		Obs obs = FHIRObsUtil.generateOpenMRSObs(observation, errors);
 		if (!errors.isEmpty()) {
 			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
 			for (int i = 0; i < errors.size(); i++) {
@@ -241,7 +240,7 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 			}
 			throw new UnprocessableEntityException(errorMessage.toString());
 		}
-		obs=Context.getObsService().saveObs(obs,"CREATED by FHIR Request");
+		obs = Context.getObsService().saveObs(obs, "CREATED by FHIR Request");
 		return FHIRObsUtil.generateObs(obs);
 	}
 

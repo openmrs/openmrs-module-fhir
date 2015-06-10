@@ -13,6 +13,24 @@
  */
 package org.openmrs.module.fhir.api.util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
+import org.openmrs.ConceptMap;
+import org.openmrs.ConceptNumeric;
+import org.openmrs.EncounterProvider;
+import org.openmrs.Obs;
+import org.openmrs.api.context.Context;
+
 import ca.uhn.fhir.model.dstu2.composite.AttachmentDt;
 import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu2.composite.CodingDt;
@@ -27,22 +45,6 @@ import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.InstantDt;
 import ca.uhn.fhir.model.primitive.StringDt;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.openmrs.Concept;
-import org.openmrs.ConceptMap;
-import org.openmrs.ConceptNumeric;
-import org.openmrs.EncounterProvider;
-import org.openmrs.Obs;
-import org.openmrs.api.context.Context;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
 
 public class FHIRObsUtil {
 	
@@ -249,9 +251,7 @@ public class FHIRObsUtil {
 		if (observation.getSubject() != null) {
 			ResourceReferenceDt subjectref = observation.getSubject();
 			IdDt id = subjectref.getReference();
-			String uri = id.getValue();
-			String[] paths = uri.split("/");
-			String patientUuid = paths[1];
+			String patientUuid = id.getIdPart();
 			obs.setPerson(Context.getPersonService().getPersonByUuid(patientUuid));
 		} else {
 			errors.add("Subject cannot be null");
@@ -263,26 +263,33 @@ public class FHIRObsUtil {
 		Date instant = observation.getIssued();
 		obs.setDateCreated(instant);
 		
-		CodeableConceptDt dt = observation.getCode();
-		List<CodingDt> dts = dt.getCoding();
-		CodingDt coding = dts.get(0);
-		String conceptUuid = coding.getCode();
+		String conceptUuid = null;
+		try {
+			CodeableConceptDt dt = observation.getCode();
+			List<CodingDt> dts = dt.getCoding();
+			CodingDt coding = dts.get(0);
+			conceptUuid = coding.getCode();
+		}
+		catch (NullPointerException e) {
+			errors.add("Code cannot be empty");
+		}
 		Concept concept = Context.getConceptService().getConceptByUuid(conceptUuid);
 		obs.setConcept(concept);
-		
-		if (concept.isNumeric()) {
-			QuantityDt quantity = (QuantityDt) observation.getValue();
-			BigDecimal bd = quantity.getValue();
-			double doubleValue = bd.doubleValue();
-			obs.setValueNumeric(doubleValue);
+		if (concept != null) {
+			if (concept.isNumeric()) {
+				QuantityDt quantity = (QuantityDt) observation.getValue();
+				BigDecimal bd = quantity.getValue();
+				double doubleValue = bd.doubleValue();
+				obs.setValueNumeric(doubleValue);
+			}
+		} else {
+			errors.add("Couldn't find a concept for the given uuid");
 		}
 		
 		if (observation.getEncounter() != null) {
 			ResourceReferenceDt encounter = observation.getEncounter();
 			IdDt ref = encounter.getReference();
-			String reference = ref.getValue();
-			String[] encpaths = reference.split("/");
-			String encounterUuid = encpaths[1];
+			String encounterUuid = ref.getIdPart();
 			obs.setEncounter(Context.getEncounterService().getEncounterByUuid(encounterUuid));
 			
 		}
