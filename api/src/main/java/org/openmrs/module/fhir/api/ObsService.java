@@ -13,13 +13,14 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu2.resource.Observation;
-import org.openmrs.api.OpenmrsService;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import org.openmrs.api.OpenmrsService;
+import org.springframework.transaction.annotation.Transactional;
+
+import ca.uhn.fhir.model.dstu2.resource.Observation;
 
 @Transactional
 public interface ObsService extends OpenmrsService {
@@ -81,19 +82,27 @@ public interface ObsService extends OpenmrsService {
 	 */
 	public List<Observation> searchObsByValueConcept(String conceptName);
 
-	/* Search observations by patient identifier
-	*
-	* @param identifier to be search
-	* @return fhir observation resource list
-	*/
+	/**
+	 * Search observations by patient identifier
+	 *
+	 * @param identifier to be search
+	 * @return fhir observation resource list
+	 */
 	public List<Observation> searchObsByPatientIdentifier(String identifier);
 
 	/**
 	 * Delete observation by id
 	 *
 	 * @param id uuid of the observation
-	 * @return observation fhir resource
 	 */
 	public void deleteObs(String id);
+	
+	/**
+	 * Create observation
+	 *
+	 * @param observation the fhir observation to create
+	 * @return observation fhir resource
+	 */
+	public Observation createFHIRObservation(Observation observation);
 
 }

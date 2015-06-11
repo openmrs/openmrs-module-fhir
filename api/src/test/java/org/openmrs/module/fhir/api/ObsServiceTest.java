@@ -13,16 +13,12 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu2.resource.Observation;
-import org.junit.Before;
-import org.junit.Test;
-import org.openmrs.Concept;
-import org.openmrs.ConceptMap;
-import org.openmrs.GlobalProperty;
-import org.openmrs.api.ConceptService;
-import org.openmrs.api.context.Context;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,15 +27,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
+import org.openmrs.Concept;
+import org.openmrs.ConceptMap;
+import org.openmrs.GlobalProperty;
+import org.openmrs.Obs;
+import org.openmrs.Person;
+import org.openmrs.api.ConceptService;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.util.FHIRObsUtil;
+import org.openmrs.test.BaseModuleContextSensitiveTest;
+
+import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
+import ca.uhn.fhir.model.dstu2.composite.CodingDt;
+import ca.uhn.fhir.model.dstu2.composite.QuantityDt;
+import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
+import ca.uhn.fhir.model.dstu2.resource.Observation;
+import ca.uhn.fhir.model.primitive.DateTimeDt;
+import ca.uhn.fhir.model.primitive.IdDt;
 
 public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 
 	protected static final String OBS_INITIAL_DATA_XML = "org/openmrs/api/include/ObsServiceTest-initial.xml";
 	protected static final String CONCEPT_CUSTOM_INITIAL_DATA_XML = "Concept_customTestData.xml";
+	
+	protected static final String PERSOM_INITIAL_DATA_XML = "org/openmrs/api/include/PersonServiceTest-createPersonPurgeVoidTest.xml";
 
 	public ObsService getService() {
 		return Context.getService(ObsService.class);
@@ -49,6 +62,7 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 	public void runBeforeEachTest() throws Exception {
 		executeDataSet(OBS_INITIAL_DATA_XML);
 		executeDataSet(CONCEPT_CUSTOM_INITIAL_DATA_XML);
+		executeDataSet(PERSOM_INITIAL_DATA_XML);
 	}
 
 	@Test
@@ -130,5 +144,40 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		getService().deleteObs(Uuid);
 		obs = obsService.getObs(9);
 		assertTrue(obs.isVoided());
+	}
+	
+	@Test
+	public void createObs_shouldCreatedObs() {
+		
+		String openmrsPersonUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
+		String openmrsConceptUuid = "4a5048b1-cf85-4c64-9339-7cab41e5e364";
+		Date openmrsDateApplies = new Date();
+		Person person = Context.getPersonService().getPersonByUuid(openmrsPersonUuid);
+		Concept concept = Context.getConceptService().getConceptByUuid(openmrsConceptUuid);
+		Obs obsn = new Obs(person, concept, openmrsDateApplies, null);
+		obsn.setValueNumeric(8d);
+		
+		Observation newObs = FHIRObsUtil.generateObs(obsn);
+		newObs = Context.getService(ObsService.class).createFHIRObservation(newObs);
+		
+		CodeableConceptDt dt = newObs.getCode();
+		List<CodingDt> dts = dt.getCoding();
+		CodingDt coding = dts.get(0);
+		String fhirConceptUuid = coding.getCode();
+		
+		ResourceReferenceDt subjectref = newObs.getSubject();
+		IdDt id = subjectref.getReference();
+		String fhirPatientUuid = id.getIdPart();
+		
+		DateTimeDt dateApplies = (DateTimeDt) newObs.getApplies();
+		Date fhirDppliesDate = dateApplies.getValue();
+		
+		QuantityDt quantity = (QuantityDt) newObs.getValue();
+		BigDecimal bd = quantity.getValue();
+
+		assertNotNull(newObs);
+		assertEquals(openmrsPersonUuid, fhirPatientUuid);
+		assertEquals(openmrsConceptUuid, fhirConceptUuid);
+		assertEquals(openmrsDateApplies, fhirDppliesDate);
 	}
 }
