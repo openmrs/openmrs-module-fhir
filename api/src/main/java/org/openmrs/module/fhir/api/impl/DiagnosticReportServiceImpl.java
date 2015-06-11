@@ -157,7 +157,7 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 			
 		}
 		catch (Exception e) {
-			throw new APIException("Unable.load.and.instantiate.handler", null, e);
+			throw new APIException("Unable.load.and.instantiate.handler", e);
 		}
 	}
 	

@@ -13,23 +13,29 @@
  */
 package org.openmrs.module.fhir.providers;
 
+import java.util.List;
+
+import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.module.fhir.resources.FHIRObservationResource;
+
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.resource.Observation;
+import ca.uhn.fhir.model.dstu2.resource.OperationOutcome;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
+import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.DateParam;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenOrListParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.openmrs.module.fhir.resources.FHIRObservationResource;
-
-import java.util.List;
 
 public class RestfulObservationResourceProvider implements IResourceProvider {
 
@@ -145,6 +151,22 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	@Delete()
 	public void deleteObservation(@IdParam IdDt theId) {
 		provider.deleteObservation(theId);
+	}
+	
+	/**
+	 * Create Observation
+	 *
+	 * @param observation fhir observation object
+	 */
+	@Create
+	public MethodOutcome createFHIRObservation(@ResourceParam Observation observation) {
+		observation = provider.createFHIRObservation(observation);
+		MethodOutcome retVal = new MethodOutcome();
+		retVal.setId(new IdDt(FHIRConstants.OBSERVATION, observation.getId().getIdPart()));
+		OperationOutcome outcome = new OperationOutcome();
+		outcome.addIssue().setDetails("Observation is successfully created" + observation.getId().getIdPart());
+		retVal.setOperationOutcome(outcome);
+		return retVal;
 	}
 
 }
