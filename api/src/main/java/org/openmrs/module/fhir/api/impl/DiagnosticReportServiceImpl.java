@@ -15,33 +15,22 @@ package org.openmrs.module.fhir.api.impl;
 
 import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
-import ca.uhn.fhir.model.dstu2.resource.Person;
-import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
-import ca.uhn.fhir.rest.server.exceptions.NotModifiedException;
-import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.api.APIException;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.DiagnosticReportService;
-import org.openmrs.module.fhir.api.ObsService;
-import org.openmrs.module.fhir.api.PersonService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
-import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportTemplate;
 import org.openmrs.module.fhir.api.util.FHIRDiagnosticReportUtil;
-import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
 import org.openmrs.util.OpenmrsClassLoader;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.naming.InvalidNameException;
 
@@ -78,16 +67,23 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 	@Override
 	public DiagnosticReport createFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
 		List<CodingDt> codingList = diagnosticReport.getServiceCategory().getCoding();
-		DiagnosticReportTemplate omrsDiagnosticReport = null;
+		Encounter omrsDiagnosticReport = null;
+
 		// If serviceCategory is not present in the DiagnosticReport, then use "DEFAULT"
-		String handler = "DEFAULT";
+		String handlerName = "DEFAULT";
 		if (!codingList.isEmpty()) {
-			handler = codingList.get(0).getCode();
+			handlerName = codingList.get(0).getCode();
 		}
-		omrsDiagnosticReport = FHIRDiagnosticReportUtil.generateOpenMRSDiagnosticReport(getHandler(handler), diagnosticReport);
+		// Get Results in Diagnostic Report as a List of OpenMRS Obs
+		List<Obs> results = FHIRDiagnosticReportUtil.getOpenMRSObs(diagnosticReport);
+		Set<Obs> obsSet = new HashSet<Obs>();//getHandler(handlerName).saveObs(results);
+
+		omrsDiagnosticReport = FHIRDiagnosticReportUtil.generateOpenMRSDiagnosticReport(diagnosticReport, obsSet);
 		// Create resource in OpenMRS Database
-		
-		return FHIRDiagnosticReportUtil.generateFHIRDiagnosticReport(getHandler(handler), omrsDiagnosticReport);
+		EncounterService encounterService = Context.getEncounterService();
+		// encounterService.saveEncounter(omrsDiagnosticReport);
+
+		return FHIRDiagnosticReportUtil.generateFHIRDiagnosticReport(omrsDiagnosticReport, obsSet);
 	}
 	
 	/**
@@ -144,10 +140,7 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 	public void registerHandler(String key, DiagnosticReportHandler handler) throws APIException {
 		getHandlers().put(key, handler);
 	}
-	
-	/**
-	 * @see org.openmrs.api.DiagnosticReport#registerHandler(String, String)
-	 */
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void registerHandler(String key, String handlerClass) throws APIException {

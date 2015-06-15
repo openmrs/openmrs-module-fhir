@@ -1,26 +1,30 @@
 package org.openmrs.module.fhir.api.diagnosticreport.handler;
 
+import org.openmrs.Obs;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
-import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportTemplate;
 
-import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class RadiologyHandler extends AbstractHandler implements DiagnosticReportHandler {
 	
 	public RadiologyHandler() {
 		super();
 	}
-	
+
 	@Override
-	public DiagnosticReport generateFHIRDiagnosticReport(DiagnosticReportTemplate omrsDiagnosticReport,
-	                                                     DiagnosticReport diagnosticReport) {
-		return null;
+	public Set<Obs> saveObs(List<Obs> result) {
+		return new HashSet<Obs>();
 	}
-	
+
 	@Override
-	public DiagnosticReportTemplate generateOpenMRSDiagnosticReport(DiagnosticReport fhirDiagnosticReport,
-	                                                                DiagnosticReportTemplate omrsDiagnosticReport) {
-		return null;
+	public Set<Obs> getObs(List<Obs> result) {
+		return new HashSet<Obs>();
 	}
-	
+
+	@Override
+	public Set<Obs> purgeObs(List<Obs> result) {
+		return new HashSet<Obs>();
+	}
 }
