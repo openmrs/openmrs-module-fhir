@@ -19,7 +19,6 @@ import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
-import org.openmrs.Obs;
 import org.openmrs.api.APIException;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
@@ -61,20 +60,18 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 
 	@Override
 	public DiagnosticReport getDiagnosticReport(String id) {
-		// Find Diagnostic Report in OpenMRS database
+		// Find Diagnostic Report (Encounter) in OpenMRS database
 		EncounterService encounterService = Context.getEncounterService();
 		Encounter omrsDiagnosticReport = encounterService.getEncounterByUuid(id);
-
 		// Get corresponding Handler
 		String handlerName = omrsDiagnosticReport.getEncounterType().getName();
 
-		return FHIRDiagnosticReportUtil.generateFHIRDiagnosticReport(omrsDiagnosticReport, getHandler(handlerName));
+		return FHIRDiagnosticReportUtil.getFHIRDiagnosticReport(omrsDiagnosticReport, getHandler(handlerName));
 	}
 
 	@Override
 	public DiagnosticReport createFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
 		List<CodingDt> codingList = diagnosticReport.getServiceCategory().getCoding();
-		Encounter omrsDiagnosticReport = null;
 
 		// If serviceCategory is not present in the DiagnosticReport, then use "DEFAULT"
 		String handlerName = "DEFAULT";
@@ -82,14 +79,8 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 			handlerName = codingList.get(0).getCode();
 		}
 
-		omrsDiagnosticReport = FHIRDiagnosticReportUtil.generateOpenMRSDiagnosticReport(diagnosticReport, getHandler
+		return FHIRDiagnosticReportUtil.saveDiagnosticReport(diagnosticReport, getHandler
 				(handlerName));
-
-		// Create resource in OpenMRS Database
-		EncounterService encounterService = Context.getEncounterService();
-		// encounterService.saveEncounter(omrsDiagnosticReport);
-
-		return FHIRDiagnosticReportUtil.generateFHIRDiagnosticReport(omrsDiagnosticReport, getHandler(handlerName));
 	}
 
 	/**

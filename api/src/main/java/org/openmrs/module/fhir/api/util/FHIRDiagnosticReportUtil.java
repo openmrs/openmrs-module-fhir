@@ -33,138 +33,40 @@ public class FHIRDiagnosticReportUtil {
 	private static final Log log = LogFactory.getLog(FHIRDiagnosticReportUtil.class);
 
 	/**
-	 * Generate a FHIR Diagnostic Report for a given OpenMRS Diagnostic Report
-	 * (Encounter)
-	 * Note: Since this method is generate a FHIR Diagnostic Report, it'll
-	 * only calling to GET method in given Handler
+	 * Get matching FHIR Diagnostic Report
 	 *
 	 * @param omrsDiagnosticReport OpenMRS Diagnostic Report (Encounter)
 	 * @param handler              An implementation of DiagnosticReportHandler
 	 * @return An instance of ca.uhn.fhir.model.dstu2.resource.DiagnosticReport
 	 */
-	public static DiagnosticReport generateFHIRDiagnosticReport(Encounter omrsDiagnosticReport, DiagnosticReportHandler
+	public static DiagnosticReport getFHIRDiagnosticReport(Encounter omrsDiagnosticReport, DiagnosticReportHandler
 			handler) {
 		DiagnosticReport diagnosticReport = new DiagnosticReport();
-		// Get Obs and set as `Name`
-		// Get Obs and set as `Status`
-		// Get EncounterDateTime and set as `Issued` date
-		// Get Encounter Patient and set as `Subject`
-		// Get Encounter Provider and set as `Performer`
-		// Get EncounterType and Set `ServiceCategory`
-		// Get valueDateTime in Obs and Set `Diagnosis[x]->DateTime`
-		// Get valueDateTime in Obs and Set `Diagnosis[x]->Period`
-
-		// ObsSet set as `Result`
-		// Binary Obs Handler
-
-		return diagnosticReport;
+		return handler.getFHIRDiagnosticReport(diagnosticReport);
 	}
 
 	/**
-	 * Generate a OpenMRS Diagnostic Report (Encounter) for a given FHIR
-	 * Diagnostic Report
-	 * Note: Since this method is generating a OpenMRS Diagnostic Report,
-	 * it'll only calling to CREATE method in give Handler
+	 * Save FHIR Diagnostic Report
+	 *
+	 * @param diagnosticReport FHIR Diagnostic Report
+	 * @param handler          An implementation of DiagnosticReportHandler
+	 * @return An instance of ca.uhn.fhir.model.dstu2.resource.DiagnosticReport
+	 */
+	public static DiagnosticReport saveDiagnosticReport(DiagnosticReport diagnosticReport, DiagnosticReportHandler
+			handler) {
+		return handler.saveFHIRDiagnosticReport(diagnosticReport);
+	}
+
+	/**
+	 * Delete given FHIR Diagnostic Report
 	 *
 	 * @param diagnosticReport FHIR Diagnostic Report
 	 * @param handler          An implementation of DiagnosticReportHandler
 	 * @return An instance of org.openmrs.Encounter
 	 */
-	public static Encounter generateOpenMRSDiagnosticReport(DiagnosticReport diagnosticReport, DiagnosticReportHandler
+	public static DiagnosticReport purgeDiagnosticReport(DiagnosticReport diagnosticReport, DiagnosticReportHandler
 			handler) {
-		Encounter omrsDiagnosticReport = new Encounter();
-
-		//Set ID if available
-		if (diagnosticReport.getId() != null) {
-			omrsDiagnosticReport.setUuid(diagnosticReport.getId().getIdPart());
-		}
-		// Set `Name` as a Obs
-		// Set `Status` as a Obs
-		// Set `Issued` date as EncounterDateTime
-		// Set `Subject` as Encounter Patient
-		// Set `Performer` as Encounter Provider
-		// Set `ServiceCategory` as EncounterType
-		// Set `Diagnosis[x]->DateTime` as valueDateTime in an Obs
-		// Set `Diagnosis[x]->Period` as valueDateTime in an Obs
-
-		// Set parsed obsSet (`Result` as Set of Obs)
-		// Set Binary Obs Handler which used to store `PresentedForm`
-
-		return omrsDiagnosticReport;
-	}
-
-	/**
-	 * Update a OpenMRS Diagnostic Report (Encounter) with a given FHIR
-	 * Diagnostic Report
-	 * Note: Since this method is updating a OpenMRS Diagnostic Report,
-	 * it'll only calling to UPDATE method in given Handler
-	 *
-	 * @param diagnosticReport     FHIR Diagnostic Report
-	 * @param omrsDiagnosticReport OpenMRS Diagnostic Report (Encounter)
-	 * @param handler              An implementation of DiagnosticReportHandler
-	 * @return An instance of org.openmrs.Encounter
-	 */
-	public static Encounter updateOpenMRSDiagnosticReport(DiagnosticReport diagnosticReport, Encounter omrsDiagnosticReport,
-	                                                      DiagnosticReportHandler handler) {
-		// Update `Name` as a Obs
-		// Update `Status` as a Obs
-		// Update `Issued` date as EncounterDateTime
-		// Update `Subject` as Encounter Patient
-		// Update `Performer` as Encounter Provider
-		// Update `ServiceCategory` as EncounterType
-		// Update `Diagnosis[x]->DateTime` as valueDateTime in an Obs
-		// Update `Diagnosis[x]->Period` as valueDateTime in an Obs
-
-		// Update parsed obsSet (`Result` as Set of Obs)
-		// Update Binary Obs Handler which used to store `PresentedForm`
-
-		return omrsDiagnosticReport;
-	}
-
-	/**
-	 * Delete a OpenMRS Diagnostic Report (Encounter)
-	 * Note: It'll only calling to DELETE method in give Handler
-	 *
-	 * @param omrsDiagnosticReport FHIR Diagnostic Report
-	 * @param handler              An implementation of DiagnosticReportHandler
-	 * @return An instance of org.openmrs.Encounter
-	 */
-	public static Encounter deleteOpenMRSDiagnosticReport(Encounter omrsDiagnosticReport, DiagnosticReportHandler
-			handler) {
-		// Delete `Name` Obs
-		// Delete `Status` Obs
-
-		// Delete Obs (`Result` as Set of Obs)
-		// Delete Binary Obs Handler which used to store `PresentedForm`
-
-		return omrsDiagnosticReport;
-	}
-
-	public static List<Obs> getOpenMRSObs(DiagnosticReport diagnosticReport) {
-		List<Obs> obsSet = new ArrayList<Obs>();
-		for (ResourceReferenceDt reference : diagnosticReport.getResult()) {
-			if (reference.getReference().isLocal()) {
-				Observation obs = (Observation) reference.getResource();
-				// obsSet.add(FHIRObsUtil.generateOpenMRSObs(obs, new ArrayList<String>()));
-			} else {
-				getOpenMRSObs(reference);
-			}
-		}
-		return obsSet;
-	}
-
-	private static Obs getOpenMRSObs(ResourceReferenceDt reference) {
-		if (reference.getReference().isLocal()) {
-			Observation obs = (Observation) reference.getResource();
-			return FHIRObsUtil.generateOpenMRSObs(obs, new ArrayList<String>());
-		} else {
-			return getExternalObsResource(reference);
-		}
-	}
-
-	private static Obs getExternalObsResource(ResourceReferenceDt reference) {
-		log.warn("Doesn't implement fetch external resources.", new NotImplementedException());
-		return new Obs();
+		return handler.purgeFHIRDiagnosticReport(diagnosticReport);
 	}
 
 	public static String getServiceCode(String handlerName) throws InvalidNameException {

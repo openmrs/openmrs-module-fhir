@@ -1,30 +1,67 @@
 package org.openmrs.module.fhir.api.diagnosticreport.handler;
 
-import org.openmrs.Obs;
+import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
+import org.openmrs.Encounter;
+import org.openmrs.api.EncounterService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 public class LaboratoryHandler extends AbstractHandler implements DiagnosticReportHandler {
-	
+
 	public LaboratoryHandler() {
 		super();
 	}
 
 	@Override
-	public Set<Obs> saveObs(List<Obs> result) {
-		return new HashSet<Obs>();
+	public DiagnosticReport getFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
+		// Get Obs and set as `Name`
+		// Get Obs and set as `Status`
+		// Get EncounterDateTime and set as `Issued` date
+		// Get Encounter Patient and set as `Subject`
+		// Get Encounter Provider and set as `Performer`
+		// Get EncounterType and Set `ServiceCategory`
+		// Get valueDateTime in Obs and Set `Diagnosis[x]->DateTime`
+		// Get valueDateTime in Obs and Set `Diagnosis[x]->Period`
+
+		// ObsSet set as `Result`
+		// Binary Obs Handler
+		return diagnosticReport;
 	}
 
 	@Override
-	public Set<Obs> getObs(List<Obs> result) {
-		return new HashSet<Obs>();
+	public DiagnosticReport saveFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
+		Encounter omrsDiagnosticReport = new Encounter();
+
+		//Set ID if available
+		if (diagnosticReport.getId() != null) {
+			omrsDiagnosticReport.setUuid(diagnosticReport.getId().getIdPart());
+		}
+
+		// Set `Name` as a Obs
+		// Set `Status` as a Obs
+		// Set `Issued` date as EncounterDateTime
+		// Set `Subject` as Encounter Patient
+		// Set `Performer` as Encounter Provider
+		// Set `ServiceCategory` as EncounterType
+		// Set `Diagnosis[x]->DateTime` as valueDateTime in an Obs
+		// Set `Diagnosis[x]->Period` as valueDateTime in an Obs
+
+		// Set parsed obsSet (`Result` as Set of Obs)
+		// Set Binary Obs Handler which used to store `PresentedForm`
+
+		// Create resource in OpenMRS Database
+		EncounterService encounterService = Context.getEncounterService();
+		// encounterService.saveEncounter(omrsDiagnosticReport);
+		return diagnosticReport;
 	}
 
 	@Override
-	public Set<Obs> purgeObs(List<Obs> result) {
-		return new HashSet<Obs>();
+	public DiagnosticReport purgeFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
+		// Delete `Name` Obs
+		// Delete `Status` Obs
+
+		// Delete Obs (`Result` as Set of Obs)
+		// Delete Binary Obs Handler which used to store `PresentedForm`
+		return diagnosticReport;
 	}
 }

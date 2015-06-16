@@ -10,10 +10,10 @@ public interface DiagnosticReportHandler {
 
 	public String getId();
 
-	public Set<Obs> saveObs(List<Obs> result);
+	public DiagnosticReport getFHIRDiagnosticReport(DiagnosticReport diagnosticReport);
 
-	public Set<Obs> getObs(List<Obs> result);
+	public DiagnosticReport saveFHIRDiagnosticReport(DiagnosticReport diagnosticReport);
 
-	public Set<Obs> purgeObs(List<Obs> result);
+	public DiagnosticReport purgeFHIRDiagnosticReport(DiagnosticReport diagnosticReport);
 
 }
