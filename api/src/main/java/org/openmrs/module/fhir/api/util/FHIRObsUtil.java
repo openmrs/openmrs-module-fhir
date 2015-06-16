@@ -17,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -282,7 +283,15 @@ public class FHIRObsUtil {
 				BigDecimal bd = quantity.getValue();
 				double doubleValue = bd.doubleValue();
 				obs.setValueNumeric(doubleValue);
-			}
+			}else if (FHIRConstants.ST_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
+				StringDt value = (StringDt)observation.getValue();
+				try {
+					obs.setValueAsString(value.getValue());
+				} catch (ParseException e) {
+					errors.add(" Obs set value failed");
+				}
+			}		
+			
 		} else {
 			errors.add("Couldn't find a concept for the given uuid");
 		}
