@@ -38,32 +38,39 @@ import javax.naming.InvalidNameException;
  * It is a default implementation of {@link org.openmrs.module.fhir.api.DiagnosticReportService}.
  */
 public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements DiagnosticReportService {
-	
+
 	protected final Log log = LogFactory.getLog(this.getClass());
-	
+
 	private FHIRDAO dao;
-	
+
 	private static Map<String, DiagnosticReportHandler> handlers = null;
-	
+
 	/**
 	 * @return the dao
 	 */
 	public FHIRDAO getDao() {
 		return dao;
 	}
-	
+
 	/**
 	 * @param dao the dao to set
 	 */
 	public void setDao(FHIRDAO dao) {
 		this.dao = dao;
 	}
-	
+
 	@Override
 	public DiagnosticReport getDiagnosticReport(String id) {
-		return null;
+		// Find Diagnostic Report in OpenMRS database
+		EncounterService encounterService = Context.getEncounterService();
+		Encounter omrsDiagnosticReport = encounterService.getEncounterByUuid(id);
+
+		// Get corresponding Handler
+		String handlerName = omrsDiagnosticReport.getEncounterType().getName();
+
+		return FHIRDiagnosticReportUtil.generateFHIRDiagnosticReport(omrsDiagnosticReport, getHandler(handlerName));
 	}
-	
+
 	@Override
 	public DiagnosticReport createFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
 		List<CodingDt> codingList = diagnosticReport.getServiceCategory().getCoding();
@@ -74,25 +81,24 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 		if (!codingList.isEmpty()) {
 			handlerName = codingList.get(0).getCode();
 		}
-		// Get Results in Diagnostic Report as a List of OpenMRS Obs
-		List<Obs> results = FHIRDiagnosticReportUtil.getOpenMRSObs(diagnosticReport);
-		Set<Obs> obsSet = new HashSet<Obs>();//getHandler(handlerName).saveObs(results);
 
-		omrsDiagnosticReport = FHIRDiagnosticReportUtil.generateOpenMRSDiagnosticReport(diagnosticReport, obsSet);
+		omrsDiagnosticReport = FHIRDiagnosticReportUtil.generateOpenMRSDiagnosticReport(diagnosticReport, getHandler
+				(handlerName));
+
 		// Create resource in OpenMRS Database
 		EncounterService encounterService = Context.getEncounterService();
 		// encounterService.saveEncounter(omrsDiagnosticReport);
 
-		return FHIRDiagnosticReportUtil.generateFHIRDiagnosticReport(omrsDiagnosticReport, obsSet);
+		return FHIRDiagnosticReportUtil.generateFHIRDiagnosticReport(omrsDiagnosticReport, getHandler(handlerName));
 	}
-	
+
 	/**
 	 * @see org.openmrs.module.fhir.api.DiagnosticReportService#deleteDiagnosticReport(String)
 	 */
 	@Override
 	public void deleteDiagnosticReport(String id) {
 	}
-	
+
 	/****************************************************************
 	 * Handler Implementation
 	 ***************************************************************/
@@ -100,7 +106,7 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 	public DiagnosticReportHandler getHandler(String key) {
 		return handlers.get(key);
 	}
-	
+
 	@Override
 	public void setHandlers(Map<String, DiagnosticReportHandler> newHandlers) throws APIException {
 		if (newHandlers == null) {
@@ -109,15 +115,15 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 		}
 		for (Map.Entry<String, DiagnosticReportHandler> entry : newHandlers.entrySet()) {
 			try {
-	            FHIRDiagnosticReportUtil.getServiceCode(entry.getKey());
-	            registerHandler(entry.getKey(), entry.getValue());
-            }
-            catch (InvalidNameException e) {
-	            log.error("Unable to register Handler.", e);
-            }
+				FHIRDiagnosticReportUtil.getServiceCode(entry.getKey());
+				registerHandler(entry.getKey(), entry.getValue());
+			}
+			catch (InvalidNameException e) {
+				log.error("Unable to register Handler.", e);
+			}
 		}
 	}
-	
+
 	/**
 	 * Sets handlers using static method
 	 *
@@ -126,16 +132,16 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 	private static void setStaticHandlers(Map<String, DiagnosticReportHandler> currentHandlers) {
 		DiagnosticReportServiceImpl.handlers = currentHandlers;
 	}
-	
+
 	@Override
 	public Map<String, DiagnosticReportHandler> getHandlers() throws APIException {
 		if (handlers == null) {
 			handlers = new LinkedHashMap<String, DiagnosticReportHandler>();
 		}
-		
+
 		return handlers;
 	}
-	
+
 	@Override
 	public void registerHandler(String key, DiagnosticReportHandler handler) throws APIException {
 		getHandlers().put(key, handler);
@@ -147,13 +153,13 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 		try {
 			Class loadedClass = OpenmrsClassLoader.getInstance().loadClass(handlerClass);
 			registerHandler(key, (DiagnosticReportHandler) loadedClass.newInstance());
-			
+
 		}
 		catch (Exception e) {
 			throw new APIException("Unable.load.and.instantiate.handler", e);
 		}
 	}
-	
+
 	@Override
 	public void removeHandler(String key) {
 		handlers.remove(key);
