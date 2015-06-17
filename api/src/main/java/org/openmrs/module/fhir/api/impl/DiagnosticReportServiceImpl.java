@@ -71,7 +71,7 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 
 	@Override
 	public DiagnosticReport createFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
-		System.out.println("DiagnosticReportServiceImpl : createFHIRDiagnosticReport");
+		log.info("DiagnosticReportServiceImpl : createFHIRDiagnosticReport");
 		List<CodingDt> codingList = diagnosticReport.getServiceCategory().getCoding();
 
 		// If serviceCategory is not present in the DiagnosticReport, then use "DEFAULT"
@@ -79,7 +79,6 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 		if (!codingList.isEmpty()) {
 			handlerName = codingList.get(0).getCode();
 		}
-		System.out.println("Handler Name : " + handlerName);
 
 		return FHIRDiagnosticReportUtil.saveDiagnosticReport(diagnosticReport, getHandler(handlerName));
 	}
@@ -101,17 +100,14 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 
 	@Override
 	public void setHandlers(Map<String, DiagnosticReportHandler> newHandlers) throws APIException {
-		System.out.println("00000000000000000");
 		if (newHandlers == null) {
-			System.out.println("111111111111111111");
 			DiagnosticReportServiceImpl.setStaticHandlers(null);
 			return;
 		}
 		for (Map.Entry<String, DiagnosticReportHandler> entry : newHandlers.entrySet()) {
 			try {
-				System.out.println("222222222222222   " + entry.getKey());
-				FHIRDiagnosticReportUtil.getServiceCode(entry.getKey());
-				registerHandler(entry.getKey(), entry.getValue());
+				String newKey = FHIRDiagnosticReportUtil.getServiceCode(entry.getKey());
+				registerHandler(newKey, entry.getValue());
 			}
 			catch (InvalidNameException e) {
 				log.error("Unable to register Handler.", e);

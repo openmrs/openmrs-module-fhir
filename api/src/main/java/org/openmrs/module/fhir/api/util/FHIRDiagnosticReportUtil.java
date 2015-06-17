@@ -54,9 +54,6 @@ public class FHIRDiagnosticReportUtil {
 	 */
 	public static DiagnosticReport saveDiagnosticReport(DiagnosticReport diagnosticReport, DiagnosticReportHandler
 			handler) {
-		if (handler == null) {
-			System.out.println("Handler is null 1111111111111111111111111111111111111");
-		}
 		return handler.saveFHIRDiagnosticReport(diagnosticReport);
 	}
 

@@ -41,13 +41,13 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 
 	@Override
 	public DiagnosticReport saveFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
-		System.out.println("Laboratory Handler : diSave FHIR Diagnostic Report");
+		log.info("Laboratory Handler : diSave FHIR Diagnostic Report");
 		Encounter omrsDiagnosticReport = new Encounter();
 
 		//Set ID if available
 		if (diagnosticReport.getId() != null) {
 			omrsDiagnosticReport.setUuid(diagnosticReport.getId().getIdPart());
-			System.out.println("Set UUid: " + omrsDiagnosticReport.getUuid());
+			log.info("Set UUid: " + omrsDiagnosticReport.getUuid());
 		}
 
 		// Set `Name` as a Obs
@@ -65,7 +65,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		} else {
 			// Get Id of the Patient
 			String id = diagnosticReport.getSubject().getReference().getIdPart();
-			System.out.println("Patient id : " + id);
+			log.info("Patient id : " + id);
 
 			// Assume that Patient is stored in the OpenMRS database
 			PatientService fhirPatientService = Context.getService(PatientService.class);
@@ -84,7 +84,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		} else {
 			// Get Id of the Performer
 			String id = diagnosticReport.getPerformer().getReference().getIdPart();
-			System.out.println("Performer id : " + id);
+			log.info("Performer id : " + id);
 
 			// Assume that Performer is stored in the OpenMRS database
 			PractitionerService fhirPractitionerService = Context.getService(PractitionerService.class);
@@ -106,7 +106,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		Encounter omrsEncounter = encounterService.saveEncounter(omrsDiagnosticReport);
 
 		// Testing purpose
-		System.out.println("Created OpenMRS encounter : " + omrsEncounter.getUuid());
+		log.info("Created OpenMRS encounter : " + omrsEncounter.getUuid());
 		encounterService.purgeEncounter(omrsEncounter, true);
 		return diagnosticReport;
 	}
