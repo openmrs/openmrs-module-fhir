@@ -48,11 +48,6 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		log.info("Laboratory Handler : Save FHIR Diagnostic Report");
 		Encounter omrsDiagnosticReport = new Encounter();
 
-		//Set ID if available
-		if (diagnosticReport.getId() != null) {
-			omrsDiagnosticReport.setUuid(diagnosticReport.getId().getIdPart());
-		}
-
 		// Set `Name` as a Obs
 		// Set `Status` as a Obs
 
