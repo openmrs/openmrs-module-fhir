@@ -323,6 +323,10 @@
                             <property name="handlers">
                                 <map>
                                     <entry>
+                                        <key><value>DefaultDiagnosticReportHandler</value></key>
+                                        <bean class="org.openmrs.module.fhir.api.diagnosticreport.handler.DefaultDiagnosticReportHandler"/>
+                                    </entry>
+                                    <entry>
                                         <key><value>LaboratoryHandler</value></key>
                                         <bean class="org.openmrs.module.fhir.api.diagnosticreport.handler.LaboratoryHandler"/>
                                     </entry>

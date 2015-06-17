@@ -54,6 +54,9 @@ public class FHIRDiagnosticReportUtil {
 	 */
 	public static DiagnosticReport saveDiagnosticReport(DiagnosticReport diagnosticReport, DiagnosticReportHandler
 			handler) {
+		if (handler == null) {
+			System.out.println("Handler is null 1111111111111111111111111111111111111");
+		}
 		return handler.saveFHIRDiagnosticReport(diagnosticReport);
 	}
 
@@ -71,6 +74,7 @@ public class FHIRDiagnosticReportUtil {
 
 	public static String getServiceCode(String handlerName) throws InvalidNameException {
 		HashMap<String, String> diagnosticServices = new HashMap<String, String>();
+		diagnosticServices.put("DefaultDiagnosticReportHandler", "DEFAULT");
 		diagnosticServices.put("LaboratoryHandler", "LAB");
 		diagnosticServices.put("RadiologyHandler", "RAD");
 		diagnosticServices.put("BloodBankHandler", "BLB");
