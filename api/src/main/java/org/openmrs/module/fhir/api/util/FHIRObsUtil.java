@@ -139,11 +139,10 @@ public class FHIRObsUtil {
 			CodeableConceptDt codeableConceptDt = new CodeableConceptDt();
 			List<CodingDt> codingDts = new ArrayList<CodingDt>();
 			CodingDt codingDt = new CodingDt();
-			codingDt.setCode(obs.getValueCoded().getName().getName());
+			codingDt.setCode(obs.getValueCodedName().getName());
 			codingDts.add(codingDt);
 			codeableConceptDt.setCoding(codingDts);
 			observation.setValue(codeableConceptDt);
-
 		} else if (FHIRConstants.TS_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
 			PeriodDt datetime = new PeriodDt();
 			DateTimeDt startDate = new DateTimeDt();
@@ -179,7 +178,7 @@ public class FHIRObsUtil {
 				}
 
 				//Set openmrs concept
-				values.add(FHIRUtils.getCodingDtByOpenMRSConcept(obs.getConcept()));
+				values.add(FHIRUtils.getCodingDtByOpenMRSConcept(obs.getValueCoded()));  // fixed by sashrika
 
 				CodeableConceptDt codeableConceptDt = new CodeableConceptDt();
 				codeableConceptDt.setCoding(values);
@@ -288,12 +287,42 @@ public class FHIRObsUtil {
 				try {
 					obs.setValueAsString(value.getValue());
 				} catch (ParseException e) {
-					errors.add(" Obs set value failed");
+					errors.add("Obs set value failed");
+					log.error("Obs set value failed");
 				}
+			}else if (FHIRConstants.BIT_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation()
+			)) {
+				CodeableConceptDt codeableConceptDt=(CodeableConceptDt)observation.getValue();
+				String valueConceptUuid=null;
+				try{
+					List<CodingDt> codingDts=codeableConceptDt.getCoding();
+					CodingDt codingDt2=codingDts.get(0);
+					valueConceptUuid=codingDt2.getCode();
+				}catch(NullPointerException e){
+					errors.add("valueCodeableConcept cannot be empty");
+					log.error("valueCodeableConcept cannot be empty");
+				}				
+				Concept valueConcept = Context.getConceptService().getConceptByUuid(valueConceptUuid);
+				if(valueConcept!=null){
+					obs.setValueCoded(valueConcept);
+				}else{
+					errors.add("valueCodeableConcept doesn't have a mapping in OpenMRS");
+					log.error("valueCodeableConcept doesn't have a mapping in OpenMRS");
+				}							
+			}else if (FHIRConstants.TS_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
+				PeriodDt datetime=(PeriodDt)observation.getValue();
+				obs.setValueDatetime(datetime.getStart());
+
+			} else if (FHIRConstants.DT_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
+				PeriodDt datetime=(PeriodDt)observation.getValue();
+				obs.setValueDate(datetime.getStart());
+			}else if (FHIRConstants.ED_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
+				// TBD
 			}		
 			
 		} else {
 			errors.add("Couldn't find a concept for the given uuid");
+			log.error("Couldn't find a concept for the given uuid");
 		}
 		
 		if (observation.getEncounter() != null) {
