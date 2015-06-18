@@ -13,16 +13,7 @@ public abstract class AbstractHandler {
 	private String id = null;
 	
 	public AbstractHandler() {
-		try {
-			this.id = FHIRDiagnosticReportUtil.getServiceCode(getClass().getSimpleName());
-		}
-		catch (InvalidNameException e) {
-			log.error("Unable to find a valid code.", e);
-		}
+		//Leave blank for first draft
 	}
-	
-	public String getId() {
-		// Refer: http://hl7.org/fhir/v2/0074
-		return this.id;
-	}
+
 }

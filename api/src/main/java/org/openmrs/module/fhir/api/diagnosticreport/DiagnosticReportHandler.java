@@ -8,7 +8,7 @@ import java.util.Set;
 
 public interface DiagnosticReportHandler {
 
-	public String getId();
+	public String getServiceCategory();
 
 	public DiagnosticReport getFHIRDiagnosticReport(DiagnosticReport diagnosticReport);
 

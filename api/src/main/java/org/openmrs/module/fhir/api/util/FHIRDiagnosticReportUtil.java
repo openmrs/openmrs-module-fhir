@@ -69,20 +69,4 @@ public class FHIRDiagnosticReportUtil {
 		return handler.purgeFHIRDiagnosticReport(diagnosticReport);
 	}
 
-	public static String getServiceCode(String handlerName) throws InvalidNameException {
-		HashMap<String, String> diagnosticServices = new HashMap<String, String>();
-		diagnosticServices.put("DefaultDiagnosticReportHandler", "DEFAULT");
-		diagnosticServices.put("LaboratoryHandler", "LAB");
-		diagnosticServices.put("RadiologyHandler", "RAD");
-		diagnosticServices.put("BloodBankHandler", "BLB");
-		diagnosticServices.put("CATScanHandler", "CT");
-
-		if (diagnosticServices.containsKey(handlerName)) {
-			return diagnosticServices.get(handlerName);
-		} else {
-			throw new InvalidNameException(
-					"<Handler Name should be one of 'Description' value in http://hl7.org/fhir/v2/0074/> + Handler");
-		}
-	}
-
 }

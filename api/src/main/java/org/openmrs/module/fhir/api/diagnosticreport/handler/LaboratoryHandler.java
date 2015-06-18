@@ -27,7 +27,13 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		super();
 	}
 
-	@Override
+    private static final String ServiceCategory = "LAB";
+
+    public String getServiceCategory() {
+        return ServiceCategory;
+    }
+
+    @Override
 	public DiagnosticReport getFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
 		// Get Obs and set as `Name`
 		// Get Obs and set as `Status`
