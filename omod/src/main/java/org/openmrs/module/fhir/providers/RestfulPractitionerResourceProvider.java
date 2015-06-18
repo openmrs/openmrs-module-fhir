@@ -13,9 +13,13 @@
  */
 package org.openmrs.module.fhir.providers;
 
+import java.util.List;
+
+import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.module.fhir.resources.FHIRPractitionerResource;
+
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.resource.OperationOutcome;
-import ca.uhn.fhir.model.dstu2.resource.Person;
 import ca.uhn.fhir.model.dstu2.resource.Practitioner;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.Create;
@@ -29,14 +33,10 @@ import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 
-import org.openmrs.module.fhir.api.util.FHIRConstants;
-import org.openmrs.module.fhir.resources.FHIRPractitionerResource;
-
-import java.util.List;
-
 public class RestfulPractitionerResourceProvider implements IResourceProvider {
 
 	;
+
 	private FHIRPractitionerResource practitionerResource;
 
 	public RestfulPractitionerResourceProvider() {
@@ -49,12 +49,11 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	}
 
 	/**
-	 * The "@Read" annotation indicates that this method supports the
-	 * read operation. Read operations should return a single resource
-	 * instance.
+	 * The "@Read" annotation indicates that this method supports the read operation. Read
+	 * operations should return a single resource instance.
 	 *
-	 * @param theId The read operation takes one parameter, which must be of type
-	 *              IdDt and must be annotated with the "@Read.IdParam" annotation.
+	 * @param theId The read operation takes one parameter, which must be of type IdDt and must be
+	 *            annotated with the "@Read.IdParam" annotation.
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read()
@@ -80,8 +79,7 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	 * @param theFamilyName object contaning the requested family name
 	 */
 	@Search()
-	public List<Practitioner> findPractitionersByFamilyName(
-			@RequiredParam(name = Practitioner.SP_FAMILY) StringParam theFamilyName) {
+	public List<Practitioner> findPractitionersByFamilyName(@RequiredParam(name = Practitioner.SP_FAMILY) StringParam theFamilyName) {
 		return practitionerResource.searchByFamilyName(theFamilyName);
 	}
 
@@ -89,9 +87,8 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	 * Get Practitioner by name
 	 *
 	 * @param name name of the Practitioner
-	 * @return This method returns a list of Practitioners. This list may contain multiple matching resources, or it may
-	 * also be
-	 * empty.
+	 * @return This method returns a list of Practitioners. This list may contain multiple matching
+	 *         resources, or it may also be empty.
 	 */
 	@Search()
 	public List<Practitioner> findPractitionersByName(@RequiredParam(name = Practitioner.SP_NAME) StringParam name) {
@@ -102,13 +99,11 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	 * Get Practitioner by identifier
 	 *
 	 * @param identifier
-	 * @return This method returns a list of Practitioners. This list may contain multiple matching resources, or it may
-	 * also be
-	 * empty.
+	 * @return This method returns a list of Practitioners. This list may contain multiple matching
+	 *         resources, or it may also be empty.
 	 */
 	@Search()
-	public List<Practitioner> searchPractitionersByIdentifier(
-			@RequiredParam(name = Practitioner.SP_IDENTIFIER) TokenParam identifier) {
+	public List<Practitioner> searchPractitionersByIdentifier(@RequiredParam(name = Practitioner.SP_IDENTIFIER) TokenParam identifier) {
 		return practitionerResource.searchByIdentifier(identifier);
 	}
 
@@ -116,13 +111,11 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	 * Find Practitioner by given name
 	 *
 	 * @param givenName given name of the Practitioner
-	 * @return This method returns a list of Practitioners. This list may contain multiple matching resources, or it may
-	 * also be
-	 * empty.
+	 * @return This method returns a list of Practitioners. This list may contain multiple matching
+	 *         resources, or it may also be empty.
 	 */
 	@Search()
-	public List<Practitioner> findPractitionersByGivenName(
-			@RequiredParam(name = Practitioner.SP_GIVEN) StringParam givenName) {
+	public List<Practitioner> findPractitionersByGivenName(@RequiredParam(name = Practitioner.SP_GIVEN) StringParam givenName) {
 		return practitionerResource.searchByGivenName(givenName);
 	}
 	

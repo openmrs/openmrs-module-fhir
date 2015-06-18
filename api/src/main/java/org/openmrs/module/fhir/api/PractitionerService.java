@@ -13,16 +13,16 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu2.resource.Practitioner;
+import java.util.List;
+
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import ca.uhn.fhir.model.dstu2.resource.Practitioner;
 
 /**
- * This service exposes module's core functionality. It is a Spring managed bean which is configured in
- * moduleApplicationContext.xml.
- * It can be accessed only via Context:<br>
+ * This service exposes module's core functionality. It is a Spring managed bean which is configured
+ * in moduleApplicationContext.xml. It can be accessed only via Context:<br>
  * <code>
  * Context.getService(FHIRService.class).someMethod();
  * </code>

@@ -14,6 +14,19 @@
 package org.openmrs.module.fhir.api.util;
 
 import static java.lang.String.valueOf;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.openmrs.Person;
+import org.openmrs.PersonAddress;
+import org.openmrs.PersonName;
+import org.openmrs.Provider;
+import org.openmrs.api.context.Context;
+
 import ca.uhn.fhir.model.dstu2.composite.AddressDt;
 import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
 import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
@@ -24,18 +37,6 @@ import ca.uhn.fhir.model.dstu2.valueset.NameUseEnum;
 import ca.uhn.fhir.model.primitive.DateDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.StringDt;
-
-import org.openmrs.Person;
-import org.openmrs.PersonAddress;
-import org.openmrs.PersonName;
-import org.openmrs.Provider;
-import org.openmrs.api.context.Context;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 public class FHIRPractitionerUtil {
 
@@ -138,21 +139,21 @@ public class FHIRPractitionerUtil {
 		return practitioner;
 	}
 	
-	public static Person generateOpenMRSPerson(Practitioner practitioner) {	
-		Person omrsPerson=new Person();
-		HumanNameDt humanNameDt= practitioner.getName();
-		PersonName nam=new PersonName();		
+	public static Person generateOpenMRSPerson(Practitioner practitioner) {
+		Person omrsPerson = new Person();
+		HumanNameDt humanNameDt = practitioner.getName();
+		PersonName nam = new PersonName();
 		List<StringDt> givenNames = humanNameDt.getGiven();
 		if (givenNames != null) {
 			StringDt givenName = givenNames.get(0);
 			nam.setGivenName(valueOf(givenName));
-		}	
+		}
 		List<StringDt> familyNames = humanNameDt.getGiven();
 		if (familyNames != null) {
 			StringDt familyName = givenNames.get(0);
 			nam.setFamilyName(valueOf(familyName));
-		}		
-		nam.setPreferred(true);		
+		}
+		nam.setPreferred(true);
 		if (humanNameDt.getPrefix() != null) {
 			List<StringDt> prefixes = humanNameDt.getPrefix();
 			if (prefixes.size() > 0) {
@@ -205,18 +206,33 @@ public class FHIRPractitionerUtil {
 		}
 		omrsPerson.setAddresses(addresses);
 
-		if (practitioner.getGender().equalsIgnoreCase(String.valueOf(AdministrativeGenderEnum.MALE))) {
+		if (String.valueOf(AdministrativeGenderEnum.MALE).equalsIgnoreCase(practitioner.getGender())) {
 			omrsPerson.setGender(FHIRConstants.MALE);
-		} else if (practitioner.getGender().equalsIgnoreCase(String.valueOf(AdministrativeGenderEnum.FEMALE))) {
+		} else if (String.valueOf(AdministrativeGenderEnum.FEMALE).equalsIgnoreCase(practitioner.getGender())) {
 			omrsPerson.setGender(FHIRConstants.FEMALE);
 		}
 		omrsPerson.setBirthdate(practitioner.getBirthDate());
 		
-		Set<Person> personList=Context.getPersonService().getSimilarPeople(nam.getFullName(), 1900+omrsPerson.getBirthdate().getYear(), omrsPerson.getGender()); // filter Persons
-		for(Person prsn: personList){ // Do we go for additional attributes like address? What if still we find duplicates
-			
+		Set<Person> personList = Context.getPersonService().getSimilarPeople(nam.getFullName(),
+		    1900 + omrsPerson.getBirthdate().getYear(), omrsPerson.getGender()); // filter Persons
+		boolean createPerson = false;
+		if (personList.isEmpty()) {
+			createPerson = true;
+		} else {
+			if (personList.size() != 1) {
+				createPerson = true;
+			}
 		}
-		return omrsPerson; // Person to be assiciate with the Practitioner
+		
+		Person personForProvider = null;
+		if (createPerson) {
+			personForProvider = Context.getPersonService().savePerson(omrsPerson);
+		} else {
+			for (Iterator<Person> pers = personList.iterator(); pers.hasNext();) {
+				personForProvider = pers.next();
+			}
+		}
+		return personForProvider;
 		
 	}
 }
