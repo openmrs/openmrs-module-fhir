@@ -18,10 +18,13 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
 import org.openmrs.module.fhir.exception.FHIRValidationException;
@@ -104,11 +107,7 @@ public class PractitionerServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	public void createPractitioner_shoulcreatePractioner() throws FHIRValidationException {
-		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
-		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);
-		Person personfhir = FHIRPersonUtil.generatePerson(person);
-		
+	public void createPractitioner_shoulcreateNewPerson() throws FHIRValidationException {
 		Practitioner practitioner = new Practitioner();
 		
 		HumanNameDt fhirName = new HumanNameDt();
@@ -148,5 +147,38 @@ public class PractitionerServiceTest extends BaseModuleContextSensitiveTest {
 		List<IdentifierDt> idtifiers = practitionerNew.getIdentifier();
 		IdentifierDt ident = identifiers.get(0);
 		assertEquals(ident.getValue(), "fhirTest");
+	}
+	
+	@Test
+	public void createPractitioner_shoulNotcreateNewPerson() throws FHIRValidationException {
+		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
+		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);
+		Person personfhir = FHIRPersonUtil.generatePerson(person);
+		
+		Practitioner practitioner = new Practitioner();
+		practitioner.setGender(personfhir.getGenderElement());
+		DateDt fhirBirthDate = new DateDt();
+		fhirBirthDate.setValue(personfhir.getBirthDate());
+		practitioner.setBirthDate(fhirBirthDate);
+		
+		practitioner.setName(personfhir.getName().get(0));
+		
+		List<IdentifierDt> identifiers = new ArrayList<IdentifierDt>();
+		IdentifierDt idnt = new IdentifierDt();
+		idnt.setValue("fhirTest");
+		identifiers.add(idnt);
+		practitioner.setIdentifier(identifiers);
+		
+		Practitioner practitionerNew = getService().createFHIRPractitioner(practitioner);
+		
+		Set<PersonName> naa = person.getNames();
+		PersonName name = null;
+		for (Iterator<PersonName> naam = naa.iterator(); naam.hasNext();) {
+			name = naam.next();
+		}
+		
+		Set<org.openmrs.Person> personList = Context.getPersonService().getSimilarPeople(name.getFullName(),
+		    1900 + person.getBirthdate().getYear(), person.getGender());
+		assertEquals(personList.size(), 1); // which means no new person created for the given representation. It has mapped the representation to a existing person.
 	}
 }
