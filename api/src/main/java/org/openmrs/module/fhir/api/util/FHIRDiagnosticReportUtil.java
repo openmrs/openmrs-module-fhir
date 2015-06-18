@@ -41,8 +41,7 @@ public class FHIRDiagnosticReportUtil {
 	 */
 	public static DiagnosticReport getFHIRDiagnosticReport(Encounter omrsDiagnosticReport, DiagnosticReportHandler
 			handler) {
-		DiagnosticReport diagnosticReport = new DiagnosticReport();
-		return handler.getFHIRDiagnosticReport(diagnosticReport);
+		return handler.getFHIRDiagnosticReport(omrsDiagnosticReport);
 	}
 
 	/**

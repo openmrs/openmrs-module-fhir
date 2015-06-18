@@ -1,6 +1,7 @@
 package org.openmrs.module.fhir.api.diagnosticreport.handler;
 
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
+import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
 
@@ -14,13 +15,16 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 		super();
 	}
 
-    private static final String ServiceCategory = "RAD";
-
-    @Override
-    public String getServiceCategory() { return ServiceCategory; }
+	private static final String ServiceCategory = "RAD";
 
 	@Override
-	public DiagnosticReport getFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
+	public String getServiceCategory() {
+		return ServiceCategory;
+	}
+
+	@Override
+	public DiagnosticReport getFHIRDiagnosticReport(Encounter omrsDiagnosticReport) {
+		DiagnosticReport diagnosticReport = new DiagnosticReport();
 		return diagnosticReport;
 	}
 

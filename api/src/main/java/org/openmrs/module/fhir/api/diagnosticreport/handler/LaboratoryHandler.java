@@ -4,22 +4,22 @@ import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.dstu2.resource.Practitioner;
+import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterRole;
-import org.openmrs.Person;
 import org.openmrs.Provider;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
-import org.openmrs.api.context.ServiceContext;
 import org.openmrs.module.fhir.api.PatientService;
 import org.openmrs.module.fhir.api.PractitionerService;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
-import org.openmrs.module.fhir.api.impl.PatientServiceImpl;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 import org.openmrs.module.fhir.api.util.FHIRPractitionerUtil;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class LaboratoryHandler extends AbstractHandler implements DiagnosticReportHandler {
 
@@ -27,20 +27,47 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		super();
 	}
 
-    private static final String ServiceCategory = "LAB";
+	private static final String ServiceCategory = "LAB";
 
-    public String getServiceCategory() {
-        return ServiceCategory;
-    }
+	public String getServiceCategory() {
+		return ServiceCategory;
+	}
 
-    @Override
-	public DiagnosticReport getFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
+	@Override
+	public DiagnosticReport getFHIRDiagnosticReport(Encounter omrsiagnosticReport) {
+		log.info("Laboratory Handler : GetFHIRDiagnosticReport");
+		DiagnosticReport diagnosticReport = new DiagnosticReport();
+		EncounterService omrsEncounterService = Context.getEncounterService();
+
+		// Set ID
+		diagnosticReport.setId(new IdDt("DiagnosticReport", omrsiagnosticReport.getUuid()));
+
 		// Get Obs and set as `Name`
 		// Get Obs and set as `Status`
-		// Get EncounterDateTime and set as `Issued` date
-		// Get Encounter Patient and set as `Subject`
+
+		// @required: Get EncounterDateTime and set as `Issued` date
+		diagnosticReport.setIssued(new DateTimeDt(omrsiagnosticReport.getEncounterDatetime()));
+
+		// @required: Get Encounter Patient and set as `Subject`
+		org.openmrs.Patient omrsPatient = omrsiagnosticReport.getPatient();
+		diagnosticReport.getSubject().setResource(FHIRPatientUtil.generatePatient(omrsPatient));
+
 		// Get Encounter Provider and set as `Performer`
+		String encounterRoleUuid = "73bbb069-9781-4afc-a9d1-54b6b2270e03";
+		EncounterRole omrsEncounterRole = omrsEncounterService.getEncounterRoleByUuid(encounterRoleUuid);
+		Set<Provider> omrsProviderList = omrsiagnosticReport.getProvidersByRole(omrsEncounterRole);
+		// If at least one provider is set (1..1 mapping in FHIR Diagnostic Report)
+		if (!omrsProviderList.isEmpty()) {
+			Practitioner practitioner = FHIRPractitionerUtil.generatePractitioner(omrsProviderList.iterator().next());
+			diagnosticReport.getPerformer().setResource(practitioner);
+		}
+
 		// Get EncounterType and Set `ServiceCategory`
+		String serviceCategory = omrsiagnosticReport.getEncounterType().getName();
+		List<CodingDt> serviceCategoryList = new ArrayList<CodingDt>();
+		serviceCategoryList.add(new CodingDt("http://hl7.org/fhir/v2/0074", serviceCategory));
+		diagnosticReport.getServiceCategory().setCoding(serviceCategoryList);
+
 		// Get valueDateTime in Obs and Set `Diagnosis[x]->DateTime`
 		// Get valueDateTime in Obs and Set `Diagnosis[x]->Period`
 
@@ -51,7 +78,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 
 	@Override
 	public DiagnosticReport saveFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
-		log.info("Laboratory Handler : Save FHIR Diagnostic Report");
+		log.info("Laboratory Handler : SaveFHIRDiagnosticReport");
 		Encounter omrsDiagnosticReport = new Encounter();
 
 		// Set `Name` as a Obs
