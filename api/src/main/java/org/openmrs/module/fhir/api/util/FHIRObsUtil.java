@@ -13,9 +13,6 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -31,6 +28,7 @@ import org.openmrs.ConceptNumeric;
 import org.openmrs.EncounterProvider;
 import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
+import org.openmrs.obs.ComplexData;
 
 import ca.uhn.fhir.model.dstu2.composite.AttachmentDt;
 import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
@@ -133,13 +131,12 @@ public class FHIRObsUtil {
 			StringDt value = new StringDt();
 			value.setValue(obs.getValueAsString(Context.getLocale()));
 			observation.setValue(value);
-
-		} else if (FHIRConstants.BIT_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation()
-		)) {
+			
+		} else if (FHIRConstants.BIT_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
 			CodeableConceptDt codeableConceptDt = new CodeableConceptDt();
 			List<CodingDt> codingDts = new ArrayList<CodingDt>();
 			CodingDt codingDt = new CodingDt();
-			codingDt.setCode(obs.getValueCodedName().getName());
+			codingDt.setCode(obs.getValueAsBoolean().toString()); // fixed by sashrika
 			codingDts.add(codingDt);
 			codeableConceptDt.setCoding(codingDts);
 			observation.setValue(codeableConceptDt);
@@ -163,9 +160,8 @@ public class FHIRObsUtil {
 			datetime.setStart(startDate);
 			datetime.setEnd(endDate);
 			observation.setValue(datetime);
-
-		} else if (FHIRConstants.CWE_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation()
-		)) {
+			
+		} else if (FHIRConstants.CWE_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
 			if (obs.getValueCoded() != null) {
 				Collection<ConceptMap> valueMappings = obs.getValueCoded().getConceptMappings();
 				List<CodingDt> values = new ArrayList<CodingDt>();
@@ -178,7 +174,7 @@ public class FHIRObsUtil {
 				}
 
 				//Set openmrs concept
-				values.add(FHIRUtils.getCodingDtByOpenMRSConcept(obs.getValueCoded()));  // fixed by sashrika
+				values.add(FHIRUtils.getCodingDtByOpenMRSConcept(obs.getValueCoded()));
 
 				CodeableConceptDt codeableConceptDt = new CodeableConceptDt();
 				codeableConceptDt.setCoding(values);
@@ -186,16 +182,18 @@ public class FHIRObsUtil {
 			}
 		} else if (FHIRConstants.ED_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
 			AttachmentDt attachmentDt = new AttachmentDt();
-			attachmentDt.setUrl(obs.getValueComplex());
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			ObjectOutputStream os = null;
+			attachmentDt.setUrl(FHIRConstants.COMPLEX_DATA_URL + obs.getId());
+			//ByteArrayOutputStream out = new ByteArrayOutputStream();
+			/*ObjectOutputStream os = null;
 			try {
 				os = new ObjectOutputStream(out);
 				os.writeObject(obs.getComplexData().getData());
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				log.error("Error while converting object data to stream");
 				attachmentDt.setData(out.toByteArray());
-			}
+			}*/
+			attachmentDt.setData(obs.getValueComplex().getBytes());
 			observation.setValue(attachmentDt);
 		} else {
 			StringDt value = new StringDt();
@@ -273,6 +271,7 @@ public class FHIRObsUtil {
 		}
 		catch (NullPointerException e) {
 			errors.add("Code cannot be empty");
+			log.error("Code cannot be empty " + e.getMessage());
 		}
 		Concept concept = Context.getConceptService().getConceptByUuid(conceptUuid);
 		obs.setConcept(concept);
@@ -282,43 +281,41 @@ public class FHIRObsUtil {
 				BigDecimal bd = quantity.getValue();
 				double doubleValue = bd.doubleValue();
 				obs.setValueNumeric(doubleValue);
-			}else if (FHIRConstants.ST_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
-				StringDt value = (StringDt)observation.getValue();
+			} else if (FHIRConstants.ST_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
+				StringDt value = (StringDt) observation.getValue();
 				try {
 					obs.setValueAsString(value.getValue());
-				} catch (ParseException e) {
-					errors.add("Obs set value failed");
-					log.error("Obs set value failed");
 				}
-			}else if (FHIRConstants.BIT_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation()
-			)) {
-				CodeableConceptDt codeableConceptDt=(CodeableConceptDt)observation.getValue();
-				String valueConceptUuid=null;
-				try{
-					List<CodingDt> codingDts=codeableConceptDt.getCoding();
-					CodingDt codingDt2=codingDts.get(0);
-					valueConceptUuid=codingDt2.getCode();
-				}catch(NullPointerException e){
-					errors.add("valueCodeableConcept cannot be empty");
-					log.error("valueCodeableConcept cannot be empty");
-				}				
-				Concept valueConcept = Context.getConceptService().getConceptByUuid(valueConceptUuid);
-				if(valueConcept!=null){
-					obs.setValueCoded(valueConcept);
-				}else{
-					errors.add("valueCodeableConcept doesn't have a mapping in OpenMRS");
-					log.error("valueCodeableConcept doesn't have a mapping in OpenMRS");
-				}							
-			}else if (FHIRConstants.TS_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
-				PeriodDt datetime=(PeriodDt)observation.getValue();
+				catch (ParseException e) {
+					errors.add("Obs set value failed");
+					log.error("Obs set value failed " + e.getMessage());
+				}
+			} else if (FHIRConstants.BIT_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
+				CodeableConceptDt codeableConceptDt = (CodeableConceptDt) observation.getValue();
+				try {
+					List<CodingDt> codingDts = codeableConceptDt.getCoding();
+					CodingDt codingDt2 = codingDts.get(0);
+					boolean booleanValue = Boolean.parseBoolean(codingDt2.getCode());
+					obs.setValueBoolean(booleanValue);
+				}
+				catch (NullPointerException e) {
+					errors.add("Setting valueBoolean failed");
+					log.error("Setting valueBoolean failed " + e.getMessage());
+				}
+			} else if (FHIRConstants.TS_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
+				PeriodDt datetime = (PeriodDt) observation.getValue();
 				obs.setValueDatetime(datetime.getStart());
 
 			} else if (FHIRConstants.DT_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
-				PeriodDt datetime=(PeriodDt)observation.getValue();
+				PeriodDt datetime = (PeriodDt) observation.getValue();
 				obs.setValueDate(datetime.getStart());
-			}else if (FHIRConstants.ED_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
-				// TBD
-			}		
+			} else if (FHIRConstants.ED_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
+				AttachmentDt attachmentDt = (AttachmentDt) observation.getValue();
+				byte[] byteStream = attachmentDt.getData();
+				ComplexData data = new ComplexData("images.JPEG", byteStream);
+				obs.setValueComplex(byteStream.toString());
+				obs.setComplexData(data);
+			}
 			
 		} else {
 			errors.add("Couldn't find a concept for the given uuid");
@@ -330,7 +327,6 @@ public class FHIRObsUtil {
 			IdDt ref = encounter.getReference();
 			String encounterUuid = ref.getIdPart();
 			obs.setEncounter(Context.getEncounterService().getEncounterByUuid(encounterUuid));
-			
 		}
 		return obs;
 	}
