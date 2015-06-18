@@ -148,9 +148,9 @@ public class FHIRPractitionerUtil {
 			StringDt givenName = givenNames.get(0);
 			nam.setGivenName(valueOf(givenName));
 		}
-		List<StringDt> familyNames = humanNameDt.getGiven();
+		List<StringDt> familyNames = humanNameDt.getFamily();
 		if (familyNames != null) {
-			StringDt familyName = givenNames.get(0);
+			StringDt familyName = familyNames.get(0);
 			nam.setFamilyName(valueOf(familyName));
 		}
 		nam.setPreferred(true);
