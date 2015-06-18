@@ -1,27 +1,31 @@
 package org.openmrs.module.fhir.api.diagnosticreport.handler;
 
-import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
-import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportTemplate;
-
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
+import org.openmrs.Obs;
+import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-public class RadiologyHandler extends AbstractHandler implements DiagnosticReportHandler{
+public class RadiologyHandler extends AbstractHandler implements DiagnosticReportHandler {
+
+	public RadiologyHandler() {
+		super();
+	}
 
 	@Override
-    public DiagnosticReport generateFHIRDiagnosticReport(DiagnosticReportTemplate omrsDiagnosticReport) {
-        return null;
-    }
+	public DiagnosticReport getFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
+		return diagnosticReport;
+	}
 
-    @Override
-    public DiagnosticReportTemplate generateOpenMRSDiagnosticReport(DiagnosticReport fhirDiagnosticReport) {
-        return null;
-    }
+	@Override
+	public DiagnosticReport saveFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
+		return diagnosticReport;
+	}
 
-    @Override
-    public String getId() {
-    	/* Radiology 
-    	   Refer: http://hl7.org/fhir/v2/0074*/
-    	return "RAD";
-    }
+	@Override
+	public DiagnosticReport purgeFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
+		return diagnosticReport;
+	}
 }

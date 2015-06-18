@@ -34,47 +34,48 @@ import ca.uhn.fhir.rest.param.TokenOrListParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 
-import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.resources.FHIRDiagnosticReportResource;
+import org.openmrs.module.fhir.util.FHIROmodConstants;
 
 public class RestfulDiagnosticReportResourceProvider implements IResourceProvider {
-	
+
 	private FHIRDiagnosticReportResource diagnosticReportResource;
-	
+
 	public RestfulDiagnosticReportResourceProvider() {
 		diagnosticReportResource = new FHIRDiagnosticReportResource();
 	}
-	
+
 	@Override
 	public Class<? extends IResource> getResourceType() {
 		return DiagnosticReport.class;
 	}
-	
+
 	/**
 	 * Create Diagnostic Report
 	 *
 	 * @param diagnosticReport FHIR Diagnostic Report object
 	 * @return This method returns a list of Diagnostic Reports. This list may contain multiple
-	 *         matching resources, or it may also be empty.
+	 * matching resources, or it may also be empty.
 	 */
 	@Create
 	public MethodOutcome createFHIRDiagnosticReport(@ResourceParam DiagnosticReport diagnosticReport) {
 		System.out.println("DiagnosticReport: createFHIRDiagnosticReport");
 		diagnosticReport = diagnosticReportResource.createFHIRDiagnosticReport(diagnosticReport);
 		MethodOutcome retVal = new MethodOutcome();
-		retVal.setId(new IdDt(FHIRConstants.PERSON, diagnosticReport.getId().getIdPart()));
+		retVal.setId(new IdDt("DiagnosticReport", diagnosticReport.getId().getIdPart()));
+		// retVal.setId(new IdDt("DiagnosticReport", "2889127246021897"));
 		OperationOutcome outcome = new OperationOutcome();
 		outcome.addIssue().setDetails("Diagnostic Report is successfully created");
 		retVal.setOperationOutcome(outcome);
 		return retVal;
 	}
-	
+
 	/**
 	 * The "@Read" annotation indicates that this method supports the read operation. Read
 	 * operations should return a single resource instance.
 	 *
 	 * @param theId The read operation takes one parameter, which must be of type IdDt and must be
-	 *            annotated with the "@Read.IdParam" annotation.
+	 *              annotated with the "@Read.IdParam" annotation.
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read()

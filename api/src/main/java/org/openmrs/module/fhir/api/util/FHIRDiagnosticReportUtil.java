@@ -13,46 +13,76 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import ca.uhn.fhir.model.dstu2.composite.AddressDt;
-import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
 import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
-import ca.uhn.fhir.model.dstu2.resource.Person;
-import ca.uhn.fhir.model.dstu2.valueset.AddressUseEnum;
-import ca.uhn.fhir.model.dstu2.valueset.AdministrativeGenderEnum;
-import ca.uhn.fhir.model.dstu2.valueset.NameUseEnum;
-import ca.uhn.fhir.model.primitive.DateTimeDt;
-import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.model.primitive.StringDt;
-
-import org.openmrs.Patient;
-import org.openmrs.PersonAddress;
-import org.openmrs.PersonName;
-import org.openmrs.api.APIException;
-import org.openmrs.api.context.Context;
+import ca.uhn.fhir.model.dstu2.resource.Observation;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.openmrs.Encounter;
+import org.openmrs.Obs;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
-import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportTemplate;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import javax.naming.InvalidNameException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
-import static java.lang.String.valueOf;
 
 public class FHIRDiagnosticReportUtil {
-	
-	private static Map<String, DiagnosticReportHandler> handlers = null;
-	
-	public static DiagnosticReport generateFHIRDiagnosticReport(String handler, DiagnosticReportTemplate omrsDiagnosticReport) {
-		return handlers.get(handler).generateFHIRDiagnosticReport(omrsDiagnosticReport);
+
+	private static final Log log = LogFactory.getLog(FHIRDiagnosticReportUtil.class);
+
+	/**
+	 * Get matching FHIR Diagnostic Report
+	 *
+	 * @param omrsDiagnosticReport OpenMRS Diagnostic Report (Encounter)
+	 * @param handler              An implementation of DiagnosticReportHandler
+	 * @return An instance of ca.uhn.fhir.model.dstu2.resource.DiagnosticReport
+	 */
+	public static DiagnosticReport getFHIRDiagnosticReport(Encounter omrsDiagnosticReport, DiagnosticReportHandler
+			handler) {
+		DiagnosticReport diagnosticReport = new DiagnosticReport();
+		return handler.getFHIRDiagnosticReport(diagnosticReport);
 	}
-	
-	public static DiagnosticReportTemplate generateOpenMRSDiagnosticReport(String handler,
-	                                                                       DiagnosticReport fhirDiagnosticReport) {
-		return handlers.get(handler).generateOpenMRSDiagnosticReport(fhirDiagnosticReport);
+
+	/**
+	 * Save FHIR Diagnostic Report
+	 *
+	 * @param diagnosticReport FHIR Diagnostic Report
+	 * @param handler          An implementation of DiagnosticReportHandler
+	 * @return An instance of ca.uhn.fhir.model.dstu2.resource.DiagnosticReport
+	 */
+	public static DiagnosticReport saveDiagnosticReport(DiagnosticReport diagnosticReport, DiagnosticReportHandler
+			handler) {
+		return handler.saveFHIRDiagnosticReport(diagnosticReport);
 	}
-	
+
+	/**
+	 * Delete given FHIR Diagnostic Report
+	 *
+	 * @param diagnosticReport FHIR Diagnostic Report
+	 * @param handler          An implementation of DiagnosticReportHandler
+	 * @return An instance of org.openmrs.Encounter
+	 */
+	public static DiagnosticReport purgeDiagnosticReport(DiagnosticReport diagnosticReport, DiagnosticReportHandler
+			handler) {
+		return handler.purgeFHIRDiagnosticReport(diagnosticReport);
+	}
+
+	public static String getServiceCode(String handlerName) throws InvalidNameException {
+		HashMap<String, String> diagnosticServices = new HashMap<String, String>();
+		diagnosticServices.put("DefaultDiagnosticReportHandler", "DEFAULT");
+		diagnosticServices.put("LaboratoryHandler", "LAB");
+		diagnosticServices.put("RadiologyHandler", "RAD");
+		diagnosticServices.put("BloodBankHandler", "BLB");
+		diagnosticServices.put("CATScanHandler", "CT");
+
+		if (diagnosticServices.containsKey(handlerName)) {
+			return diagnosticServices.get(handlerName);
+		} else {
+			throw new InvalidNameException(
+					"<Handler Name should be one of 'Description' value in http://hl7.org/fhir/v2/0074/> + Handler");
+		}
+	}
+
 }
