@@ -14,6 +14,11 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 		super();
 	}
 
+    private static final String ServiceCategory = "RAD";
+
+    @Override
+    public String getServiceCategory() { return ServiceCategory; }
+
 	@Override
 	public DiagnosticReport getFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
 		return diagnosticReport;

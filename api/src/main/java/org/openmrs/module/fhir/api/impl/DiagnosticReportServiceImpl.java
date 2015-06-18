@@ -105,13 +105,8 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 			return;
 		}
 		for (Map.Entry<String, DiagnosticReportHandler> entry : newHandlers.entrySet()) {
-			try {
-				String newKey = FHIRDiagnosticReportUtil.getServiceCode(entry.getKey());
-				registerHandler(newKey, entry.getValue());
-			}
-			catch (InvalidNameException e) {
-				log.error("Unable to register Handler.", e);
-			}
+			registerHandler(entry.getValue().getServiceCategory(), entry.getValue());
+
 		}
 	}
 
