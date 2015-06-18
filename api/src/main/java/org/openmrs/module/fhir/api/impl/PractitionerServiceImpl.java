@@ -13,9 +13,12 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import ca.uhn.fhir.model.dstu2.resource.Practitioner;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Person;
 import org.openmrs.PersonName;
 import org.openmrs.Provider;
 import org.openmrs.api.context.Context;
@@ -24,8 +27,8 @@ import org.openmrs.module.fhir.api.PractitionerService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRPractitionerUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
+import ca.uhn.fhir.model.dstu2.resource.Practitioner;
 
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
@@ -147,5 +150,23 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 
 	private List<Provider> searchProvidersByQuery(String query) {
 		return Context.getProviderService().getProviders(query, null, null, null, false);
+	}
+	
+	/**
+	 * @see org.openmrs.module.fhir.api.PractitionerService#createFHIRPractitioner(String)
+	 */
+	public Practitioner createFHIRPractitioner(Practitioner practitioner) {
+		Provider provider = new Provider();
+		Person prsnProvider = FHIRPractitionerUtil.generateOpenMRSPerson(practitioner);
+		
+		List<IdentifierDt> identifiers = practitioner.getIdentifier();
+		if (!identifiers.isEmpty()) {
+			IdentifierDt idnt = identifiers.get(0);
+			provider.setIdentifier(idnt.getValue());
+		}
+		provider.setPerson(prsnProvider);
+		
+		Provider omrsProvider = Context.getProviderService().saveProvider(provider);
+		return FHIRPractitionerUtil.generatePractitioner(omrsProvider);
 	}
 }
