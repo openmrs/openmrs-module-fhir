@@ -42,7 +42,11 @@ public final class FHIRConstants {
 	public static final String IMP_PROCEDURE_URI = "https://www.e-imo.com/releases/problem-it";
 	public static final String NDF_RT_NUI_URI = "http://www.nlm.nih.gov/research/umls/sourcereleasedocs/current/NDFRT/";
 	public static final String UCUM_URI = "http://unitsofmeasure.org/";
+	
 	public static final String OTHER = "UNSPECIFIED";
+
+	public static final String COMPLEX_DATA_URL = "/complexObsServlet?obsId=";
+
 	//Concept Sources
 	public static final String LOINC = "LOINC";
 	public static final String CIEL = "CIEL";
