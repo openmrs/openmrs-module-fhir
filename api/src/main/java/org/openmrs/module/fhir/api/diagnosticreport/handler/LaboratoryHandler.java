@@ -5,10 +5,13 @@ import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.dstu2.resource.Practitioner;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterRole;
 import org.openmrs.Person;
 import org.openmrs.Provider;
+import org.openmrs.api.APIException;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ServiceContext;
@@ -27,13 +30,13 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		super();
 	}
 
-    private static final String ServiceCategory = "LAB";
+	private static final String ServiceCategory = "LAB";
 
-    public String getServiceCategory() {
-        return ServiceCategory;
-    }
+	public String getServiceCategory() {
+		return ServiceCategory;
+	}
 
-    @Override
+	@Override
 	public DiagnosticReport getFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
 		// Get Obs and set as `Name`
 		// Get Obs and set as `Status`
@@ -119,12 +122,25 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 	}
 
 	@Override
-	public DiagnosticReport purgeFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
-		// Delete `Name` Obs
-		// Delete `Status` Obs
-
-		// Delete Obs (`Result` as Set of Obs)
+	public void retireFHIRDiagnosticReport(String id) {
+		EncounterService encounterService = Context.getEncounterService();
 		// Delete Binary Obs Handler which used to store `PresentedForm`
-		return diagnosticReport;
+
+		// Delete Encounter OpenMRS Object
+		Encounter omrsDiagnosticReport = encounterService.getEncounterByUuid(id);
+
+		if (omrsDiagnosticReport == null) {
+			throw new ResourceNotFoundException(String.format("Diagnostic Report with id '%s' not found.", id));
+		}
+		if (omrsDiagnosticReport.isVoided()) {
+			return;
+		}
+		try {
+			encounterService.voidEncounter(omrsDiagnosticReport, "Voided by FHIR Request.");
+		}
+		catch (APIException exAPI) {
+			throw new MethodNotAllowedException(String.format("OpenMRS has failed to retire Encounter '%s' due to : %s",
+					id, exAPI.getMessage()));
+		}
 	}
 }

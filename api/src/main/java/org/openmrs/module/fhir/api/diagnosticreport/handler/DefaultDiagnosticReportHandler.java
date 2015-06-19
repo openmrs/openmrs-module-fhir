@@ -12,8 +12,10 @@ public class DefaultDiagnosticReportHandler extends AbstractHandler implements D
 		super();
 	}
 
-    @Override
-    public String getServiceCategory() { return "DEFAULT"; }
+	@Override
+	public String getServiceCategory() {
+		return "DEFAULT";
+	}
 
 	@Override
 	public DiagnosticReport getFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
@@ -60,12 +62,9 @@ public class DefaultDiagnosticReportHandler extends AbstractHandler implements D
 	}
 
 	@Override
-	public DiagnosticReport purgeFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
-		// Delete `Name` Obs
-		// Delete `Status` Obs
-
-		// Delete Obs (`Result` as Set of Obs)
+	public void retireFHIRDiagnosticReport(String id) {
 		// Delete Binary Obs Handler which used to store `PresentedForm`
-		return diagnosticReport;
+		// Delete Encounter
+		return;
 	}
 }

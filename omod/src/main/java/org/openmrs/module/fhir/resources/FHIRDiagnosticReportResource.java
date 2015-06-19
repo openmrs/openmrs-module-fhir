@@ -13,27 +13,12 @@
  */
 package org.openmrs.module.fhir.resources;
 
-import ca.uhn.fhir.model.base.composite.BaseCodingDt;
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
-import ca.uhn.fhir.model.dstu2.resource.Observation;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.dstu2.resource.Person;
 import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.rest.param.DateParam;
-import ca.uhn.fhir.rest.param.ReferenceParam;
-import ca.uhn.fhir.rest.param.TokenOrListParam;
-import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.DiagnosticReportService;
-import org.openmrs.module.fhir.api.ObsService;
-import org.openmrs.module.fhir.api.PersonService;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class FHIRDiagnosticReportResource extends Resource {
 	
@@ -51,9 +36,9 @@ public class FHIRDiagnosticReportResource extends Resource {
 		return diagnosticReportService.createFHIRDiagnosticReport(diagnosticReport);
 	}
 	
-	public void deleteDiagnosticReport(IdDt id) {
+	public void retireDiagnosticReport(IdDt id) {
 		DiagnosticReportService diagnosticReportService = Context.getService(DiagnosticReportService.class);
-		diagnosticReportService.deleteDiagnosticReport(id.getIdPart());
+		diagnosticReportService.retireDiagnosticReport(id.getIdPart());
 	}
 	
 }

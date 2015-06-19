@@ -49,7 +49,7 @@ public interface DiagnosticReportService {
 	 * @param id uuid of the Diagnostic Report
 	 * @return Diagnostic Report FHIR resource
 	 */
-	public void deleteDiagnosticReport(String id);
+	public void retireDiagnosticReport(String id);
 	
 	/**
 	 * Get the DiagnosticReportHandler that has been registered with the given key
