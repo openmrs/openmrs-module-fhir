@@ -16,7 +16,7 @@ package org.openmrs.module.fhir.api.util;
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Encounter;
+
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
 
 public class FHIRDiagnosticReportUtil {
@@ -26,14 +26,13 @@ public class FHIRDiagnosticReportUtil {
 	/**
 	 * Get matching FHIR Diagnostic Report
 	 *
-	 * @param omrsDiagnosticReport OpenMRS Diagnostic Report (Encounter)
-	 * @param handler              An implementation of DiagnosticReportHandler
+	 * @param id      ID of the Diagnostic Report to be search
+	 * @param handler An implementation of DiagnosticReportHandler
 	 * @return An instance of ca.uhn.fhir.model.dstu2.resource.DiagnosticReport
 	 */
-	public static DiagnosticReport getFHIRDiagnosticReport(Encounter omrsDiagnosticReport, DiagnosticReportHandler
+	public static DiagnosticReport getFHIRDiagnosticReport(String id, DiagnosticReportHandler
 			handler) {
-		DiagnosticReport diagnosticReport = new DiagnosticReport();
-		return handler.getFHIRDiagnosticReport(diagnosticReport);
+		return handler.getFHIRDiagnosticReportById(id);
 	}
 
 	/**

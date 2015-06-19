@@ -1,6 +1,7 @@
 package org.openmrs.module.fhir.api.diagnosticreport;
 
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
+import org.openmrs.Encounter;
 import org.openmrs.Obs;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public interface DiagnosticReportHandler {
 
 	public String getServiceCategory();
 
-	public DiagnosticReport getFHIRDiagnosticReport(DiagnosticReport diagnosticReport);
+	public DiagnosticReport getFHIRDiagnosticReportById(String id);
 
 	public DiagnosticReport saveFHIRDiagnosticReport(DiagnosticReport diagnosticReport);
 

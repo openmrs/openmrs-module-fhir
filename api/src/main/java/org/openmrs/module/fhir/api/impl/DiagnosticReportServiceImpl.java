@@ -64,7 +64,7 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 		// Get corresponding Handler
 		String handlerName = omrsDiagnosticReport.getEncounterType().getName();
 
-		return FHIRDiagnosticReportUtil.getFHIRDiagnosticReport(omrsDiagnosticReport, getHandler(handlerName));
+		return FHIRDiagnosticReportUtil.getFHIRDiagnosticReport(id, getHandler(handlerName));
 	}
 
 	@Override
