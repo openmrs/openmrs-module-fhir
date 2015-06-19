@@ -23,7 +23,7 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 	}
 
 	@Override
-	public DiagnosticReport getFHIRDiagnosticReport(Encounter omrsDiagnosticReport) {
+	public DiagnosticReport getFHIRDiagnosticReportById(String id) {
 		DiagnosticReport diagnosticReport = new DiagnosticReport();
 		return diagnosticReport;
 	}

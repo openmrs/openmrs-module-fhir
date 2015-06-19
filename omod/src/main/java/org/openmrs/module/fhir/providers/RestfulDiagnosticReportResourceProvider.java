@@ -59,7 +59,6 @@ public class RestfulDiagnosticReportResourceProvider implements IResourceProvide
 	 */
 	@Create
 	public MethodOutcome createFHIRDiagnosticReport(@ResourceParam DiagnosticReport diagnosticReport) {
-		System.out.println("DiagnosticReport: createFHIRDiagnosticReport");
 		diagnosticReport = diagnosticReportResource.createFHIRDiagnosticReport(diagnosticReport);
 		MethodOutcome retVal = new MethodOutcome();
 		retVal.setId(new IdDt("DiagnosticReport", diagnosticReport.getId().getIdPart()));
@@ -80,7 +79,6 @@ public class RestfulDiagnosticReportResourceProvider implements IResourceProvide
 	 */
 	@Read()
 	public DiagnosticReport getResourceById(@IdParam IdDt theId) {
-		System.out.println("DiagnosticReport : getResourceByID");
 		DiagnosticReport result = diagnosticReportResource.getByUniqueId(theId);
 		return result;
 	}

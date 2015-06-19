@@ -34,7 +34,11 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 	}
 
 	@Override
-	public DiagnosticReport getFHIRDiagnosticReport(Encounter omrsiagnosticReport) {
+	public DiagnosticReport getFHIRDiagnosticReportById(String id) {
+		return getFHIRDiagnosticReport(Context.getEncounterService().getEncounterByUuid(id));
+	}
+
+	private DiagnosticReport getFHIRDiagnosticReport(Encounter omrsiagnosticReport) {
 		log.info("Laboratory Handler : GetFHIRDiagnosticReport");
 		DiagnosticReport diagnosticReport = new DiagnosticReport();
 		EncounterService omrsEncounterService = Context.getEncounterService();

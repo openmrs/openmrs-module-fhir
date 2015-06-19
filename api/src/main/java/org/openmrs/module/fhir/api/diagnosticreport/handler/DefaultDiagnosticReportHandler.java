@@ -18,7 +18,7 @@ public class DefaultDiagnosticReportHandler extends AbstractHandler implements D
 	}
 
 	@Override
-	public DiagnosticReport getFHIRDiagnosticReport(Encounter omrsDiagnosticReport) {
+	public DiagnosticReport getFHIRDiagnosticReportById(String id) {
 		DiagnosticReport diagnosticReport = new DiagnosticReport();
 
 		// Get Obs and set as `Name`

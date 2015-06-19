@@ -11,7 +11,7 @@ public interface DiagnosticReportHandler {
 
 	public String getServiceCategory();
 
-	public DiagnosticReport getFHIRDiagnosticReport(Encounter omrsDiagnosticReport);
+	public DiagnosticReport getFHIRDiagnosticReportById(String id);
 
 	public DiagnosticReport saveFHIRDiagnosticReport(DiagnosticReport diagnosticReport);
 
