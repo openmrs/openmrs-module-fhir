@@ -12,11 +12,15 @@ public class DefaultDiagnosticReportHandler extends AbstractHandler implements D
 		super();
 	}
 
-    @Override
-    public String getServiceCategory() { return "DEFAULT"; }
+	@Override
+	public String getServiceCategory() {
+		return "DEFAULT";
+	}
 
 	@Override
-	public DiagnosticReport getFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
+	public DiagnosticReport getFHIRDiagnosticReportById(String id) {
+		DiagnosticReport diagnosticReport = new DiagnosticReport();
+
 		// Get Obs and set as `Name`
 		// Get Obs and set as `Status`
 		// Get EncounterDateTime and set as `Issued` date
