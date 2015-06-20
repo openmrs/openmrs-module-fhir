@@ -13,9 +13,24 @@
  */
 package org.openmrs.module.fhir.api.util;
 
+import static java.lang.String.valueOf;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.openmrs.Location;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.PersonAddress;
+import org.openmrs.PersonName;
+import org.openmrs.api.context.Context;
+
 import ca.uhn.fhir.model.dstu2.composite.AddressDt;
 import ca.uhn.fhir.model.dstu2.composite.ContactPointDt;
 import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
+import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.dstu2.valueset.AddressUseEnum;
 import ca.uhn.fhir.model.dstu2.valueset.AdministrativeGenderEnum;
@@ -27,12 +42,6 @@ import ca.uhn.fhir.model.primitive.DateDt;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.StringDt;
-import org.openmrs.PatientIdentifier;
-import org.openmrs.PersonAddress;
-import org.openmrs.PersonName;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class FHIRPatientUtil {
 
@@ -160,4 +169,120 @@ public class FHIRPatientUtil {
 		FHIRUtils.validate(patient);
 		return patient;
 	}
+	
+	public static org.openmrs.Patient generateOmrsPatient(Patient patient) {
+		org.openmrs.Patient omrsPatient=new org.openmrs.Patient();
+
+		List<IdentifierDt> fhirIdList = patient.getIdentifier();
+		IdentifierDt iddt = (IdentifierDt) fhirIdList.get(0);
+		PatientIdentifier idnt = new PatientIdentifier();
+		idnt.setIdentifier(iddt.getValue());
+		Location loc = Context.getLocationService().getLocationByUuid("8d6c993e-c2cc-11de-8d13-0010c6dffd0f");
+		idnt.setLocation(loc);
+
+		PatientIdentifierType type = new PatientIdentifierType(1);
+		idnt.setIdentifierType(type);
+		Set<PatientIdentifier> idList = new TreeSet<PatientIdentifier>();
+		idList.add(idnt);
+		omrsPatient.setIdentifiers(idList);
+		
+
+		Set<PersonName> names = new TreeSet<PersonName>();
+		for (HumanNameDt humanNameDt : patient.getName()) {
+			PersonName personName = new PersonName();
+			if (humanNameDt.getUse() != null) {
+				String getUse = humanNameDt.getUse();
+				if (String.valueOf(NameUseEnum.USUAL).equalsIgnoreCase(getUse)) {
+					personName.setPreferred(true);
+				}
+				if (String.valueOf(NameUseEnum.OLD).equalsIgnoreCase(getUse)) {
+					personName.setPreferred(false);
+				}
+			}
+			if (humanNameDt.getSuffix() != null) {
+				List<StringDt> prefixes = humanNameDt.getSuffix();
+				if (prefixes.size() > 0) {
+					StringDt prefix = prefixes.get(0);
+					personName.setPrefix(valueOf(prefix));
+				}
+			}
+			if (humanNameDt.getSuffix() != null) {
+				List<StringDt> suffixes = humanNameDt.getSuffix();
+				if (suffixes.size() > 0) {
+					StringDt suffix = suffixes.get(0);
+					personName.setFamilyNameSuffix(valueOf(suffix));
+				}
+			}
+			
+			List<StringDt> givenNames = humanNameDt.getGiven();
+			if (givenNames != null) {
+				StringDt givenName = givenNames.get(0);
+				personName.setGivenName(valueOf(givenName));
+			}
+			List<StringDt> familyNames = humanNameDt.getFamily();
+			if (familyNames != null) {
+				StringDt familyName = familyNames.get(0);
+				personName.setFamilyName(valueOf(familyName));
+			}
+			names.add(personName);
+		}
+		omrsPatient.setNames(names);
+		
+		Set<PersonAddress> addresses = new TreeSet<PersonAddress>();
+		PersonAddress address;
+		for (AddressDt fhirAddress : patient.getAddress()) {
+			address = new PersonAddress();
+			address.setCityVillage(fhirAddress.getCity());
+			address.setCountry(fhirAddress.getCountry());
+			address.setStateProvince(fhirAddress.getState());
+			address.setPostalCode(fhirAddress.getPostalCode());
+			List<StringDt> addressStrings = fhirAddress.getLine();
+			
+			if (addressStrings != null) {
+				for (int i = 0; i < addressStrings.size(); i++) {
+					if (i == 0) {
+						address.setAddress1(valueOf(addressStrings.get(0)));
+					} else if (i == 1) {
+						address.setAddress2(valueOf(addressStrings.get(1)));
+					} else if (i == 2) {
+						address.setAddress3(valueOf(addressStrings.get(2)));
+					} else if (i == 3) {
+						address.setAddress4(valueOf(addressStrings.get(3)));
+					} else if (i == 4) {
+						address.setAddress5(valueOf(addressStrings.get(4)));
+					}
+				}
+			}
+			
+			if (String.valueOf(AddressUseEnum.HOME).equalsIgnoreCase(fhirAddress.getUse())) {
+				address.setPreferred(true);
+			}
+			if (String.valueOf(AddressUseEnum.OLD).equalsIgnoreCase(fhirAddress.getUse())) {
+				address.setPreferred(false);
+			}
+			addresses.add(address);
+		}
+		omrsPatient.setAddresses(addresses);
+		
+		if (patient.getGender().equalsIgnoreCase(String.valueOf(AdministrativeGenderEnum.MALE))) {
+			omrsPatient.setGender(FHIRConstants.MALE);
+		} else if (patient.getGender().equalsIgnoreCase(String.valueOf(AdministrativeGenderEnum.FEMALE))) {
+			omrsPatient.setGender(FHIRConstants.FEMALE);
+		}
+		
+		omrsPatient.setBirthdate(patient.getBirthDate());
+
+		BooleanDt Isdeceased = (BooleanDt) patient.getDeceased();
+		omrsPatient.setDead(Isdeceased.getValue());
+		
+		if (patient.getActive()) {
+			omrsPatient.setPersonVoided(false);
+		} else {
+			omrsPatient.setPersonVoided(true);
+			omrsPatient.setPersonVoidReason("Deleted from FHIR module"); // deleted reason is compulsory
+		}
+
+		return omrsPatient;
+	}
+	
 }

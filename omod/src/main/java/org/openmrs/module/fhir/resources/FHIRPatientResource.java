@@ -13,16 +13,17 @@
  */
 package org.openmrs.module.fhir.resources;
 
+import java.util.List;
+
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.PatientService;
+
 import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.PatientService;
-
-import java.util.List;
 
 public class FHIRPatientResource extends Resource {
 
@@ -88,5 +89,10 @@ public class FHIRPatientResource extends Resource {
 	public void deletePatient(IdDt id) {
 		PatientService personService = Context.getService(PatientService.class);
 		personService.deletePatient(id.getIdPart());
+	}
+	
+	public Patient createFHIRPatient(Patient patient) {
+		PatientService personService = Context.getService(PatientService.class);
+		return personService.createFHIRPatient(patient);
 	}
 }

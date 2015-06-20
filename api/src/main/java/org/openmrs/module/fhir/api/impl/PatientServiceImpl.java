@@ -13,12 +13,9 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import ca.uhn.fhir.model.dstu2.resource.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.FamilyMemberHistory;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
-import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
@@ -36,8 +33,12 @@ import org.openmrs.module.fhir.api.util.FHIRLocationUtil;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 import org.openmrs.module.fhir.api.util.OMRSFHIRVisitUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import ca.uhn.fhir.model.dstu2.resource.Bundle;
+import ca.uhn.fhir.model.dstu2.resource.FamilyMemberHistory;
+import ca.uhn.fhir.model.dstu2.resource.Patient;
+import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
@@ -264,5 +265,13 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 			// refused to retire resource.  return with 405
 			throw new MethodNotAllowedException("The OpenMRS API refused to retire the Patient via the FHIR request.");
 		}
+	}
+	
+	@Override
+	public Patient createFHIRPatient(Patient patient) {
+		org.openmrs.Patient omrsPatient = FHIRPatientUtil.generateOmrsPatient(patient);
+		org.openmrs.api.PatientService patientService = Context.getPatientService();
+		omrsPatient = patientService.savePatient(omrsPatient);
+		return FHIRPatientUtil.generatePatient(omrsPatient);
 	}
 }

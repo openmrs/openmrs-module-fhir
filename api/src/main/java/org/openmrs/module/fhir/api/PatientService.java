@@ -13,12 +13,13 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu2.resource.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
+import java.util.List;
+
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import ca.uhn.fhir.model.dstu2.resource.Bundle;
+import ca.uhn.fhir.model.dstu2.resource.Patient;
 
 @Transactional
 public interface PatientService extends OpenmrsService {
@@ -98,4 +99,11 @@ public interface PatientService extends OpenmrsService {
 	 * @param id uuid of the patient
 	 */
 	public void deletePatient(String id);
+	
+	/**
+	 * Create patient
+	 *
+	 * @param patient the patient to create
+	 */
+	public Patient createFHIRPatient(Patient patient);
 }
