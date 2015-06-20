@@ -31,8 +31,6 @@ import org.openmrs.util.OpenmrsClassLoader;
 
 import java.util.*;
 
-import javax.naming.InvalidNameException;
-
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.DiagnosticReportService}.
  */
@@ -84,10 +82,17 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.DiagnosticReportService#deleteDiagnosticReport(String)
+	 * @see org.openmrs.module.fhir.api.DiagnosticReportService#retireDiagnosticReport(String)
 	 */
 	@Override
-	public void deleteDiagnosticReport(String id) {
+	public void retireDiagnosticReport(String id) {
+		// Find Diagnostic Report (Encounter) in OpenMRS database
+		EncounterService encounterService = Context.getEncounterService();
+		Encounter omrsDiagnosticReport = encounterService.getEncounterByUuid(id);
+		// Get corresponding Handler
+		String handlerName = omrsDiagnosticReport.getEncounterType().getName();
+
+		FHIRDiagnosticReportUtil.retireDiagnosticReport(id, getHandler(handlerName));
 	}
 
 	/****************************************************************

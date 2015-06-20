@@ -15,6 +15,6 @@ public interface DiagnosticReportHandler {
 
 	public DiagnosticReport saveFHIRDiagnosticReport(DiagnosticReport diagnosticReport);
 
-	public DiagnosticReport purgeFHIRDiagnosticReport(DiagnosticReport diagnosticReport);
+	public void retireFHIRDiagnosticReport(String id);
 
 }

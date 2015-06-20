@@ -16,6 +16,7 @@ package org.openmrs.module.fhir.api.util;
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
 
 public class FHIRDiagnosticReportUtil {
@@ -49,13 +50,13 @@ public class FHIRDiagnosticReportUtil {
 	/**
 	 * Delete given FHIR Diagnostic Report
 	 *
-	 * @param diagnosticReport FHIR Diagnostic Report
-	 * @param handler          An implementation of DiagnosticReportHandler
+	 * @param id      FHIR Diagnostic Report id tha want to voided
+	 * @param handler An implementation of DiagnosticReportHandler
 	 * @return An instance of org.openmrs.Encounter
 	 */
-	public static DiagnosticReport purgeDiagnosticReport(DiagnosticReport diagnosticReport, DiagnosticReportHandler
+	public static void retireDiagnosticReport(String id, DiagnosticReportHandler
 			handler) {
-		return handler.purgeFHIRDiagnosticReport(diagnosticReport);
+		handler.retireFHIRDiagnosticReport(id);
 	}
 
 }

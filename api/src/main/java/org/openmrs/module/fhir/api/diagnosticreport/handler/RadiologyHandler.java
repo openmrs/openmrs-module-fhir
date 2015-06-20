@@ -34,7 +34,7 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 	}
 
 	@Override
-	public DiagnosticReport purgeFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
-		return diagnosticReport;
+	public void retireFHIRDiagnosticReport(String id) {
+		return;
 	}
 }
