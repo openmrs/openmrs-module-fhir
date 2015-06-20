@@ -13,6 +13,18 @@
  */
 package org.openmrs.module.fhir.api.util;
 
+import static java.lang.String.valueOf;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.openmrs.Patient;
+import org.openmrs.PersonAddress;
+import org.openmrs.PersonName;
+import org.openmrs.api.context.Context;
+
 import ca.uhn.fhir.model.dstu2.composite.AddressDt;
 import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
 import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
@@ -23,17 +35,6 @@ import ca.uhn.fhir.model.dstu2.valueset.NameUseEnum;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.StringDt;
-import org.openmrs.Patient;
-import org.openmrs.PersonAddress;
-import org.openmrs.PersonName;
-import org.openmrs.api.context.Context;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
-import static java.lang.String.valueOf;
 
 public class FHIRPersonUtil {
 
