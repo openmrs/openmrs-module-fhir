@@ -87,12 +87,17 @@ public class FHIRPatientResource extends Resource {
 	}
 
 	public void deletePatient(IdDt id) {
-		PatientService personService = Context.getService(PatientService.class);
-		personService.deletePatient(id.getIdPart());
+		PatientService patientService = Context.getService(PatientService.class);
+		patientService.deletePatient(id.getIdPart());
 	}
 	
 	public Patient createFHIRPatient(Patient patient) {
-		PatientService personService = Context.getService(PatientService.class);
-		return personService.createFHIRPatient(patient);
+		PatientService patientService = Context.getService(PatientService.class);
+		return patientService.createFHIRPatient(patient);
+	}
+	
+	public Patient updatePatient(Patient patient, String theId) {
+		PatientService patientService = Context.getService(PatientService.class);
+		return patientService.updatePatient(patient, theId);
 	}
 }

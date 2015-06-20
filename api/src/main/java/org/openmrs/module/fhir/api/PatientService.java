@@ -106,4 +106,12 @@ public interface PatientService extends OpenmrsService {
 	 * @param patient the patient to create
 	 */
 	public Patient createFHIRPatient(Patient patient);
+	
+	/**
+	 * Update patient
+	 *
+	 * @param patient the patient to update
+	 * @param theId the uuid ofpatient to update
+	 */
+	public Patient updatePatient(Patient patient, String theId);
 }

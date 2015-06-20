@@ -274,4 +274,26 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 		omrsPatient = patientService.savePatient(omrsPatient);
 		return FHIRPatientUtil.generatePatient(omrsPatient);
 	}
+	
+	@Override
+	public Patient updatePatient(Patient patient, String theId) {
+		org.openmrs.api.PatientService patientService = Context.getPatientService();
+		org.openmrs.Patient retrievedPatient = patientService.getPatientByUuid(theId);
+
+		if (retrievedPatient != null) { // update patient
+			org.openmrs.Patient omrsPatient = FHIRPatientUtil.generateOmrsPatient(patient);
+			retrievedPatient = FHIRPatientUtil.updatePatientAttributes(omrsPatient, retrievedPatient);
+			Context.getPatientService().savePatient(retrievedPatient);
+			return FHIRPatientUtil.generatePatient(retrievedPatient);
+		} else { // no patient is associated with the given uuid. so create a new patient with the given uuid
+			if (patient.getId() == null) { // since we need to PUT the patient to a specific URI, we need to set the uuid
+			// here, if it is not
+				// already set.
+				IdDt uuid = new IdDt();
+				uuid.setValue(theId);
+				patient.setId(uuid);
+			}
+			return createFHIRPatient(patient);
+		}
+	}
 }

@@ -33,6 +33,7 @@ import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.StringParam;
@@ -176,12 +177,32 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 *         create operation
 	 */
 	@Create
-	public MethodOutcome createFHIRPerson(@ResourceParam Patient patient) {
+	public MethodOutcome createFHIRPatient(@ResourceParam Patient patient) {
 		patient = patientResource.createFHIRPatient(patient);
 		MethodOutcome retVal = new MethodOutcome();
 		retVal.setId(new IdDt(FHIRConstants.PATIENT, patient.getId().getIdPart()));
 		OperationOutcome outcome = new OperationOutcome();
 		outcome.addIssue().setDetails("Patient is successfully created");
+		retVal.setOperationOutcome(outcome);
+		return retVal;
+	}
+	
+	@Update
+	public MethodOutcome updatePatient(@ResourceParam Patient patient, @IdParam IdDt theId) {
+		MethodOutcome retVal = new MethodOutcome();
+		OperationOutcome outcome = new OperationOutcome();
+		try {
+			patient = patientResource.updatePatient(patient, theId.getIdPart());
+		} catch (Exception e) {
+			outcome.addIssue()
+					.setDetails(
+			            "No Patient is associated with the given UUID to update. Please"
+			                    + " make sure you have set at lease one prefered identifier, non-deleted name, Gender and Birthdate to create a new "
+			                    + "Person with the given UUID. The actual error message was" + e.getMessage());
+			retVal.setOperationOutcome(outcome);
+			return retVal;
+		}
+		outcome.addIssue().setDetails("Patient is successfully updated");
 		retVal.setOperationOutcome(outcome);
 		return retVal;
 	}

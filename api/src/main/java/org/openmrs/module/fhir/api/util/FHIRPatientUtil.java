@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.openmrs.Location;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAddress;
@@ -171,21 +170,29 @@ public class FHIRPatientUtil {
 	}
 	
 	public static org.openmrs.Patient generateOmrsPatient(Patient patient) {
-		org.openmrs.Patient omrsPatient=new org.openmrs.Patient();
+		org.openmrs.Patient omrsPatient = new org.openmrs.Patient(); // add eror handli
+		
+		if (patient.getId() != null) {
+			omrsPatient.setUuid(patient.getId().getIdPart());
+		}
 
 		List<IdentifierDt> fhirIdList = patient.getIdentifier();
-		IdentifierDt iddt = (IdentifierDt) fhirIdList.get(0);
-		PatientIdentifier idnt = new PatientIdentifier();
-		idnt.setIdentifier(iddt.getValue());
-		Location loc = Context.getLocationService().getLocationByUuid("8d6c993e-c2cc-11de-8d13-0010c6dffd0f");
-		idnt.setLocation(loc);
-
-		PatientIdentifierType type = new PatientIdentifierType(1);
-		idnt.setIdentifierType(type);
 		Set<PatientIdentifier> idList = new TreeSet<PatientIdentifier>();
-		idList.add(idnt);
-		omrsPatient.setIdentifiers(idList);
 		
+		for (IdentifierDt fhirIentifier : fhirIdList) {
+			PatientIdentifier patientIdentifier = new PatientIdentifier();
+			patientIdentifier.setIdentifier(fhirIentifier.getValue());
+			String identifierTypeName = fhirIentifier.getSystem();
+			if (String.valueOf(IdentifierUseEnum.USUAL).equalsIgnoreCase(fhirIentifier.getUse())) {
+				patientIdentifier.setPreferred(true);
+			} else {
+				patientIdentifier.setPreferred(false);
+			}
+			PatientIdentifierType type = Context.getPatientService().getPatientIdentifierTypeByName(identifierTypeName);
+			patientIdentifier.setIdentifierType(type);
+			idList.add(patientIdentifier);
+		}
+		omrsPatient.setIdentifiers(idList);
 
 		Set<PersonName> names = new TreeSet<PersonName>();
 		for (HumanNameDt humanNameDt : patient.getName()) {
@@ -285,4 +292,49 @@ public class FHIRPatientUtil {
 		return omrsPatient;
 	}
 	
+	public static org.openmrs.Patient updatePatientAttributes(org.openmrs.Patient omrsPatient,
+	                                                          org.openmrs.Patient retrievedPatient) {
+		Set<PersonName> all = retrievedPatient.getNames();
+		boolean needToSetPrefferedName = false; // indicate wheter any preffered names are in the request body. 
+		for (PersonName name : omrsPatient.getNames()) {
+			if (name.getPreferred()) { // detecting any preffered names are in the request body
+				needToSetPrefferedName = true;
+			}
+		}
+		if (needToSetPrefferedName) { // unset the existing preffered name, 
+			for (PersonName name : all) {
+				name.setPreferred(false);
+			}
+		}
+		for (PersonName name : omrsPatient.getNames()) {
+			all.add(name); // add all the new names to the person
+		}
+		retrievedPatient.setNames(all);
+		Set<PersonAddress> allAddress = retrievedPatient.getAddresses();
+		boolean needToSetHome = false;
+		for (PersonAddress address : omrsPatient.getAddresses()) {
+			if (address.isPreferred()) {
+				needToSetHome = true;
+			}
+		}
+		if (needToSetHome) {
+			for (PersonAddress address : allAddress) {
+				address.setPreferred(false);
+			}
+		}
+		for (PersonAddress address : omrsPatient.getAddresses()) {
+			allAddress.add(address);
+		}
+		retrievedPatient.setAddresses(allAddress);
+		retrievedPatient.setPersonVoided(omrsPatient.getVoided());
+		if (omrsPatient.getVoided()) {
+			retrievedPatient.setPersonVoidReason("Deleted from FHIR module"); // deleted reason is compulsory
+		}
+		retrievedPatient.setBirthdate(omrsPatient.getBirthdate());
+		retrievedPatient.setGender(omrsPatient.getGender());
+		//retrievedPerson.getActiveAttributes().get(0).setValue("Test");
+		//	retrievedPerson.getActiveAttributes().get(1).setValue("Test");
+		return retrievedPatient;
+	}
+
 }
