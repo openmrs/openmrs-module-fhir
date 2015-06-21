@@ -23,6 +23,8 @@ import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.ValidationResult;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
+import org.openmrs.EncounterRole;
+import org.openmrs.EncounterType;
 import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.manager.FHIRContextFactory;
@@ -172,5 +174,23 @@ public class FHIRUtils {
 
 	public static Concept getSevereSeverityConcept() {
 		return getConceptByGlobalProperty("allergy.concept.severity.severe");
+	}
+
+	public static EncounterRole getEncounterRole() {
+		String globalProperty = Context.getAdministrationService().getGlobalProperty("fhir.encounter.encounterRoleUuid");
+		EncounterRole encounterRole = Context.getEncounterService().getEncounterRoleByUuid(globalProperty);
+		if(encounterRole == null) {
+			throw new IllegalStateException("Configuration required for " + globalProperty);
+		}
+		return encounterRole;
+	}
+
+	public static EncounterType getEncounterType(String code) {
+		String globalProperty = Context.getAdministrationService().getGlobalProperty("fhir.encounter.encounterType." + code);
+		EncounterType encounterType = Context.getEncounterService().getEncounterTypeByUuid(globalProperty);
+		if(encounterType == null) {
+			throw new IllegalStateException("Configuration required for " + globalProperty);
+		}
+		return encounterType;
 	}
 }
