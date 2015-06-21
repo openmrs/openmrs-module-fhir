@@ -205,7 +205,7 @@ public class FHIRObsUtil {
 		observation.setReliability(ObservationReliabilityEnum.OK);
 
 		InstantDt dateIssued = new InstantDt();
-        dateIssued.setValue(obs.getObsDatetime());
+        	dateIssued.setValue(obs.getObsDatetime());
 		observation.setIssued(dateIssued);
 
 		//Set reference observations
