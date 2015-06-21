@@ -24,6 +24,7 @@ import ca.uhn.fhir.validation.ValidationResult;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
 import org.openmrs.EncounterRole;
+import org.openmrs.EncounterType;
 import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.manager.FHIRContextFactory;
@@ -182,5 +183,14 @@ public class FHIRUtils {
 			throw new IllegalStateException("Configuration required for " + globalProperty);
 		}
 		return encounterRole;
+	}
+
+	public static EncounterType getEncounterType(String code) {
+		String globalProperty = Context.getAdministrationService().getGlobalProperty("fhir.encounter.encounterType" + code);
+		EncounterType encounterType = Context.getEncounterService().getEncounterTypeByUuid(globalProperty);
+		if(encounterType == null) {
+			throw new IllegalStateException("Configuration required for " + globalProperty);
+		}
+		return encounterType;
 	}
 }

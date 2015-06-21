@@ -135,6 +135,24 @@
         <defaultValue>73bbb069-9781-4afc-a9d1-54b6b2270e03</defaultValue>
         <description>Encounter Role uuid</description>
     </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.encounter.encounterTypeDEFAULT</property>
+        <defaultValue>01234-abcde-56789</defaultValue>
+        <description>EncounterType uuid for Default (not available in http://hl7.org/implement/standards/fhir/v2/0074/index
+            .html)</description>
+    </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.encounter.encounterTypeLAB</property>
+        <defaultValue>01234-abcde-56789</defaultValue>
+        <description>EncounterType uuid for Laboratory in http://hl7.org/implement/standards/fhir/v2/0074/index.html
+        </description>
+    </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.encounter.encounterTypeRAD</property>
+        <defaultValue>01234-abcde-56789</defaultValue>
+        <description>EncounterType uuid for Radiology in http://hl7.org/implement/standards/fhir/v2/0074/index.html
+        </description>
+    </globalProperty>
 
     <privilege>
         <name>View FHIR Client</name>

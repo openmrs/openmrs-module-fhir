@@ -85,6 +85,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 	@Override
 	public DiagnosticReport saveFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
 		log.info("Laboratory Handler : SaveFHIRDiagnosticReport");
+		EncounterService encounterService = Context.getEncounterService();
 		Encounter omrsDiagnosticReport = new Encounter();
 
 		// Set `Name` as a Obs
@@ -135,7 +136,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		if (!codingList.isEmpty()) {
 			encounterType = codingList.get(0).getCode();
 		}
-		omrsDiagnosticReport.setEncounterType(Context.getEncounterService().getEncounterType(encounterType));
+		omrsDiagnosticReport.setEncounterType(FHIRUtils.getEncounterType(encounterType));
 
 		// Set `Diagnosis[x]->DateTime` as valueDateTime in an Obs
 		// Set `Diagnosis[x]->Period` as valueDateTime in an Obs
@@ -144,7 +145,6 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		// Set Binary Obs Handler which used to store `PresentedForm`
 
 		// Create resource in OpenMRS Database
-		EncounterService encounterService = Context.getEncounterService();
 		Encounter omrsEncounter = encounterService.saveEncounter(omrsDiagnosticReport);
 		diagnosticReport.setId(new IdDt("DiagnosticReport", omrsEncounter.getUuid()));
 		return diagnosticReport;
