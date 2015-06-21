@@ -19,6 +19,7 @@ import org.openmrs.module.fhir.api.PractitionerService;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 import org.openmrs.module.fhir.api.util.FHIRPractitionerUtil;
+import org.openmrs.module.fhir.api.util.FHIRUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,6 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 	private DiagnosticReport getFHIRDiagnosticReport(Encounter omrsiagnosticReport) {
 		log.info("Laboratory Handler : GetFHIRDiagnosticReport");
 		DiagnosticReport diagnosticReport = new DiagnosticReport();
-		EncounterService omrsEncounterService = Context.getEncounterService();
 
 		// Set ID
 		diagnosticReport.setId(new IdDt("DiagnosticReport", omrsiagnosticReport.getUuid()));
@@ -60,8 +60,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		diagnosticReport.getSubject().setResource(FHIRPatientUtil.generatePatient(omrsPatient));
 
 		// Get Encounter Provider and set as `Performer`
-		String encounterRoleUuid = "73bbb069-9781-4afc-a9d1-54b6b2270e03";
-		EncounterRole omrsEncounterRole = omrsEncounterService.getEncounterRoleByUuid(encounterRoleUuid);
+		EncounterRole omrsEncounterRole = FHIRUtils.getEncounterRole();
 		Set<Provider> omrsProviderList = omrsiagnosticReport.getProvidersByRole(omrsEncounterRole);
 		// If at least one provider is set (1..1 mapping in FHIR Diagnostic Report)
 		if (!omrsProviderList.isEmpty()) {
@@ -126,8 +125,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 			//TODO: org.openmrs.Provider omrsProvider = FHIRPractitionerUtil.generateOpenMRSPractitioner();
 			Provider omrsProvider = Context.getProviderService().getProviderByUuid(practitionerID);
 			//TODO: Get EncounterRole from DiagnosticReport (remove hard coded value)
-			String encounterRoleID = "73bbb069-9781-4afc-a9d1-54b6b2270e03";
-			EncounterRole encounterRole = Context.getEncounterService().getEncounterRoleByUuid(encounterRoleID);
+			EncounterRole encounterRole = FHIRUtils.getEncounterRole();
 			omrsDiagnosticReport.setProvider(encounterRole, omrsProvider);
 		}
 

@@ -129,6 +129,12 @@
         <defaultValue>OPENMRS</defaultValue>
         <description>Concept Coding System</description>
     </globalProperty>
+    <!-- Diagnostic Report -->
+    <globalProperty>
+        <property>${project.parent.artifactId}.encounter.encounterRoleUuid</property>
+        <defaultValue>73bbb069-9781-4afc-a9d1-54b6b2270e03</defaultValue>
+        <description>Encounter Role uuid</description>
+    </globalProperty>
 
     <privilege>
         <name>View FHIR Client</name>
