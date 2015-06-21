@@ -136,19 +136,19 @@
         <description>Encounter Role uuid</description>
     </globalProperty>
     <globalProperty>
-        <property>${project.parent.artifactId}.encounter.encounterTypeDEFAULT</property>
+        <property>${project.parent.artifactId}.encounter.encounterType.DEFAULT</property>
         <defaultValue>01234-abcde-56789</defaultValue>
         <description>EncounterType uuid for Default (not available in http://hl7.org/implement/standards/fhir/v2/0074/index
             .html)</description>
     </globalProperty>
     <globalProperty>
-        <property>${project.parent.artifactId}.encounter.encounterTypeLAB</property>
+        <property>${project.parent.artifactId}.encounter.encounterType.LAB</property>
         <defaultValue>01234-abcde-56789</defaultValue>
         <description>EncounterType uuid for Laboratory in http://hl7.org/implement/standards/fhir/v2/0074/index.html
         </description>
     </globalProperty>
     <globalProperty>
-        <property>${project.parent.artifactId}.encounter.encounterTypeRAD</property>
+        <property>${project.parent.artifactId}.encounter.encounterType.RAD</property>
         <defaultValue>01234-abcde-56789</defaultValue>
         <description>EncounterType uuid for Radiology in http://hl7.org/implement/standards/fhir/v2/0074/index.html
         </description>

@@ -186,7 +186,7 @@ public class FHIRUtils {
 	}
 
 	public static EncounterType getEncounterType(String code) {
-		String globalProperty = Context.getAdministrationService().getGlobalProperty("fhir.encounter.encounterType" + code);
+		String globalProperty = Context.getAdministrationService().getGlobalProperty("fhir.encounter.encounterType." + code);
 		EncounterType encounterType = Context.getEncounterService().getEncounterTypeByUuid(globalProperty);
 		if(encounterType == null) {
 			throw new IllegalStateException("Configuration required for " + globalProperty);
