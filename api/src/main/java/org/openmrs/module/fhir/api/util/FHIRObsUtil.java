@@ -204,9 +204,9 @@ public class FHIRObsUtil {
 		observation.setStatus(ObservationStatusEnum.FINAL);
 		observation.setReliability(ObservationReliabilityEnum.OK);
 
-		DateTimeDt dateApplies = new DateTimeDt();
-		dateApplies.setValue(obs.getObsDatetime());
-		observation.setApplies(dateApplies);
+		InstantDt dateIssued = new InstantDt();
+        dateIssued.setValue(obs.getObsDatetime());
+		observation.setIssued(dateIssued);
 
 		//Set reference observations
 		if (obs.getGroupMembers() != null && !obs.getGroupMembers().isEmpty()) {
