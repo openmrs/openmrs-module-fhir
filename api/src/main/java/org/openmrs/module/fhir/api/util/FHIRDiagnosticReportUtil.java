@@ -42,9 +42,21 @@ public class FHIRDiagnosticReportUtil {
 	 * @param handler          An implementation of DiagnosticReportHandler
 	 * @return An instance of ca.uhn.fhir.model.dstu2.resource.DiagnosticReport
 	 */
-	public static DiagnosticReport saveDiagnosticReport(DiagnosticReport diagnosticReport, DiagnosticReportHandler
-			handler) {
+	public static DiagnosticReport saveDiagnosticReport(DiagnosticReport diagnosticReport,
+	                                                    DiagnosticReportHandler handler) {
 		return handler.saveFHIRDiagnosticReport(diagnosticReport);
+	}
+
+	/**
+	 * Update FHIR Diagnostic Report
+	 *
+	 * @param diagnosticReport FHIR Diagnostic Report
+	 * @param handler          An implementation of DiagnosticReportHandler
+	 * @return An instance of ca.uhn.fhir.model.dstu2.resource.DiagnosticReport
+	 */
+	public static DiagnosticReport updateDiagnosticReport(DiagnosticReport diagnosticReport, String theId,
+	                                                      DiagnosticReportHandler handler) {
+		return handler.updateFHIRDiagnosticReport(diagnosticReport, theId);
 	}
 
 	/**

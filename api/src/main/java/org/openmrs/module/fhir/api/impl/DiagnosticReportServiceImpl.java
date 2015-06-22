@@ -81,6 +81,18 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 		return FHIRDiagnosticReportUtil.saveDiagnosticReport(diagnosticReport, getHandler(handlerName));
 	}
 
+	@Override
+	public DiagnosticReport updateFHIRDiagnosticReport(DiagnosticReport diagnosticReport, String theId) {
+		log.info("DiagnosticReportServiceImpl : updateFHIRDiagnosticReport");
+		// Find Diagnostic Report (Encounter) in OpenMRS database
+		EncounterService encounterService = Context.getEncounterService();
+		Encounter omrsDiagnosticReport = encounterService.getEncounterByUuid(theId);
+		// Get corresponding Handler
+		String handlerName = omrsDiagnosticReport.getEncounterType().getName();
+
+		return FHIRDiagnosticReportUtil.updateDiagnosticReport(diagnosticReport, theId, getHandler(handlerName));
+	}
+
 	/**
 	 * @see org.openmrs.module.fhir.api.DiagnosticReportService#retireDiagnosticReport(String)
 	 */

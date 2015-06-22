@@ -22,6 +22,7 @@ import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
+import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 
@@ -71,6 +72,27 @@ public class RestfulDiagnosticReportResourceProvider implements IResourceProvide
 	public DiagnosticReport getResourceById(@IdParam IdDt theId) {
 		DiagnosticReport result = diagnosticReportResource.getByUniqueId(theId);
 		return result;
+	}
+
+	@Update
+	public MethodOutcome updateFHIRDiagnosticReport(@ResourceParam DiagnosticReport diagnosticReport, @IdParam IdDt theId) {
+		MethodOutcome retVal = new MethodOutcome();
+		OperationOutcome outcome = new OperationOutcome();
+		try {
+			diagnosticReport = diagnosticReportResource.updateFHIRDiagnosticReport(diagnosticReport, theId.getIdPart());
+		}
+		catch (Exception e) {
+			outcome.addIssue()
+					.setDetails(
+							"No Diagnostic Report is associated with the given UUID to update. Please"
+									+ " make sure you have set at lease one non-delete Issued, Subject, Performer and "
+									+ "ServiceCategory to create a new Diagnostic Report with the given UUID.");
+			retVal.setOperationOutcome(outcome);
+			return retVal;
+		}
+		outcome.addIssue().setDetails("Diagnostic Report is successfully updated.");
+		retVal.setOperationOutcome(outcome);
+		return retVal;
 	}
 
 	/**

@@ -64,6 +64,11 @@ public class DefaultDiagnosticReportHandler extends AbstractHandler implements D
 	}
 
 	@Override
+	public DiagnosticReport updateFHIRDiagnosticReport(DiagnosticReport diagnosticReport, String theId) {
+		return null;
+	}
+
+	@Override
 	public void retireFHIRDiagnosticReport(String id) {
 		// Delete Binary Obs Handler which used to store `PresentedForm`
 		// Delete Encounter
