@@ -21,7 +21,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.DiagnosticReportService;
 
 public class FHIRDiagnosticReportResource extends Resource {
-	
+
 	public DiagnosticReport getByUniqueId(IdDt id) {
 		DiagnosticReportService diagnosticReportService = Context.getService(DiagnosticReportService.class);
 		DiagnosticReport fhirDiagnosticReport = diagnosticReportService.getDiagnosticReport(id.getIdPart());
@@ -30,15 +30,20 @@ public class FHIRDiagnosticReportResource extends Resource {
 		}
 		return fhirDiagnosticReport;
 	}
-	
+
 	public DiagnosticReport createFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
 		DiagnosticReportService diagnosticReportService = Context.getService(DiagnosticReportService.class);
 		return diagnosticReportService.createFHIRDiagnosticReport(diagnosticReport);
 	}
-	
+
+	public DiagnosticReport updateFHIRDiagnosticReport(DiagnosticReport diagnosticReport, String theId) {
+		DiagnosticReportService diagnosticReportService = Context.getService(DiagnosticReportService.class);
+		return diagnosticReportService.updateFHIRDiagnosticReport(diagnosticReport, theId);
+	}
+
 	public void retireDiagnosticReport(IdDt id) {
 		DiagnosticReportService diagnosticReportService = Context.getService(DiagnosticReportService.class);
 		diagnosticReportService.retireDiagnosticReport(id.getIdPart());
 	}
-	
+
 }
