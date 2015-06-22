@@ -158,8 +158,8 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 	 */
 	public Practitioner createFHIRPractitioner(Practitioner practitioner) {
 		Provider provider = new Provider();
-		Person personFromRequest = FHIRPractitionerUtil.extractOpenMRSPerson(practitioner);
-		Person personToProvider = FHIRPractitionerUtil.generateOpenMRSPerson(personFromRequest);
+		Person personFromRequest = FHIRPractitionerUtil.extractOpenMRSPerson(practitioner); // extracts openmrs person from the practitioner representation
+		Person personToProvider = FHIRPractitionerUtil.generateOpenMRSPerson(personFromRequest); // either map to an existing person, or create a new person for the given representation
 		
 		List<IdentifierDt> identifiers = practitioner.getIdentifier();
 		if (!identifiers.isEmpty()) {
@@ -179,7 +179,7 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 	public Practitioner updatePractitioner(Practitioner practitioner, IdDt theId) {
 		org.openmrs.api.ProviderService providerService = Context.getProviderService();
 		org.openmrs.Provider retrievedProvider = providerService.getProviderByUuid(theId.getIdPart());
-		if (retrievedProvider != null) { // update person
+		if (retrievedProvider != null) { // update existing practitioner
 			retrievedProvider = FHIRPractitionerUtil.updatePractitionerAttributes(practitioner, retrievedProvider);
 			Provider p=Context.getProviderService().saveProvider(retrievedProvider);
 			return FHIRPractitionerUtil.generatePractitioner(p);

@@ -250,14 +250,14 @@ public class FHIRPractitionerUtil {
 	                                                                org.openmrs.Provider retrievedProvider) {
 		String gender = practitioner.getGender();
 		String givenname = null;
-		String familyname = null;
+		String familyname = null; // these three attributes are mandotory for create a new person
 		
 		HumanNameDt humanNameDt = practitioner.getName();
 		PersonName name = new PersonName();
 		List<StringDt> givenNames = humanNameDt.getGiven();
 		if (givenNames != null) {
 			StringDt givenName = givenNames.get(0);
-			givenname = valueOf(givenName);
+			givenname = valueOf(givenName); // initialize vatiables
 		}
 		List<StringDt> familyNames = humanNameDt.getFamily();
 		if (familyNames != null) {
@@ -265,14 +265,15 @@ public class FHIRPractitionerUtil {
 			familyname = valueOf(familyName);
 		}
 		
-		Person providerPerson = retrievedProvider.getPerson();
+		Person providerPerson = retrievedProvider.getPerson(); // get the person associates with the practitioner resource
 		
-		if (providerPerson == null) {
+		if (providerPerson == null) { // if the person is null, create a new person first. 
 			if (gender != null && givenname != null && familyname != null) {
 				Person newPerson = new Person();
 				Set<PersonName> nameSet = new TreeSet<PersonName>();
 				name.setFamilyName(familyname);
 				name.setGivenName(familyname);
+				name.setPreferred(true);
 				nameSet.add(name);
 				newPerson.setNames(nameSet);
 				
@@ -287,78 +288,95 @@ public class FHIRPractitionerUtil {
 				retrievedProvider.setPerson(newPerson);
 				retrievedProvider.setName("");
 			}
-		} else {
+		} else { // if , there is a person, associates with the practitioner, update its persons attributes
 			Set<PersonName> all = providerPerson.getNames();
-			for (PersonName pname : all) {
-				pname.setPreferred(false);
-			}
-			HumanNameDt humanName = practitioner.getName();
-			PersonName nam = new PersonName();
-			List<StringDt> giveNames = humanName.getGiven();
-			if (giveNames != null) {
-				StringDt givenName = giveNames.get(0);
-				nam.setGivenName(valueOf(givenName));
-			}
-			List<StringDt> famlyNames = humanName.getFamily();
-			if (famlyNames != null) {
-				StringDt familyName = famlyNames.get(0);
-				nam.setFamilyName(valueOf(familyName));
-			}
-			nam.setPreferred(true);
-			if (humanName.getPrefix() != null) {
-				List<StringDt> prefixes = humanName.getPrefix();
-				if (prefixes.size() > 0) {
-					StringDt prefix = prefixes.get(0);
-					nam.setPrefix(valueOf(prefix));
+			if (all.size() != 0) {
+				for (PersonName pname : all) {
+					pname.setPreferred(false);
 				}
-			}
-			if (humanName.getSuffix() != null) {
-				List<StringDt> suffixes = humanName.getSuffix();
-				if (suffixes.size() > 0) {
-					StringDt suffix = suffixes.get(0);
-					nam.setFamilyNameSuffix(valueOf(suffix));
+				HumanNameDt humanName = practitioner.getName();
+				PersonName nam = new PersonName();
+				List<StringDt> giveNames = humanName.getGiven();
+				if (giveNames != null) {
+					StringDt givenName = giveNames.get(0);
+					nam.setGivenName(valueOf(givenName));
 				}
-			}
-			nam.setPreferred(true);
-			all.add(nam);
-		}
-		
-		Set<PersonAddress> allAddress = providerPerson.getAddresses();
-		for (PersonAddress address : allAddress) {
-			address.setPreferred(false);
-		}
-		PersonAddress address;
-		for (AddressDt fhirAddress : practitioner.getAddress()) {
-			address = new PersonAddress();
-			address.setCityVillage(fhirAddress.getCity());
-			address.setCountry(fhirAddress.getCountry());
-			address.setStateProvince(fhirAddress.getState());
-			address.setPostalCode(fhirAddress.getPostalCode());
-			List<StringDt> addressStrings = fhirAddress.getLine();
-			if (addressStrings != null) {
-				for (int i = 0; i < addressStrings.size(); i++) {
-					if (i == 0) {
-						address.setAddress1(valueOf(addressStrings.get(0)));
-					} else if (i == 1) {
-						address.setAddress2(valueOf(addressStrings.get(1)));
-					} else if (i == 2) {
-						address.setAddress3(valueOf(addressStrings.get(2)));
-					} else if (i == 3) {
-						address.setAddress4(valueOf(addressStrings.get(3)));
-					} else if (i == 4) {
-						address.setAddress5(valueOf(addressStrings.get(4)));
+				List<StringDt> famlyNames = humanName.getFamily();
+				if (famlyNames != null) {
+					StringDt familyName = famlyNames.get(0);
+					nam.setFamilyName(valueOf(familyName));
+				}
+				nam.setPreferred(true);
+				if (humanName.getPrefix() != null) {
+					List<StringDt> prefixes = humanName.getPrefix();
+					if (prefixes.size() > 0) {
+						StringDt prefix = prefixes.get(0);
+						nam.setPrefix(valueOf(prefix));
 					}
 				}
+				if (humanName.getSuffix() != null) {
+					List<StringDt> suffixes = humanName.getSuffix();
+					if (suffixes.size() > 0) {
+						StringDt suffix = suffixes.get(0);
+						nam.setFamilyNameSuffix(valueOf(suffix));
+					}
+				}
+				nam.setPreferred(true);
+				all.add(nam);
+				providerPerson.setNames(all);
 			}
-			if (String.valueOf(AddressUseEnum.HOME).equalsIgnoreCase(fhirAddress.getUse())) {
-				address.setPreferred(true);
+			Set<PersonAddress> allAddress = providerPerson.getAddresses();
+			if (allAddress.size() != 0) {
+				for (PersonAddress address : allAddress) {
+					address.setPreferred(false);
+				}
+				PersonAddress address;
+				for (AddressDt fhirAddress : practitioner.getAddress()) {
+					address = new PersonAddress();
+					address.setCityVillage(fhirAddress.getCity());
+					address.setCountry(fhirAddress.getCountry());
+					address.setStateProvince(fhirAddress.getState());
+					address.setPostalCode(fhirAddress.getPostalCode());
+					List<StringDt> addressStrings = fhirAddress.getLine();
+					if (addressStrings != null) {
+						for (int i = 0; i < addressStrings.size(); i++) {
+							if (i == 0) {
+								address.setAddress1(valueOf(addressStrings.get(0)));
+							} else if (i == 1) {
+								address.setAddress2(valueOf(addressStrings.get(1)));
+							} else if (i == 2) {
+								address.setAddress3(valueOf(addressStrings.get(2)));
+							} else if (i == 3) {
+								address.setAddress4(valueOf(addressStrings.get(3)));
+							} else if (i == 4) {
+								address.setAddress5(valueOf(addressStrings.get(4)));
+							}
+						}
+					}
+					if (String.valueOf(AddressUseEnum.HOME).equalsIgnoreCase(fhirAddress.getUse())) {
+						address.setPreferred(true);
+					}
+					if (String.valueOf(AddressUseEnum.OLD).equalsIgnoreCase(fhirAddress.getUse())) {
+						address.setPreferred(false);
+					}
+					allAddress.add(address);
+				}
+				providerPerson.setAddresses(allAddress);
 			}
-			if (String.valueOf(AddressUseEnum.OLD).equalsIgnoreCase(fhirAddress.getUse())) {
-				address.setPreferred(false);
-			}
-			allAddress.add(address);
 		}
-		// bdate and gender need to set
+
+		if (practitioner.getGender() != null) {
+			if (String.valueOf(AdministrativeGenderEnum.MALE).equalsIgnoreCase(practitioner.getGender())) {
+				providerPerson.setGender(FHIRConstants.MALE);
+			} else if (String.valueOf(AdministrativeGenderEnum.FEMALE).equalsIgnoreCase(practitioner.getGender())) {
+				providerPerson.setGender(FHIRConstants.FEMALE);
+			} else {
+				providerPerson.setGender("o");
+			}
+		}
+		if (practitioner.getBirthDate() != null) {
+			providerPerson.setBirthdate(practitioner.getBirthDate());
+		}
 		retrievedProvider.setPerson(providerPerson);
 		return retrievedProvider;
 	}
