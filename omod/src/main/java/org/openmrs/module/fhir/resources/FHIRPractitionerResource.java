@@ -72,4 +72,10 @@ public class FHIRPractitionerResource extends Resource {
 		        .getService(org.openmrs.module.fhir.api.PractitionerService.class);
 		return practitionerService.createFHIRPractitioner(practitioner);
 	}
+	
+	public Practitioner updatePractitioner(Practitioner practitioner, IdDt theId) {
+		org.openmrs.module.fhir.api.PractitionerService practitionerService = Context
+		        .getService(org.openmrs.module.fhir.api.PractitionerService.class);
+		return practitionerService.updatePractitioner(practitioner, theId);
+	}
 }

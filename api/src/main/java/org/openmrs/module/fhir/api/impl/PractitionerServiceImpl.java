@@ -29,6 +29,7 @@ import org.openmrs.module.fhir.api.util.FHIRPractitionerUtil;
 
 import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
 import ca.uhn.fhir.model.dstu2.resource.Practitioner;
+import ca.uhn.fhir.model.primitive.IdDt;
 
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
@@ -157,16 +158,40 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 	 */
 	public Practitioner createFHIRPractitioner(Practitioner practitioner) {
 		Provider provider = new Provider();
-		Person prsnProvider = FHIRPractitionerUtil.generateOpenMRSPerson(practitioner);
+		Person personFromRequest = FHIRPractitionerUtil.extractOpenMRSPerson(practitioner); // extracts openmrs person from the practitioner representation
+		Person personToProvider = FHIRPractitionerUtil.generateOpenMRSPerson(personFromRequest); // either map to an existing person, or create a new person for the given representation
 		
 		List<IdentifierDt> identifiers = practitioner.getIdentifier();
 		if (!identifiers.isEmpty()) {
 			IdentifierDt idnt = identifiers.get(0);
 			provider.setIdentifier(idnt.getValue());
 		}
-		provider.setPerson(prsnProvider);
+		provider.setPerson(personToProvider);
 		
 		Provider omrsProvider = Context.getProviderService().saveProvider(provider);
 		return FHIRPractitionerUtil.generatePractitioner(omrsProvider);
+	}
+	
+	/**
+	 * @see org.openmrs.module.fhir.api.PractitionerService#updatePractitioner(Practitioner
+	 *      practitioner, IdDt theId)
+	 */
+	public Practitioner updatePractitioner(Practitioner practitioner, IdDt theId) {
+		org.openmrs.api.ProviderService providerService = Context.getProviderService();
+		org.openmrs.Provider retrievedProvider = providerService.getProviderByUuid(theId.getIdPart());
+		if (retrievedProvider != null) { // update existing practitioner
+			retrievedProvider = FHIRPractitionerUtil.updatePractitionerAttributes(practitioner, retrievedProvider);
+			Provider p=Context.getProviderService().saveProvider(retrievedProvider);
+			return FHIRPractitionerUtil.generatePractitioner(p);
+		} else { // no practitioner is associated with the given uuid. so create a new practitioner with the given uuid
+			if (practitioner.getId() == null) { // since we need to PUT the Person to a specific URI, we need to set the uuid
+				// here, if it is not
+				// already set.
+				IdDt uuid = new IdDt();
+				uuid.setValue(theId.getIdPart());
+				practitioner.setId(uuid);
+			}
+			return createFHIRPractitioner(practitioner);
+		}
 	}
 }

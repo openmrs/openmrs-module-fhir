@@ -14,12 +14,17 @@
 package org.openmrs.module.fhir.providers;
 
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
+import org.openmrs.PersonName;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.resources.FHIRPractitionerResource;
 
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.resource.OperationOutcome;
+import ca.uhn.fhir.model.dstu2.resource.Person;
 import ca.uhn.fhir.model.dstu2.resource.Practitioner;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.Create;
@@ -28,6 +33,7 @@ import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
@@ -131,6 +137,37 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 		retVal.setId(new IdDt(FHIRConstants.PERSON, practitioner.getId().getIdPart()));
 		OperationOutcome outcome = new OperationOutcome();
 		outcome.addIssue().setDetails("Practitioner is successfully created");
+		retVal.setOperationOutcome(outcome);
+		return retVal;
+	}
+	
+	@Update
+	public MethodOutcome updatePractitioner(@ResourceParam Person thePerson, @IdParam IdDt theId) {
+		MethodOutcome retVal = new MethodOutcome();
+		OperationOutcome outcome = new OperationOutcome();
+		org.openmrs.Person p = new org.openmrs.Person();
+		//p.setGender("m");
+		//p.setBirthdate(new Date());
+		
+		PersonName na = new PersonName();
+		Set<PersonName> set = new TreeSet<PersonName>();
+		na.setGivenName("buruwah");
+		na.setFamilyName("haha");
+		set.add(na);
+		//p.setNames(set);
+		p = Context.getPersonService().savePerson(p);
+		/*try {
+			Person person = personResource.updateFHIRPerson(thePerson, theId.getIdPart());
+		} catch (Exception e) {
+			outcome.addIssue()
+					.setDetails(
+							"No Person is associated with the given UUID to update. Please"
+							+ " make sure you have set at lease one non-delete name, Gender and Birthdate to create a new "
+							+ "Person with the given UUID");
+			retVal.setOperationOutcome(outcome);
+			return retVal;
+		}*/
+		outcome.addIssue().setDetails("Person is successfully updated " + p.getUuid());
 		retVal.setOperationOutcome(outcome);
 		return retVal;
 	}
