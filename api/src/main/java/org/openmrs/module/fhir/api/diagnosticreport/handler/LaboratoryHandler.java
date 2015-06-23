@@ -43,7 +43,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 	}
 
 	private DiagnosticReport getFHIRDiagnosticReport(Encounter omrsiagnosticReport) {
-		log.info("Laboratory Handler : GetFHIRDiagnosticReport");
+		log.debug("Laboratory Handler : GetFHIRDiagnosticReport");
 		DiagnosticReport diagnosticReport = new DiagnosticReport();
 
 		// Set ID
@@ -84,7 +84,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 
 	@Override
 	public DiagnosticReport saveFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
-		log.info("Laboratory Handler : SaveFHIRDiagnosticReport");
+		log.debug("Laboratory Handler : SaveFHIRDiagnosticReport");
 		EncounterService encounterService = Context.getEncounterService();
 		Encounter omrsDiagnosticReport = new Encounter();
 
@@ -152,7 +152,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 
 	@Override
 	public DiagnosticReport updateFHIRDiagnosticReport(DiagnosticReport diagnosticReport, String theId) {
-		log.info("Laboratory Handler : UpdateFHIRDiagnosticReport");
+		log.debug("Laboratory Handler : UpdateFHIRDiagnosticReport");
 		EncounterService encounterService = Context.getEncounterService();
 		Encounter omrsDiagnosticReport = encounterService.getEncounterByUuid(theId);
 
@@ -228,6 +228,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 
 	@Override
 	public void retireFHIRDiagnosticReport(String id) {
+		log.debug("Laboratory Handler : RetireFHIRDiagnosticReport");
 		EncounterService encounterService = Context.getEncounterService();
 		// Delete Binary Obs Handler which used to store `PresentedForm`
 
