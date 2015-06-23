@@ -15,7 +15,6 @@ package org.openmrs.module.fhir.api.impl;
 
 import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
@@ -29,7 +28,9 @@ import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
 import org.openmrs.module.fhir.api.util.FHIRDiagnosticReportUtil;
 import org.openmrs.util.OpenmrsClassLoader;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.DiagnosticReportService}.
@@ -79,6 +80,19 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 		}
 
 		return FHIRDiagnosticReportUtil.saveDiagnosticReport(diagnosticReport, getHandler(handlerName));
+	}
+
+	@Override
+	public DiagnosticReport updateFHIRDiagnosticReport(DiagnosticReport diagnosticReport, String theId) {
+		log.info("DiagnosticReportServiceImpl : updateFHIRDiagnosticReport");
+		// Find Diagnostic Report (Encounter) in OpenMRS database
+		EncounterService encounterService = Context.getEncounterService();
+		Encounter omrsDiagnosticReport = encounterService.getEncounterByUuid(theId);
+		// Get corresponding Handler
+		String handlerName = omrsDiagnosticReport.getEncounterType().getName();
+
+		return FHIRDiagnosticReportUtil.updateDiagnosticReport(diagnosticReport, theId, getHandler(
+				handlerName));
 	}
 
 	/**

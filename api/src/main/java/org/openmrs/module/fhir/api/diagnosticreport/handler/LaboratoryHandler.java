@@ -43,7 +43,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 	}
 
 	private DiagnosticReport getFHIRDiagnosticReport(Encounter omrsiagnosticReport) {
-		log.info("Laboratory Handler : GetFHIRDiagnosticReport");
+		log.debug("Laboratory Handler : GetFHIRDiagnosticReport");
 		DiagnosticReport diagnosticReport = new DiagnosticReport();
 
 		// Set ID
@@ -84,7 +84,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 
 	@Override
 	public DiagnosticReport saveFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
-		log.info("Laboratory Handler : SaveFHIRDiagnosticReport");
+		log.debug("Laboratory Handler : SaveFHIRDiagnosticReport");
 		EncounterService encounterService = Context.getEncounterService();
 		Encounter omrsDiagnosticReport = new Encounter();
 
@@ -151,7 +151,84 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 	}
 
 	@Override
+	public DiagnosticReport updateFHIRDiagnosticReport(DiagnosticReport diagnosticReport, String theId) {
+		log.debug("Laboratory Handler : UpdateFHIRDiagnosticReport");
+		EncounterService encounterService = Context.getEncounterService();
+		Encounter omrsDiagnosticReport = encounterService.getEncounterByUuid(theId);
+
+		// Set `Name` as a Obs
+		// Set `Status` as a Obs
+
+		// If available set `Issued` date as EncounterDateTime
+		if (diagnosticReport.getIssued() != null) {
+			omrsDiagnosticReport.setEncounterDatetime(diagnosticReport.getIssued());
+		}
+
+		// Set `Subject` as Encounter Patient
+		IdDt subjectReference = diagnosticReport.getSubject().getReference();
+		if (!subjectReference.isEmpty()) {
+			if (subjectReference.isLocal()) {
+				Patient patient = (Patient) diagnosticReport.getSubject().getResource();
+				//TODO: org.openmrs.Patient omrsParient = FHIRPatientUtil.generateOpenMRSPatient(patient);
+				org.openmrs.Patient omrsParient = new org.openmrs.Patient();
+				omrsDiagnosticReport.setPatient(omrsParient);
+			} else {
+				// Get Id of the Patient
+				String patientID = subjectReference.getIdPart();
+				// Assume that Patient is stored in the OpenMRS database
+				PatientService fhirPatientService = Context.getService(PatientService.class);
+				Patient patient = fhirPatientService.getPatient(patientID);
+				// org.openmrs.Patient omrsPatient = FHIRPatientUtil.generatePatient(patient);
+				org.openmrs.Patient omrsPatient = Context.getPatientService().getPatientByUuid(patientID);
+				omrsDiagnosticReport.setPatient(omrsPatient);
+			}
+		}
+
+		// Set `Performer`(Practitioner) as Encounter Provider
+		IdDt performerReference = diagnosticReport.getPerformer().getReference();
+		if (!performerReference.isEmpty()) {
+			if (performerReference.isLocal()) {
+				Practitioner practitioner = (Practitioner) diagnosticReport.getPerformer().getResource();
+				//TODO: org.openmrs.Provider omrsProvider = FHIRPractitionerUtil.generatePractitioner();
+				Provider omrsProvider = new Provider();
+				omrsDiagnosticReport.setProvider(new EncounterRole(), omrsProvider);
+			} else {
+				// Get Id of the Performer
+				String practitionerID = performerReference.getIdPart();
+				// Assume that Performer is stored in the OpenMRS database
+				PractitionerService fhirPractitionerService = Context.getService(PractitionerService.class);
+				Practitioner practitioner = fhirPractitionerService.getPractitioner(practitionerID);
+				//TODO: org.openmrs.Provider omrsProvider = FHIRPractitionerUtil.generateOpenMRSPractitioner();
+				Provider omrsProvider = Context.getProviderService().getProviderByUuid(practitionerID);
+				//TODO: Get EncounterRole from DiagnosticReport (remove hard coded value)
+				EncounterRole encounterRole = FHIRUtils.getEncounterRole();
+				omrsDiagnosticReport.setProvider(encounterRole, omrsProvider);
+			}
+		}
+
+		// Set `ServiceCategory` as EncounterType
+		List<CodingDt> codingList = diagnosticReport.getServiceCategory().getCoding();
+		String encounterType = null;
+		if (!codingList.isEmpty()) {
+			encounterType = codingList.get(0).getCode();
+			omrsDiagnosticReport.setEncounterType(FHIRUtils.getEncounterType(encounterType));
+		}
+
+		// Set `Diagnosis[x]->DateTime` as valueDateTime in an Obs
+		// Set `Diagnosis[x]->Period` as valueDateTime in an Obs
+
+		// Set parsed obsSet (`Result` as Set of Obs)
+		// Set Binary Obs Handler which used to store `PresentedForm`
+
+		// Create resource in OpenMRS Database
+		Encounter omrsEncounter = encounterService.saveEncounter(omrsDiagnosticReport);
+		diagnosticReport.setId(new IdDt("DiagnosticReport", omrsEncounter.getUuid()));
+		return diagnosticReport;
+	}
+
+	@Override
 	public void retireFHIRDiagnosticReport(String id) {
+		log.debug("Laboratory Handler : RetireFHIRDiagnosticReport");
 		EncounterService encounterService = Context.getEncounterService();
 		// Delete Binary Obs Handler which used to store `PresentedForm`
 

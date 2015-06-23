@@ -34,6 +34,11 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 	}
 
 	@Override
+	public DiagnosticReport updateFHIRDiagnosticReport(DiagnosticReport diagnosticReport, String theId) {
+		return diagnosticReport;
+	}
+
+	@Override
 	public void retireFHIRDiagnosticReport(String id) {
 		return;
 	}
