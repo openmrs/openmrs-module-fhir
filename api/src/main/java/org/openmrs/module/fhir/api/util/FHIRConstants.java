@@ -106,7 +106,6 @@ public final class FHIRConstants {
 	public static final String OBS_ALLERGY_STRATEGY = "ObsAllergyStrategy";
 	public static final String OPENMRS_CONCEPT_CODING_SYSTEM = "OPENMRS";
 	public static final String NONE = "none";
-
 	static {
 		conceptSourceMap.put(LOINC.toLowerCase(), new ConceptSourceNameURIPair(LOINC, LOINC_URI));
 		conceptSourceMap.put(CIEL.toLowerCase(), new ConceptSourceNameURIPair(CIEL, CIEL_URI));
@@ -150,4 +149,9 @@ public final class FHIRConstants {
 		conceptSourceURINameMap.put(NDF_RT_NUI_URI, NDF_RT_NUI);
 		conceptSourceURINameMap.put(UCUM_URI, UCUM);
 	}
+
+	public static final String DIAGNOSTIC_REPORT_NAME = "name";
+	public static final String DIAGNOSTIC_REPORT_STATUS = "status";
+	public static final String DIAGNOSTIC_REPORT_RESULT = "result";
+	public static final String DIAGNOSTIC_REPORT_PRESENTED_FORM = "presentedForm";
 }
