@@ -32,12 +32,19 @@ import org.openmrs.module.fhir.api.manager.FHIRContextFactory;
 public class FHIRUtils {
 
 	public static final String CONTENT_TYPE_APPLICATION_XML_FHIR = "application/xml+fhir";
+
 	public static final String CONTENT_TYPE_APPLICATION_JSON_FHIR = "application/json+fhir";
+
 	public static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
+
 	public static final String CONTENT_TYPE_APPLICATION_XML = "application/xml";
+
 	public static final String PATIENT_IDENTIFIER_TYPE_REST_RESOURCE_URI = "/ws/rest/v1/patientidentifiertype/";
+
 	public static final String PATIENT_PHONE_NUMBER_ATTRIBUTE = "Telephone Number";
+
 	private static FhirContext ctx = FHIRContextFactory.getFHIRContext();
+
 	private static FhirValidator val = ctx.newValidator();
 
 	public static String getFHIRBaseUrl() {
@@ -179,18 +186,44 @@ public class FHIRUtils {
 	public static EncounterRole getEncounterRole() {
 		String globalProperty = Context.getAdministrationService().getGlobalProperty("fhir.encounter.encounterRoleUuid");
 		EncounterRole encounterRole = Context.getEncounterService().getEncounterRoleByUuid(globalProperty);
-		if(encounterRole == null) {
+		if (encounterRole == null) {
 			throw new IllegalStateException("Configuration required for " + globalProperty);
 		}
 		return encounterRole;
 	}
 
 	public static EncounterType getEncounterType(String code) {
-		String globalProperty = Context.getAdministrationService().getGlobalProperty("fhir.encounter.encounterType." + code);
+		String globalProperty = Context.getAdministrationService().getGlobalProperty("fhir.encounter.encounterType." +
+				code);
 		EncounterType encounterType = Context.getEncounterService().getEncounterTypeByUuid(globalProperty);
-		if(encounterType == null) {
+		if (encounterType == null) {
 			throw new IllegalStateException("Configuration required for " + globalProperty);
 		}
 		return encounterType;
+	}
+
+	public static Concept getDiagnosticReportNameConcept() {
+		return getConceptByConceptId("fhir.diagnosticreport.name");
+	}
+
+	public static Concept getDiagnosticReportStatusConcept() {
+		return getConceptByConceptId("fhir.diagnosticreport.status");
+	}
+
+	public static Concept getDiagnosticReportResultConcept() {
+		return getConceptByConceptId("fhir.diagnosticreport.result");
+	}
+
+	public static Concept getDiagnosticReportPresentedFormConcept() {
+		return getConceptByConceptId("fhir.diagnosticreport.presentedform");
+	}
+
+	private static Concept getConceptByConceptId(String globalPropertyName) {
+		String globalProperty = Context.getAdministrationService().getGlobalProperty(globalPropertyName);
+		Concept concept = Context.getConceptService().getConcept(Integer.parseInt(globalProperty));
+		if (concept == null) {
+			throw new IllegalStateException("Configuration required: " + globalPropertyName);
+		}
+		return concept;
 	}
 }
