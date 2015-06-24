@@ -204,9 +204,9 @@ public class FHIRObsUtil {
 		observation.setStatus(ObservationStatusEnum.FINAL);
 		observation.setReliability(ObservationReliabilityEnum.OK);
 
-		InstantDt dateIssued = new InstantDt();
+		DateTimeDt dateIssued = new DateTimeDt();
         	dateIssued.setValue(obs.getObsDatetime());
-		observation.setIssued(dateIssued);
+		observation.setApplies(dateIssued);
 
 		//Set reference observations
 		if (obs.getGroupMembers() != null && !obs.getGroupMembers().isEmpty()) {
@@ -265,27 +265,37 @@ public class FHIRObsUtil {
 		String conceptCode = null;
 		String system = null;
 		Concept concept = null;
+		List<CodingDt> dts = null;
 		try {
 			CodeableConceptDt dt = observation.getCode();
-			List<CodingDt> dts = dt.getCoding();
-			CodingDt coding = dts.get(0);
-			conceptCode = coding.getCode();
-			system = coding.getSystem();
+			dts = dt.getCoding();
 		}
 		catch (NullPointerException e) {
 			errors.add("Code cannot be empty");
 			log.error("Code cannot be empty " + e.getMessage());
 		}
-		if (FHIRConstants.OPENMRS_URI.equals(system)) {
-			concept = Context.getConceptService().getConceptByUuid(conceptCode);
-		} else {
-			String systemName = FHIRConstants.conceptSourceURINameMap.get(system);
-			if (systemName == null || systemName.isEmpty()) {
-				errors.add("Unknown systemvalue");
+		
+		for (CodingDt cding : dts) {
+			conceptCode = cding.getCode();
+			system = cding.getSystem();
+			if (FHIRConstants.OPENMRS_URI.equals(system)) {
+				concept = Context.getConceptService().getConceptByUuid(conceptCode);
+			} else {
+				String systemName = FHIRConstants.conceptSourceURINameMap.get(system);
+				if (systemName != null && !systemName.isEmpty()) {
+					concept = Context.getConceptService().getConceptByMapping(conceptCode, systemName);
+				}
 			}
-			concept = Context.getConceptService().getConceptByMapping(conceptCode, systemName);
+			if (concept != null) {
+				break;
+			}
 		}
-		obs.setConcept(concept);
+		if (concept == null) {
+			errors.add("No matching concept found for the given codings");
+		} else {
+			obs.setConcept(concept);
+		}
+
 		if (concept != null) {
 			if (concept.isNumeric()) {
 				QuantityDt quantity = (QuantityDt) observation.getValue();
@@ -328,9 +338,6 @@ public class FHIRObsUtil {
 				obs.setComplexData(data);
 			}
 			
-		} else {
-			errors.add("Couldn't find a concept for the given code");
-			log.error("Couldn't find a concept for the given code");
 		}
 		
 		if (observation.getEncounter() != null) {
