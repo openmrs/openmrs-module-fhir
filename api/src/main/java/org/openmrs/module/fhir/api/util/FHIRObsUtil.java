@@ -262,18 +262,29 @@ public class FHIRObsUtil {
 		Date instant = observation.getIssued();
 		obs.setDateCreated(instant);
 		
-		String conceptUuid = null;
+		String conceptCode = null;
+		String system = null;
+		Concept concept = null;
 		try {
 			CodeableConceptDt dt = observation.getCode();
 			List<CodingDt> dts = dt.getCoding();
 			CodingDt coding = dts.get(0);
-			conceptUuid = coding.getCode();
+			conceptCode = coding.getCode();
+			system = coding.getSystem();
 		}
 		catch (NullPointerException e) {
 			errors.add("Code cannot be empty");
 			log.error("Code cannot be empty " + e.getMessage());
 		}
-		Concept concept = Context.getConceptService().getConceptByUuid(conceptUuid);
+		if (FHIRConstants.OPENMRS_URI.equals(system)) {
+			concept = Context.getConceptService().getConceptByUuid(conceptCode);
+		} else {
+			String systemName = FHIRConstants.conceptSourceURINameMap.get(system);
+			if (systemName == null || systemName.isEmpty()) {
+				errors.add("Unknown systemvalue");
+			}
+			concept = Context.getConceptService().getConceptByMapping(conceptCode, systemName);
+		}
 		obs.setConcept(concept);
 		if (concept != null) {
 			if (concept.isNumeric()) {
@@ -318,8 +329,8 @@ public class FHIRObsUtil {
 			}
 			
 		} else {
-			errors.add("Couldn't find a concept for the given uuid");
-			log.error("Couldn't find a concept for the given uuid");
+			errors.add("Couldn't find a concept for the given code");
+			log.error("Couldn't find a concept for the given code");
 		}
 		
 		if (observation.getEncounter() != null) {
