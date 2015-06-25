@@ -33,6 +33,7 @@ import org.openmrs.module.fhir.api.util.FHIRObsUtil;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 
 import ca.uhn.fhir.model.dstu2.resource.Observation;
+import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 
 /**
@@ -242,5 +243,35 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 		}
 		obs = Context.getObsService().saveObs(obs, "CREATED by FHIR Request");
 		return FHIRObsUtil.generateObs(obs);
+	}
+	
+	@Override
+	public Observation updateFHIRObservation(Observation observation, String theId) {
+		List<String> errors = new ArrayList<String>();
+		org.openmrs.api.ObsService observationService = Context.getObsService();
+		org.openmrs.Obs retrievedObs = observationService.getObsByUuid(theId);
+		if (retrievedObs != null) { // update observation
+			org.openmrs.Obs omrsObs = FHIRObsUtil.generateOpenMRSObs(observation, errors);
+			FHIRObsUtil.copyObsAttributes(omrsObs, retrievedObs, errors);
+			if (!errors.isEmpty()) {
+				StringBuilder errorMessage = new StringBuilder(
+				        "The request cannot be processed due to the following issues \n");
+				for (int i = 0; i < errors.size(); i++) {
+					errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
+				}
+				throw new UnprocessableEntityException(errorMessage.toString());
+			}
+			omrsObs = Context.getObsService().saveObs(retrievedObs, "Updated via FHIR");
+			return FHIRObsUtil.generateObs(omrsObs);
+		} else { // no observation is associated with the given uuid. so create a new observation with the given uuid
+			if (observation.getId() == null) { // since we need to PUT the observation to a specific URI, we need to set the uuid
+				// here, if it is not
+				// already set.
+				IdDt uuid = new IdDt();
+				uuid.setValue(theId);
+				observation.setId(uuid);
+			}
+			return createFHIRObservation(observation);
+		}
 	}
 }

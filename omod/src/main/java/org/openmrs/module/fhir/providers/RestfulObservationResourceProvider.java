@@ -30,6 +30,7 @@ import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.DateParam;
 import ca.uhn.fhir.rest.param.ReferenceParam;
@@ -165,6 +166,25 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 		retVal.setId(new IdDt(FHIRConstants.OBSERVATION, observation.getId().getIdPart()));
 		OperationOutcome outcome = new OperationOutcome();
 		outcome.addIssue().setDetails("Observation is successfully created" + observation.getId().getIdPart());
+		retVal.setOperationOutcome(outcome);
+		return retVal;
+	}
+	
+	@Update
+	public MethodOutcome updateFHIRObservation(@ResourceParam Observation observation, @IdParam IdDt theId) {
+		MethodOutcome retVal = new MethodOutcome();
+		OperationOutcome outcome = new OperationOutcome();
+		try {
+			observation = provider.updateFHIRObservation(observation, theId.getIdPart());
+		}
+		catch (Exception e) {
+			outcome.addIssue()
+.setDetails("Following exception occured " + e.getMessage());
+			retVal.setOperationOutcome(outcome);
+			return retVal;
+		}
+		outcome.addIssue().setDetails(
+		    "Observation is successfully updated. New Observation UUID is " + observation.getId().getIdPart());
 		retVal.setOperationOutcome(outcome);
 		return retVal;
 	}
