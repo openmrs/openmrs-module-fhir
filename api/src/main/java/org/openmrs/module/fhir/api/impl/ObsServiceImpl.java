@@ -247,12 +247,20 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	
 	@Override
 	public Observation updateFHIRObservation(Observation observation, String theId) {
+		List<String> errors = new ArrayList<String>();
 		org.openmrs.api.ObsService observationService = Context.getObsService();
 		org.openmrs.Obs retrievedObs = observationService.getObsByUuid(theId);
 		if (retrievedObs != null) { // update observation
-			org.openmrs.Obs omrsObs = FHIRObsUtil.generateOpenMRSObs(observation, new ArrayList<String>());
-
-			FHIRObsUtil.copyObsAttributes(omrsObs, retrievedObs);
+			org.openmrs.Obs omrsObs = FHIRObsUtil.generateOpenMRSObs(observation, errors);
+			FHIRObsUtil.copyObsAttributes(omrsObs, retrievedObs, errors);
+			if (!errors.isEmpty()) {
+				StringBuilder errorMessage = new StringBuilder(
+				        "The request cannot be processed due to the following issues \n");
+				for (int i = 0; i < errors.size(); i++) {
+					errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
+				}
+				throw new UnprocessableEntityException(errorMessage.toString());
+			}
 			omrsObs = Context.getObsService().saveObs(retrievedObs, "Updated via FHIR");
 			return FHIRObsUtil.generateObs(omrsObs);
 		} else { // no observation is associated with the given uuid. so create a new observation with the given uuid

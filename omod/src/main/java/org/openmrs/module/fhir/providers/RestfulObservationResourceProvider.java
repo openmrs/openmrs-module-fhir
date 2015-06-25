@@ -179,9 +179,7 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 		}
 		catch (Exception e) {
 			outcome.addIssue()
-			        //UPDATE THISSSSSSSSSSSSSSSSSSSSSSSSSSSS
-			        .setDetails(
-"Following exception occured " + e.getMessage());
+.setDetails("Following exception occured " + e.getMessage());
 			retVal.setOperationOutcome(outcome);
 			return retVal;
 		}

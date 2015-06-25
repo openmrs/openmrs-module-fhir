@@ -165,17 +165,14 @@ public class FHIRObsUtil {
 			if (obs.getValueCoded() != null) {
 				Collection<ConceptMap> valueMappings = obs.getValueCoded().getConceptMappings();
 				List<CodingDt> values = new ArrayList<CodingDt>();
-
 				//Set codings from openmrs concept mappings
 				for (ConceptMap map : valueMappings) {
 					if (map.getConceptReferenceTerm() != null) {
 						values.add(FHIRUtils.getCodingDtByConceptMappings(map));
 					}
 				}
-
 				//Set openmrs concept
 				values.add(FHIRUtils.getCodingDtByOpenMRSConcept(obs.getValueCoded()));
-
 				CodeableConceptDt codeableConceptDt = new CodeableConceptDt();
 				codeableConceptDt.setCoding(values);
 				observation.setValue(codeableConceptDt);
@@ -370,7 +367,7 @@ public class FHIRObsUtil {
 		return obs;
 	}
 	
-	public static Obs copyObsAttributes(Obs requestObs, Obs retrievedObs) {
+	public static Obs copyObsAttributes(Obs requestObs, Obs retrievedObs, List<String> errors) {
 		retrievedObs.setPerson(requestObs.getPerson());
 		retrievedObs.setObsDatetime(requestObs.getObsDatetime());
 		retrievedObs.setConcept(requestObs.getConcept());
@@ -383,7 +380,7 @@ public class FHIRObsUtil {
 					retrievedObs.setValueAsString(requestObs.getValueAsString(Context.getLocale()));
 				}
 				catch (ParseException e) {
-					e.printStackTrace();
+					errors.add("Couldn't set value as String to the Observation. Caused " + e.getMessage());
 				}
 			} else if (FHIRConstants.BIT_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
 				retrievedObs.setValueCoded(requestObs.getValueCoded());
