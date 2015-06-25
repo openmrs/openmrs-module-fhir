@@ -104,5 +104,14 @@ public interface ObsService extends OpenmrsService {
 	 * @return observation fhir resource
 	 */
 	public Observation createFHIRObservation(Observation observation);
+	
+	/**
+	 * Update observation
+	 *
+	 * @param observation the fhir observation to update
+	 * @param theId the uuid of the obs
+	 * @return observation fhir resource
+	 */
+	public Observation updateFHIRObservation(Observation observation, String theId);
 
 }

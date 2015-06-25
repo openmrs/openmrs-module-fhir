@@ -209,8 +209,9 @@ public class FHIRObsUtil {
 		observation.setApplies(dateIssued);
 
 		//Set reference observations
+		List<Observation.Related> relatedObs = null;
 		if (obs.getGroupMembers() != null && !obs.getGroupMembers().isEmpty()) {
-			List<Observation.Related> relatedObs = new ArrayList<Observation.Related>();
+			relatedObs = new ArrayList<Observation.Related>();
 			ResourceReferenceDt resourceReferenceDt;
 			Observation.Related related;
 			for (Obs ob : obs.getGroupMembers()) {
@@ -223,9 +224,28 @@ public class FHIRObsUtil {
 				providerRef.setValue(obsUri);
 				resourceReferenceDt.setReference(providerRef);
 				related.setTarget(resourceReferenceDt);
+				relatedObs.add(related);
 			}
-			observation.setRelated(relatedObs);
 		}
+		//Set old Obs
+		if (obs.getPreviousVersion() != null) {
+			if (relatedObs == null) {
+				relatedObs = new ArrayList<Observation.Related>();
+			}
+
+			ResourceReferenceDt resourceReferenceDt = new ResourceReferenceDt();
+			Observation.Related related = new Observation.Related();
+			related.setType(ObservationRelationshipTypeEnum.REPLACES);
+			resourceReferenceDt.setDisplay("Old Obs which replaced by the new Obs");
+			IdDt providerRef = new IdDt();
+			String obsUri = FHIRConstants.OBSERVATION + "/" + obs.getPreviousVersion().getUuid();
+			providerRef.setValue(obsUri);
+			resourceReferenceDt.setReference(providerRef);
+			related.setTarget(resourceReferenceDt);
+			relatedObs.add(related);
+			//throw new NullPointerException();
+		}
+		observation.setRelated(relatedObs);
 
 		//As per discussions, obs location will be deprecated from openmrs. So it will no need of setting it
 		/*if (obs.getLocation() != null) {
@@ -240,6 +260,7 @@ public class FHIRObsUtil {
 			encounter.setReference(FHIRConstants.ENCOUNTER + "/" + obs.getEncounter().getUuid());
 			observation.setEncounter(encounter);
 		}
+
 		return observation;
 	}
 	
@@ -348,4 +369,34 @@ public class FHIRObsUtil {
 		}
 		return obs;
 	}
+	
+	public static Obs copyObsAttributes(Obs requestObs, Obs retrievedObs) {
+		retrievedObs.setPerson(requestObs.getPerson());
+		retrievedObs.setObsDatetime(requestObs.getObsDatetime());
+		retrievedObs.setConcept(requestObs.getConcept());
+		Concept concept=requestObs.getConcept();
+		if (concept != null) {
+			if (requestObs.getConcept().isNumeric()) {
+				retrievedObs.setValueNumeric(requestObs.getValueNumeric());
+			} else if (FHIRConstants.ST_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
+				try {
+					retrievedObs.setValueAsString(requestObs.getValueAsString(Context.getLocale()));
+				}
+				catch (ParseException e) {
+					e.printStackTrace();
+				}
+			} else if (FHIRConstants.BIT_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
+				retrievedObs.setValueCoded(requestObs.getValueCoded());
+			} else if (FHIRConstants.TS_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
+					retrievedObs.setValueDatetime(requestObs.getValueDatetime());
+			} else if (FHIRConstants.DT_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
+				retrievedObs.setValueDate(requestObs.getValueDate());
+			} else if (FHIRConstants.ED_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
+				//TBD
+			}
+	    }
+		retrievedObs.setComment(requestObs.getComment());
+		return retrievedObs;
+	}
+	
 }
