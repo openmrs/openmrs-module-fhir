@@ -204,9 +204,9 @@ public class FHIRObsUtil {
 		observation.setStatus(ObservationStatusEnum.FINAL);
 		observation.setReliability(ObservationReliabilityEnum.OK);
 
-		InstantDt dateIssued = new InstantDt();
+		DateTimeDt dateIssued = new DateTimeDt();
         	dateIssued.setValue(obs.getObsDatetime());
-		observation.setIssued(dateIssued);
+		observation.setApplies(dateIssued);
 
 		//Set reference observations
 		if (obs.getGroupMembers() != null && !obs.getGroupMembers().isEmpty()) {
@@ -262,19 +262,40 @@ public class FHIRObsUtil {
 		Date instant = observation.getIssued();
 		obs.setDateCreated(instant);
 		
-		String conceptUuid = null;
+		String conceptCode = null;
+		String system = null;
+		Concept concept = null;
+		List<CodingDt> dts = null;
 		try {
 			CodeableConceptDt dt = observation.getCode();
-			List<CodingDt> dts = dt.getCoding();
-			CodingDt coding = dts.get(0);
-			conceptUuid = coding.getCode();
+			dts = dt.getCoding();
 		}
 		catch (NullPointerException e) {
 			errors.add("Code cannot be empty");
 			log.error("Code cannot be empty " + e.getMessage());
 		}
-		Concept concept = Context.getConceptService().getConceptByUuid(conceptUuid);
-		obs.setConcept(concept);
+		
+		for (CodingDt cding : dts) {
+			conceptCode = cding.getCode();
+			system = cding.getSystem();
+			if (FHIRConstants.OPENMRS_URI.equals(system)) {
+				concept = Context.getConceptService().getConceptByUuid(conceptCode);
+			} else {
+				String systemName = FHIRConstants.conceptSourceURINameMap.get(system);
+				if (systemName != null && !systemName.isEmpty()) {
+					concept = Context.getConceptService().getConceptByMapping(conceptCode, systemName);
+				}
+			}
+			if (concept != null) {
+				break;
+			}
+		}
+		if (concept == null) {
+			errors.add("No matching concept found for the given codings");
+		} else {
+			obs.setConcept(concept);
+		}
+
 		if (concept != null) {
 			if (concept.isNumeric()) {
 				QuantityDt quantity = (QuantityDt) observation.getValue();
@@ -317,9 +338,6 @@ public class FHIRObsUtil {
 				obs.setComplexData(data);
 			}
 			
-		} else {
-			errors.add("Couldn't find a concept for the given uuid");
-			log.error("Couldn't find a concept for the given uuid");
 		}
 		
 		if (observation.getEncounter() != null) {
