@@ -240,7 +240,6 @@ public class FHIRObsUtil {
 			resourceReferenceDt.setReference(providerRef);
 			related.setTarget(resourceReferenceDt);
 			relatedObs.add(related);
-			//throw new NullPointerException();
 		}
 		observation.setRelated(relatedObs);
 
