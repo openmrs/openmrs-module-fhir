@@ -99,5 +99,10 @@ public class FHIRObservationResource extends Resource {
 		ObsService obsService = Context.getService(ObsService.class);
 		return obsService.createFHIRObservation(observation);
 	}
+	
+	public Observation updateFHIRObservation(Observation observation, String theId) {
+		ObsService obsService = Context.getService(ObsService.class);
+		return obsService.updateFHIRObservation(observation, theId);
+	}
 
 }
