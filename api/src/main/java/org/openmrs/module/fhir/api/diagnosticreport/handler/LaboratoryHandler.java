@@ -239,7 +239,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		for(IResource resource :containedResources.getContainedResources()){
 			if(resource.getResourceName().equals("Observation")){
 				ObsService fhirObsService = Context.getService(ObsService.class);
-
+				fhirObsService.createFHIRObservation((Observation)resource);
 			}
 		}
 		diagnosticReport.setId(new IdDt("DiagnosticReport", omrsEncounter.getUuid()));
