@@ -1,8 +1,11 @@
 package org.openmrs.module.fhir.api.diagnosticreport.handler;
 
+import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.composite.AttachmentDt;
 import ca.uhn.fhir.model.dstu2.composite.CodingDt;
+import ca.uhn.fhir.model.dstu2.composite.ContainedDt;
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
+import ca.uhn.fhir.model.dstu2.resource.Observation;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.dstu2.resource.Practitioner;
 import ca.uhn.fhir.model.primitive.Base64BinaryDt;
@@ -20,6 +23,7 @@ import org.openmrs.Provider;
 import org.openmrs.api.APIException;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.ObsService;
 import org.openmrs.module.fhir.api.PatientService;
 import org.openmrs.module.fhir.api.PractitionerService;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
@@ -229,6 +233,13 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		}
 		//TODO: Not working properly. Need to test it.  omrsDiagnosticReport.setObs(obsList);
 
+		ContainedDt containedResources = diagnosticReport.getContained();
+		for(IResource resource :containedResources.getContainedResources()){
+			if(resource.getResourceName().equals("Observation")){
+				ObsService fhirObsService = Context.getService(ObsService.class);
+				fhirObsService.createFHIRObservation((Observation)resource);
+			}
+		}
 		diagnosticReport.setId(new IdDt("DiagnosticReport", omrsEncounter.getUuid()));
 		return diagnosticReport;
 	}

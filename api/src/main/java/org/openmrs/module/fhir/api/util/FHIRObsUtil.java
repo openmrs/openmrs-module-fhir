@@ -273,11 +273,9 @@ public class FHIRObsUtil {
 			errors.add("Subject cannot be null");
 		}
 		
-		DateTimeDt dateApplies = (DateTimeDt) observation.getApplies();
-		obs.setObsDatetime(dateApplies.getValue());
-		
-		Date instant = observation.getIssued();
-		obs.setDateCreated(instant);
+		Date dateIssued = observation.getIssued();
+		obs.setObsDatetime(dateIssued);
+		obs.setDateCreated(new Date());
 		
 		String conceptCode = null;
 		String system = null;
