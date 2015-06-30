@@ -169,7 +169,7 @@ public class FHIRPatientUtil {
 		return patient;
 	}
 	
-	public static org.openmrs.Patient generateOmrsPatient(Patient patient) {
+	public static org.openmrs.Patient generateOmrsPatient(Patient patient, List<String> errors) {
 		org.openmrs.Patient omrsPatient = new org.openmrs.Patient(); // add eror handli
 		
 		if (patient.getId() != null) {
@@ -179,6 +179,10 @@ public class FHIRPatientUtil {
 		List<IdentifierDt> fhirIdList = patient.getIdentifier();
 		Set<PatientIdentifier> idList = new TreeSet<PatientIdentifier>();
 		
+		if (fhirIdList == null || fhirIdList.isEmpty()) {
+			errors.add("Identifiers cannot be empty");
+		}
+
 		for (IdentifierDt fhirIentifier : fhirIdList) {
 			PatientIdentifier patientIdentifier = new PatientIdentifier();
 			patientIdentifier.setIdentifier(fhirIentifier.getValue());
@@ -271,12 +275,18 @@ public class FHIRPatientUtil {
 		}
 		omrsPatient.setAddresses(addresses);
 		
-		if (patient.getGender().equalsIgnoreCase(String.valueOf(AdministrativeGenderEnum.MALE))) {
-			omrsPatient.setGender(FHIRConstants.MALE);
-		} else if (patient.getGender().equalsIgnoreCase(String.valueOf(AdministrativeGenderEnum.FEMALE))) {
-			omrsPatient.setGender(FHIRConstants.FEMALE);
+		if (patient.getGender() == null) {
+			errors.add("Gender cannot be empty");
+		} else {
+			if (patient.getGender().equalsIgnoreCase(String.valueOf(AdministrativeGenderEnum.MALE))) {
+				omrsPatient.setGender(FHIRConstants.MALE);
+			} else if (patient.getGender().equalsIgnoreCase(String.valueOf(AdministrativeGenderEnum.FEMALE))) {
+				omrsPatient.setGender(FHIRConstants.FEMALE);
+			}
 		}
+
 		
+
 		omrsPatient.setBirthdate(patient.getBirthDate());
 
 		BooleanDt Isdeceased = (BooleanDt) patient.getDeceased();
