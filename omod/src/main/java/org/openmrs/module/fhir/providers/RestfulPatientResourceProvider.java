@@ -182,7 +182,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 		MethodOutcome retVal = new MethodOutcome();
 		retVal.setId(new IdDt(FHIRConstants.PATIENT, patient.getId().getIdPart()));
 		OperationOutcome outcome = new OperationOutcome();
-		outcome.addIssue().setDetails("Patient is successfully created with " + patient.getId().getIdPart());
+		outcome.addIssue().setDetails("Patient is successfully created with");
 		retVal.setOperationOutcome(outcome);
 		return retVal;
 	}
@@ -191,17 +191,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	public MethodOutcome updatePatient(@ResourceParam Patient patient, @IdParam IdDt theId) {
 		MethodOutcome retVal = new MethodOutcome();
 		OperationOutcome outcome = new OperationOutcome();
-		try {
-			patient = patientResource.updatePatient(patient, theId.getIdPart());
-		} catch (Exception e) {
-			outcome.addIssue()
-					.setDetails(
-			            "No Patient is associated with the given UUID to update. Please"
-			                    + " make sure you have set at lease one prefered identifier, non-deleted name, Gender and Birthdate to create a new "
-			                    + "Patient with the given UUID. The actual error message was" + e.getMessage());
-			retVal.setOperationOutcome(outcome);
-			return retVal;
-		}
+		patient = patientResource.updatePatient(patient, theId.getIdPart());
 		outcome.addIssue().setDetails("Patient is successfully updated");
 		retVal.setOperationOutcome(outcome);
 		return retVal;
