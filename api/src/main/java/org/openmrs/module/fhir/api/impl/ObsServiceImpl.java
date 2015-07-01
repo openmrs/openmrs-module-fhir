@@ -250,9 +250,9 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 		List<String> errors = new ArrayList<String>();
 		org.openmrs.api.ObsService observationService = Context.getObsService();
 		org.openmrs.Obs retrievedObs = observationService.getObsByUuid(theId);
-		if (retrievedObs != null) { // update observation
-			org.openmrs.Obs omrsObs = FHIRObsUtil.generateOpenMRSObs(observation, errors);
-			FHIRObsUtil.copyObsAttributes(omrsObs, retrievedObs, errors);
+		org.openmrs.Obs omrsObs = FHIRObsUtil.generateOpenMRSObs(observation, errors);
+		FHIRObsUtil.copyObsAttributes(omrsObs, retrievedObs, errors);
+		if (retrievedObs != null) { // update observation			
 			if (!errors.isEmpty()) {
 				StringBuilder errorMessage = new StringBuilder(
 				        "The request cannot be processed due to the following issues \n");
