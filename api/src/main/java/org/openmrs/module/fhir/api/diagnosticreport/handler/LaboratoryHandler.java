@@ -100,8 +100,10 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 
 		// ObsSet set as `Result`
 		List<ResourceReferenceDt> resultReferenceDtList = new ArrayList<ResourceReferenceDt>();
+		log.info("result obs length " + obsSetsMap.get(FHIRConstants.DIAGNOSTIC_REPORT_RESULT).size());
 		for (Obs resultObs : obsSetsMap.get(FHIRConstants.DIAGNOSTIC_REPORT_RESULT)) {
-			resultReferenceDtList.add(new ResourceReferenceDt(FHIRObsUtil.generateObs(resultObs)));
+			Observation observation = FHIRObsUtil.generateObs(resultObs);
+			resultReferenceDtList.add(new ResourceReferenceDt(observation));
 		}
 		if (resultReferenceDtList.size() > 0) {
 			diagnosticReport.setResult(resultReferenceDtList);
@@ -228,10 +230,16 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		// Set `Diagnosis[x]->DateTime` as valueDateTime in an Obs
 		// Set `Diagnosis[x]->Period` as valueDateTime in an Obs
 
-		// Create resource in OpenMRS Database
+		/**
+		 * Create resource in OpenMRS Database
+		 * RATIONALE: Due to encounter.setObs(obsList) method is not working properly and need to set encounter for the
+		 * Obs before create them to link with the Encounter. In order to set the Encounter, it has to be save before set.
+		 */
 		Encounter omrsEncounter = encounterService.saveEncounter(omrsDiagnosticReport);
 
 		// Set parsed obsSet (`Result` as Set of Obs)
+		Set<Obs> resultObsGroupMembersSet = new HashSet<Obs>();
+		// Iterate through 'result' Observations and adding to the OpenMRS Obs group
 		for (ResourceReferenceDt referenceDt : diagnosticReport.getResult()) {
 			List<String> errors = new ArrayList<String>();
 			Observation observation;
@@ -241,20 +249,28 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 			} else {
 				// Get Id of the Observation
 				String observationID = referenceDt.getReference().getIdPart();
-				// Assume that Observation is stored in the OpenMRS database
-				ObsService fhirObsService = Context.getService(ObsService.class);
-				observation = fhirObsService.getObs(observationID);
+				// Assume that the given Observation is stored in the OpenMRS database
+				observation = Context.getService(ObsService.class).getObs(observationID);
 			}
 
 			observation = prepareForGenerateOpenMRSObs(observation, diagnosticReport);
 			Obs obs = FHIRObsUtil.generateOpenMRSObs(observation, errors);
-			/*TODO: Unable to check for errors because it's sending errors also for not mandatory fields
-			if(errors.isEmpty()) {*/
-			obs.setConcept(FHIRUtils.getDiagnosticReportResultConcept());
-			obs.setEncounter(omrsEncounter);
+			/** TODO: Unable to check for errors because it's sending errors also for not mandatory fields
+			 if(errors.isEmpty()) {}*/
 			obs = Context.getObsService().saveObs(obs, null);
-			obsList.add(obs);
-			// }
+			resultObsGroupMembersSet.add(obs);
+		}
+
+		if (!resultObsGroupMembersSet.isEmpty()) {
+			Concept resultConcept = FHIRUtils.getDiagnosticReportResultConcept();
+			Obs resultObsGroup = new Obs(Context.getPersonService().getPersonByUuid(omrsPatient.getUuid()), resultConcept,
+					diagnosticReport.getIssued(), null);
+			resultObsGroup.setValueText(resultConcept.getDisplayString());
+			// resultObsGroup.setGroupMembers(resultObsGroupMembersSet);
+			resultObsGroup.setEncounter(omrsEncounter);
+			Context.getObsService().saveObs(resultObsGroup, null);
+		} else {
+			log.info("Result field is empty.");
 		}
 
 		// Set Binary Obs Handler which used to store `PresentedForm`
@@ -266,7 +282,9 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 			Obs complexObs = saveComplexData(omrsDiagnosticReport, conceptId, omrsPatient, attachment);
 			obsList.add(complexObs);
 		}
-		//TODO: Not working properly. Need to test it.  omrsDiagnosticReport.setObs(obsList);
+		/** TODO: Not working properly. Need to test it.
+		 * omrsDiagnosticReport.setObs(obsList);
+		 */
 
 		diagnosticReport.setId(new IdDt("DiagnosticReport", omrsEncounter.getUuid()));
 		return diagnosticReport;
