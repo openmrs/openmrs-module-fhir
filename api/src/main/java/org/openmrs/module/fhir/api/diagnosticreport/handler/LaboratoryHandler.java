@@ -100,13 +100,21 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 
 		// ObsSet set as `Result`
 		List<ResourceReferenceDt> resultReferenceDtList = new ArrayList<ResourceReferenceDt>();
-		log.info("result obs length " + obsSetsMap.get(FHIRConstants.DIAGNOSTIC_REPORT_RESULT).size());
+		System.out.println("result obs length " + obsSetsMap.get(FHIRConstants.DIAGNOSTIC_REPORT_RESULT).size());
 		for (Obs resultObs : obsSetsMap.get(FHIRConstants.DIAGNOSTIC_REPORT_RESULT)) {
-			Observation observation = FHIRObsUtil.generateObs(resultObs);
-			resultReferenceDtList.add(new ResourceReferenceDt(observation));
+			Set<Obs> groupMembers = resultObs.getGroupMembers();
+			System.out.println(resultObs.getConcept().getDisplayString() + " Group members " + resultObs.isObsGrouping() +
+					" > " + +groupMembers.size());
+
+			for (Obs obs : resultObs.getGroupMembers()) {
+				Observation observation = FHIRObsUtil.generateObs(obs);
+				resultReferenceDtList.add(new ResourceReferenceDt(observation));
+			}
 		}
-		if (resultReferenceDtList.size() > 0) {
+		if (!resultReferenceDtList.isEmpty()) {
 			diagnosticReport.setResult(resultReferenceDtList);
+		} else {
+			log.info("Result field is empty.");
 		}
 
 		// Binary Obs Handler `PresentedForm`
@@ -114,8 +122,10 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		for (Obs attachmentObs : obsSetsMap.get(FHIRConstants.DIAGNOSTIC_REPORT_PRESENTED_FORM)) {
 			attachmentDtList.add(getAttachmentDt(attachmentObs));
 		}
-		if (attachmentDtList.size() > 0) {
+		if (!attachmentDtList.isEmpty()) {
 			diagnosticReport.setPresentedForm(attachmentDtList);
+		} else {
+			log.info("Attachment field is empty.");
 		}
 
 		return diagnosticReport;
@@ -141,11 +151,11 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 
 	public String getFieldName(Concept concept) throws NoSuchFieldException {
 		if (FHIRUtils.getDiagnosticReportResultConcept().getConceptId().equals(concept.getConceptId())) {
-			return FHIRConstants.DIAGNOSTIC_REPORT_NAME;
+			return FHIRConstants.DIAGNOSTIC_REPORT_RESULT;
 		} else if (FHIRUtils.getDiagnosticReportStatusConcept().getConceptId().equals(concept.getConceptId())) {
 			return FHIRConstants.DIAGNOSTIC_REPORT_STATUS;
 		} else if (FHIRUtils.getDiagnosticReportNameConcept().getConceptId().equals(concept.getConceptId())) {
-			return FHIRConstants.DIAGNOSTIC_REPORT_RESULT;
+			return FHIRConstants.DIAGNOSTIC_REPORT_NAME;
 		} else if (FHIRUtils.getDiagnosticReportPresentedFormConcept().getConceptId().equals(concept.getConceptId())) {
 			return FHIRConstants.DIAGNOSTIC_REPORT_PRESENTED_FORM;
 		} else {
@@ -265,10 +275,12 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 			Concept resultConcept = FHIRUtils.getDiagnosticReportResultConcept();
 			Obs resultObsGroup = new Obs(Context.getPersonService().getPersonByUuid(omrsPatient.getUuid()), resultConcept,
 					diagnosticReport.getIssued(), null);
-			resultObsGroup.setValueText(resultConcept.getDisplayString());
-			// resultObsGroup.setGroupMembers(resultObsGroupMembersSet);
+			// resultObsGroup.setValueText(resultConcept.getDisplayString());
+			resultObsGroup.setGroupMembers(resultObsGroupMembersSet);
 			resultObsGroup.setEncounter(omrsEncounter);
-			Context.getObsService().saveObs(resultObsGroup, null);
+			resultObsGroup = Context.getObsService().saveObs(resultObsGroup, null);
+			System.out.println("Created result obs. " + resultObsGroup.isObsGrouping() + " > " + resultObsGroup
+					.getGroupMembers().size());
 		} else {
 			log.info("Result field is empty.");
 		}
