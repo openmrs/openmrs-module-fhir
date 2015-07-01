@@ -18,7 +18,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -41,7 +40,6 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu2.composite.CodingDt;
-import ca.uhn.fhir.model.dstu2.composite.QuantityDt;
 import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu2.resource.Observation;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
@@ -171,9 +169,6 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		
 		DateTimeDt dateApplies = (DateTimeDt) newObs.getApplies();
 		Date fhirDppliesDate = dateApplies.getValue();
-		
-		QuantityDt quantity = (QuantityDt) newObs.getValue();
-		BigDecimal bd = quantity.getValue();
 
 		assertNotNull(newObs);
 		assertEquals(openmrsPersonUuid, fhirPatientUuid);
