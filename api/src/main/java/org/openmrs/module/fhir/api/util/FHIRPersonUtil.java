@@ -154,17 +154,24 @@ public class FHIRPersonUtil {
 	 * @return OpenMRS person after giving a FHIR person
 	 * @should generate Oms Person
 	 */
-	public static org.openmrs.Person generateOpenMRSPerson(ca.uhn.fhir.model.dstu2.resource.Person personFHIR) {
+	public static org.openmrs.Person generateOpenMRSPerson(ca.uhn.fhir.model.dstu2.resource.Person personFHIR,
+	                                                       List<String> errors) {
 		org.openmrs.Person omrsPerson = new org.openmrs.Person();
+		boolean preferedPresent = false, givennamePresent = false, familynamePresent = false, doCheckName = true;
+
 		if (personFHIR.getId() != null) {
 			omrsPerson.setUuid(personFHIR.getId().getIdPart());
 		}
 		Set<PersonName> names = new TreeSet<PersonName>();
+		if (personFHIR.getName().size() == 0) {
+			errors.add("Name cannot be empty");
+		}
 		for (HumanNameDt humanNameDt : personFHIR.getName()) {
 			PersonName personName = new PersonName();
 			if (humanNameDt.getUse() != null) {
 				String getUse = humanNameDt.getUse();
 				if (String.valueOf(NameUseEnum.USUAL).equalsIgnoreCase(getUse)) {
+					preferedPresent = true;
 					personName.setPreferred(true);
 				}
 				if (String.valueOf(NameUseEnum.OLD).equalsIgnoreCase(getUse)) {
@@ -188,17 +195,30 @@ public class FHIRPersonUtil {
 
 			List<StringDt> givenNames = humanNameDt.getGiven();
 			if (givenNames != null) {
+				givennamePresent = true;
 				StringDt givenName = givenNames.get(0);
 				personName.setGivenName(valueOf(givenName));
 			}
 			List<StringDt> familyNames = humanNameDt.getFamily();
 			if (familyNames != null) {
+				familynamePresent = true;
 				StringDt familyName = familyNames.get(0);
 				personName.setFamilyName(valueOf(familyName));
 			}
 			names.add(personName);
+			if (preferedPresent && givennamePresent && familynamePresent) { //if all are present in one name, further checkings are not needed
+				doCheckName = false; // cancel future checkings
+			}
+			if (doCheckName) { // if no suitable names found, these variables should be reset
+				preferedPresent = false;
+				givennamePresent = false;
+				familynamePresent = false;
+			}
 		}
 		omrsPerson.setNames(names);
+		if (doCheckName) {
+			errors.add("Person should have atleast one prefered name with family name and given name");
+		}
 
 		Set<PersonAddress> addresses = new TreeSet<PersonAddress>();
 		PersonAddress address;
@@ -235,12 +255,17 @@ public class FHIRPersonUtil {
 			addresses.add(address);
 		}
 		omrsPerson.setAddresses(addresses);
-
-		if (personFHIR.getGender().equalsIgnoreCase(String.valueOf(AdministrativeGenderEnum.MALE))) {
-			omrsPerson.setGender(FHIRConstants.MALE);
-		} else if (personFHIR.getGender().equalsIgnoreCase(String.valueOf(AdministrativeGenderEnum.FEMALE))) {
-			omrsPerson.setGender(FHIRConstants.FEMALE);
+		
+		if (personFHIR.getGender() != null && !personFHIR.getGender().isEmpty()) {
+			if (personFHIR.getGender().equalsIgnoreCase(String.valueOf(AdministrativeGenderEnum.MALE))) {
+				omrsPerson.setGender(FHIRConstants.MALE);
+			} else if (personFHIR.getGender().equalsIgnoreCase(String.valueOf(AdministrativeGenderEnum.FEMALE))) {
+				omrsPerson.setGender(FHIRConstants.FEMALE);
+			}
+		} else {
+			errors.add("Gender cannot be empty");
 		}
+
 
 		omrsPerson.setBirthdate(personFHIR.getBirthDate());
 		if (personFHIR.getActive()) {
