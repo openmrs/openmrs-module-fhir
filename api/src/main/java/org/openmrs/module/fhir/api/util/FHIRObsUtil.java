@@ -268,13 +268,22 @@ public class FHIRObsUtil {
 			ResourceReferenceDt subjectref = observation.getSubject();
 			IdDt id = subjectref.getReference();
 			String patientUuid = id.getIdPart();
-			obs.setPerson(Context.getPersonService().getPersonByUuid(patientUuid));
+			org.openmrs.Person person = Context.getPersonService().getPersonByUuid(patientUuid);
+			if (person == null) {
+				errors.add("There is no person for the given uuid");
+			} else {
+				obs.setPerson(person);
+			}
 		} else {
-			errors.add("Subject cannot be null");
+			errors.add("Subject cannot be empty");
 		}
 		
 		DateTimeDt dateApplies = (DateTimeDt) observation.getApplies();
-		obs.setObsDatetime(dateApplies.getValue());
+		if (dateApplies == null) {
+			errors.add("Observation DateTime cannot be empty");
+		} else {
+			obs.setObsDatetime(dateApplies.getValue());
+		}
 		
 		Date instant = observation.getIssued();
 		obs.setDateCreated(instant);
@@ -314,47 +323,50 @@ public class FHIRObsUtil {
 		}
 
 		if (concept != null) {
-			if (concept.isNumeric()) {
-				QuantityDt quantity = (QuantityDt) observation.getValue();
-				BigDecimal bd = quantity.getValue();
-				double doubleValue = bd.doubleValue();
-				obs.setValueNumeric(doubleValue);
-			} else if (FHIRConstants.ST_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
-				StringDt value = (StringDt) observation.getValue();
-				try {
-					obs.setValueAsString(value.getValue());
+			if (observation.getValue() == null) {
+				errors.add("Obs set value cannot be empty");
+			} else {
+				if (concept.isNumeric()) {
+					QuantityDt quantity = (QuantityDt) observation.getValue();
+					BigDecimal bd = quantity.getValue();
+					double doubleValue = bd.doubleValue();
+					obs.setValueNumeric(doubleValue);
+				} else if (FHIRConstants.ST_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
+					StringDt value = (StringDt) observation.getValue();
+					try {
+						obs.setValueAsString(value.getValue());
+					}
+					catch (ParseException e) {
+						errors.add("Obs set value failed");
+						log.error("Obs set value failed " + e.getMessage());
+					}
+				} else if (FHIRConstants.BIT_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
+					CodeableConceptDt codeableConceptDt = (CodeableConceptDt) observation.getValue();
+					try {
+						List<CodingDt> codingDts = codeableConceptDt.getCoding();
+						CodingDt codingDt2 = codingDts.get(0);
+						boolean booleanValue = Boolean.parseBoolean(codingDt2.getCode());
+						obs.setValueBoolean(booleanValue);
+					}
+					catch (NullPointerException e) {
+						errors.add("Setting valueBoolean failed");
+						log.error("Setting valueBoolean failed " + e.getMessage());
+					}
+				} else if (FHIRConstants.TS_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
+					PeriodDt datetime = (PeriodDt) observation.getValue();
+					obs.setValueDatetime(datetime.getStart());
+					
+				} else if (FHIRConstants.DT_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
+					PeriodDt datetime = (PeriodDt) observation.getValue();
+					obs.setValueDate(datetime.getStart());
+				} else if (FHIRConstants.ED_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
+					AttachmentDt attachmentDt = (AttachmentDt) observation.getValue();
+					byte[] byteStream = attachmentDt.getData();
+					ComplexData data = new ComplexData("images.JPEG", byteStream);
+					obs.setValueComplex(byteStream.toString());
+					obs.setComplexData(data);
 				}
-				catch (ParseException e) {
-					errors.add("Obs set value failed");
-					log.error("Obs set value failed " + e.getMessage());
-				}
-			} else if (FHIRConstants.BIT_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
-				CodeableConceptDt codeableConceptDt = (CodeableConceptDt) observation.getValue();
-				try {
-					List<CodingDt> codingDts = codeableConceptDt.getCoding();
-					CodingDt codingDt2 = codingDts.get(0);
-					boolean booleanValue = Boolean.parseBoolean(codingDt2.getCode());
-					obs.setValueBoolean(booleanValue);
-				}
-				catch (NullPointerException e) {
-					errors.add("Setting valueBoolean failed");
-					log.error("Setting valueBoolean failed " + e.getMessage());
-				}
-			} else if (FHIRConstants.TS_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
-				PeriodDt datetime = (PeriodDt) observation.getValue();
-				obs.setValueDatetime(datetime.getStart());
-
-			} else if (FHIRConstants.DT_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
-				PeriodDt datetime = (PeriodDt) observation.getValue();
-				obs.setValueDate(datetime.getStart());
-			} else if (FHIRConstants.ED_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {
-				AttachmentDt attachmentDt = (AttachmentDt) observation.getValue();
-				byte[] byteStream = attachmentDt.getData();
-				ComplexData data = new ComplexData("images.JPEG", byteStream);
-				obs.setValueComplex(byteStream.toString());
-				obs.setComplexData(data);
 			}
-			
 		}
 		
 		if (observation.getEncounter() != null) {
@@ -370,8 +382,8 @@ public class FHIRObsUtil {
 		retrievedObs.setPerson(requestObs.getPerson());
 		retrievedObs.setObsDatetime(requestObs.getObsDatetime());
 		retrievedObs.setConcept(requestObs.getConcept());
-		Concept concept=requestObs.getConcept();
-		if (concept != null) {
+		Concept concept = requestObs.getConcept(); // potential bug here. if we update the concept, we should check whether the existing value obs value datatype is match. 
+		if (concept != null) { // potential bug here. even the concept is null, we should allow update obs value
 			if (requestObs.getConcept().isNumeric()) {
 				retrievedObs.setValueNumeric(requestObs.getValueNumeric());
 			} else if (FHIRConstants.ST_HL7_ABBREVATION.equalsIgnoreCase(concept.getDatatype().getHl7Abbreviation())) {

@@ -13,11 +13,10 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import ca.uhn.fhir.model.dstu2.resource.Person;
-import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
-import ca.uhn.fhir.rest.server.exceptions.NotModifiedException;
-import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.APIException;
@@ -26,9 +25,12 @@ import org.openmrs.module.fhir.api.PersonService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import ca.uhn.fhir.model.dstu2.resource.Person;
+import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
+import ca.uhn.fhir.rest.server.exceptions.NotModifiedException;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 
 public class PersonServiceImpl implements PersonService {
 
@@ -91,7 +93,15 @@ public class PersonServiceImpl implements PersonService {
 
 	@Override
 	public Person createFHIRPerson(Person person) {
-		org.openmrs.Person omrsPerson = FHIRPersonUtil.generateOpenMRSPerson(person);
+		List<String> errors = new ArrayList<String>();
+		org.openmrs.Person omrsPerson = FHIRPersonUtil.generateOpenMRSPerson(person, errors);
+		if (!errors.isEmpty()) {
+			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to following issues \n");
+			for (int i = 0; i < errors.size(); i++) {
+				errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
+			}
+			throw new UnprocessableEntityException(errorMessage.toString());
+		}
 		org.openmrs.api.PersonService personService = Context.getPersonService();
 		omrsPerson = personService.savePerson(omrsPerson);
 		return FHIRPersonUtil.generatePerson(omrsPerson);
@@ -99,10 +109,11 @@ public class PersonServiceImpl implements PersonService {
 
 	@Override
 	public Person updateFHIRPerson(Person thePerson, String theId) {
+		List<String> errors = new ArrayList<String>();
 		org.openmrs.api.PersonService personService = Context.getPersonService();
 		org.openmrs.Person retrievedPerson = personService.getPersonByUuid(theId);
 		if (retrievedPerson != null) { // update person
-			org.openmrs.Person omrsPerson = FHIRPersonUtil.generateOpenMRSPerson(thePerson);
+			org.openmrs.Person omrsPerson = FHIRPersonUtil.generateOpenMRSPerson(thePerson, errors);
 			retrievedPerson = FHIRPersonUtil.updatePersonAttributes(omrsPerson, retrievedPerson);
 			Context.getPersonService().savePerson(retrievedPerson);
 			return FHIRPersonUtil.generatePerson(retrievedPerson);
