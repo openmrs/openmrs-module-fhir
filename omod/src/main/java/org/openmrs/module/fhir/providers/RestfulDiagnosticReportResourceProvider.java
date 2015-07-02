@@ -27,6 +27,8 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.openmrs.module.fhir.resources.FHIRDiagnosticReportResource;
 
 public class RestfulDiagnosticReportResourceProvider implements IResourceProvider {
@@ -52,11 +54,11 @@ public class RestfulDiagnosticReportResourceProvider implements IResourceProvide
 	@Create
 	public MethodOutcome createFHIRDiagnosticReport(@ResourceParam DiagnosticReport diagnosticReport) {
 		diagnosticReport = diagnosticReportResource.createFHIRDiagnosticReport(diagnosticReport);
+		IdDt id = diagnosticReport.getId();
 		MethodOutcome retVal = new MethodOutcome();
-		retVal.setId(new IdDt("DiagnosticReport", diagnosticReport.getId().getIdPart()));
-		// retVal.setId(new IdDt("DiagnosticReport", "2889127246021897"));
+		retVal.setId(id);
 		OperationOutcome outcome = new OperationOutcome();
-		outcome.addIssue().setDetails("Diagnostic Report is successfully created");
+		outcome.addIssue().setDetails("Diagnostic Report is successfully created at " + id.getValueAsString());
 		retVal.setOperationOutcome(outcome);
 		return retVal;
 	}
