@@ -65,7 +65,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		DiagnosticReport diagnosticReport = new DiagnosticReport();
 
 		// Separate Obs into different field based on Concept Id
-		Map<String, Set<Obs>> obsSetsMap = separateObs(omrsDiagnosticReport.getObs());
+		Map<String, Set<Obs>> obsSetsMap = separateObs(omrsDiagnosticReport.getObsAtTopLevel(false));
 
 		// Set ID
 		diagnosticReport.setId(new IdDt("DiagnosticReport", omrsDiagnosticReport.getUuid()));
@@ -100,14 +100,11 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 
 		// ObsSet set as `Result`
 		List<ResourceReferenceDt> resultReferenceDtList = new ArrayList<ResourceReferenceDt>();
-		System.out.println("result obs length " + obsSetsMap.get(FHIRConstants.DIAGNOSTIC_REPORT_RESULT).size());
 		for (Obs resultObs : obsSetsMap.get(FHIRConstants.DIAGNOSTIC_REPORT_RESULT)) {
-			Set<Obs> groupMembers = resultObs.getGroupMembers();
-			System.out.println(resultObs.getConcept().getDisplayString() + " Group members " + resultObs.isObsGrouping() +
-					" > " + +groupMembers.size());
-
 			for (Obs obs : resultObs.getGroupMembers()) {
 				Observation observation = FHIRObsUtil.generateObs(obs);
+				// To make it contained in side Diagnostic Report
+				observation.setId(new IdDt());
 				resultReferenceDtList.add(new ResourceReferenceDt(observation));
 			}
 		}
@@ -275,12 +272,14 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 			Concept resultConcept = FHIRUtils.getDiagnosticReportResultConcept();
 			Obs resultObsGroup = new Obs(Context.getPersonService().getPersonByUuid(omrsPatient.getUuid()), resultConcept,
 					diagnosticReport.getIssued(), null);
-			// resultObsGroup.setValueText(resultConcept.getDisplayString());
-			resultObsGroup.setGroupMembers(resultObsGroupMembersSet);
+			/** TODO: This method is not working properly. Need more testing.
+			 *  resultObsGroup.setGroupMembers(resultObsGroupMembersSet);
+			 */
+			for (Obs obs : resultObsGroupMembersSet) {
+				resultObsGroup.addGroupMember(obs);
+			}
 			resultObsGroup.setEncounter(omrsEncounter);
 			resultObsGroup = Context.getObsService().saveObs(resultObsGroup, null);
-			System.out.println("Created result obs. " + resultObsGroup.isObsGrouping() + " > " + resultObsGroup
-					.getGroupMembers().size());
 		} else {
 			log.info("Result field is empty.");
 		}
