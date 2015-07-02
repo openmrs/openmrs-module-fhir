@@ -110,8 +110,6 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		}
 		if (!resultReferenceDtList.isEmpty()) {
 			diagnosticReport.setResult(resultReferenceDtList);
-		} else {
-			log.info("Result field is empty.");
 		}
 
 		// Binary Obs Handler `PresentedForm`
@@ -121,8 +119,6 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		}
 		if (!attachmentDtList.isEmpty()) {
 			diagnosticReport.setPresentedForm(attachmentDtList);
-		} else {
-			log.info("Attachment field is empty.");
 		}
 
 		return diagnosticReport;
@@ -280,8 +276,6 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 			}
 			resultObsGroup.setEncounter(omrsEncounter);
 			resultObsGroup = Context.getObsService().saveObs(resultObsGroup, null);
-		} else {
-			log.info("Result field is empty.");
 		}
 
 		// Set Binary Obs Handler which used to store `PresentedForm`
