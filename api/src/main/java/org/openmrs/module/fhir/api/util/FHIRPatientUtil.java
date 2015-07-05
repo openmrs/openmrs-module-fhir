@@ -169,7 +169,9 @@ public class FHIRPatientUtil {
 		return patient;
 	}
 	
-	public static org.openmrs.Patient generateOmrsPatient(Patient patient) {
+	public static org.openmrs.Patient generateOmrsPatient(Patient patient, List<String> errors) {
+		boolean preferedPresent = false, givennamePresent = false, familynamePresent = false, doCheckName = true;
+
 		org.openmrs.Patient omrsPatient = new org.openmrs.Patient(); // add eror handli
 		
 		if (patient.getId() != null) {
@@ -179,6 +181,10 @@ public class FHIRPatientUtil {
 		List<IdentifierDt> fhirIdList = patient.getIdentifier();
 		Set<PatientIdentifier> idList = new TreeSet<PatientIdentifier>();
 		
+		if (fhirIdList == null || fhirIdList.isEmpty()) {
+			errors.add("Identifiers cannot be empty");
+		}
+
 		for (IdentifierDt fhirIentifier : fhirIdList) {
 			PatientIdentifier patientIdentifier = new PatientIdentifier();
 			patientIdentifier.setIdentifier(fhirIentifier.getValue());
@@ -189,17 +195,24 @@ public class FHIRPatientUtil {
 				patientIdentifier.setPreferred(false);
 			}
 			PatientIdentifierType type = Context.getPatientService().getPatientIdentifierTypeByName(identifierTypeName);
+			if (type == null) {
+				errors.add("No PatientIdentifierType exists for the given PatientIdentifierTypeName");
+			}
 			patientIdentifier.setIdentifierType(type);
 			idList.add(patientIdentifier);
 		}
 		omrsPatient.setIdentifiers(idList);
 
 		Set<PersonName> names = new TreeSet<PersonName>();
+		if (patient.getName().size() == 0) {
+			errors.add("Name cannot be empty");
+		}
 		for (HumanNameDt humanNameDt : patient.getName()) {
 			PersonName personName = new PersonName();
 			if (humanNameDt.getUse() != null) {
 				String getUse = humanNameDt.getUse();
 				if (String.valueOf(NameUseEnum.USUAL).equalsIgnoreCase(getUse)) {
+					preferedPresent = true;
 					personName.setPreferred(true);
 				}
 				if (String.valueOf(NameUseEnum.OLD).equalsIgnoreCase(getUse)) {
@@ -223,18 +236,31 @@ public class FHIRPatientUtil {
 			
 			List<StringDt> givenNames = humanNameDt.getGiven();
 			if (givenNames != null) {
+				givennamePresent = true;
 				StringDt givenName = givenNames.get(0);
 				personName.setGivenName(valueOf(givenName));
 			}
 			List<StringDt> familyNames = humanNameDt.getFamily();
 			if (familyNames != null) {
+				familynamePresent = true;
 				StringDt familyName = familyNames.get(0);
 				personName.setFamilyName(valueOf(familyName));
 			}
 			names.add(personName);
+			if (preferedPresent && givennamePresent && familynamePresent) { //if all are present in one name, further checkings are not needed
+				doCheckName = false; // cancel future checkings
+			}
+			if (doCheckName) { // if no suitable names found, these variables should be reset
+				preferedPresent = false;
+				givennamePresent = false;
+				familynamePresent = false;
+			}
 		}
 		omrsPatient.setNames(names);
-		
+		if (doCheckName) {
+			errors.add("Person should have atleast one prefered name with family name and given name");
+		}
+
 		Set<PersonAddress> addresses = new TreeSet<PersonAddress>();
 		PersonAddress address;
 		for (AddressDt fhirAddress : patient.getAddress()) {
@@ -271,12 +297,15 @@ public class FHIRPatientUtil {
 		}
 		omrsPatient.setAddresses(addresses);
 		
-		if (patient.getGender().equalsIgnoreCase(String.valueOf(AdministrativeGenderEnum.MALE))) {
-			omrsPatient.setGender(FHIRConstants.MALE);
-		} else if (patient.getGender().equalsIgnoreCase(String.valueOf(AdministrativeGenderEnum.FEMALE))) {
-			omrsPatient.setGender(FHIRConstants.FEMALE);
+		if (patient.getGender() != null && !patient.getGender().isEmpty()) {
+			if (patient.getGender().equalsIgnoreCase(String.valueOf(AdministrativeGenderEnum.MALE))) {
+				omrsPatient.setGender(FHIRConstants.MALE);
+			} else if (patient.getGender().equalsIgnoreCase(String.valueOf(AdministrativeGenderEnum.FEMALE))) {
+				omrsPatient.setGender(FHIRConstants.FEMALE);
+			}
+		} else {
+			errors.add("Gender cannot be empty");
 		}
-		
 		omrsPatient.setBirthdate(patient.getBirthDate());
 
 		BooleanDt Isdeceased = (BooleanDt) patient.getDeceased();
@@ -288,7 +317,6 @@ public class FHIRPatientUtil {
 			omrsPatient.setPersonVoided(true);
 			omrsPatient.setPersonVoidReason("Deleted from FHIR module"); // deleted reason is compulsory
 		}
-
 		return omrsPatient;
 	}
 	

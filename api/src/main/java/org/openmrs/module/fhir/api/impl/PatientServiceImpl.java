@@ -39,6 +39,7 @@ import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
@@ -269,9 +270,24 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 	
 	@Override
 	public Patient createFHIRPatient(Patient patient) {
-		org.openmrs.Patient omrsPatient = FHIRPatientUtil.generateOmrsPatient(patient);
+		List<String> errors = new ArrayList<String>();
+		org.openmrs.Patient omrsPatient = FHIRPatientUtil.generateOmrsPatient(patient, errors);
+		if (!errors.isEmpty()) {
+			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
+			for (int i = 0; i < errors.size(); i++) {
+				errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
+			}
+			throw new UnprocessableEntityException(errorMessage.toString());
+		}
 		org.openmrs.api.PatientService patientService = Context.getPatientService();
-		omrsPatient = patientService.savePatient(omrsPatient);
+		try {
+			omrsPatient = patientService.savePatient(omrsPatient);
+		}
+		catch (Exception e) {
+			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
+			errorMessage.append(e.getMessage());
+			throw new UnprocessableEntityException(errorMessage.toString());
+		}
 		return FHIRPatientUtil.generatePatient(omrsPatient);
 	}
 	
@@ -279,11 +295,19 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 	public Patient updatePatient(Patient patient, String theId) {
 		org.openmrs.api.PatientService patientService = Context.getPatientService();
 		org.openmrs.Patient retrievedPatient = patientService.getPatientByUuid(theId);
-
-		if (retrievedPatient != null) { // update patient
-			org.openmrs.Patient omrsPatient = FHIRPatientUtil.generateOmrsPatient(patient);
+		if (retrievedPatient != null) { // update patient			
+			List<String> errors = new ArrayList<String>();
+			org.openmrs.Patient omrsPatient = FHIRPatientUtil.generateOmrsPatient(patient, errors);
 			retrievedPatient = FHIRPatientUtil.updatePatientAttributes(omrsPatient, retrievedPatient);
-			Context.getPatientService().savePatient(retrievedPatient);
+			try {
+				Context.getPatientService().savePatient(retrievedPatient);
+			}
+			catch (Exception e) {
+				StringBuilder errorMessage = new StringBuilder(
+				        "The request cannot be processed due to the following issues \n");
+				errorMessage.append(e.getMessage());
+				throw new UnprocessableEntityException(errorMessage.toString());
+			}
 			return FHIRPatientUtil.generatePatient(retrievedPatient);
 		} else { // no patient is associated with the given uuid. so create a new patient with the given uuid
 			if (patient.getId() == null) { // since we need to PUT the patient to a specific URI, we need to set the uuid
