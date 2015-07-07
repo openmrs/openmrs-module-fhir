@@ -154,14 +154,14 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	}
 	
 	/**
-	 * Update location by id.
+	 * Update Person by name.
 	 *
-	 * @param theLocation {@link ca.uhn.fhir.model.dstu2.resource.Location} object provided by the
+	 * @param person {@link ca.uhn.fhir.model.dstu2.resource.Person} object provided by the
 	 *            {@link ca.uhn.fhir .rest.server.RestfulServer}
 	 * @param theId Only one of theId or theConditional will have a value and the other will be
 	 *            null, depending on the URL passed into the server
-	 * @param theConditional This will have a value like "Patient?identifier=system%7C00001
-	 * @return This object contains the identity of the created resource.
+	 * @param theConditional This will have a value like "Person?name=John
+	 * @return MethodOutcome which contains the status of the operation
 	 */
 	@Update()
 	public MethodOutcome updatePersonByName(@ResourceParam Person person, @IdParam IdDt theId,
@@ -174,16 +174,18 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 			List<Person> personList = personResource.searchPersons(name, null, null);
 			if (personList != null) {
 				if (personList.size() == 0) {
-					personResource.updateFHIRPerson(person, null);
+					methodOutcome = updatePersonConditional(person, null);
 				} else if (personList.size() == 1) {
-					personResource.updateFHIRPerson(person, personList.get(0).getId().getIdPart());
+					IdDt id = new IdDt();
+					id.setValue(personList.get(0).getId().getIdPart());
+					methodOutcome = updatePersonConditional(person, id);
 				} else {
-					throw new PreconditionFailedException("There are more then one person for the given name");
+					throw new PreconditionFailedException("There are more than one person for the given name");
 				}
 			}
 		} else {
-			updatePersonConditional(person, theId);
+			methodOutcome = updatePersonConditional(person, theId);
 		}
-		return new MethodOutcome();
+		return methodOutcome;
 	}
 }
