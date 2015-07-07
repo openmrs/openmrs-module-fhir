@@ -25,6 +25,7 @@ import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.OperationOutcome;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.annotation.ConditionalUrlParam;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
@@ -40,6 +41,7 @@ import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.NotImplementedOperationException;
+import ca.uhn.fhir.rest.server.exceptions.PreconditionFailedException;
 
 public class RestfulPatientResourceProvider implements IResourceProvider {
 
@@ -196,4 +198,41 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 		retVal.setOperationOutcome(outcome);
 		return retVal;
 	}
+	
+	/**
+	 * Update Patient by identifier.
+	 *
+	 * @param patient {@link ca.uhn.fhir.model.dstu2.resource.Patient} object provided by the
+	 *            {@link ca.uhn.fhir .rest.server.RestfulServer}
+	 * @param theId Only one of theId or theConditional will have a value and the other will be
+	 *            null, depending on the URL passed into the server
+	 * @param theConditional This will have a value like "Patient?identifier=OpenMRS Identification
+	 *            Number%7C00001
+	 * @return MethodOutcome which contains the status of the update operation
+	 */
+	@Update()
+	public MethodOutcome updatePatientByIdentifier(@ResourceParam Patient patient, @IdParam IdDt theId,
+		                                        @ConditionalUrlParam String theConditional) {
+		String name = null;
+		if (theConditional != null) {
+			int startIndex = theConditional.lastIndexOf('=');
+			name = theConditional.substring(startIndex + 1);
+			TokenParam params = new TokenParam();
+			params.setValue(name);
+			List<Patient> patientList = patientResource.searchByIdentifier(params);
+			if (patientList != null) {
+				if (patientList.size() == 0) {
+					patientResource.updatePatient(patient, null);
+				} else if (patientList.size() == 1) {
+					patientResource.updatePatient(patient, patientList.get(0).getId().getIdPart());
+				} else {
+					throw new PreconditionFailedException("There are more than one patient for the given identifier");
+				}
+			}
+		} else {
+			updatePatient(patient, theId);
+		}
+		return new MethodOutcome();
+	}
+
 }
