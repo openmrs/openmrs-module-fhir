@@ -13,10 +13,16 @@
  */
 package org.openmrs.module.fhir.providers;
 
+import java.util.List;
+
+import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.module.fhir.resources.FHIRPersonResource;
+
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.resource.OperationOutcome;
 import ca.uhn.fhir.model.dstu2.resource.Person;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.annotation.ConditionalUrlParam;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
@@ -30,10 +36,7 @@ import ca.uhn.fhir.rest.param.DateParam;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.openmrs.module.fhir.api.util.FHIRConstants;
-import org.openmrs.module.fhir.resources.FHIRPersonResource;
-
-import java.util.List;
+import ca.uhn.fhir.rest.server.exceptions.PreconditionFailedException;
 
 public class RestfulPersonResourceProvider implements IResourceProvider {
 
@@ -87,7 +90,7 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	                                 @RequiredParam(name = Person.SP_BIRTHDATE) DateParam birthDate,
 	                                 @RequiredParam(name = Person.SP_GENDER) StringParam gender) {
 		Integer birthYear = 1900 + birthDate.getValue().getYear(); // e.g. 2011-01-02
-		return personResource.searchPersons(name, birthYear, gender);
+		return personResource.searchPersons(name.getValue(), birthYear, gender);
 	}
 
 	/**
@@ -148,5 +151,41 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	@Delete()
 	public void deletePerson(@IdParam IdDt theId) {
 		personResource.deletePerson(theId);
+	}
+	
+	/**
+	 * Update Person by name.
+	 *
+	 * @param person {@link ca.uhn.fhir.model.dstu2.resource.Person} object provided by the
+	 *            {@link ca.uhn.fhir .rest.server.RestfulServer}
+	 * @param theId Only one of theId or theConditional will have a value and the other will be
+	 *            null, depending on the URL passed into the server
+	 * @param theConditional This will have a value like "Person?name=John
+	 * @return MethodOutcome which contains the status of the operation
+	 */
+	@Update()
+	public MethodOutcome updatePersonByName(@ResourceParam Person person, @IdParam IdDt theId,
+	                                        @ConditionalUrlParam String theConditional) {
+		MethodOutcome methodOutcome = new MethodOutcome();
+		String name = null;
+		if (theConditional != null) {
+			int startIndex = theConditional.lastIndexOf('=');
+			name = theConditional.substring(startIndex + 1);
+			List<Person> personList = personResource.searchPersons(name, null, null);
+			if (personList != null) {
+				if (personList.size() == 0) {
+					methodOutcome = updatePersonConditional(person, null);
+				} else if (personList.size() == 1) {
+					IdDt id = new IdDt();
+					id.setValue(personList.get(0).getId().getIdPart());
+					methodOutcome = updatePersonConditional(person, id);
+				} else {
+					throw new PreconditionFailedException("There are more than one person for the given name");
+				}
+			}
+		} else {
+			methodOutcome = updatePersonConditional(person, theId);
+		}
+		return methodOutcome;
 	}
 }
