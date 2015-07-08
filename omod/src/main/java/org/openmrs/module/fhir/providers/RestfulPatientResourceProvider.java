@@ -206,8 +206,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 *            {@link ca.uhn.fhir .rest.server.RestfulServer}
 	 * @param theId Only one of theId or theConditional will have a value and the other will be
 	 *            null, depending on the URL passed into the server
-	 * @param theConditional This will have a value like "Patient?identifier=OpenMRS Identification
-	 *            Number%7C00001
+	 * @param theConditional This will have a value like "Patient?identifier=7C00001
 	 * @return MethodOutcome which contains the status of the update operation
 	 */
 	@Update()
@@ -215,18 +214,27 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 		                                        @ConditionalUrlParam String theConditional) {
 		String name = null;
 		if (theConditional != null) {
-			int startIndex = theConditional.lastIndexOf('=');
-			name = theConditional.substring(startIndex + 1);
-			TokenParam params = new TokenParam();
-			params.setValue(name);
-			List<Patient> patientList = patientResource.searchByIdentifier(params);
+			List<Patient> patientList = null;
+			String args[] = theConditional.split("?");
+			String parameterPart = args[1];
+			String paraArgs[] = parameterPart.split("=");
+			String parameterName = paraArgs[0];
+			if ("name".equals(parameterName)) {
+				StringParam param = new StringParam();
+				param.setValue(paraArgs[1]);
+				patientList = patientResource.searchByName(param);
+			} else if ("identifier".equals(parameterName)) {
+				TokenParam params = new TokenParam();
+				params.setValue(paraArgs[1]);
+				patientList = patientResource.searchByIdentifier(params);
+			}
 			if (patientList != null) {
 				if (patientList.size() == 0) {
 					patientResource.updatePatient(patient, null);
 				} else if (patientList.size() == 1) {
 					patientResource.updatePatient(patient, patientList.get(0).getId().getIdPart());
 				} else {
-					throw new PreconditionFailedException("There are more than one patient for the given identifier");
+					throw new PreconditionFailedException("There are more than one patient for the given condition");
 				}
 			}
 		} else {
