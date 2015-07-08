@@ -13,6 +13,11 @@
  */
 package org.openmrs.module.fhir.providers;
 
+import java.util.List;
+
+import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.module.fhir.resources.FHIRLocationResource;
+
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.resource.Location;
 import ca.uhn.fhir.model.dstu2.resource.OperationOutcome;
@@ -30,11 +35,7 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-
-import org.openmrs.module.fhir.api.util.FHIRConstants;
-import org.openmrs.module.fhir.resources.FHIRLocationResource;
-
-import java.util.List;
+import ca.uhn.fhir.rest.server.exceptions.PreconditionFailedException;
 
 public class RestfulLocationResourceProvider implements IResourceProvider {
 	
@@ -109,30 +110,49 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	}
 	
 	/**
-	 * Update location by id.
+	 * Conditionally update location by name.
 	 *
 	 * @param theLocation {@link ca.uhn.fhir.model.dstu2.resource.Location} object provided by the
 	 *            {@link ca.uhn.fhir .rest.server.RestfulServer}
 	 * @param theId Only one of theId or theConditional will have a value and the other will be
 	 *            null, depending on the URL passed into the server
-	 * @param theConditional This will have a value like "Patient?identifier=system%7C00001
-	 * @return This object contains the identity of the created resource.
+	 * @param theConditional This will have a value like "Location?name=Colombo
+	 * @return MethodOutcome which contains the status of the operation
 	 */
 	@Update()
-	public MethodOutcome updateLocationById(@ResourceParam Location theLocation, @IdParam IdDt theId,
+	public MethodOutcome updateLocationByName(@ResourceParam Location theLocation, @IdParam IdDt theId,
 	                                        @ConditionalUrlParam String theConditional) {
 		MethodOutcome methodOutcome = new MethodOutcome();
-		String id = null;
+		String locationName = null;
 		if (theConditional != null) {
 			int startIndex = theConditional.lastIndexOf('=');
-			id = theConditional.substring(startIndex + 1);
+			locationName = theConditional.substring(startIndex + 1);
+			StringParam nameParam = new StringParam();
+			nameParam.setValue(locationName);
+			List<Location> locationList = locationResource.searchLocationsByName(nameParam);
+			if (locationList.size() == 0) {
+				methodOutcome = updateLocation(theLocation, null);
+			} else if (locationList.size() == 1) {
+				methodOutcome = updateLocation(theLocation, locationList.get(0).getId());
+			} else {
+				throw new PreconditionFailedException("There are more than one Location for the given condition");
+			}
 		} else {
-			id = theId.getIdPart();
+			methodOutcome = updateLocation(theLocation, theId);
 		}
-		locationResource.updateLocationById(id, theLocation);
 		return methodOutcome;
 	}
 	
+	@Update
+	public MethodOutcome updateLocation(@ResourceParam Location location, @IdParam IdDt theId) {
+		MethodOutcome retVal = new MethodOutcome();
+		OperationOutcome outcome = new OperationOutcome();
+		location = locationResource.updateLocation(theId.getIdPart(), location);
+		outcome.addIssue().setDetails("Location successfully updated");
+		retVal.setOperationOutcome(outcome);
+		return retVal;
+	}
+
 	/**
 	 * Create Location
 	 *
