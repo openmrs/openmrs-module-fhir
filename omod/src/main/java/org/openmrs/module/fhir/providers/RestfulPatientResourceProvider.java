@@ -212,7 +212,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	@Update()
 	public MethodOutcome updatePatientByIdentifier(@ResourceParam Patient patient, @IdParam IdDt theId,
 		                                        @ConditionalUrlParam String theConditional) {
-		String name = null;
+		MethodOutcome outcome = new MethodOutcome();
 		if (theConditional != null) {
 			List<Patient> patientList = null;
 			String args[] = theConditional.split("?");
@@ -230,17 +230,17 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 			}
 			if (patientList != null) {
 				if (patientList.size() == 0) {
-					patientResource.updatePatient(patient, null);
+					outcome = updatePatient(patient, null);
 				} else if (patientList.size() == 1) {
-					patientResource.updatePatient(patient, patientList.get(0).getId().getIdPart());
+					outcome = updatePatient(patient, patientList.get(0).getId());
 				} else {
 					throw new PreconditionFailedException("There are more than one patient for the given condition");
 				}
 			}
 		} else {
-			updatePatient(patient, theId);
+			outcome = updatePatient(patient, theId);
 		}
-		return new MethodOutcome();
+		return outcome;
 	}
 
 }
