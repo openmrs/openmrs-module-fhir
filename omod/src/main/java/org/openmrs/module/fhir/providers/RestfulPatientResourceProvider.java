@@ -227,6 +227,10 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 				TokenParam params = new TokenParam();
 				params.setValue(paraArgs[1]);
 				patientList = patientResource.searchByIdentifier(params);
+			} else if ("givenName".equals(parameterName)) {
+				StringParam param = new StringParam();
+				param.setValue(paraArgs[1]);
+				patientList = patientResource.searchByGivenName(param);
 			}
 			if (patientList != null) {
 				if (patientList.size() == 0) {
