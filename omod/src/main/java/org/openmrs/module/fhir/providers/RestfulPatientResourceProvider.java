@@ -213,23 +213,35 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	public MethodOutcome updatePatientByIdentifier(@ResourceParam Patient patient, @IdParam IdDt theId,
 		                                        @ConditionalUrlParam String theConditional) {
 		MethodOutcome outcome = new MethodOutcome();
+		OperationOutcome operationoutcome = null;
 		if (theConditional != null) {
+			String paramValue = null;
 			List<Patient> patientList = null;
-			String args[] = theConditional.split("?");
-			String parameterPart = args[1];
-			String paraArgs[] = parameterPart.split("=");
-			String parameterName = paraArgs[0];
-			if ("name".equals(parameterName)) {
+			String parameterName = null;
+			try {
+				String args[] = theConditional.split("?");
+				String parameterPart = args[1];
+				String paraArgs[] = parameterPart.split("=");
+				parameterName = paraArgs[0];
+				paramValue = paraArgs[1];
+			}
+			catch (Exception e) { // will catch nullpointerexceptions and indexoutofboundexceptions
+				operationoutcome = new OperationOutcome();
+				operationoutcome.addIssue().setDetails("Please check Condition URL format");
+				outcome.setOperationOutcome(operationoutcome);
+				return outcome;
+			}
+			if (FHIRConstants.PARAMETER_NAME.equals(parameterName)) {
 				StringParam param = new StringParam();
-				param.setValue(paraArgs[1]);
+				param.setValue(paramValue);
 				patientList = patientResource.searchByName(param);
-			} else if ("identifier".equals(parameterName)) {
+			} else if (FHIRConstants.PARAMETER_IDENTIFIER.equals(parameterName)) {
 				TokenParam params = new TokenParam();
-				params.setValue(paraArgs[1]);
+				params.setValue(paramValue);
 				patientList = patientResource.searchByIdentifier(params);
-			} else if ("givenName".equals(parameterName)) {
+			} else if (FHIRConstants.PARAMETER_GIVENNAME.equals(parameterName)) {
 				StringParam param = new StringParam();
-				param.setValue(paraArgs[1]);
+				param.setValue(paramValue);
 				patientList = patientResource.searchByGivenName(param);
 			}
 			if (patientList != null) {
