@@ -147,7 +147,7 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 				int startIndex = theConditional.lastIndexOf('=');
 				locationName = theConditional.substring(startIndex + 1);
 			}
-			catch (Exception e) { // will catch nullpointerexceptions and indexoutofboundexceptions
+			catch (NullPointerException e) {
 				operationoutcome = new OperationOutcome();
 				operationoutcome.addIssue().setDetails("Please check Condition URL format");
 				outcome.setOperationOutcome(operationoutcome);
