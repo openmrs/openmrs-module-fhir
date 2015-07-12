@@ -154,4 +154,12 @@ public final class FHIRConstants {
 	public static final String DIAGNOSTIC_REPORT_STATUS = "status";
 	public static final String DIAGNOSTIC_REPORT_RESULT = "result";
 	public static final String DIAGNOSTIC_REPORT_PRESENTED_FORM = "presentedForm";
+	
+	public static final String PARAMETER_NAME = "name";
+	
+	public static final String PARAMETER_GIVENNAME = "givenName";
+	
+	public static final String PARAMETER_IDENTIFIER = "identifier";
+	
+	
 }

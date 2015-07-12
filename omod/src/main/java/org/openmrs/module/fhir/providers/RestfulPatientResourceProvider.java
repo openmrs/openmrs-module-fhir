@@ -206,33 +206,57 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 *            {@link ca.uhn.fhir .rest.server.RestfulServer}
 	 * @param theId Only one of theId or theConditional will have a value and the other will be
 	 *            null, depending on the URL passed into the server
-	 * @param theConditional This will have a value like "Patient?identifier=OpenMRS Identification
-	 *            Number%7C00001
+	 * @param theConditional This will have a value like "Patient?identifier=7C00001
 	 * @return MethodOutcome which contains the status of the update operation
 	 */
 	@Update()
 	public MethodOutcome updatePatientByIdentifier(@ResourceParam Patient patient, @IdParam IdDt theId,
 		                                        @ConditionalUrlParam String theConditional) {
-		String name = null;
+		MethodOutcome outcome = new MethodOutcome();
+		OperationOutcome operationoutcome = null;
 		if (theConditional != null) {
-			int startIndex = theConditional.lastIndexOf('=');
-			name = theConditional.substring(startIndex + 1);
-			TokenParam params = new TokenParam();
-			params.setValue(name);
-			List<Patient> patientList = patientResource.searchByIdentifier(params);
+			String paramValue = null;
+			List<Patient> patientList = null;
+			String parameterName = null;
+			try {
+				String args[] = theConditional.split("?");
+				String parameterPart = args[1];
+				String paraArgs[] = parameterPart.split("=");
+				parameterName = paraArgs[0];
+				paramValue = paraArgs[1];
+			}
+			catch (Exception e) { // will catch nullpointerexceptions and indexoutofboundexceptions
+				operationoutcome = new OperationOutcome();
+				operationoutcome.addIssue().setDetails("Please check Condition URL format");
+				outcome.setOperationOutcome(operationoutcome);
+				return outcome;
+			}
+			if (FHIRConstants.PARAMETER_NAME.equals(parameterName)) {
+				StringParam param = new StringParam();
+				param.setValue(paramValue);
+				patientList = patientResource.searchByName(param);
+			} else if (FHIRConstants.PARAMETER_IDENTIFIER.equals(parameterName)) {
+				TokenParam params = new TokenParam();
+				params.setValue(paramValue);
+				patientList = patientResource.searchByIdentifier(params);
+			} else if (FHIRConstants.PARAMETER_GIVENNAME.equals(parameterName)) {
+				StringParam param = new StringParam();
+				param.setValue(paramValue);
+				patientList = patientResource.searchByGivenName(param);
+			}
 			if (patientList != null) {
 				if (patientList.size() == 0) {
-					patientResource.updatePatient(patient, null);
+					outcome = updatePatient(patient, null);
 				} else if (patientList.size() == 1) {
-					patientResource.updatePatient(patient, patientList.get(0).getId().getIdPart());
+					outcome = updatePatient(patient, patientList.get(0).getId());
 				} else {
-					throw new PreconditionFailedException("There are more than one patient for the given identifier");
+					throw new PreconditionFailedException("There are more than one patient for the given condition");
 				}
 			}
 		} else {
-			updatePatient(patient, theId);
+			outcome = updatePatient(patient, theId);
 		}
-		return new MethodOutcome();
+		return outcome;
 	}
 
 }
