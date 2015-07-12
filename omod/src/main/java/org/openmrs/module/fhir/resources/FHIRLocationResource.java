@@ -13,16 +13,17 @@
  */
 package org.openmrs.module.fhir.resources;
 
+import java.util.List;
+
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.LocationService;
+
 import ca.uhn.fhir.model.dstu2.resource.Location;
 import ca.uhn.fhir.model.dstu2.valueset.LocationStatusEnum;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.LocationService;
-
-import java.util.List;
 
 public class FHIRLocationResource extends Resource {
 	
@@ -56,8 +57,8 @@ public class FHIRLocationResource extends Resource {
 		locationService.deleteLocation(id.getIdPart());
 	}
 	
-	public void updateLocationById(String id, Location location) {
-		Context.getService(LocationService.class).updateLocationById(id, location);
+	public Location updateLocation(String id, Location location) {
+		return Context.getService(LocationService.class).updateLocation(id, location);
 		
 	}
 	
