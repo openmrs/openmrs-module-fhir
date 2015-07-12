@@ -13,11 +13,12 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu2.resource.Location;
+import java.util.List;
+
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import ca.uhn.fhir.model.dstu2.resource.Location;
 
 @Transactional
 public interface LocationService extends OpenmrsService {
@@ -62,12 +63,12 @@ public interface LocationService extends OpenmrsService {
 	public void deleteLocation(String id);
 
 	/**
-	 * Update location by id
+	 * Update location
 	 *
-	 * @param id       location uuid
+	 * @param id location uuid
 	 * @param location representation of location fhir resource
 	 */
-	public void updateLocationById(String id, Location location);
+	public Location updateLocation(String id, Location location);
 	
 	/**
 	 * Create location 
