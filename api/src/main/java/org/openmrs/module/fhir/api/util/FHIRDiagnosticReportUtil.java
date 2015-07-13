@@ -35,6 +35,18 @@ public class FHIRDiagnosticReportUtil {
 	}
 
 	/**
+	 * Get matching FHIR Diagnostic Report for a given Subject Name
+	 *
+	 * @param name    Name of the Subject of the Diagnostic Report to be search
+	 * @param handler An implementation of DiagnosticReportHandler
+	 * @return An instance of ca.uhn.fhir.model.dstu2.resource.DiagnosticReport
+	 */
+	public static DiagnosticReport getFHIRDiagnosticReportBySubjectName(String name, DiagnosticReportHandler
+			handler) {
+		return handler.getFHIRDiagnosticReportBySubjectName(name);
+	}
+
+	/**
 	 * Save FHIR Diagnostic Report
 	 *
 	 * @param diagnosticReport FHIR Diagnostic Report

@@ -36,6 +36,11 @@ public class DefaultDiagnosticReportHandler extends AbstractHandler implements D
 	}
 
 	@Override
+	public DiagnosticReport getFHIRDiagnosticReportBySubjectName(String name) {
+		return new DiagnosticReport();
+	}
+
+	@Override
 	public DiagnosticReport saveFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
 		System.out.println("Laboratory Handler : diSave FHIR Diagnostic Report");
 		Encounter omrsDiagnosticReport = new Encounter();

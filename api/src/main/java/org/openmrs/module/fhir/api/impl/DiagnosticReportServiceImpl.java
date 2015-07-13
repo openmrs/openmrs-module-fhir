@@ -109,6 +109,21 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 		FHIRDiagnosticReportUtil.retireDiagnosticReport(id, getHandler(handlerName));
 	}
 
+	/**
+	 * @see org.openmrs.module.fhir.api.DiagnosticReportService#getDiagnosticReportByPatientNameAndServiceCategory(String,
+	 * String)
+	 */
+	@Override
+	public DiagnosticReport getDiagnosticReportByPatientNameAndServiceCategory(String patientName, String serviceCode) {
+		if(serviceCode == null) {
+			// Get DEFAULT Handler
+			serviceCode = "DEFAULT";
+		}
+
+		FHIRDiagnosticReportUtil.getFHIRDiagnosticReportBySubjectName(patientName, getHandler(serviceCode));
+		return new DiagnosticReport();
+	}
+
 	/****************************************************************
 	 * Handler Implementation
 	 ***************************************************************/

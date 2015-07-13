@@ -16,19 +16,22 @@ package org.openmrs.module.fhir.providers;
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
 import ca.uhn.fhir.model.dstu2.resource.OperationOutcome;
+import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
+import ca.uhn.fhir.rest.annotation.OptionalParam;
 import ca.uhn.fhir.rest.annotation.Read;
+import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
+import ca.uhn.fhir.rest.annotation.Search;
 import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.param.ReferenceParam;
+import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 
-import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
-import org.openmrs.module.fhir.api.util.FHIRConstants;
-import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.openmrs.module.fhir.resources.FHIRDiagnosticReportResource;
 
 public class RestfulDiagnosticReportResourceProvider implements IResourceProvider {
@@ -105,5 +108,15 @@ public class RestfulDiagnosticReportResourceProvider implements IResourceProvide
 	@Delete()
 	public void retireDiagnosticReport(@IdParam IdDt theId) {
 		diagnosticReportResource.retireDiagnosticReport(theId);
+	}
+
+	@Search
+	public DiagnosticReport searchByPatientAndServiceCategory(
+			@RequiredParam(name = DiagnosticReport.SP_SUBJECT, chainWhitelist = Patient.SP_GIVEN) ReferenceParam theSubject,
+			@OptionalParam(name = DiagnosticReport.SP_SERVICE) TokenParam theService) {
+
+		DiagnosticReport diagnosticReport = diagnosticReportResource.getDiagnosticReportByPatientNameAndServiceCategory
+				(theSubject, theService);
+		return diagnosticReport;
 	}
 }

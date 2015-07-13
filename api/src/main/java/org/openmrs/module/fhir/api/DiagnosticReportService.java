@@ -15,6 +15,7 @@ package org.openmrs.module.fhir.api;
 
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
 import ca.uhn.fhir.model.dstu2.resource.Person;
+import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.NotModifiedException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 
@@ -59,6 +60,14 @@ public interface DiagnosticReportService {
 	 * @return Diagnostic Report FHIR resource
 	 */
 	public void retireDiagnosticReport(String id);
+
+	/**
+	 * Get FHIR Diagnostic Report resource by Patient Name and Service Category
+	 *
+	 * @param patientName Patient name of the Diagnostic Report
+	 * @param service     Service Category of the Diagnostic Report
+	 */
+	public DiagnosticReport getDiagnosticReportByPatientNameAndServiceCategory(String patientName, String service);
 
 	/**
 	 * Get the DiagnosticReportHandler that has been registered with the given key

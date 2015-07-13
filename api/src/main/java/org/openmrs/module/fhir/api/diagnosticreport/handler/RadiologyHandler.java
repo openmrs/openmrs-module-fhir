@@ -1,6 +1,7 @@
 package org.openmrs.module.fhir.api.diagnosticreport.handler;
 
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
+import ca.uhn.fhir.model.primitive.IdDt;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
@@ -29,6 +30,15 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 	}
 
 	@Override
+	public DiagnosticReport getFHIRDiagnosticReportBySubjectName(String name) {
+		System.out.println("In Radiology Handler : getFHIRDiagnosticReportBySubjectName : " + name);
+		DiagnosticReport diagnosticReport = new DiagnosticReport();
+		
+		diagnosticReport.setId("12345");
+		return diagnosticReport;
+	}
+
+	@Override
 	public DiagnosticReport saveFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
 		return diagnosticReport;
 	}
@@ -40,6 +50,5 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 
 	@Override
 	public void retireFHIRDiagnosticReport(String id) {
-		return;
 	}
 }
