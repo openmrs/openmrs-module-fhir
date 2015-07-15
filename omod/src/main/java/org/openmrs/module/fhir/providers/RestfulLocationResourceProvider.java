@@ -128,6 +128,7 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 
 	/**
 	 * Conditionally update location by name.
+	 * 
 	 * @param theLocation {@link ca.uhn.fhir.model.dstu2.resource.Location} object provided by the
 	 *            {@link ca.uhn.fhir .rest.server.RestfulServer}
 	 * @param theId Only one of theId or theConditional will have a value and the other will be
@@ -137,17 +138,14 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	 */
 	@Update()
 	public MethodOutcome updateLocationByName(@ResourceParam Location theLocation, @IdParam IdDt theId,
-	                                        @ConditionalUrlParam String theConditional) {
+	                                          @ConditionalUrlParam String theConditional) {
 		MethodOutcome outcome = new MethodOutcome();
 		OperationOutcome operationoutcome = null;
 		if (theConditional != null) {
 			List<Location> locationList = null;
-			String locationName = null;
-			try {
-				int startIndex = theConditional.lastIndexOf('=');
-				locationName = theConditional.substring(startIndex + 1);
-			}
-			catch (NullPointerException e) {
+			int startIndex = theConditional.lastIndexOf('=');
+			String locationName = theConditional.substring(startIndex + 1);
+			if (locationName == null) {
 				operationoutcome = new OperationOutcome();
 				operationoutcome.addIssue().setDetails("Please check Condition URL format");
 				outcome.setOperationOutcome(operationoutcome);
