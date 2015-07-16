@@ -13,8 +13,9 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import ca.uhn.fhir.model.dstu2.resource.Location;
-import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
@@ -23,8 +24,8 @@ import org.openmrs.module.fhir.api.LocationService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRLocationUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import ca.uhn.fhir.model.dstu2.resource.Location;
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
@@ -122,7 +123,7 @@ public class LocationServiceImpl extends BaseOpenmrsService implements LocationS
 	 * @see org.openmrs.module.fhir.api.LocationService#updateLocationById(String, ca.uhn.fhir.model.dstu2.resource
 	 * .Location)
 	 */
-	public void updateLocationById(String id, Location location) {
+	public Location updateLocation(String id, Location location) {
 		org.openmrs.Location omrsLocation;
 		List<String> errors = new ArrayList<String>();
 		omrsLocation = FHIRLocationUtil.generateOpenMRSLocation(location, errors);
@@ -133,7 +134,8 @@ public class LocationServiceImpl extends BaseOpenmrsService implements LocationS
 			}
 			throw new UnprocessableEntityException(errorMessage.toString());
 		}
-		Context.getLocationService().saveLocation(omrsLocation);
+		omrsLocation = Context.getLocationService().saveLocation(omrsLocation);
+		return FHIRLocationUtil.generateLocation(omrsLocation);
 	}
 	
 	/**
