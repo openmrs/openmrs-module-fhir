@@ -127,9 +127,9 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	public MethodOutcome updatePersonConditional(@ResourceParam Person thePerson, @IdParam IdDt theId) {
 		MethodOutcome retVal = new MethodOutcome();
 		OperationOutcome outcome = new OperationOutcome();
-		try {
-			Person person = personResource.updateFHIRPerson(thePerson, theId.getIdPart());
-		} catch (Exception e) {
+		//try {
+		thePerson = personResource.updateFHIRPerson(thePerson, theId.getIdPart());
+		/*} catch (Exception e) {
 			outcome.addIssue()
 					.setDetails(
 							"No Person is associated with the given UUID to update. Please"
@@ -137,7 +137,7 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 							+ "Person with the given UUID");
 			retVal.setOperationOutcome(outcome);
 			return retVal;
-		}
+		}*/
 		outcome.addIssue().setDetails("Person is successfully updated");
 		retVal.setOperationOutcome(outcome);
 		return retVal;

@@ -23,6 +23,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.PersonService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
 
 import ca.uhn.fhir.model.dstu2.resource.Person;
@@ -96,7 +97,7 @@ public class PersonServiceImpl implements PersonService {
 		List<String> errors = new ArrayList<String>();
 		org.openmrs.Person omrsPerson = FHIRPersonUtil.generateOpenMRSPerson(person, errors);
 		if (!errors.isEmpty()) {
-			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to following issues \n");
+			StringBuilder errorMessage = new StringBuilder(FHIRConstants.REQUEST_ISSUE_LIST);
 			for (int i = 0; i < errors.size(); i++) {
 				errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
 			}
@@ -109,17 +110,24 @@ public class PersonServiceImpl implements PersonService {
 
 	@Override
 	public Person updateFHIRPerson(Person thePerson, String theId) {
-		List<String> errors = new ArrayList<String>();
 		org.openmrs.api.PersonService personService = Context.getPersonService();
 		org.openmrs.Person retrievedPerson = personService.getPersonByUuid(theId);
 		if (retrievedPerson != null) { // update person
+			List<String> errors = new ArrayList<String>();
 			org.openmrs.Person omrsPerson = FHIRPersonUtil.generateOpenMRSPerson(thePerson, errors);
+			if (!errors.isEmpty()) {
+				StringBuilder errorMessage = new StringBuilder(FHIRConstants.REQUEST_ISSUE_LIST);
+				for (int i = 0; i < errors.size(); i++) {
+					errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
+				}
+				throw new UnprocessableEntityException(errorMessage.toString());
+			}
 			retrievedPerson = FHIRPersonUtil.updatePersonAttributes(omrsPerson, retrievedPerson);
 			Context.getPersonService().savePerson(retrievedPerson);
 			return FHIRPersonUtil.generatePerson(retrievedPerson);
 		} else { // no person is associated with the given uuid. so create a new person with the given uuid
 			if (thePerson.getId() == null) { // since we need to PUT the Person to a specific URI, we need to set the uuid
-			// here, if it is not
+				// here, if it is not
 				// already set.
 				IdDt uuid = new IdDt();
 				uuid.setValue(theId);
@@ -145,7 +153,7 @@ public class PersonServiceImpl implements PersonService {
 			Context.getPersonService().voidPerson(person, "Voided by FHIR Request");
 		} catch (APIException apie) {
 			throw new MethodNotAllowedException(String.format("OpenMRS has failed to retire person '%s': %s", id,
-					apie.getMessage()));
+			    apie.getMessage()));
 		}
 	}
 }

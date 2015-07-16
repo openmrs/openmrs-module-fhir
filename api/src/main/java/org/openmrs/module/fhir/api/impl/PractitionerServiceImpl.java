@@ -25,11 +25,13 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.PractitionerService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRPractitionerUtil;
 
 import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
 import ca.uhn.fhir.model.dstu2.resource.Practitioner;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
@@ -158,16 +160,28 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 	 */
 	public Practitioner createFHIRPractitioner(Practitioner practitioner) {
 		Provider provider = new Provider();
+		List<String> errors = new ArrayList<String>();
 		Person personFromRequest = FHIRPractitionerUtil.extractOpenMRSPerson(practitioner); // extracts openmrs person from the practitioner representation
-		Person personToProvider = FHIRPractitionerUtil.generateOpenMRSPerson(personFromRequest); // either map to an existing person, or create a new person for the given representation
-		
+		if (personFromRequest == null) {
+			errors.add("Practitioner should contain a Person with given name, family name and gender");
+		}
 		List<IdentifierDt> identifiers = practitioner.getIdentifier();
-		if (!identifiers.isEmpty()) {
+		if (!identifiers.isEmpty() && !identifiers.isEmpty()) {
 			IdentifierDt idnt = identifiers.get(0);
 			provider.setIdentifier(idnt.getValue());
+		} else {
+			errors.add("Practitioner should contain an identifier");
 		}
+		if (!errors.isEmpty()) {
+			StringBuilder errorMessage = new StringBuilder(FHIRConstants.REQUEST_ISSUE_LIST);
+			for (int i = 0; i < errors.size(); i++) {
+				errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
+			}
+			throw new UnprocessableEntityException(errorMessage.toString());
+		}
+		// creating an Practitoner only with a name should come here
+		Person personToProvider = FHIRPractitionerUtil.generateOpenMRSPerson(personFromRequest); // either map to an existing person, or create a new person for the given representation
 		provider.setPerson(personToProvider);
-		
 		Provider omrsProvider = Context.getProviderService().saveProvider(provider);
 		return FHIRPractitionerUtil.generatePractitioner(omrsProvider);
 	}

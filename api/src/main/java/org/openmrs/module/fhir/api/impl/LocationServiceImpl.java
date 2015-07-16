@@ -22,6 +22,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.LocationService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRLocationUtil;
 
 import ca.uhn.fhir.model.dstu2.resource.Location;
@@ -120,15 +121,15 @@ public class LocationServiceImpl extends BaseOpenmrsService implements LocationS
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.LocationService#updateLocationById(String, ca.uhn.fhir.model.dstu2.resource
-	 * .Location)
+	 * @see org.openmrs.module.fhir.api.LocationService#updateLocationById(String,
+	 *      ca.uhn.fhir.model.dstu2.resource .Location)
 	 */
 	public Location updateLocation(String id, Location location) {
 		org.openmrs.Location omrsLocation;
 		List<String> errors = new ArrayList<String>();
 		omrsLocation = FHIRLocationUtil.generateOpenMRSLocation(location, errors);
 		if (!errors.isEmpty()) {
-			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to following issues \n");
+			StringBuilder errorMessage = new StringBuilder(FHIRConstants.REQUEST_ISSUE_LIST);
 			for (int i = 0; i < errors.size(); i++) {
 				errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
 			}
@@ -140,20 +141,20 @@ public class LocationServiceImpl extends BaseOpenmrsService implements LocationS
 	
 	/**
 	 * @see org.openmrs.module.fhir.api.LocationService#createLocation(ca.uhn.fhir.model.dstu2.resource
-	 * .Location)
+	 *      .Location)
 	 */
 	public Location createLocation(Location location) {
-		org.openmrs.Location omrsLocation=null;
+		org.openmrs.Location omrsLocation = null;
 		List<String> errors = new ArrayList<String>();
 		omrsLocation = FHIRLocationUtil.generateOpenMRSLocation(location, errors);
 		if (!errors.isEmpty()) {
-			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
+			StringBuilder errorMessage = new StringBuilder(FHIRConstants.REQUEST_ISSUE_LIST);
 			for (int i = 0; i < errors.size(); i++) {
 				errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
 			}
 			throw new UnprocessableEntityException(errorMessage.toString());
 		}
-		omrsLocation=Context.getLocationService().saveLocation(omrsLocation);
+		omrsLocation = Context.getLocationService().saveLocation(omrsLocation);
 		return FHIRLocationUtil.generateLocation(omrsLocation);
 	}
 

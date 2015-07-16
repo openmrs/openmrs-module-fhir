@@ -71,7 +71,8 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByPatientAndConcept(String, java.util.Map)
+	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByPatientAndConcept(String,
+	 *      java.util.Map)
 	 */
 	public List<Observation> searchObsByPatientAndConcept(String patientUUid, Map<String, String> conceptNamesAndURIs) {
 		Patient patient = Context.getPatientService().getPatientByUuid(patientUUid);
@@ -152,8 +153,8 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 
 			List<Concept> concepts = new ArrayList<Concept>();
 			concepts.add(concept);
-			omrsObs = Context.getObsService().getObservations(null, null, concepts, null, null, null, null, null,
-					null, null, null, false);
+			omrsObs = Context.getObsService().getObservations(null, null, concepts, null, null, null, null, null, null,
+			    null, null, false);
 
 			for (Obs obs : omrsObs) {
 				obsList.add(FHIRObsUtil.generateObs(obs));
@@ -166,8 +167,8 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByDate(java.util.Date)
 	 */
 	public List<Observation> searchObsByDate(Date date) {
-		List<Obs> omrsObs = Context.getObsService().getObservations(null, null, null, null, null, null, null, null,
-				null, date, date, false);
+		List<Obs> omrsObs = Context.getObsService().getObservations(null, null, null, null, null, null, null, null, null,
+		    date, date, false);
 		List<Observation> obsList = new ArrayList<Observation>();
 		for (Obs obs : omrsObs) {
 			obsList.add(FHIRObsUtil.generateObs(obs));
@@ -196,8 +197,7 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 		List<Concept> conceptsAnswers = new ArrayList<Concept>();
 		conceptsAnswers.add(concept);
 		List<Obs> omrsObs = Context.getObsService().getObservations(null, null, null, conceptsAnswers, null, null, null,
-				null,
-				null, null, null, false);
+		    null, null, null, null, false);
 		List<Observation> obsList = new ArrayList<Observation>();
 		for (Obs obs : omrsObs) {
 			obsList.add(FHIRObsUtil.generateObs(obs));
@@ -235,7 +235,7 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 		List<String> errors = new ArrayList<String>();
 		Obs obs = FHIRObsUtil.generateOpenMRSObs(observation, errors);
 		if (!errors.isEmpty()) {
-			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
+			StringBuilder errorMessage = new StringBuilder(FHIRConstants.REQUEST_ISSUE_LIST);
 			for (int i = 0; i < errors.size(); i++) {
 				errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
 			}
@@ -254,8 +254,7 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 		FHIRObsUtil.copyObsAttributes(omrsObs, retrievedObs, errors);
 		if (retrievedObs != null) { // update observation			
 			if (!errors.isEmpty()) {
-				StringBuilder errorMessage = new StringBuilder(
-				        "The request cannot be processed due to the following issues \n");
+				StringBuilder errorMessage = new StringBuilder(FHIRConstants.REQUEST_ISSUE_LIST);
 				for (int i = 0; i < errors.size(); i++) {
 					errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
 				}

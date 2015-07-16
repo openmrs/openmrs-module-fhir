@@ -100,7 +100,10 @@ public final class FHIRConstants {
 	public static final String CONFIDENTIALITY_CODING_VALUE_RESTRICTED = "restricted";
 	public static final String ENCOUNTER_ID = "encounter_id";
 	public static final String MALE = "M";
+	
 	public static final String FEMALE = "F";
+
+	public static final String OTHER_GENDER = "o";
 	public static final String ACTIVE_LIST_ALLERGY_STRATEGY = "ActiveListAllergyStrategy";
 	public static final String ALLERGY_API_ALLERGY_STRATEGY = "AllergyApiModuleAllergyStrategy";
 	public static final String OBS_ALLERGY_STRATEGY = "ObsAllergyStrategy";
@@ -154,4 +157,6 @@ public final class FHIRConstants {
 	public static final String DIAGNOSTIC_REPORT_STATUS = "status";
 	public static final String DIAGNOSTIC_REPORT_RESULT = "result";
 	public static final String DIAGNOSTIC_REPORT_PRESENTED_FORM = "presentedForm";
+	
+	public static final String REQUEST_ISSUE_LIST = "The request cannot be processed due to following issues \n";
 }

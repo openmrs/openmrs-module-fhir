@@ -29,6 +29,7 @@ import org.openmrs.module.fhir.api.EncounterService;
 import org.openmrs.module.fhir.api.FamilyHistoryService;
 import org.openmrs.module.fhir.api.PatientService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRLocationUtil;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 import org.openmrs.module.fhir.api.util.OMRSFHIRVisitUtil;
@@ -96,7 +97,7 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 		List<PatientIdentifierType> patientIdentifierTypes = new ArrayList<PatientIdentifierType>();
 		patientIdentifierTypes.add(patientService.getPatientIdentifierTypeByName(identifierTypeName));
 		List<org.openmrs.Patient> patientList = patientService.getPatients(null, identifierValue, patientIdentifierTypes,
-				true);
+		    true);
 		List<Patient> fhirPatientList = new ArrayList<Patient>();
 		for (org.openmrs.Patient patient : patientList) {
 			fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
@@ -110,8 +111,8 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 	public List<Patient> searchPatientsByIdentifier(String identifier) {
 		org.openmrs.api.PatientService patientService = Context.getPatientService();
 		List<PatientIdentifierType> allPatientIdentifierTypes = patientService.getAllPatientIdentifierTypes();
-		List<org.openmrs.Patient> patientList = patientService.getPatients(null, identifier, allPatientIdentifierTypes,
-				true);
+		List<org.openmrs.Patient> patientList = patientService
+		        .getPatients(null, identifier, allPatientIdentifierTypes, true);
 		List<Patient> fhirPatientList = new ArrayList<Patient>();
 		for (org.openmrs.Patient patient : patientList) {
 			fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
@@ -218,8 +219,8 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 			}
 
 			//Set patients' relationships
-			for (FamilyMemberHistory familyHistory : familyHistoryService.searchFamilyHistoryByPersonId(
-					omsrPatient.getUuid())) {
+			for (FamilyMemberHistory familyHistory : familyHistoryService.searchFamilyHistoryByPersonId(omsrPatient
+			        .getUuid())) {
 				bundle.addEntry().setResource(familyHistory);
 			}
 
@@ -273,7 +274,7 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 		List<String> errors = new ArrayList<String>();
 		org.openmrs.Patient omrsPatient = FHIRPatientUtil.generateOmrsPatient(patient, errors);
 		if (!errors.isEmpty()) {
-			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
+			StringBuilder errorMessage = new StringBuilder(FHIRConstants.REQUEST_ISSUE_LIST);
 			for (int i = 0; i < errors.size(); i++) {
 				errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
 			}
@@ -282,9 +283,8 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 		org.openmrs.api.PatientService patientService = Context.getPatientService();
 		try {
 			omrsPatient = patientService.savePatient(omrsPatient);
-		}
-		catch (Exception e) {
-			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
+		} catch (Exception e) {
+			StringBuilder errorMessage = new StringBuilder(FHIRConstants.REQUEST_ISSUE_LIST);
 			errorMessage.append(e.getMessage());
 			throw new UnprocessableEntityException(errorMessage.toString());
 		}
@@ -299,10 +299,16 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 			List<String> errors = new ArrayList<String>();
 			org.openmrs.Patient omrsPatient = FHIRPatientUtil.generateOmrsPatient(patient, errors);
 			retrievedPatient = FHIRPatientUtil.updatePatientAttributes(omrsPatient, retrievedPatient);
+			if (!errors.isEmpty()) {
+				StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to following issues \n");
+				for (int i = 0; i < errors.size(); i++) {
+					errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
+				}
+				throw new UnprocessableEntityException(errorMessage.toString());
+			}
 			try {
 				Context.getPatientService().savePatient(retrievedPatient);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				StringBuilder errorMessage = new StringBuilder(
 				        "The request cannot be processed due to the following issues \n");
 				errorMessage.append(e.getMessage());
@@ -311,7 +317,7 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 			return FHIRPatientUtil.generatePatient(retrievedPatient);
 		} else { // no patient is associated with the given uuid. so create a new patient with the given uuid
 			if (patient.getId() == null) { // since we need to PUT the patient to a specific URI, we need to set the uuid
-			// here, if it is not
+				// here, if it is not
 				// already set.
 				IdDt uuid = new IdDt();
 				uuid.setValue(theId);
