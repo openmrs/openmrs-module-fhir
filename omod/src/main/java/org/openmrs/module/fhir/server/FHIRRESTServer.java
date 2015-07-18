@@ -13,12 +13,12 @@
  */
 package org.openmrs.module.fhir.server;
 
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
-import ca.uhn.fhir.rest.server.EncodingEnum;
-import ca.uhn.fhir.rest.server.IResourceProvider;
-import ca.uhn.fhir.rest.server.RestfulServer;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.servlet.ServletException;
+
+import org.openmrs.module.fhir.ResponseHighlighterInterceptor;
 import org.openmrs.module.fhir.addressstrategy.OpenMRSFHIRRequestAddressStrategy;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.openmrs.module.fhir.providers.RestfulAllergyIntoleranceResourceProvider;
@@ -33,10 +33,11 @@ import org.openmrs.module.fhir.providers.RestfulPersonResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulPractitionerResourceProvider;
 import org.openmrs.module.fhir.util.FHIROmodConstants;
 
-import javax.servlet.ServletException;
-
-import java.util.ArrayList;
-import java.util.List;
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
+import ca.uhn.fhir.rest.server.EncodingEnum;
+import ca.uhn.fhir.rest.server.IResourceProvider;
+import ca.uhn.fhir.rest.server.RestfulServer;
 
 public class FHIRRESTServer extends RestfulServer {
 
@@ -76,6 +77,8 @@ public class FHIRRESTServer extends RestfulServer {
 			CustomThymeleafNarrativeGenerator generator = new CustomThymeleafNarrativeGenerator(propFile);
 			getFhirContext().setNarrativeGenerator(generator);
 		}
+		ResponseHighlighterInterceptor interceptor = new ResponseHighlighterInterceptor();
+	    registerInterceptor(interceptor);
 	}
 
 	protected String getRequestPath(String requestFullPath, String servletContextPath, String servletPath) {
