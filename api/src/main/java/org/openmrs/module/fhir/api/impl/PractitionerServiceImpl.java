@@ -13,6 +13,8 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
+import static java.lang.String.valueOf;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,11 +27,15 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.PractitionerService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRPractitionerUtil;
 
+import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
 import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
 import ca.uhn.fhir.model.dstu2.resource.Practitioner;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.model.primitive.StringDt;
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
@@ -158,17 +164,51 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 	 */
 	public Practitioner createFHIRPractitioner(Practitioner practitioner) {
 		Provider provider = new Provider();
+		List<String> errors = new ArrayList<String>();
+		String practionerName = "";
 		Person personFromRequest = FHIRPractitionerUtil.extractOpenMRSPerson(practitioner); // extracts openmrs person from the practitioner representation
-		Person personToProvider = FHIRPractitionerUtil.generateOpenMRSPerson(personFromRequest); // either map to an existing person, or create a new person for the given representation
-		
 		List<IdentifierDt> identifiers = practitioner.getIdentifier();
-		if (!identifiers.isEmpty()) {
+		if (identifiers != null && !identifiers.isEmpty()) {
 			IdentifierDt idnt = identifiers.get(0);
 			provider.setIdentifier(idnt.getValue());
+		}// identifiers can be empty
+		if (personFromRequest == null) { // if this is true, that means the request doesn't have enough attributes to create a person from it, or attach a person from existing ones
+			HumanNameDt humanNameDt = practitioner.getName();
+			if (humanNameDt != null) { // check whether atleast one name is exist. if so we can create a practitioner without attaching a person, just with a name.
+				List<StringDt> givenNames = humanNameDt.getGiven();
+				if (givenNames != null && !givenNames.isEmpty()) {
+					StringDt givenName = givenNames.get(0);
+					practionerName = valueOf(givenName);
+				}
+				List<StringDt> familyNames = humanNameDt.getFamily();
+				if (familyNames != null && !familyNames.isEmpty()) {
+					StringDt familyName = familyNames.get(0);
+					practionerName = practionerName + " " + valueOf(familyName); // will create a name like "John David"
+				}
+				if ("".equals(practionerName)) { // there is no given name or family name. cannot proceed with the request
+					errors.add("Practioner should contain atleast given name or family name");
+				}
+			} else {
+				errors.add("Practioner should contain atleast given name or family name");
+			}
 		}
-		provider.setPerson(personToProvider);
-		
+		if (!errors.isEmpty()) {
+			StringBuilder errorMessage = new StringBuilder(FHIRConstants.REQUEST_ISSUE_LIST);
+			for (int i = 0; i < errors.size(); i++) {
+				errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
+			}
+			throw new UnprocessableEntityException(errorMessage.toString());
+		}
+		if (personFromRequest != null) { // if this is not null, we can have a person resource along the practitioner resource
+			Person personToProvider = FHIRPractitionerUtil.generateOpenMRSPerson(personFromRequest); // either map to an existing person, or create a new person for the given representation
+			provider.setPerson(personToProvider);
+		} else {
+			provider.setName(practionerName); // else create the practitioner just with the name
+		}
 		Provider omrsProvider = Context.getProviderService().saveProvider(provider);
+		if (personFromRequest == null) {
+			omrsProvider.setPerson(null);
+		}
 		return FHIRPractitionerUtil.generatePractitioner(omrsProvider);
 	}
 	
