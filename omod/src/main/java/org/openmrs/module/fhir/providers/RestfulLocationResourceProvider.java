@@ -13,6 +13,11 @@
  */
 package org.openmrs.module.fhir.providers;
 
+import java.util.List;
+
+import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.module.fhir.resources.FHIRLocationResource;
+
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.resource.Location;
 import ca.uhn.fhir.model.dstu2.resource.OperationOutcome;
@@ -30,11 +35,7 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-
-import org.openmrs.module.fhir.api.util.FHIRConstants;
-import org.openmrs.module.fhir.resources.FHIRLocationResource;
-
-import java.util.List;
+import ca.uhn.fhir.rest.server.exceptions.PreconditionFailedException;
 
 public class RestfulLocationResourceProvider implements IResourceProvider {
 	
@@ -109,33 +110,66 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	}
 	
 	/**
-	 * Update location by id.
-	 *
+	 * Update Location
+	 * 
+	 * @param location fhir Location object
+	 * @param theId , the uuid of the Location resource to be update
+	 * @return Method outcome contains the status of the update operation
+	 */
+	@Update
+	public MethodOutcome updateLocation(@ResourceParam Location location, @IdParam IdDt theId) {
+		MethodOutcome retVal = new MethodOutcome();
+		OperationOutcome outcome = new OperationOutcome();
+		location = locationResource.updateLocation(theId.getIdPart(), location);
+		outcome.addIssue().setDetails("Location successfully updated");
+		retVal.setOperationOutcome(outcome);
+		return retVal;
+	}
+
+	/**
+	 * Conditionally update location by name.
+	 * 
 	 * @param theLocation {@link ca.uhn.fhir.model.dstu2.resource.Location} object provided by the
 	 *            {@link ca.uhn.fhir .rest.server.RestfulServer}
 	 * @param theId Only one of theId or theConditional will have a value and the other will be
 	 *            null, depending on the URL passed into the server
-	 * @param theConditional This will have a value like "Patient?identifier=system%7C00001
-	 * @return This object contains the identity of the created resource.
+	 * @param theConditional This will have a value like "Location?name=Colombo
+	 * @return MethodOutcome which contains the status of the operation
 	 */
 	@Update()
-	public MethodOutcome updateLocationById(@ResourceParam Location theLocation, @IdParam IdDt theId,
-	                                        @ConditionalUrlParam String theConditional) {
-		MethodOutcome methodOutcome = new MethodOutcome();
-		String id = null;
+	public MethodOutcome updateLocationByName(@ResourceParam Location theLocation, @IdParam IdDt theId,
+	                                          @ConditionalUrlParam String theConditional) {
+		MethodOutcome outcome = new MethodOutcome();
+		OperationOutcome operationoutcome = null;
 		if (theConditional != null) {
+			List<Location> locationList = null;
 			int startIndex = theConditional.lastIndexOf('=');
-			id = theConditional.substring(startIndex + 1);
+			String locationName = theConditional.substring(startIndex + 1);
+			if (locationName == null) {
+				operationoutcome = new OperationOutcome();
+				operationoutcome.addIssue().setDetails("Please check Condition URL format");
+				outcome.setOperationOutcome(operationoutcome);
+				return outcome;
+			}
+			StringParam nameParam = new StringParam();
+			nameParam.setValue(locationName);
+			locationList = locationResource.searchLocationsByName(nameParam);
+			if (locationList.size() == 0) {
+				outcome = updateLocation(theLocation, null);
+			} else if (locationList.size() == 1) {
+				outcome = updateLocation(theLocation, locationList.get(0).getId());
+			} else {
+				throw new PreconditionFailedException("There are more than one Location for the given condition");
+			}
 		} else {
-			id = theId.getIdPart();
+			outcome = updateLocation(theLocation, theId);
 		}
-		locationResource.updateLocationById(id, theLocation);
-		return methodOutcome;
+		return outcome;
 	}
 	
 	/**
 	 * Create Location
-	 *
+	 * 
 	 * @param location fhir Location object
 	 * @return Method outcome object which contains the identity of the created resource.
 	 */
