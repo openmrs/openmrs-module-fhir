@@ -15,49 +15,62 @@ package org.openmrs.module.fhir.api.util;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.Bundle;
-import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
+import ca.uhn.fhir.model.dstu2.resource.Practitioner;
 import ca.uhn.fhir.rest.client.IGenericClient;
-import ca.uhn.fhir.rest.gclient.DateClientParam;
 import ca.uhn.fhir.rest.gclient.ICriterion;
 import ca.uhn.fhir.rest.gclient.ReferenceClientParam;
-import ca.uhn.fhir.rest.gclient.StringClientParam;
-
-import java.util.ArrayList;
-import java.util.List;
+import ca.uhn.fhir.rest.gclient.TokenClientParam;
 
 public class FHIRRESTfulGenericClient {
 
 	private static final FhirContext ctx = FhirContext.forDstu2();
 
-	private static IGenericClient getGenericClient(String serverBase) {
-		return ctx.newRestfulGenericClient(serverBase);
+	public static Bundle searchDiagnosticReportByReference(String serverBase,
+	                            ICriterion<ReferenceClientParam> where) {
+		IGenericClient client = ctx.newRestfulGenericClient(serverBase);
+
+		return client
+				.search()
+				.forResource(DiagnosticReport.class)
+				.where(where)
+				.execute();
+	}
+
+	public static Patient readPatientById(String serverBase,
+	                                     String theID) {
+		IGenericClient client = ctx.newRestfulGenericClient(serverBase);
+
+		return client
+				.read()
+				.resource(Patient.class)
+				.withId(theID)
+				.execute();
+	}
+
+	public static Practitioner readPractitionerById(String serverBase,
+	                                      String theID) {
+		IGenericClient client = ctx.newRestfulGenericClient(serverBase);
+
+		return client
+				.read()
+				.resource(Practitioner.class)
+				.withId(theID)
+				.execute();
 	}
 
 	public static Bundle search(String serverBase,
 	                            Class<DiagnosticReport> fhirResource,
-	                            ICriterion<ReferenceClientParam> where) {
-		/*Bundle results = getGenericClient(serverBase)
+	                            ICriterion<ReferenceClientParam> where,
+	                            ICriterion<TokenClientParam> and) {
+		IGenericClient client = ctx.newRestfulGenericClient(serverBase);
+
+		return client
 				.search()
 				.forResource(fhirResource)
 				.where(where)
-				.execute();*/
-
-		String serverBase1 = "http://fhir.hackathon.siim.org/fhir";
-		String serverBase2 = "http://fhirtest.uhn.ca/baseDstu2";
-
-		IGenericClient client = ctx.newRestfulGenericClient(serverBase1);
-
-		// Perform a search
-		Bundle results = client
-				.search()
-				.forResource(DiagnosticReport.class)
-				.where(Patient.FAMILY.matches().value("SIIM"))
+				.and(and)
 				.execute();
-
-		System.out.println("Found " + results.size() + " patients named 'duck'");
-
-		return results;
 	}
 }

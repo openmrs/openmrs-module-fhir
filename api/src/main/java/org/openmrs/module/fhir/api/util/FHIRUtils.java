@@ -56,7 +56,7 @@ public class FHIRUtils {
 		return Boolean.parseBoolean(enabled);
 	}
 
-	public static String gettCustomNarrativesPropertyPath() {
+	public static String getCustomNarrativesPropertyPath() {
 		return Context.getAdministrationService().getGlobalProperty("fhir.customNarrativePropertiesPath");
 	}
 
@@ -216,6 +216,10 @@ public class FHIRUtils {
 
 	public static Concept getDiagnosticReportPresentedFormConcept() {
 		return getConceptByConceptId("fhir.diagnosticreport.presentedform");
+	}
+
+	public static String getDiagnosticReportRadiologyBaseServerURL() {
+		return Context.getAdministrationService().getGlobalProperty("fhir.diagnosticreport.radiology.server");
 	}
 
 	private static Concept getConceptByConceptId(String globalPropertyName) {

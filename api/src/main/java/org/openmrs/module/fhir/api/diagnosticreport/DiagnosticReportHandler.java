@@ -13,7 +13,7 @@ public interface DiagnosticReportHandler {
 
 	public DiagnosticReport getFHIRDiagnosticReportById(String id);
 
-	public DiagnosticReport getFHIRDiagnosticReportBySubjectName(String name);
+	public List<DiagnosticReport> getFHIRDiagnosticReportBySubjectName(String name);
 
 	public DiagnosticReport saveFHIRDiagnosticReport(DiagnosticReport diagnosticReport);
 

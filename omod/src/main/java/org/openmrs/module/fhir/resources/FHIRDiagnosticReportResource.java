@@ -13,18 +13,16 @@
  */
 package org.openmrs.module.fhir.resources;
 
-import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.rest.param.InternalCodingDt;
 import ca.uhn.fhir.rest.param.ReferenceParam;
-import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
-
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.DiagnosticReportService;
+
+import java.util.List;
 
 public class FHIRDiagnosticReportResource extends Resource {
 
@@ -52,15 +50,11 @@ public class FHIRDiagnosticReportResource extends Resource {
 		diagnosticReportService.retireDiagnosticReport(id.getIdPart());
 	}
 
-	public DiagnosticReport getDiagnosticReportByPatientNameAndServiceCategory(ReferenceParam theSubject,
-	                                                                           TokenParam service) {
+	public List<DiagnosticReport> getDiagnosticReportByPatientNameAndServiceCategory(ReferenceParam theSubject,
+	                                                                                 TokenParam service) {
 		String name = null;
 		String chain = theSubject.getChain();
 		if (Patient.SP_GIVEN.equals(chain)) {
-			name = theSubject.getValue();
-		} else if (Patient.SP_NAME.equals(chain)) {
-			name = theSubject.getValue();
-		} else if (Patient.SP_FAMILY.equals(chain)) {
 			name = theSubject.getValue();
 		}
 		if (name == null) {

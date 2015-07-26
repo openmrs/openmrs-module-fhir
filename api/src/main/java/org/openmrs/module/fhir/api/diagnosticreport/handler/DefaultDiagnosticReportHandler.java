@@ -1,12 +1,19 @@
 package org.openmrs.module.fhir.api.diagnosticreport.handler;
 
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DefaultDiagnosticReportHandler extends AbstractHandler implements DiagnosticReportHandler {
+
+	protected final Log log = LogFactory.getLog(this.getClass());
 
 	public DefaultDiagnosticReportHandler() {
 		super();
@@ -36,8 +43,8 @@ public class DefaultDiagnosticReportHandler extends AbstractHandler implements D
 	}
 
 	@Override
-	public DiagnosticReport getFHIRDiagnosticReportBySubjectName(String name) {
-		return new DiagnosticReport();
+	public List<DiagnosticReport> getFHIRDiagnosticReportBySubjectName(String name) {
+		return new ArrayList<DiagnosticReport>();
 	}
 
 	@Override

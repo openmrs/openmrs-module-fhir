@@ -34,6 +34,8 @@ import ca.uhn.fhir.rest.server.IResourceProvider;
 
 import org.openmrs.module.fhir.resources.FHIRDiagnosticReportResource;
 
+import java.util.List;
+
 public class RestfulDiagnosticReportResourceProvider implements IResourceProvider {
 
 	private FHIRDiagnosticReportResource diagnosticReportResource;
@@ -76,8 +78,7 @@ public class RestfulDiagnosticReportResourceProvider implements IResourceProvide
 	 */
 	@Read()
 	public DiagnosticReport getResourceById(@IdParam IdDt theId) {
-		DiagnosticReport result = diagnosticReportResource.getByUniqueId(theId);
-		return result;
+		return diagnosticReportResource.getByUniqueId(theId);
 	}
 
 	@Update()
@@ -110,13 +111,17 @@ public class RestfulDiagnosticReportResourceProvider implements IResourceProvide
 		diagnosticReportResource.retireDiagnosticReport(theId);
 	}
 
+	/**
+	 * The "@Search" annotation indicates that this method supports the search operation. Search operations should return
+	 * a bundle of resources.
+	 *
+	 * @param theSubject The read operation takes one parameter, which must be of type ReferenceParam.
+	 * @return Returns a bundle of resources matching this subject's given name, or empty bundle if none exists.
+	 */
 	@Search
-	public DiagnosticReport searchByPatientAndServiceCategory(
+	public List<DiagnosticReport> searchByPatientAndServiceCategory(
 			@RequiredParam(name = DiagnosticReport.SP_SUBJECT, chainWhitelist = Patient.SP_GIVEN) ReferenceParam theSubject,
 			@OptionalParam(name = DiagnosticReport.SP_SERVICE) TokenParam theService) {
-
-		DiagnosticReport diagnosticReport = diagnosticReportResource.getDiagnosticReportByPatientNameAndServiceCategory
-				(theSubject, theService);
-		return diagnosticReport;
+		return diagnosticReportResource.getDiagnosticReportByPatientNameAndServiceCategory(theSubject, theService);
 	}
 }

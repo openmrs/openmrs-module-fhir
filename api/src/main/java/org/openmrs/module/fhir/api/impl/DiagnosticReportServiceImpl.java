@@ -114,14 +114,14 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 	 * String)
 	 */
 	@Override
-	public DiagnosticReport getDiagnosticReportByPatientNameAndServiceCategory(String patientName, String serviceCode) {
-		if(serviceCode == null) {
+	public List<DiagnosticReport> getDiagnosticReportByPatientNameAndServiceCategory(String patientName, String
+			serviceCode) {
+		if (serviceCode == null) {
 			// Get DEFAULT Handler
 			serviceCode = "DEFAULT";
 		}
 
-		FHIRDiagnosticReportUtil.getFHIRDiagnosticReportBySubjectName(patientName, getHandler(serviceCode));
-		return new DiagnosticReport();
+		return FHIRDiagnosticReportUtil.getFHIRDiagnosticReportBySubjectName(patientName, getHandler(serviceCode));
 	}
 
 	/****************************************************************
