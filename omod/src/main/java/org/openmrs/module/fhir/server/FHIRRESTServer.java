@@ -13,11 +13,10 @@
  */
 package org.openmrs.module.fhir.server;
 
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
-import ca.uhn.fhir.rest.server.EncodingEnum;
-import ca.uhn.fhir.rest.server.IResourceProvider;
-import ca.uhn.fhir.rest.server.RestfulServer;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.ServletException;
 
 import org.openmrs.module.fhir.addressstrategy.OpenMRSFHIRRequestAddressStrategy;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
@@ -33,10 +32,13 @@ import org.openmrs.module.fhir.providers.RestfulPersonResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulPractitionerResourceProvider;
 import org.openmrs.module.fhir.util.FHIROmodConstants;
 
-import javax.servlet.ServletException;
-
-import java.util.ArrayList;
-import java.util.List;
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
+import ca.uhn.fhir.rest.server.EncodingEnum;
+import ca.uhn.fhir.rest.server.IResourceProvider;
+import ca.uhn.fhir.rest.server.RestfulServer;
+import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
+import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
 
 public class FHIRRESTServer extends RestfulServer {
 
@@ -76,6 +78,13 @@ public class FHIRRESTServer extends RestfulServer {
 			CustomThymeleafNarrativeGenerator generator = new CustomThymeleafNarrativeGenerator(propFile);
 			getFhirContext().setNarrativeGenerator(generator);
 		}
+		ResponseHighlighterInterceptor responseHighlighter = new ResponseHighlighterInterceptor();
+		registerInterceptor(responseHighlighter);
+		LoggingInterceptor loggingInterceptor = new LoggingInterceptor();
+		registerInterceptor(loggingInterceptor);
+		loggingInterceptor.setLoggerName("test.accesslog");
+		loggingInterceptor
+		        .setMessageFormat("Source[${remoteAddr}] Operation[${operationType} ${idOrResourceName}] UA[${requestHeader.user-agent}] Params[${requestParameters}]");
 	}
 
 	protected String getRequestPath(String requestFullPath, String servletContextPath, String servletPath) {
