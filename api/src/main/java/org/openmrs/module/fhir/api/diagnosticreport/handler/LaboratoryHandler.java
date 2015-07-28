@@ -12,6 +12,8 @@ import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptComplex;
 import org.openmrs.Encounter;
@@ -44,7 +46,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class LaboratoryHandler extends AbstractHandler implements DiagnosticReportHandler {
-	
+	protected final Log log = LogFactory.getLog(this.getClass());
+
 	public LaboratoryHandler() {
 		super();
 	}
@@ -59,7 +62,12 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 	public DiagnosticReport getFHIRDiagnosticReportById(String id) {
 		return getFHIRDiagnosticReport(Context.getEncounterService().getEncounterByUuid(id));
 	}
-	
+
+	@Override
+	public List<DiagnosticReport >getFHIRDiagnosticReportBySubjectName(String name) {
+		return null;
+	}
+
 	private DiagnosticReport getFHIRDiagnosticReport(Encounter omrsDiagnosticReport) {
 		log.debug("Laboratory Handler : GetFHIRDiagnosticReport");
 		DiagnosticReport diagnosticReport = new DiagnosticReport();
@@ -278,7 +286,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 				resultObsGroup.addGroupMember(obs);
 			}
 			resultObsGroup.setEncounter(omrsEncounter);
-			resultObsGroup = Context.getObsService().saveObs(resultObsGroup, null);
+			Context.getObsService().saveObs(resultObsGroup, null);
 		}
 		
 		// Set Binary Obs Handler which used to store `PresentedForm`

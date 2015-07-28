@@ -18,6 +18,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
 
+import java.util.List;
+
 public class FHIRDiagnosticReportUtil {
 
 	private static final Log log = LogFactory.getLog(FHIRDiagnosticReportUtil.class);
@@ -32,6 +34,18 @@ public class FHIRDiagnosticReportUtil {
 	public static DiagnosticReport getFHIRDiagnosticReport(String id, DiagnosticReportHandler
 			handler) {
 		return handler.getFHIRDiagnosticReportById(id);
+	}
+
+	/**
+	 * Get matching FHIR Diagnostic Report for a given Subject Name
+	 *
+	 * @param name    Name of the Subject of the Diagnostic Report to be search
+	 * @param handler An implementation of DiagnosticReportHandler
+	 * @return An instance of ca.uhn.fhir.model.dstu2.resource.DiagnosticReport
+	 */
+	public static List<DiagnosticReport> getFHIRDiagnosticReportBySubjectName(String name, DiagnosticReportHandler
+			handler) {
+		return handler.getFHIRDiagnosticReportBySubjectName(name);
 	}
 
 	/**

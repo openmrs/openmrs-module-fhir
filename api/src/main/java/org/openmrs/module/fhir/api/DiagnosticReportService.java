@@ -14,15 +14,11 @@
 package org.openmrs.module.fhir.api;
 
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
-import ca.uhn.fhir.model.dstu2.resource.Person;
-import ca.uhn.fhir.rest.server.exceptions.NotModifiedException;
-import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import org.openmrs.api.APIException;
+import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
 
 import java.util.List;
 import java.util.Map;
-
-import org.openmrs.api.APIException;
-import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
 
 public interface DiagnosticReportService {
 
@@ -38,17 +34,17 @@ public interface DiagnosticReportService {
 	/**
 	 * Creates OpenMRS objects from FHIR Diagnostic Report
 	 *
-	 * @param diagnosticReport
-	 * @return FHIR Diagnostic Report
+	 * @param diagnosticReport FHIR Diagnostic Report
+	 * @return Created FHIR Diagnostic Report
 	 */
 	DiagnosticReport createFHIRDiagnosticReport(DiagnosticReport diagnosticReport);
 
 	/**
 	 * Updates OpenMRS objects from FHIR Diagnostic Report
 	 *
-	 * @param diagnosticReport
-	 * @param theId
-	 * @return FHIR Diagnostic Report
+	 * @param diagnosticReport FHIR Diagnostic Report
+	 * @param theId The ID of Stored Diagnostic Report to be updated
+	 * @return Updated FHIR Diagnostic Report
 	 */
 	DiagnosticReport updateFHIRDiagnosticReport(DiagnosticReport diagnosticReport, String theId);
 
@@ -58,7 +54,15 @@ public interface DiagnosticReportService {
 	 * @param id uuid of the Diagnostic Report
 	 * @return Diagnostic Report FHIR resource
 	 */
-	public void retireDiagnosticReport(String id);
+	void retireDiagnosticReport(String id);
+
+	/**
+	 * Get FHIR Diagnostic Report resource by Patient Name and Service Category
+	 *
+	 * @param patientName Patient name of the Diagnostic Report
+	 * @param service     Service Category of the Diagnostic Report
+	 */
+	List<DiagnosticReport> getDiagnosticReportByPatientNameAndServiceCategory(String patientName, String service);
 
 	/**
 	 * Get the DiagnosticReportHandler that has been registered with the given key
@@ -66,7 +70,7 @@ public interface DiagnosticReportService {
 	 * @param key that has been registered with a handler class
 	 * @return Object representing the handler for the given key
 	 */
-	public DiagnosticReportHandler getHandler(String key) throws APIException;
+	DiagnosticReportHandler getHandler(String key) throws APIException;
 
 	/**
 	 * <u>Add</u> the given map to this service's handlers. This method registers each
@@ -77,7 +81,7 @@ public interface DiagnosticReportService {
 	 * @param handlers Map of class to handler object
 	 * @throws APIException
 	 */
-	public void setHandlers(Map<String, DiagnosticReportHandler> handlers) throws APIException;
+	void setHandlers(Map<String, DiagnosticReportHandler> handlers) throws APIException;
 
 	/**
 	 * Gets the handlers map registered
@@ -86,7 +90,7 @@ public interface DiagnosticReportService {
 	 * @throws APIException
 	 * @should never return null
 	 */
-	public Map<String, DiagnosticReportHandler> getHandlers() throws APIException;
+	Map<String, DiagnosticReportHandler> getHandlers() throws APIException;
 
 	/**
 	 * Registers the given handler with the given key If the given String key exists, that handler
@@ -96,7 +100,7 @@ public interface DiagnosticReportService {
 	 * @param handler the class to register with this key
 	 * @throws APIException
 	 */
-	public void registerHandler(String key, DiagnosticReportHandler handler) throws APIException;
+	void registerHandler(String key, DiagnosticReportHandler handler) throws APIException;
 
 	/**
 	 * Convenience method for {@link #registerHandler(String, DiagnosticReportHandler)}
@@ -106,7 +110,7 @@ public interface DiagnosticReportService {
 	 * @throws APIException
 	 * @should load handler and register key
 	 */
-	public void registerHandler(String key, String handlerClass) throws APIException;
+	void registerHandler(String key, String handlerClass) throws APIException;
 
 	/**
 	 * Remove the handler associated with the key from list of available handlers
@@ -115,5 +119,5 @@ public interface DiagnosticReportService {
 	 * @should remove handler with matching key
 	 * @should not fail with invalid key
 	 */
-	public void removeHandler(String key) throws APIException;
+	void removeHandler(String key) throws APIException;
 }

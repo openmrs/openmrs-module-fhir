@@ -13,6 +13,8 @@ public interface DiagnosticReportHandler {
 
 	public DiagnosticReport getFHIRDiagnosticReportById(String id);
 
+	public List<DiagnosticReport> getFHIRDiagnosticReportBySubjectName(String name);
+
 	public DiagnosticReport saveFHIRDiagnosticReport(DiagnosticReport diagnosticReport);
 
 	public DiagnosticReport updateFHIRDiagnosticReport(DiagnosticReport diagnosticReport, String theId);

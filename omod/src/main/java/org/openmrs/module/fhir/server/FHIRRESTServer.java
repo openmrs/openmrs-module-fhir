@@ -74,7 +74,7 @@ public class FHIRRESTServer extends RestfulServer {
 		setDefaultPrettyPrint(true);
 		setDefaultResponseEncoding(EncodingEnum.JSON);
 		if (FHIRUtils.isCustomNarrativesEnabled()) {
-			String propFile = FHIRUtils.gettCustomNarrativesPropertyPath();
+			String propFile = FHIRUtils.getCustomNarrativesPropertyPath();
 			CustomThymeleafNarrativeGenerator generator = new CustomThymeleafNarrativeGenerator(propFile);
 			getFhirContext().setNarrativeGenerator(generator);
 		}

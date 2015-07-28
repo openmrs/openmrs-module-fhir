@@ -177,6 +177,12 @@
         <description>Concept Id for 'PresentedForm' field in http://www.hl7.org/FHIR/2015May/diagnosticreport.html
         </description>
     </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.diagnosticreport.radiology.server</property>
+        <defaultValue>http://fhir-dev.healthintersections.com.au/open</defaultValue>
+        <description>The URL of third party FHIR base server that use to retrieve Radiology Diagnostic Reports
+        </description>
+    </globalProperty>
 
     <privilege>
         <name>View FHIR Client</name>
