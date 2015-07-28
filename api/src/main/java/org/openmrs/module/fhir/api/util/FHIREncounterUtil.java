@@ -13,27 +13,35 @@
  */
 package org.openmrs.module.fhir.api.util;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.openmrs.Concept;
+import org.openmrs.EncounterProvider;
+import org.openmrs.EncounterRole;
+import org.openmrs.EncounterType;
+import org.openmrs.Obs;
+import org.openmrs.PersonName;
+import org.openmrs.api.context.Context;
+
+import ca.uhn.fhir.model.dstu2.composite.BoundCodeableConceptDt;
+import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.composite.PeriodDt;
 import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Composition;
 import ca.uhn.fhir.model.dstu2.resource.Composition.Section;
 import ca.uhn.fhir.model.dstu2.resource.Encounter;
+import ca.uhn.fhir.model.dstu2.resource.Encounter.Participant;
 import ca.uhn.fhir.model.dstu2.valueset.CompositionStatusEnum;
 import ca.uhn.fhir.model.dstu2.valueset.EncounterClassEnum;
 import ca.uhn.fhir.model.dstu2.valueset.EncounterStateEnum;
+import ca.uhn.fhir.model.dstu2.valueset.EncounterTypeEnum;
 import ca.uhn.fhir.model.dstu2.valueset.ParticipantTypeEnum;
 import ca.uhn.fhir.model.primitive.CodeDt;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
-import org.openmrs.Concept;
-import org.openmrs.EncounterProvider;
-import org.openmrs.Obs;
-import org.openmrs.PersonName;
-import org.openmrs.api.context.Context;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class FHIREncounterUtil {
 
@@ -225,12 +233,12 @@ public class FHIREncounterUtil {
 	}
 
 	/**
-	 * Filter which obs need to be added to the encounter everything operation. Because some openmrs installations store
-	 * allergies as obs. In that case we need to omit obs getting included in everything operation and return them in
-	 * patient everything operation
+	 * Filter which obs need to be added to the encounter everything operation. Because some openmrs
+	 * installations store allergies as obs. In that case we need to omit obs getting included in
+	 * everything operation and return them in patient everything operation
 	 *
 	 * @param encounter encounter containing obs
-	 * @param bundle    bundle containg encounter everything contents
+	 * @param bundle bundle containg encounter everything contents
 	 * @return bundle with only required obs
 	 */
 	public static void addFilteredObs(org.openmrs.Encounter encounter, Bundle bundle) {
@@ -251,5 +259,44 @@ public class FHIREncounterUtil {
 				observation.setResource(FHIRObsUtil.generateObs(obs));
 			}
 		}
+	}
+	
+	public static org.openmrs.Encounter generateOMRSEncounter(Encounter encounter, List<String> errors) {
+		org.openmrs.Encounter omrsEncounter = new org.openmrs.Encounter();
+		if (encounter.getPatient() != null) {
+			ResourceReferenceDt patientref = encounter.getPatient();
+			IdDt id = patientref.getReference();
+			String patientUuid = id.getIdPart();
+			org.openmrs.Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
+			if (patient == null) {
+				errors.add("There is no patient for the given uuid"); // remove to constants
+			} else {
+				omrsEncounter.setPatient(patient);
+			}
+		}
+		PeriodDt period = encounter.getPeriod();
+		Date start = period.getStart();
+		omrsEncounter.setEncounterDatetime(start);
+		
+		List<BoundCodeableConceptDt<EncounterTypeEnum>> types = encounter.getType();
+		for (BoundCodeableConceptDt<EncounterTypeEnum> type : types) {
+			List<CodingDt> typeCodings = type.getCoding();
+			CodingDt code = typeCodings.get(0);//  check null
+			String value = code.getCode();
+			int typeId = Integer.parseInt(value);
+			EncounterType encounterType = Context.getEncounterService().getEncounterType(typeId);
+			omrsEncounter.setEncounterType(encounterType);
+		}
+		
+		List<Participant> participants = encounter.getParticipant();
+		for (Participant participant : participants) {
+			ResourceReferenceDt participantsref = participant.getIndividual();
+			IdDt id = participantsref.getReference();
+			String participantUuid = id.getIdPart();
+			org.openmrs.Provider provider = Context.getProviderService().getProviderByUuid(participantUuid);
+			EncounterRole role = Context.getEncounterService().getEncounterRole(1); // hard coded
+			omrsEncounter.setProvider(role, provider);
+		}
+		return omrsEncounter;
 	}
 }

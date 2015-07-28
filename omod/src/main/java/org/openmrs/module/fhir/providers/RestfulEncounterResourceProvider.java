@@ -13,23 +13,29 @@
  */
 package org.openmrs.module.fhir.providers;
 
+import java.util.List;
+
+import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.module.fhir.resources.FHIREncounterResource;
+
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Encounter;
+import ca.uhn.fhir.model.dstu2.resource.OperationOutcome;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Operation;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
+import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.openmrs.module.fhir.resources.FHIREncounterResource;
-
-import java.util.List;
 
 public class RestfulEncounterResourceProvider implements IResourceProvider {
 
@@ -128,5 +134,23 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	@Delete
 	public void deleteEncounter(@IdParam IdDt theId) {
 		encounterResource.deleteEncounter(theId);
+	}
+	
+	/**
+	 * Create Encounter
+	 *
+	 * @param encounter fhir encounter oobject
+	 * @return This method returns Meth codOutcome object, which contains information about the
+	 *         create operation
+	 */
+	@Create
+	public MethodOutcome createFHIRPatient(@ResourceParam Encounter encounter) {
+		encounter = encounterResource.createFHIREncounter(encounter);
+		MethodOutcome retVal = new MethodOutcome();
+		retVal.setId(new IdDt(FHIRConstants.ENCOUNTER, encounter.getId().getIdPart()));
+		OperationOutcome outcome = new OperationOutcome();
+		outcome.addIssue().setDetails("Encounter is successfully created");
+		retVal.setOperationOutcome(outcome);
+		return retVal;
 	}
 }
