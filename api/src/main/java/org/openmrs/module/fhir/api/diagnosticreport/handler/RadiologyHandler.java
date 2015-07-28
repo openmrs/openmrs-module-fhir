@@ -28,8 +28,6 @@ import org.openmrs.Provider;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.ObsService;
-import org.openmrs.module.fhir.api.PatientService;
-import org.openmrs.module.fhir.api.PractitionerService;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRObsUtil;
@@ -75,24 +73,32 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 	 */
 	@Override
 	public List<DiagnosticReport> getFHIRDiagnosticReportBySubjectName(String name) {
-		log.debug("In Radiology Handler : getFHIRDiagnosticReportBySubjectName : " + name);
-		ArrayList<DiagnosticReport> diagnosticReports = new ArrayList<DiagnosticReport>();
+		if (log.isDebugEnabled()) {
+			log.debug("In Radiology Handler : getFHIRDiagnosticReportBySubjectName : " + name);
+		}
+		List<DiagnosticReport> diagnosticReports = new ArrayList<DiagnosticReport>();
 
 		String serverBase = FHIRUtils.getDiagnosticReportRadiologyBaseServerURL();
 		ICriterion<ReferenceClientParam> diagnosticReportBySubject = DiagnosticReport.SUBJECT.hasChainedProperty(
 				Patient.GIVEN.matches().value(name));
 		ICriterion<TokenClientParam> diagnosticReportByService = DiagnosticReport.SERVICE.exactly().code("RAD");
-		Bundle bundle = FHIRRESTfulGenericClient.search(serverBase, DiagnosticReport.class, diagnosticReportBySubject,
+		Bundle bundle = FHIRRESTfulGenericClient.searchWhereReferenceAndToken(serverBase, DiagnosticReport.class,
+				diagnosticReportBySubject,
 				diagnosticReportByService);
-		log.debug("Bundle size : " + bundle.size());
+		if (log.isDebugEnabled()) {
+			log.debug("Bundle size : " + bundle.size());
+		}
 
 		for (BundleEntry entry : bundle.getEntries()) {
 			IResource resource = entry.getResource();
-			log.debug("Resource Type : " + resource.getResourceName());
+			if (log.isDebugEnabled()) {
+				log.debug("Resource Type : " + resource.getResourceName());
+			}
 			if (resource.getResourceName().equals("DiagnosticReport")) {
 				DiagnosticReport diagnosticReport = (DiagnosticReport) resource;
 				/*diagnosticReport = this.saveFHIRDiagnosticReport(diagnosticReport);
 				diagnosticReport = this.getFHIRDiagnosticReportById(diagnosticReport.getId().getIdPart());*/
+
 				diagnosticReports.add(diagnosticReport);
 			}
 		}
@@ -101,7 +107,9 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 	}
 
 	private DiagnosticReport getFHIRDiagnosticReport(Encounter omrsDiagnosticReport) {
-		log.debug("Laboratory Handler : GetFHIRDiagnosticReport");
+		if (log.isDebugEnabled()) {
+			log.debug("Laboratory Handler : GetFHIRDiagnosticReport");
+		}
 		DiagnosticReport diagnosticReport = new DiagnosticReport();
 
 		// Separate Obs into different field based on Concept Id
@@ -215,10 +223,11 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 
 	@Override
 	public DiagnosticReport saveFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
-		log.debug("Radiology Handler : SaveFHIRDiagnosticReport");
+		if (log.isDebugEnabled()) {
+			log.debug("Radiology Handler : SaveFHIRDiagnosticReport");
+		}
 		EncounterService encounterService = Context.getEncounterService();
 		Encounter omrsDiagnosticReport = new Encounter();
-		Set<Obs> obsList = new HashSet<Obs>();
 
 		// Set `Name` as a Obs
 		// Set `Status` as a Obs
@@ -239,7 +248,6 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 			// Retrieve Patient
 			String serverBase = FHIRUtils.getDiagnosticReportRadiologyBaseServerURL();
 			Patient patient = FHIRRESTfulGenericClient.readPatientById(serverBase, patientID);
-			System.out.println("Patient " + patient.getId().getIdPart());
 
 			List<String> errors = new ArrayList<String>();
 			omrsPatient = FHIRPatientUtil.generateOmrsPatient(patient, errors);
@@ -262,7 +270,6 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 			// Retrieve Practitioner
 			String serverBase = FHIRUtils.getDiagnosticReportRadiologyBaseServerURL();
 			Practitioner practitioner = FHIRRESTfulGenericClient.readPractitionerById(serverBase, practitionerID);
-			System.out.println("Practitioner " + practitioner.getId().getIdPart());
 			//TODO: Provider omrsProvider = FHIRPractitionerUtil.generateOpenMRSPractitioner();
 			Provider omrsProvider = Context.getProviderService().getProviderByUuid(practitionerID);
 
@@ -335,8 +342,7 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 			if (attachment.getCreation() == null) {
 				attachment.setCreation(diagnosticReport.getIssuedElement());
 			}
-			Obs complexObs = saveComplexData(omrsDiagnosticReport, conceptId, omrsPatient, attachment);
-			obsList.add(complexObs);
+			saveComplexData(omrsDiagnosticReport, conceptId, omrsPatient, attachment);
 		}
 		/**
 		 * TODO: Not working properly. Need to test it. omrsDiagnosticReport.setObs(obsList);

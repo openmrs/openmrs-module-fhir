@@ -49,7 +49,9 @@ public class DefaultDiagnosticReportHandler extends AbstractHandler implements D
 
 	@Override
 	public DiagnosticReport saveFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
-		System.out.println("Laboratory Handler : diSave FHIR Diagnostic Report");
+		if (log.isDebugEnabled()) {
+			log.debug("Laboratory Handler : Save FHIR Diagnostic Report");
+		}
 		Encounter omrsDiagnosticReport = new Encounter();
 
 		//Set ID if available
