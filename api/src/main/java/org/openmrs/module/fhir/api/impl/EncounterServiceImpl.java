@@ -33,12 +33,13 @@ import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 import org.openmrs.module.fhir.api.util.FHIRPractitionerUtil;
 import org.openmrs.module.fhir.api.util.OMRSFHIRVisitUtil;
 
+import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Composition;
 import ca.uhn.fhir.model.dstu2.resource.Encounter;
+import ca.uhn.fhir.model.dstu2.resource.Encounter.Hospitalization;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
-import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
@@ -299,15 +300,27 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 	public Encounter createFHIREncounter(Encounter encounter) {
 		List<String> errors = new ArrayList<String>();
 		org.openmrs.Encounter encounterToCreate = FHIREncounterUtil.generateOMRSEncounter(encounter, errors);
-		if (!errors.isEmpty()) {
-			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
-			for (int i = 0; i < errors.size(); i++) {
-				errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
+		ResourceReferenceDt encounterref = encounter.getPartOf();
+		if (encounterref != null) {
+			IdDt ref = encounterref.getReference();
+			String encounterrefuuid = ref.getIdPart();
+			Visit visit = Context.getVisitService().getVisitByUuid(encounterrefuuid);
+			if (visit == null) {
+				errors.add("No Encounters found for :" + encounterrefuuid);
+			} else {
+				encounterToCreate.setVisit(visit); // this is an encounter of an admitted patient
 			}
-			throw new UnprocessableEntityException(errorMessage.toString());
+		} else {			
+			Hospitalization hopitalization = encounter.getHospitalization();
+			if(hopitalization!=null){
+				//it can be a visit
+				//create visit
+				//return				
+			}
+			// else this will create an independent encounter
 		}
 		encounterToCreate = Context.getEncounterService().saveEncounter(encounterToCreate);
-		return FHIREncounterUtil.generateEncounter(encounterToCreate); // validate the resourc in util
+		return FHIREncounterUtil.generateEncounter(encounterToCreate);
 	}
 
 }

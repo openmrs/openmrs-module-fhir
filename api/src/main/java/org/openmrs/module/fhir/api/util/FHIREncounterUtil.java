@@ -33,6 +33,7 @@ import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Composition;
 import ca.uhn.fhir.model.dstu2.resource.Composition.Section;
 import ca.uhn.fhir.model.dstu2.resource.Encounter;
+import ca.uhn.fhir.model.dstu2.resource.Encounter.Location;
 import ca.uhn.fhir.model.dstu2.resource.Encounter.Participant;
 import ca.uhn.fhir.model.dstu2.valueset.CompositionStatusEnum;
 import ca.uhn.fhir.model.dstu2.valueset.EncounterClassEnum;
@@ -267,7 +268,8 @@ public class FHIREncounterUtil {
 			ResourceReferenceDt patientref = encounter.getPatient();
 			IdDt id = patientref.getReference();
 			String patientUuid = id.getIdPart();
-			org.openmrs.Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
+			org.openmrs.Patient patient = Context.getPatientService().getPatientByUuid(
+			    "4640b84f-0cfd-4cd3-9819-7c5f2c847ec9");
 			if (patient == null) {
 				errors.add("There is no patient for the given uuid"); // remove to constants
 			} else {
@@ -296,6 +298,17 @@ public class FHIREncounterUtil {
 			org.openmrs.Provider provider = Context.getProviderService().getProviderByUuid(participantUuid);
 			EncounterRole role = Context.getEncounterService().getEncounterRole(1); // hard coded
 			omrsEncounter.setProvider(role, provider);
+		}
+		List<Location> locationList = encounter.getLocation();
+		if (locationList != null && !locationList.isEmpty()) {
+			Location location = locationList.get(0);
+			ResourceReferenceDt locationref = location.getLocation();
+			IdDt locRef = locationref.getReference();
+			String locationUuid = locRef.getIdPart();
+			org.openmrs.Location omrsLocation = Context.getLocationService().getLocationByUuid(locationUuid);
+			if (omrsLocation != null) {
+				omrsEncounter.setLocation(omrsLocation);
+			}
 		}
 		return omrsEncounter;
 	}
