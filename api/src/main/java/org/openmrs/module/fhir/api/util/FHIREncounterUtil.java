@@ -20,9 +20,9 @@ import java.util.List;
 import org.openmrs.Concept;
 import org.openmrs.EncounterProvider;
 import org.openmrs.EncounterRole;
-import org.openmrs.EncounterType;
 import org.openmrs.Obs;
 import org.openmrs.PersonName;
+import org.openmrs.VisitType;
 import org.openmrs.api.context.Context;
 
 import ca.uhn.fhir.model.dstu2.composite.BoundCodeableConceptDt;
@@ -268,10 +268,9 @@ public class FHIREncounterUtil {
 			ResourceReferenceDt patientref = encounter.getPatient();
 			IdDt id = patientref.getReference();
 			String patientUuid = id.getIdPart();
-			org.openmrs.Patient patient = Context.getPatientService().getPatientByUuid(
-			    "4640b84f-0cfd-4cd3-9819-7c5f2c847ec9");
+			org.openmrs.Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
 			if (patient == null) {
-				errors.add("There is no patient for the given uuid"); // remove to constants
+				errors.add("There is no patient for the given uuid " + patientUuid); // remove to constants
 			} else {
 				omrsEncounter.setPatient(patient);
 			}
@@ -280,15 +279,7 @@ public class FHIREncounterUtil {
 		Date start = period.getStart();
 		omrsEncounter.setEncounterDatetime(start);
 		
-		List<BoundCodeableConceptDt<EncounterTypeEnum>> types = encounter.getType();
-		for (BoundCodeableConceptDt<EncounterTypeEnum> type : types) {
-			List<CodingDt> typeCodings = type.getCoding();
-			CodingDt code = typeCodings.get(0);//  check null
-			String value = code.getCode();
-			int typeId = Integer.parseInt(value);
-			EncounterType encounterType = Context.getEncounterService().getEncounterType(typeId);
-			omrsEncounter.setEncounterType(encounterType);
-		}
+		//
 		
 		List<Participant> participants = encounter.getParticipant();
 		for (Participant participant : participants) {
@@ -311,5 +302,45 @@ public class FHIREncounterUtil {
 			}
 		}
 		return omrsEncounter;
+	}
+	
+	public static org.openmrs.Visit generateOMRSVisit(Encounter encounter, List<String> errors) {
+		org.openmrs.Visit visit = new org.openmrs.Visit();
+		if (encounter.getPatient() != null) {
+			ResourceReferenceDt patientref = encounter.getPatient();
+			IdDt id = patientref.getReference();
+			String patientUuid = id.getIdPart();
+			org.openmrs.Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
+			if (patient == null) {
+				errors.add("There is no patient for the given uuid " + patientUuid); // remove to constants
+			} else {
+				visit.setPatient(patient);
+			}
+		}
+		List<BoundCodeableConceptDt<EncounterTypeEnum>> types = encounter.getType();
+		for (BoundCodeableConceptDt<EncounterTypeEnum> type : types) {
+			List<CodingDt> typeCodings = type.getCoding();
+			VisitType visitType = null;
+			if (typeCodings != null && !typeCodings.isEmpty()) {
+				CodingDt code = typeCodings.get(0);
+				String typeCode = code.getCode();
+				int typeId = Integer.parseInt(typeCode);
+				visitType = Context.getVisitService().getVisitType(typeId);
+			}
+
+			if (visitType == null) {
+				errors.add("There is no Visit Type for the given type id");
+			}
+			visit.setVisitType(visitType);
+		}
+		
+		PeriodDt period = encounter.getPeriod();
+		Date start = period.getStart();
+		if (start == null) {
+			errors.add("Start date cannot be empty");
+		}
+		visit.setStartDatetime(start);
+		visit.setStopDatetime(period.getEnd());
+		return visit;
 	}
 }

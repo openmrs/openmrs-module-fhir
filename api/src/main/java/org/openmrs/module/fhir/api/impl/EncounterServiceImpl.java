@@ -19,6 +19,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.EncounterProvider;
+import org.openmrs.EncounterType;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Visit;
@@ -33,13 +34,17 @@ import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 import org.openmrs.module.fhir.api.util.FHIRPractitionerUtil;
 import org.openmrs.module.fhir.api.util.OMRSFHIRVisitUtil;
 
+import ca.uhn.fhir.model.dstu2.composite.BoundCodeableConceptDt;
+import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Composition;
 import ca.uhn.fhir.model.dstu2.resource.Encounter;
 import ca.uhn.fhir.model.dstu2.resource.Encounter.Hospitalization;
+import ca.uhn.fhir.model.dstu2.valueset.EncounterTypeEnum;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
@@ -301,7 +306,7 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 		List<String> errors = new ArrayList<String>();
 		org.openmrs.Encounter encounterToCreate = FHIREncounterUtil.generateOMRSEncounter(encounter, errors);
 		ResourceReferenceDt encounterref = encounter.getPartOf();
-		if (encounterref != null) {
+		if (encounterref != null && !encounterref.isEmpty()) { // if partOf is not empty, This Encounter should be created under an Visit
 			IdDt ref = encounterref.getReference();
 			String encounterrefuuid = ref.getIdPart();
 			Visit visit = Context.getVisitService().getVisitByUuid(encounterrefuuid);
@@ -310,16 +315,51 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 			} else {
 				encounterToCreate.setVisit(visit); // this is an encounter of an admitted patient
 			}
-		} else {			
+		} else {
 			Hospitalization hopitalization = encounter.getHospitalization();
-			if(hopitalization!=null){
-				//it can be a visit
-				//create visit
-				//return				
+			if (hopitalization != null && !hopitalization.isEmpty()) { // if hopitalization is not empty, this should be a Visit.
+				Visit v = FHIREncounterUtil.generateOMRSVisit(encounter, errors);
+				if (!errors.isEmpty()) {
+					StringBuilder errorMessage = new StringBuilder(
+					        "The request cannot be processed due to the following issues \n");
+					for (int i = 0; i < errors.size(); i++) {
+						errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
+					}
+					throw new UnprocessableEntityException(errorMessage.toString());
+				}
+				Context.getVisitService().saveVisit(v);
+				return encounter;
 			}
-			// else this will create an independent encounter
+			// else this will create an independent encounter as below
 		}
-		encounterToCreate = Context.getEncounterService().saveEncounter(encounterToCreate);
+
+		List<BoundCodeableConceptDt<EncounterTypeEnum>> types = encounter.getType();
+		for (BoundCodeableConceptDt<EncounterTypeEnum> type : types) {
+			List<CodingDt> typeCodings = type.getCoding();
+			EncounterType encounterType = null;
+			if (typeCodings != null && !typeCodings.isEmpty()) {
+				CodingDt code = typeCodings.get(0);
+				String value = code.getCode();
+				int typeId = Integer.parseInt(value);
+				encounterType = Context.getEncounterService().getEncounterType(typeId);
+			}
+			if (encounterType == null) {
+				errors.add("No EncounterType found for the type id");
+			}
+			encounterToCreate.setEncounterType(encounterType);
+		}
+		if (!errors.isEmpty()) {
+			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
+			for (int i = 0; i < errors.size(); i++) {
+				errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
+			}
+			throw new UnprocessableEntityException(errorMessage.toString());
+		}
+		try {
+			encounterToCreate = Context.getEncounterService().saveEncounter(encounterToCreate);
+		} catch (Exception e) {
+			throw new UnprocessableEntityException(e.getMessage());
+		}
 		return FHIREncounterUtil.generateEncounter(encounterToCreate);
 	}
 

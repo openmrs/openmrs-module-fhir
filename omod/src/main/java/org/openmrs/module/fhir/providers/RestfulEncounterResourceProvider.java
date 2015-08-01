@@ -147,7 +147,7 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	public MethodOutcome createFHIRPatient(@ResourceParam Encounter encounter) {
 		encounter = encounterResource.createFHIREncounter(encounter);
 		MethodOutcome retVal = new MethodOutcome();
-		retVal.setId(new IdDt(FHIRConstants.ENCOUNTER, encounter.getId().getIdPart()));
+		retVal.setId(new IdDt(FHIRConstants.ENCOUNTER, ""));//encounter.getId().getIdPart())
 		OperationOutcome outcome = new OperationOutcome();
 		outcome.addIssue().setDetails("Encounter is successfully created");
 		retVal.setOperationOutcome(outcome);
