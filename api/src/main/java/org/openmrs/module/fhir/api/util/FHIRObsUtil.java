@@ -369,11 +369,13 @@ public class FHIRObsUtil {
 			}
 		}
 		
-		if (observation.getEncounter() != null) {
+		if (observation.getEncounter() != null && !observation.getEncounter().isEmpty()) {
 			ResourceReferenceDt encounter = observation.getEncounter();
 			IdDt ref = encounter.getReference();
-			String encounterUuid = ref.getIdPart();
-			obs.setEncounter(Context.getEncounterService().getEncounterByUuid(encounterUuid));
+			if (ref != null) {
+				String encounterUuid = ref.getIdPart();
+				obs.setEncounter(Context.getEncounterService().getEncounterByUuid(encounterUuid));
+			}
 		}
 		return obs;
 	}
