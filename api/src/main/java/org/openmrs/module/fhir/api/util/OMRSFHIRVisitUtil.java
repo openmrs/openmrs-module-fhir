@@ -13,6 +13,12 @@
  */
 package org.openmrs.module.fhir.api.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openmrs.PersonName;
+import org.openmrs.Visit;
+
 import ca.uhn.fhir.model.dstu2.composite.PeriodDt;
 import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu2.resource.Encounter;
@@ -20,17 +26,11 @@ import ca.uhn.fhir.model.dstu2.valueset.EncounterClassEnum;
 import ca.uhn.fhir.model.dstu2.valueset.EncounterStateEnum;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
-import org.openmrs.PersonName;
-import org.openmrs.Visit;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class OMRSFHIRVisitUtil {
 
 	public static Encounter generateEncounter(Visit omrsVisit) {
 		Encounter encounter = new Encounter();
-
 		IdDt uuid = new IdDt();
 		uuid.setValue(omrsVisit.getUuid());
 		encounter.setId(uuid);

@@ -51,12 +51,11 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	}
 
 	/**
-	 * The "@Read" annotation indicates that this method supports the
-	 * read operation. Read operations should return a single resource
-	 * instance.
+	 * The "@Read" annotation indicates that this method supports the read operation. Read
+	 * operations should return a single resource instance.
 	 *
-	 * @param theId The read operation takes one parameter, which must be of type
-	 *              IdDt and must be annotated with the "@Read.IdParam" annotation.
+	 * @param theId The read operation takes one parameter, which must be of type IdDt and must be
+	 *            annotated with the "@Read.IdParam" annotation.
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read()
@@ -82,10 +81,7 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	 * @param identifier object containing the patient identifier
 	 */
 	@Search()
-	public List<Encounter> searchEncountersByPatientIdentifier(
-			@RequiredParam(name = Encounter.SP_PATIENT, chainWhitelist = { Patient.SP_IDENTIFIER }) ReferenceParam
-					identifier
-	) {
+	public List<Encounter> searchEncountersByPatientIdentifier(@RequiredParam(name = Encounter.SP_PATIENT, chainWhitelist = { Patient.SP_IDENTIFIER }) ReferenceParam identifier) {
 		return encounterResource.searchEncountersByPatientIdentifier(identifier);
 	}
 
@@ -93,12 +89,11 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	 * Search encounters by patient identifier and encounter part of
 	 *
 	 * @param patientIdentifier the patient identifier
-	 * @param partOf            the top level visit
+	 * @param partOf the top level visit
 	 */
 	@Search()
-	public List<Encounter> searchEncountersByPatientIdentifierAndPartOf(
-			@RequiredParam(name = Encounter.SP_PATIENT, chainWhitelist = { Patient.SP_IDENTIFIER }) ReferenceParam
-					patientIdentifier, @RequiredParam(name = Encounter.SP_PART_OF) ReferenceParam partOf) {
+	public List<Encounter> searchEncountersByPatientIdentifierAndPartOf(@RequiredParam(name = Encounter.SP_PATIENT, chainWhitelist = { Patient.SP_IDENTIFIER }) ReferenceParam patientIdentifier,
+	                                                                    @RequiredParam(name = Encounter.SP_PART_OF) ReferenceParam partOf) {
 		return encounterResource.searchEncountersByPatientIdentifierAndPartOf(patientIdentifier, partOf);
 	}
 
@@ -106,12 +101,11 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	 * Search encounters by patient identifier and encounter part of
 	 *
 	 * @param encounterId the encounter id
-	 * @param partOf      the top level visit
+	 * @param partOf the top level visit
 	 */
 	@Search()
-	public List<Encounter> searchEncountersByIdAndPartOf(
-			@RequiredParam(name = Encounter.SP_RES_ID) TokenParam
-					encounterId, @RequiredParam(name = Encounter.SP_PART_OF) ReferenceParam partOf) {
+	public List<Encounter> searchEncountersByIdAndPartOf(@RequiredParam(name = Encounter.SP_RES_ID) TokenParam encounterId,
+	                                                     @RequiredParam(name = Encounter.SP_PART_OF) ReferenceParam partOf) {
 		return encounterResource.searchEncountersByIdAndPartOf(encounterId, partOf);
 	}
 
@@ -147,7 +141,7 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	public MethodOutcome createFHIRPatient(@ResourceParam Encounter encounter) {
 		encounter = encounterResource.createFHIREncounter(encounter);
 		MethodOutcome retVal = new MethodOutcome();
-		retVal.setId(new IdDt(FHIRConstants.ENCOUNTER, ""));//encounter.getId().getIdPart())
+		retVal.setId(new IdDt(FHIRConstants.ENCOUNTER, encounter.getId().getIdPart()));
 		OperationOutcome outcome = new OperationOutcome();
 		outcome.addIssue().setDetails("Encounter is successfully created");
 		retVal.setOperationOutcome(outcome);
