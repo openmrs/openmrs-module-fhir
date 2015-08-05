@@ -155,13 +155,16 @@ public class FHIREncounterUtil {
 				}
 				ResourceReferenceDt providerReference = new ResourceReferenceDt();
 				StringBuilder providerNameDisplay = new StringBuilder();
-				providerNameDisplay.append(provider.getProvider().getName());
-				providerNameDisplay.append("(");
-				providerNameDisplay.append(FHIRConstants.IDENTIFIER);
-				providerNameDisplay.append(":");
-				providerNameDisplay.append(provider.getProvider().getIdentifier());
-				providerNameDisplay.append(")");
-				providerReference.setDisplay(providerNameDisplay.toString());
+				if (provider.getProvider() != null) {
+					providerNameDisplay.append(provider.getProvider().getName());
+					providerNameDisplay.append("(");
+					providerNameDisplay.append(FHIRConstants.IDENTIFIER);
+					providerNameDisplay.append(":");
+					providerNameDisplay.append(provider.getProvider().getIdentifier());
+					providerNameDisplay.append(")");
+					providerReference.setDisplay(providerNameDisplay.toString());
+				}
+
 				IdDt providerRef = new IdDt();
 				String providerUri = FHIRConstants.PRACTITIONER + "/" + provider.getUuid();
 				providerRef.setValue(providerUri);

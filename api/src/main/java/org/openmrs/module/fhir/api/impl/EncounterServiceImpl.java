@@ -338,12 +338,12 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 			}
 			throw new UnprocessableEntityException(errorMessage.toString());
 		}
-		if (visit != null) {
-			visit = Context.getVisitService().saveVisit(visit);
-			return OMRSFHIRVisitUtil.generateEncounter(visit);
-		} else {
+		if (encounterref != null && !encounterref.isEmpty()) {
 			encounterToCreate = Context.getEncounterService().saveEncounter(encounterToCreate);
 			return FHIREncounterUtil.generateEncounter(encounterToCreate);
+		} else {
+			visit = Context.getVisitService().saveVisit(visit);
+			return OMRSFHIRVisitUtil.generateEncounter(visit);
 		}
 	}
 }
