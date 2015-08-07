@@ -13,11 +13,10 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import ca.uhn.fhir.model.dstu2.resource.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.Composition;
-import ca.uhn.fhir.model.dstu2.resource.Encounter;
-import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.EncounterProvider;
@@ -35,8 +34,13 @@ import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 import org.openmrs.module.fhir.api.util.FHIRPractitionerUtil;
 import org.openmrs.module.fhir.api.util.OMRSFHIRVisitUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
+import ca.uhn.fhir.model.dstu2.resource.Bundle;
+import ca.uhn.fhir.model.dstu2.resource.Composition;
+import ca.uhn.fhir.model.dstu2.resource.Encounter;
+import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
@@ -102,8 +106,8 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 	public List<Encounter> searchEncountersByPatientIdentifier(String identifier) {
 		org.openmrs.api.PatientService patientService = Context.getPatientService();
 		List<PatientIdentifierType> allPatientIdentifierTypes = patientService.getAllPatientIdentifierTypes();
-		List<org.openmrs.Patient> patientList = patientService.getPatients(null, identifier, allPatientIdentifierTypes,
-				true);
+		List<org.openmrs.Patient> patientList = patientService
+		        .getPatients(null, identifier, allPatientIdentifierTypes, true);
 		List<Encounter> fhirEncountersList = new ArrayList<Encounter>();
 
 		for (Patient patient : patientList) {
@@ -167,8 +171,8 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.EncounterService#getEncounterOperationsById(String, ca.uhn.fhir.model.dstu2
-	 * .resource.Bundle, boolean)
+	 * @see org.openmrs.module.fhir.api.EncounterService#getEncounterOperationsById(String,
+	 *      ca.uhn.fhir.model.dstu2 .resource.Bundle, boolean)
 	 */
 	public Bundle getEncounterOperationsById(String encounterId, Bundle bundle, boolean includePatient) {
 		org.openmrs.Encounter omsrEncounter = null;
@@ -222,15 +226,15 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.EncounterService#searchEncountersByPatientIdentifierAndPartOf(String, String)
+	 * @see org.openmrs.module.fhir.api.EncounterService#searchEncountersByPatientIdentifierAndPartOf(String,
+	 *      String)
 	 */
 	@Override
 	public List<Encounter> searchEncountersByPatientIdentifierAndPartOf(String patientIdentifier, String partOf) {
 		org.openmrs.api.PatientService patientService = Context.getPatientService();
 		List<PatientIdentifierType> allPatientIdentifierTypes = patientService.getAllPatientIdentifierTypes();
 		List<org.openmrs.Patient> patientList = patientService.getPatients(null, patientIdentifier,
-				allPatientIdentifierTypes,
-				true);
+		    allPatientIdentifierTypes, true);
 		List<Encounter> fhirEncountersList = new ArrayList<Encounter>();
 
 		for (Patient patient : patientList) {
@@ -260,7 +264,8 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.EncounterService#searchEncountersByEncounterIdAndPartOf(String, String)
+	 * @see org.openmrs.module.fhir.api.EncounterService#searchEncountersByEncounterIdAndPartOf(String,
+	 *      String)
 	 */
 	@Override
 	public List<Encounter> searchEncountersByEncounterIdAndPartOf(String encounterId, String partOf) {
@@ -287,5 +292,58 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 			}
 		}
 		return fhirEncountersList;
+	}
+	
+	/**
+	 * @see org.openmrs.module.fhir.api.EncounterService#createFHIREncounter(Encounter)
+	 */
+	@Override
+	public Encounter createFHIREncounter(Encounter encounter) {
+		List<String> errors = new ArrayList<String>();
+		org.openmrs.Encounter encounterToCreate = null;
+		ResourceReferenceDt encounterRef = encounter.getPartOf();
+		Visit visit = null;
+		if (encounterRef != null && !encounterRef.isEmpty()) { // if partOf is not empty, This Encounter should be created under an Visit
+			encounterToCreate = FHIREncounterUtil.generateOMRSEncounter(encounter, errors);
+			IdDt ref = encounterRef.getReference();
+			String encounterRefUuid = ref.getIdPart();
+			visit = Context.getVisitService().getVisitByUuid(encounterRefUuid);
+			if (visit == null) {
+				errors.add("No Encounters found for :" + encounterRefUuid);
+			} else {
+				encounterToCreate.setVisit(visit); // this is an encounter of an admitted patient
+			}
+		} else {
+			org.openmrs.Patient patient = null;
+			if (encounter.getPatient() != null) {
+				ResourceReferenceDt patientRef = encounter.getPatient();
+				IdDt id = patientRef.getReference();
+				String patientUuid = id.getIdPart();
+				patient = Context.getPatientService().getPatientByUuid(patientUuid);
+				if (patient == null) {
+					errors.add("There is no patient for the given uuid " + patientUuid); // remove to constants
+				}
+			}
+			List<Visit> activeVisits = Context.getVisitService().getActiveVisitsByPatient(patient);
+			for (Visit activeVisit : activeVisits) {
+				activeVisit.setStopDatetime(new Date());
+			}
+			visit = FHIREncounterUtil.generateOMRSVisit(encounter, errors);
+			
+		}
+		if (!errors.isEmpty()) {
+			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
+			for (int i = 0; i < errors.size(); i++) {
+				errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
+			}
+			throw new UnprocessableEntityException(errorMessage.toString());
+		}
+		if (encounterRef != null && !encounterRef.isEmpty()) {
+			encounterToCreate = Context.getEncounterService().saveEncounter(encounterToCreate);
+			return FHIREncounterUtil.generateEncounter(encounterToCreate);
+		} else {
+			visit = Context.getVisitService().saveVisit(visit);
+			return OMRSFHIRVisitUtil.generateEncounter(visit);
+		}
 	}
 }

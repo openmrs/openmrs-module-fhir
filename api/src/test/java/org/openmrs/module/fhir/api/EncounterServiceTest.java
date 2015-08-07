@@ -13,28 +13,37 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu2.resource.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.Composition;
-import ca.uhn.fhir.model.dstu2.resource.Encounter;
-import org.junit.Before;
-import org.junit.Test;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.util.FHIRConstants;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
-
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.openmrs.Visit;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.test.BaseModuleContextSensitiveTest;
+
+import ca.uhn.fhir.model.dstu2.composite.BoundCodeableConceptDt;
+import ca.uhn.fhir.model.dstu2.composite.CodingDt;
+import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
+import ca.uhn.fhir.model.dstu2.resource.Bundle;
+import ca.uhn.fhir.model.dstu2.resource.Composition;
+import ca.uhn.fhir.model.dstu2.resource.Encounter;
+import ca.uhn.fhir.model.dstu2.valueset.EncounterTypeEnum;
+import ca.uhn.fhir.model.primitive.CodeDt;
+import ca.uhn.fhir.model.primitive.IdDt;
+
 public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 
 	protected static final String ENCOUNTER_INITIAL_DATA_XML = "org/openmrs/api/include/EncounterServiceTest-initialData"
-	                                                           + ".xml";
-	protected static final String VISIT_INITIAL_DATA_XML =
-			"org/openmrs/api/include/VisitServiceTest-includeVisitsAndTypeToAutoClose.xml";
+	        + ".xml";
+	
+	protected static final String VISIT_INITIAL_DATA_XML = "org/openmrs/api/include/VisitServiceTest-includeVisitsAndTypeToAutoClose.xml";
 
 	public EncounterService getService() {
 		return Context.getService(EncounterService.class);
@@ -52,6 +61,49 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 		Encounter fhirEncounter = getService().getEncounter(encounterUuid);
 		assertNotNull(fhirEncounter);
 		assertEquals(fhirEncounter.getId().toString(), encounterUuid);
+	}
+	
+	@Test
+	public void FHIREncounter_shouldCreateEncounter() {
+		String encounterUuid = "430bbb70-6a9c-4e1e-badb-9d1034b1b5e9";
+		Encounter fhirEncounter = getService().getEncounter(encounterUuid);
+		
+		ResourceReferenceDt visitRef = new ResourceReferenceDt();
+		visitRef.setDisplay("test");
+		IdDt visitRefId = new IdDt();
+		String visitRefUri = FHIRConstants.ENCOUNTER + "/" + "7fffd6b9-0970-4967-88c7-0b7b50f12ab9";
+		visitRefId.setValue(visitRefUri);
+		visitRef.setReference(visitRefId);
+		fhirEncounter.setPartOf(visitRef);
+
+		fhirEncounter = getService().createFHIREncounter(fhirEncounter);
+		assertNotNull(fhirEncounter);
+		assertEquals(fhirEncounter.getPeriod().getStart().toString(), "2005-01-01 00:00:00.0");
+		assertEquals(fhirEncounter.getLocation().get(0).getLocation().getReference().getIdPart(),
+		    "c36006e5-9fbb-4f20-866b-0ece245615a1");
+	}
+	
+	@Test
+	public void FHIREncounter_shouldCreateVisit() {
+		String encounterUuid = "430bbb70-6a9c-4e1e-badb-9d1034b1b5e9";
+		Encounter fhirEncounter = getService().getEncounter(encounterUuid);
+		BoundCodeableConceptDt<EncounterTypeEnum> typeAsCode = new BoundCodeableConceptDt<EncounterTypeEnum>(null);
+		List<CodingDt> typeCoding = new ArrayList<CodingDt>();
+		CodingDt code = new CodingDt();
+		CodeDt codeValue = new CodeDt();
+		codeValue.setValue("1");
+		code.setCode(codeValue);
+		typeCoding.add(code);
+		typeAsCode.setCoding(typeCoding);
+		List<BoundCodeableConceptDt<EncounterTypeEnum>> typeList = new ArrayList<BoundCodeableConceptDt<EncounterTypeEnum>>();
+		typeList.add(typeAsCode);
+		fhirEncounter.setType(typeList);
+		fhirEncounter = getService().createFHIREncounter(fhirEncounter);
+		Visit visi = Context.getVisitService().getVisitByUuid(fhirEncounter.getId().getIdPart());
+		assertEquals(visi.getUuid(), fhirEncounter.getId().getIdPart());
+		assertEquals(visi.getVisitType().getVisitTypeId().toString(), "1");
+		assertEquals(visi.getStartDatetime().toString(), "2005-01-01 00:00:00.0");
+		assertNotNull(visi);
 	}
 
 	@Test
@@ -141,7 +193,7 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 	public void searchEncounterByPatientIdentifierAndPartOfNone_shouldReturnsEncounterWithoutParentVisitOrVisit() {
 		String patientIdentifier = "1234";
 		List<Encounter> fhirEncounters = getService().searchEncountersByPatientIdentifierAndPartOf(patientIdentifier,
-				FHIRConstants.NONE);
+		    FHIRConstants.NONE);
 		assertNotNull(fhirEncounters);
 		assertEquals(8, fhirEncounters.size());
 	}
@@ -151,7 +203,7 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 		String patientIdentifier = "12345";
 		String visitUuid = "7fffd6b9-0970-4967-88c7-0b7b50f12ab9";
 		List<Encounter> fhirEncounters = getService().searchEncountersByPatientIdentifierAndPartOf(patientIdentifier,
-				visitUuid);
+		    visitUuid);
 		assertNotNull(fhirEncounters);
 		assertEquals(1, fhirEncounters.size());
 	}

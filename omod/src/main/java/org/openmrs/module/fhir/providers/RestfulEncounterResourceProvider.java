@@ -13,23 +13,29 @@
  */
 package org.openmrs.module.fhir.providers;
 
+import java.util.List;
+
+import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.module.fhir.resources.FHIREncounterResource;
+
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Encounter;
+import ca.uhn.fhir.model.dstu2.resource.OperationOutcome;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Operation;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
+import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.openmrs.module.fhir.resources.FHIREncounterResource;
-
-import java.util.List;
 
 public class RestfulEncounterResourceProvider implements IResourceProvider {
 
@@ -45,12 +51,11 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	}
 
 	/**
-	 * The "@Read" annotation indicates that this method supports the
-	 * read operation. Read operations should return a single resource
-	 * instance.
+	 * The "@Read" annotation indicates that this method supports the read operation. Read
+	 * operations should return a single resource instance.
 	 *
-	 * @param theId The read operation takes one parameter, which must be of type
-	 *              IdDt and must be annotated with the "@Read.IdParam" annotation.
+	 * @param theId The read operation takes one parameter, which must be of type IdDt and must be
+	 *            annotated with the "@Read.IdParam" annotation.
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read()
@@ -76,10 +81,7 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	 * @param identifier object containing the patient identifier
 	 */
 	@Search()
-	public List<Encounter> searchEncountersByPatientIdentifier(
-			@RequiredParam(name = Encounter.SP_PATIENT, chainWhitelist = { Patient.SP_IDENTIFIER }) ReferenceParam
-					identifier
-	) {
+	public List<Encounter> searchEncountersByPatientIdentifier(@RequiredParam(name = Encounter.SP_PATIENT, chainWhitelist = { Patient.SP_IDENTIFIER }) ReferenceParam identifier) {
 		return encounterResource.searchEncountersByPatientIdentifier(identifier);
 	}
 
@@ -87,12 +89,11 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	 * Search encounters by patient identifier and encounter part of
 	 *
 	 * @param patientIdentifier the patient identifier
-	 * @param partOf            the top level visit
+	 * @param partOf the top level visit
 	 */
 	@Search()
-	public List<Encounter> searchEncountersByPatientIdentifierAndPartOf(
-			@RequiredParam(name = Encounter.SP_PATIENT, chainWhitelist = { Patient.SP_IDENTIFIER }) ReferenceParam
-					patientIdentifier, @RequiredParam(name = Encounter.SP_PART_OF) ReferenceParam partOf) {
+	public List<Encounter> searchEncountersByPatientIdentifierAndPartOf(@RequiredParam(name = Encounter.SP_PATIENT, chainWhitelist = { Patient.SP_IDENTIFIER }) ReferenceParam patientIdentifier,
+	                                                                    @RequiredParam(name = Encounter.SP_PART_OF) ReferenceParam partOf) {
 		return encounterResource.searchEncountersByPatientIdentifierAndPartOf(patientIdentifier, partOf);
 	}
 
@@ -100,12 +101,11 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	 * Search encounters by patient identifier and encounter part of
 	 *
 	 * @param encounterId the encounter id
-	 * @param partOf      the top level visit
+	 * @param partOf the top level visit
 	 */
 	@Search()
-	public List<Encounter> searchEncountersByIdAndPartOf(
-			@RequiredParam(name = Encounter.SP_RES_ID) TokenParam
-					encounterId, @RequiredParam(name = Encounter.SP_PART_OF) ReferenceParam partOf) {
+	public List<Encounter> searchEncountersByIdAndPartOf(@RequiredParam(name = Encounter.SP_RES_ID) TokenParam encounterId,
+	                                                     @RequiredParam(name = Encounter.SP_PART_OF) ReferenceParam partOf) {
 		return encounterResource.searchEncountersByIdAndPartOf(encounterId, partOf);
 	}
 
@@ -128,5 +128,23 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	@Delete
 	public void deleteEncounter(@IdParam IdDt theId) {
 		encounterResource.deleteEncounter(theId);
+	}
+	
+	/**
+	 * Create Encounter
+	 *
+	 * @param encounter fhir encounter oobject
+	 * @return This method returns Meth codOutcome object, which contains information about the
+	 *         create operation
+	 */
+	@Create
+	public MethodOutcome createFHIRPatient(@ResourceParam Encounter encounter) {
+		encounter = encounterResource.createFHIREncounter(encounter);
+		MethodOutcome retVal = new MethodOutcome();
+		retVal.setId(new IdDt(FHIRConstants.ENCOUNTER, encounter.getId().getIdPart()));
+		OperationOutcome outcome = new OperationOutcome();
+		outcome.addIssue().setDetails("Encounter is successfully created");
+		retVal.setOperationOutcome(outcome);
+		return retVal;
 	}
 }

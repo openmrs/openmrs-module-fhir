@@ -13,6 +13,12 @@
  */
 package org.openmrs.module.fhir.resources;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.EncounterService;
+
 import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Encounter;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
@@ -20,11 +26,6 @@ import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.EncounterService;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class FHIREncounterResource extends Resource {
 
@@ -77,5 +78,10 @@ public class FHIREncounterResource extends Resource {
 	public void deleteEncounter(IdDt theId) {
 		EncounterService encounterService = Context.getService(EncounterService.class);
 		encounterService.deleteEncounter(theId.getIdPart());
+	}
+	
+	public Encounter createFHIREncounter(Encounter encounter) {
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		return encounterService.createFHIREncounter(encounter);
 	}
 }
