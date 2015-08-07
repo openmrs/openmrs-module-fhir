@@ -301,23 +301,23 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 	public Encounter createFHIREncounter(Encounter encounter) {
 		List<String> errors = new ArrayList<String>();
 		org.openmrs.Encounter encounterToCreate = null;
-		ResourceReferenceDt encounterref = encounter.getPartOf();
+		ResourceReferenceDt encounterRef = encounter.getPartOf();
 		Visit visit = null;
-		if (encounterref != null && !encounterref.isEmpty()) { // if partOf is not empty, This Encounter should be created under an Visit
+		if (encounterRef != null && !encounterRef.isEmpty()) { // if partOf is not empty, This Encounter should be created under an Visit
 			encounterToCreate = FHIREncounterUtil.generateOMRSEncounter(encounter, errors);
-			IdDt ref = encounterref.getReference();
-			String encounterrefuuid = ref.getIdPart();
-			visit = Context.getVisitService().getVisitByUuid(encounterrefuuid);
+			IdDt ref = encounterRef.getReference();
+			String encounterRefUuid = ref.getIdPart();
+			visit = Context.getVisitService().getVisitByUuid(encounterRefUuid);
 			if (visit == null) {
-				errors.add("No Encounters found for :" + encounterrefuuid);
+				errors.add("No Encounters found for :" + encounterRefUuid);
 			} else {
 				encounterToCreate.setVisit(visit); // this is an encounter of an admitted patient
 			}
 		} else {
 			org.openmrs.Patient patient = null;
 			if (encounter.getPatient() != null) {
-				ResourceReferenceDt patientref = encounter.getPatient();
-				IdDt id = patientref.getReference();
+				ResourceReferenceDt patientRef = encounter.getPatient();
+				IdDt id = patientRef.getReference();
 				String patientUuid = id.getIdPart();
 				patient = Context.getPatientService().getPatientByUuid(patientUuid);
 				if (patient == null) {
@@ -338,7 +338,7 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 			}
 			throw new UnprocessableEntityException(errorMessage.toString());
 		}
-		if (encounterref != null && !encounterref.isEmpty()) {
+		if (encounterRef != null && !encounterRef.isEmpty()) {
 			encounterToCreate = Context.getEncounterService().saveEncounter(encounterToCreate);
 			return FHIREncounterUtil.generateEncounter(encounterToCreate);
 		} else {
