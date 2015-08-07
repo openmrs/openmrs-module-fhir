@@ -211,7 +211,7 @@ public class FHIRPatientUtil {
 			PersonName personName = new PersonName();
 			if (humanNameDt.getUse() != null) {
 				String getUse = humanNameDt.getUse();
-				if (String.valueOf(NameUseEnum.USUAL).equalsIgnoreCase(getUse)) {
+				if (String.valueOf(NameUseEnum.OFFICIAL).equalsIgnoreCase(getUse)) {
 					preferedPresent = true;
 					personName.setPreferred(true);
 				}
