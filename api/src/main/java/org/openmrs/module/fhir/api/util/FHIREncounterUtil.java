@@ -13,27 +13,36 @@
  */
 package org.openmrs.module.fhir.api.util;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.openmrs.Concept;
+import org.openmrs.EncounterProvider;
+import org.openmrs.EncounterRole;
+import org.openmrs.Obs;
+import org.openmrs.PersonName;
+import org.openmrs.VisitType;
+import org.openmrs.api.context.Context;
+
+import ca.uhn.fhir.model.dstu2.composite.BoundCodeableConceptDt;
+import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.composite.PeriodDt;
 import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Composition;
 import ca.uhn.fhir.model.dstu2.resource.Composition.Section;
 import ca.uhn.fhir.model.dstu2.resource.Encounter;
+import ca.uhn.fhir.model.dstu2.resource.Encounter.Location;
+import ca.uhn.fhir.model.dstu2.resource.Encounter.Participant;
 import ca.uhn.fhir.model.dstu2.valueset.CompositionStatusEnum;
 import ca.uhn.fhir.model.dstu2.valueset.EncounterClassEnum;
 import ca.uhn.fhir.model.dstu2.valueset.EncounterStateEnum;
+import ca.uhn.fhir.model.dstu2.valueset.EncounterTypeEnum;
 import ca.uhn.fhir.model.dstu2.valueset.ParticipantTypeEnum;
 import ca.uhn.fhir.model.primitive.CodeDt;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
-import org.openmrs.Concept;
-import org.openmrs.EncounterProvider;
-import org.openmrs.Obs;
-import org.openmrs.PersonName;
-import org.openmrs.api.context.Context;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class FHIREncounterUtil {
 
@@ -146,13 +155,16 @@ public class FHIREncounterUtil {
 				}
 				ResourceReferenceDt providerReference = new ResourceReferenceDt();
 				StringBuilder providerNameDisplay = new StringBuilder();
-				providerNameDisplay.append(provider.getProvider().getName());
-				providerNameDisplay.append("(");
-				providerNameDisplay.append(FHIRConstants.IDENTIFIER);
-				providerNameDisplay.append(":");
-				providerNameDisplay.append(provider.getProvider().getIdentifier());
-				providerNameDisplay.append(")");
-				providerReference.setDisplay(providerNameDisplay.toString());
+				if (provider.getProvider() != null) {
+					providerNameDisplay.append(provider.getProvider().getName());
+					providerNameDisplay.append("(");
+					providerNameDisplay.append(FHIRConstants.IDENTIFIER);
+					providerNameDisplay.append(":");
+					providerNameDisplay.append(provider.getProvider().getIdentifier());
+					providerNameDisplay.append(")");
+					providerReference.setDisplay(providerNameDisplay.toString());
+				}
+
 				IdDt providerRef = new IdDt();
 				String providerUri = FHIRConstants.PRACTITIONER + "/" + provider.getUuid();
 				providerRef.setValue(providerUri);
@@ -225,12 +237,12 @@ public class FHIREncounterUtil {
 	}
 
 	/**
-	 * Filter which obs need to be added to the encounter everything operation. Because some openmrs installations store
-	 * allergies as obs. In that case we need to omit obs getting included in everything operation and return them in
-	 * patient everything operation
+	 * Filter which obs need to be added to the encounter everything operation. Because some openmrs
+	 * installations store allergies as obs. In that case we need to omit obs getting included in
+	 * everything operation and return them in patient everything operation
 	 *
 	 * @param encounter encounter containing obs
-	 * @param bundle    bundle containg encounter everything contents
+	 * @param bundle bundle containg encounter everything contents
 	 * @return bundle with only required obs
 	 */
 	public static void addFilteredObs(org.openmrs.Encounter encounter, Bundle bundle) {
@@ -251,5 +263,87 @@ public class FHIREncounterUtil {
 				observation.setResource(FHIRObsUtil.generateObs(obs));
 			}
 		}
+	}
+	
+	public static org.openmrs.Encounter generateOMRSEncounter(Encounter encounter, List<String> errors) {
+		org.openmrs.Encounter omrsEncounter = new org.openmrs.Encounter();
+		if (encounter.getPatient() != null) {
+			ResourceReferenceDt patientref = encounter.getPatient();
+			IdDt id = patientref.getReference();
+			String patientUuid = id.getIdPart();
+			org.openmrs.Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
+			if (patient == null) {
+				errors.add("There is no patient for the given uuid " + patientUuid); // remove to constants
+			} else {
+				omrsEncounter.setPatient(patient);
+			}
+		}
+		PeriodDt period = encounter.getPeriod();
+		Date start = period.getStart();
+		omrsEncounter.setEncounterDatetime(start);
+		
+		//
+		
+		List<Participant> participants = encounter.getParticipant();
+		for (Participant participant : participants) {
+			ResourceReferenceDt participantsref = participant.getIndividual();
+			IdDt id = participantsref.getReference();
+			String participantUuid = id.getIdPart();
+			org.openmrs.Provider provider = Context.getProviderService().getProviderByUuid(participantUuid);
+			EncounterRole role = Context.getEncounterService().getEncounterRole(1); // hard coded
+			omrsEncounter.setProvider(role, provider);
+		}
+		List<Location> locationList = encounter.getLocation();
+		if (locationList != null && !locationList.isEmpty()) {
+			Location location = locationList.get(0);
+			ResourceReferenceDt locationref = location.getLocation();
+			IdDt locRef = locationref.getReference();
+			String locationUuid = locRef.getIdPart();
+			org.openmrs.Location omrsLocation = Context.getLocationService().getLocationByUuid(locationUuid);
+			if (omrsLocation != null) {
+				omrsEncounter.setLocation(omrsLocation);
+			}
+		}
+		return omrsEncounter;
+	}
+	
+	public static org.openmrs.Visit generateOMRSVisit(Encounter encounter, List<String> errors) {
+		org.openmrs.Visit visit = new org.openmrs.Visit();
+		if (encounter.getPatient() != null) {
+			ResourceReferenceDt patientref = encounter.getPatient();
+			IdDt id = patientref.getReference();
+			String patientUuid = id.getIdPart();
+			org.openmrs.Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
+			if (patient == null) {
+				errors.add("There is no patient for the given uuid " + patientUuid); // remove to constants
+			} else {
+				visit.setPatient(patient);
+			}
+		}
+		List<BoundCodeableConceptDt<EncounterTypeEnum>> types = encounter.getType();
+		for (BoundCodeableConceptDt<EncounterTypeEnum> type : types) {
+			List<CodingDt> typeCodings = type.getCoding();
+			VisitType visitType = null;
+			if (typeCodings != null && !typeCodings.isEmpty()) {
+				CodingDt code = typeCodings.get(0);
+				String typeCode = code.getCode();
+				int typeId = Integer.parseInt(typeCode);
+				visitType = Context.getVisitService().getVisitType(typeId);
+			}
+
+			if (visitType == null) {
+				errors.add("There is no Visit Type for the given type id");
+			}
+			visit.setVisitType(visitType);
+		}
+		
+		PeriodDt period = encounter.getPeriod();
+		Date start = period.getStart();
+		if (start == null) {
+			errors.add("Start date cannot be empty");
+		}
+		visit.setStartDatetime(start);
+		visit.setStopDatetime(period.getEnd());
+		return visit;
 	}
 }
