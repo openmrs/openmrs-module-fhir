@@ -96,7 +96,7 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 		List<PatientIdentifierType> patientIdentifierTypes = new ArrayList<PatientIdentifierType>();
 		patientIdentifierTypes.add(patientService.getPatientIdentifierTypeByName(identifierTypeName));
 		List<org.openmrs.Patient> patientList = patientService.getPatients(null, identifierValue, patientIdentifierTypes,
-				true);
+		    true);
 		List<Patient> fhirPatientList = new ArrayList<Patient>();
 		for (org.openmrs.Patient patient : patientList) {
 			fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
@@ -110,8 +110,8 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 	public List<Patient> searchPatientsByIdentifier(String identifier) {
 		org.openmrs.api.PatientService patientService = Context.getPatientService();
 		List<PatientIdentifierType> allPatientIdentifierTypes = patientService.getAllPatientIdentifierTypes();
-		List<org.openmrs.Patient> patientList = patientService.getPatients(null, identifier, allPatientIdentifierTypes,
-				true);
+		List<org.openmrs.Patient> patientList = patientService
+		        .getPatients(null, identifier, allPatientIdentifierTypes, true);
 		List<Patient> fhirPatientList = new ArrayList<Patient>();
 		for (org.openmrs.Patient patient : patientList) {
 			fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
@@ -143,55 +143,79 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 	/**
 	 * @see org.openmrs.module.fhir.api.PatientService#searchPatientsByGivenName(String)
 	 */
-	public List<Patient> searchPatientsByGivenName(String givenName) {
+	public Bundle searchPatientsByGivenName(String givenName) {
 		List<org.openmrs.Patient> patients = searchPatientByQuery(givenName);
 		List<Patient> fhirPatientList = new ArrayList<Patient>();
 		//Go through the patients given by the openmrs core api and find them patient who has the givenName matching
 		for (org.openmrs.Patient patient : patients) {
-			if (givenName.equalsIgnoreCase(patient.getGivenName())) {
+			if (givenName.toLowerCase().contains(patient.getGivenName().toLowerCase())) {
 				fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
 			} else {
 				for (PersonName personName : patient.getNames()) {
-					if (givenName.equalsIgnoreCase(personName.getGivenName())) {
+					if (givenName.toLowerCase().contains(personName.getGivenName().toLowerCase())) {
 						fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
 					}
 				}
 			}
 		}
-		return fhirPatientList;
+		Bundle bundle = new Bundle();
+		List<Bundle.Entry> filteredList = new ArrayList<Bundle.Entry>();
+		for (Patient fhirPatient : fhirPatientList) {
+			Bundle.Entry entry = new Bundle.Entry();
+			entry.setResource(fhirPatient);
+			filteredList.add(entry);
+		}
+		bundle.setEntry(filteredList);
+		return bundle;
 	}
 
 	/**
 	 * @see org.openmrs.module.fhir.api.PatientService#searchPatientsByFamilyName(String)
 	 */
-	public List<Patient> searchPatientsByFamilyName(String familyName) {
+	public Bundle searchPatientsByFamilyName(String familyName) {
 		List<org.openmrs.Patient> patients = searchPatientByQuery(familyName);
 		List<Patient> fhirPatientList = new ArrayList<Patient>();
 		//Go through the patients given by the openmrs core api and find them patient who has the familyName matching
 		for (org.openmrs.Patient patient : patients) {
-			if (familyName.equalsIgnoreCase(patient.getFamilyName())) {
+			if (familyName.toLowerCase().contains(patient.getFamilyName().toLowerCase())) {
 				fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
 			} else {
 				for (PersonName personName : patient.getNames()) {
-					if (familyName.equalsIgnoreCase(personName.getFamilyName())) {
+					if (familyName.toLowerCase().contains(personName.getFamilyName().toLowerCase())) {
 						fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
 					}
 				}
 			}
 		}
-		return fhirPatientList;
+		Bundle bundle = new Bundle();
+		List<Bundle.Entry> filteredList = new ArrayList<Bundle.Entry>();
+		for (Patient fhirPatient : fhirPatientList) {
+			Bundle.Entry entry = new Bundle.Entry();
+			entry.setResource(fhirPatient);
+			filteredList.add(entry);
+		}
+		bundle.setEntry(filteredList);
+		return bundle;
 	}
 
 	/**
 	 * @see org.openmrs.module.fhir.api.PatientService#searchPatientsByName(String) (String)
 	 */
-	public List<Patient> searchPatientsByName(String name) {
+	public Bundle searchPatientsByName(String name) {
 		List<org.openmrs.Patient> patients = searchPatientByQuery(name);
 		List<Patient> fhirPatientList = new ArrayList<Patient>();
 		for (org.openmrs.Patient patient : patients) {
 			fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
 		}
-		return fhirPatientList;
+		Bundle bundle = new Bundle();
+		List<Bundle.Entry> filteredList = new ArrayList<Bundle.Entry>();
+		for (Patient fhirPatient : fhirPatientList) {
+			Bundle.Entry entry = new Bundle.Entry();
+			entry.setResource(fhirPatient);
+			filteredList.add(entry);
+		}
+		bundle.setEntry(filteredList);
+		return bundle;
 	}
 
 	private List<org.openmrs.Patient> searchPatientByQuery(String query) {
@@ -218,8 +242,8 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 			}
 
 			//Set patients' relationships
-			for (FamilyMemberHistory familyHistory : familyHistoryService.searchFamilyHistoryByPersonId(
-					omsrPatient.getUuid())) {
+			for (FamilyMemberHistory familyHistory : familyHistoryService.searchFamilyHistoryByPersonId(omsrPatient
+			        .getUuid())) {
 				bundle.addEntry().setResource(familyHistory);
 			}
 
@@ -282,8 +306,7 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 		org.openmrs.api.PatientService patientService = Context.getPatientService();
 		try {
 			omrsPatient = patientService.savePatient(omrsPatient);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
 			errorMessage.append(e.getMessage());
 			throw new UnprocessableEntityException(errorMessage.toString());
@@ -301,8 +324,7 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 			retrievedPatient = FHIRPatientUtil.updatePatientAttributes(omrsPatient, retrievedPatient);
 			try {
 				Context.getPatientService().savePatient(retrievedPatient);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				StringBuilder errorMessage = new StringBuilder(
 				        "The request cannot be processed due to the following issues \n");
 				errorMessage.append(e.getMessage());
@@ -311,7 +333,7 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 			return FHIRPatientUtil.generatePatient(retrievedPatient);
 		} else { // no patient is associated with the given uuid. so create a new patient with the given uuid
 			if (patient.getId() == null) { // since we need to PUT the patient to a specific URI, we need to set the uuid
-			// here, if it is not
+				// here, if it is not
 				// already set.
 				IdDt uuid = new IdDt();
 				uuid.setValue(theId);

@@ -13,21 +13,22 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
-import ca.uhn.fhir.model.dstu2.resource.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.exception.FHIRValidationException;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
+import ca.uhn.fhir.model.dstu2.resource.Bundle;
+import ca.uhn.fhir.model.dstu2.resource.Patient;
 
 public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 
@@ -112,25 +113,25 @@ public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void searchPatientsByName_shouldReturnBundle() {
 		String name = "Jean";
-		List<Patient> patients = getService().searchPatientsByName(name);
+		Bundle patients = getService().searchPatientsByName(name);
 		assertNotNull(patients);
-		assertEquals(2, patients.size());
+		assertEquals(2, patients.getEntry().size());
 	}
 
 	@Test
 	public void searchPatientsByGivenName_shouldReturnBundle() {
 		String name = "Jean";
-		List<Patient> patients = getService().searchPatientsByGivenName(name);
+		Bundle patients = getService().searchPatientsByGivenName(name);
 		assertNotNull(patients);
-		assertEquals(1, patients.size());
+		assertEquals(1, patients.getEntry().size());
 	}
 
 	@Test
 	public void searchPatientsByFamilyName_shouldReturnBundle() {
 		String name = "Doe";
-		List<Patient> patients = getService().searchPatientsByFamilyName(name);
+		Bundle patients = getService().searchPatientsByFamilyName(name);
 		assertNotNull(patients);
-		assertEquals(2, patients.size());
+		assertEquals(2, patients.getEntry().size());
 	}
 
 	@Test

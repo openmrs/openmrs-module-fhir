@@ -67,23 +67,23 @@ public interface PatientService extends OpenmrsService {
 	/**
 	 * Search all patients by given name
 	 *
-	 * @return active patients list
+	 * @return active patients Bundle
 	 */
-	List<Patient> searchPatientsByGivenName(String givenName);
+	Bundle searchPatientsByGivenName(String givenName);
 
 	/**
 	 * Search all patients by given name
 	 *
-	 * @return active patients list
+	 * @return active patients Bundle
 	 */
-	List<Patient> searchPatientsByFamilyName(String familyName);
+	Bundle searchPatientsByFamilyName(String familyName);
 
 	/**
-	 * Search all patients by  name
+	 * Search all patients by name
 	 *
-	 * @return active patients list
+	 * @return active patients Bundle
 	 */
-	List<Patient> searchPatientsByName(String name);
+	Bundle searchPatientsByName(String name);
 
 	/**
 	 * Get patient operations bundle resource

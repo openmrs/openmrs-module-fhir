@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.fhir.providers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -46,6 +47,7 @@ import ca.uhn.fhir.rest.server.exceptions.PreconditionFailedException;
 public class RestfulPatientResourceProvider implements IResourceProvider {
 
 	private static final Log log = LogFactory.getLog(RestfulPatientResourceProvider.class);
+
 	private FHIRPatientResource patientResource;
 
 	public RestfulPatientResourceProvider() {
@@ -86,7 +88,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 * @param theFamilyName object contaning the requested family name
 	 */
 	@Search()
-	public List<Patient> findPatientsByFamilyName(@RequiredParam(name = Patient.SP_FAMILY) StringParam theFamilyName) {
+	public Bundle findPatientsByFamilyName(@RequiredParam(name = Patient.SP_FAMILY) StringParam theFamilyName) {
 		return patientResource.searchByFamilyName(theFamilyName);
 	}
 
@@ -94,11 +96,11 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 * Get patients by name
 	 *
 	 * @param name name of the patient
-	 * @return This method returns a list of Patients. This list may contain multiple matching resources, or it may also be
-	 * empty.
+	 * @return This method returns a Bundle of Patients. This list may contain multiple matching
+	 *         resources, or it may also be empty.
 	 */
 	@Search()
-	public List<Patient> findPatientsByName(@RequiredParam(name = Patient.SP_NAME) StringParam name) {
+	public Bundle findPatientsByName(@RequiredParam(name = Patient.SP_NAME) StringParam name) {
 		return patientResource.searchByName(name);
 	}
 
@@ -106,8 +108,8 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 * Get patients by identifier
 	 *
 	 * @param identifier
-	 * @return This method returns a list of Patients. This list may contain multiple matching resources, or it may also be
-	 * empty.
+	 * @return This method returns a list of Patients. This list may contain multiple matching
+	 *         resources, or it may also be empty.
 	 */
 	@Search()
 	public List<Patient> searchPatientsByIdentifier(@RequiredParam(name = Patient.SP_IDENTIFIER) TokenParam identifier) {
@@ -118,8 +120,8 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 * Get active patients
 	 *
 	 * @param active search term
-	 * @return This method returns a list of Patients. This list may contain multiple matching resources, or it may also be
-	 * empty.
+	 * @return This method returns a list of Patients. This list may contain multiple matching
+	 *         resources, or it may also be empty.
 	 */
 	@Search()
 	public List<Patient> findActivePatients(@RequiredParam(name = Patient.SP_ACTIVE) TokenParam active) {
@@ -130,11 +132,11 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 * Find patients by given name
 	 *
 	 * @param givenName given name of the patient
-	 * @return This method returns a list of Patients. This list may contain multiple matching resources, or it may also be
-	 * empty.
+	 * @return This method returns a list of Patients. This list may contain multiple matching
+	 *         resources, or it may also be empty.
 	 */
 	@Search()
-	public List<Patient> findPatientsByGivenName(@RequiredParam(name = Patient.SP_GIVEN) StringParam givenName) {
+	public Bundle findPatientsByGivenName(@RequiredParam(name = Patient.SP_GIVEN) StringParam givenName) {
 		return patientResource.searchByGivenName(givenName);
 	}
 
@@ -142,8 +144,8 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 * Find patients by provider
 	 *
 	 * @param provider the provider of the patient
-	 * @return This method returns a list of Patients. This list may contain multiple matching resources, or it may also be
-	 * empty.
+	 * @return This method returns a list of Patients. This list may contain multiple matching
+	 *         resources, or it may also be empty.
 	 */
 	@Search()
 	public List<Patient> searchPatientsByProvider(@RequiredParam(name = Patient.SP_CAREPROVIDER) ReferenceParam provider) {
@@ -211,7 +213,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 */
 	@Update()
 	public MethodOutcome updatePatientByIdentifier(@ResourceParam Patient patient, @IdParam IdDt theId,
-		                                        @ConditionalUrlParam String theConditional) {
+	                                               @ConditionalUrlParam String theConditional) {
 		MethodOutcome outcome = new MethodOutcome();
 		OperationOutcome operationoutcome = null;
 		if (theConditional != null) {
@@ -224,8 +226,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 				String paraArgs[] = parameterPart.split("=");
 				parameterName = paraArgs[0];
 				paramValue = paraArgs[1];
-			}
-			catch (Exception e) { // will catch nullpointerexceptions and indexoutofboundexceptions
+			} catch (Exception e) { // will catch nullpointerexceptions and indexoutofboundexceptions
 				operationoutcome = new OperationOutcome();
 				operationoutcome.addIssue().setDetails("Please check Condition URL format");
 				outcome.setOperationOutcome(operationoutcome);
@@ -234,7 +235,16 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 			if (FHIRConstants.PARAMETER_NAME.equals(parameterName)) {
 				StringParam param = new StringParam();
 				param.setValue(paramValue);
-				patientList = patientResource.searchByName(param);
+				Bundle patientBundle = patientResource.searchByName(param);
+				if (patientBundle != null) {
+					if (patientBundle.getEntry().size() > 0) {
+						patientList = new ArrayList<Patient>();
+					}
+					for (Bundle.Entry entry : patientBundle.getEntry()) {
+						Patient fhirPatient = (Patient) entry.getResource();
+						patientList.add(fhirPatient);
+					}
+				}
 			} else if (FHIRConstants.PARAMETER_IDENTIFIER.equals(parameterName)) {
 				TokenParam params = new TokenParam();
 				params.setValue(paramValue);
@@ -242,7 +252,16 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 			} else if (FHIRConstants.PARAMETER_GIVENNAME.equals(parameterName)) {
 				StringParam param = new StringParam();
 				param.setValue(paramValue);
-				patientList = patientResource.searchByGivenName(param);
+				Bundle patientBundle = patientResource.searchByGivenName(param);
+				if (patientBundle != null) {
+					if (patientBundle.getEntry().size() > 0) {
+						patientList = new ArrayList<Patient>();
+					}
+					for (Bundle.Entry entry : patientBundle.getEntry()) {
+						Patient fhirPatient = (Patient) entry.getResource();
+						patientList.add(fhirPatient);
+					}
+				}
 			}
 			if (patientList != null) {
 				if (patientList.size() == 0) {
