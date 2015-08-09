@@ -54,19 +54,19 @@ public class FHIRPatientResource extends Resource {
 		return patientService.searchPatientsByIdentifier(identifier.getValue());
 	}
 
-	public List<Patient> searchByGivenName(StringParam givenName) {
+	public Bundle searchByGivenName(StringParam givenName) {
 		org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
 				org.openmrs.module.fhir.api.PatientService.class);
 		return patientService.searchPatientsByGivenName(givenName.getValue());
 	}
 
-	public List<Patient> searchByFamilyName(StringParam theFamilyName) {
+	public Bundle searchByFamilyName(StringParam theFamilyName) {
 		org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
 				org.openmrs.module.fhir.api.PatientService.class);
 		return patientService.searchPatientsByFamilyName(theFamilyName.getValue());
 	}
 
-	public List<Patient> searchByName(StringParam name) {
+	public Bundle searchByName(StringParam name) {
 		org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
 				org.openmrs.module.fhir.api.PatientService.class);
 		return patientService.searchPatientsByName(name.getValue());
