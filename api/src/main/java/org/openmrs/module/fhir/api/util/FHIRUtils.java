@@ -222,6 +222,10 @@ public class FHIRUtils {
 		return getConceptByConceptId("fhir.diagnosticreport.presentedform");
 	}
 
+	public static Concept getImagingStudyContentConcept() {
+		return getConceptByConceptId("fhir.imagingstudy.content");
+	}
+
 	public static String getDiagnosticReportRadiologyBaseServerURL() {
 		return Context.getAdministrationService().getGlobalProperty("fhir.diagnosticreport.radiology.server");
 	}
