@@ -225,12 +225,11 @@ public final class FHIRConstants {
 		conceptSourceURINameMap.put(UCUM_URI, UCUM);
 	}
 
+	// DiagnosticReport Constants
 	public static final String DIAGNOSTIC_REPORT_NAME = "name";
-
 	public static final String DIAGNOSTIC_REPORT_STATUS = "status";
-
 	public static final String DIAGNOSTIC_REPORT_RESULT = "result";
-
+	public static final String DIAGNOSTIC_REPORT_IMAGING_STUDY = "imaging_study";
 	public static final String DIAGNOSTIC_REPORT_PRESENTED_FORM = "presentedForm";
 	
 	public static final String PARAMETER_NAME = "name";

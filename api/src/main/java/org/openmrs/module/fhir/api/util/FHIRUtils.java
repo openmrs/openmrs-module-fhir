@@ -214,6 +214,10 @@ public class FHIRUtils {
 		return getConceptByConceptId("fhir.diagnosticreport.result");
 	}
 
+	public static Concept getDiagnosticReportImagingStudyConcept() {
+		return getConceptByConceptId("fhir.diagnosticreport.imagingstudy");
+	}
+
 	public static Concept getDiagnosticReportPresentedFormConcept() {
 		return getConceptByConceptId("fhir.diagnosticreport.presentedform");
 	}
