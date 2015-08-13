@@ -19,14 +19,18 @@ import ca.uhn.fhir.model.dstu2.resource.ImagingStudy;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
+import org.openmrs.Concept;
 import org.openmrs.ConceptComplex;
 import org.openmrs.Obs;
 import org.openmrs.Person;
+import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.FHIR;
 import org.openmrs.obs.ComplexData;
 import org.openmrs.util.OpenmrsConstants;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class FHIRImagingStudyUtil {
@@ -36,32 +40,44 @@ public class FHIRImagingStudyUtil {
 	}
 
 	public static Obs generateOpenMRSImagingStudy(ImagingStudy imagingStudy, List<String> errors) {
-		Obs imagingStudyObs = new Obs();
+		Concept conceptImagingStudy = FHIRUtils.getDiagnosticReportImagingStudyConcept();
 		// Set `started` as Obs DateTime
-
+		Date started = imagingStudy.getStarted();// Since it'll not return null
 		// Set `patient` as Obs Person
 		String patientId = imagingStudy.getPatient().getReference().getIdPart();
 		org.openmrs.Patient omrsPatient = getOpenMRSPatient(patientId);
+		// Create Obs for store `ImagingStudy`
+		Obs omrsImagingStudy = new Obs(omrsPatient, conceptImagingStudy, started, null);
 
 		// Set `uid` as uuid of Obs
-		imagingStudyObs.setUuid(imagingStudy.getId().getIdPart());
-
+		omrsImagingStudy.setUuid(imagingStudy.getId().getIdPart());
 		// Set `accession` as AccessionNumber
 		if (!imagingStudy.getAccession().isEmpty()) {
 			String value = imagingStudy.getAccession().getValue();
-			imagingStudyObs.setAccessionNumber(value);
+			omrsImagingStudy.setAccessionNumber(value);
 		}
-
 		// Set `numberOfSeries` = Number of Series Obs
 		// Set `url` and `numberOfInstance` as Obs Value (Text)
-
+		String value = "";
+		value += "url:".concat(imagingStudy.getUrl() + ",");
+		value += "numberOfInstance:".concat(imagingStudy.getNumberOfInstances().toString());
+		omrsImagingStudy.setValueText(value);
 		// Set `clinicalInformation` and `description` as Obs comment
+		String comment = "";
+		comment += "clinicalInformation:".concat(imagingStudy.getClinicalInformation() + ",");
+		comment += "description:".concat(imagingStudy.getDescription());
+		omrsImagingStudy.setComment(comment);
 
+		// Set All values
+		omrsImagingStudy.setValueText(value);
 		// Set `series` as Obs group
+		ObsService obsService = Context.getObsService();
 		for (ImagingStudy.Series series : imagingStudy.getSeries()) {
-			generateOpenMRSSeriesObs(series, omrsPatient);
+			Obs omrsSeries = generateOpenMRSSeriesObs(series, omrsPatient);
+			omrsSeries = obsService.saveObs(omrsSeries, null);
+			omrsImagingStudy.addGroupMember(omrsSeries);
 		}
-		return imagingStudyObs;
+		return omrsImagingStudy;
 	}
 
 	/**
@@ -100,43 +116,62 @@ public class FHIRImagingStudyUtil {
 	}
 
 	public static Obs generateOpenMRSSeriesObs(ImagingStudy.Series series, org.openmrs.Patient omrsPatient) {
-		Obs seriesObs = new Obs();
-		// Set `number` as Obs Value (Text)
-
-		// Set `modality` as Obs Value (Text)
-
-		// Set `uid` as Obs uuid
-
-		// Set `description` as Obs Comment
-
-		// `numberOfInstance` = Number of Instance Obs
-
-		// Set `url` as Obs Value (Text)
-
+		Concept conceptSeries = FHIRUtils.getImagingStudySeriesConcept();
 		// Set `dateTime` as Obs DateTime
+		Date dateTime = series.getDateTime();// Will not be null
+		// Create a Obs for store Series
+		Obs omrsSeries = new Obs(omrsPatient, conceptSeries, dateTime, null);
 
+		String value = "";
+		// Set `number` as Obs Value (Text)
+		value += "number:".concat(series.getNumber().toString() + ",");
+		// Set `modality` as Obs Value (Text)
+		value += "modality:".concat(series.getModality() + ",");
+		// Set `uid` as Obs uuid
+		omrsSeries.setUuid(series.getUid());
+		// Set `description` as Obs Comment
+		omrsSeries.setComment(series.getDescription());
+		// `numberOfInstance` = Number of Instance Obs
+		// Set `url` as Obs Value (Text)
+		value += "url:".concat(series.getUrl() + ",");
+
+		// Set All values
+		omrsSeries.setValueText(value);
 		// Set `instance` as Obs group
+		ObsService obsService = Context.getObsService();
 		for (ImagingStudy.SeriesInstance instance : series.getInstance()) {
-			generateOpenMRSInstanceObs(instance, omrsPatient);
+			Obs omrsInstance = generateOpenMRSInstanceObs(instance, omrsPatient);
+			omrsInstance = obsService.saveObs(omrsInstance, null);
+			omrsSeries.addGroupMember(omrsInstance);
 		}
-		return seriesObs;
+		return omrsSeries;
 	}
 
 	public static Obs generateOpenMRSInstanceObs(ImagingStudy.SeriesInstance instance, org.openmrs.Patient omrsPatient) {
-		Obs seriesObs = new Obs();
+		Concept conceptInstance = FHIRUtils.getImagingStudySeriesInstanceConcept();
+		Obs omrsInstance = new Obs();
+		omrsInstance.setPerson(omrsPatient);
+		String value = "";
 		// Set `number` as Obs Value (Text)
-
+		value += "number:".concat(instance.getNumber().toString() + ",");
 		// Set `uid` as Obs uuid
+		omrsInstance.setUuid(instance.getUid());
 
+		// Set All values
+		omrsInstance.setValueText(value);
 		// Set `content` as Complex Obs
 		for (AttachmentDt attachment : instance.getContent()) {
-			int conceptId = FHIRUtils.getImagingStudyContentConcept().getConceptId();
+			int conceptId = FHIRUtils.getImagingStudySeriesInstanceContentConcept().getConceptId();
 			if (attachment.getCreation() == null) {
 				attachment.setCreation(new DateTimeDt());
 			}
-			saveComplexData(conceptId, omrsPatient, attachment);
+			System.out.println("1111111111111 size " + attachment.getSize());
+			System.out.println("1111111111111 data " + attachment.getData());
+			System.out.println("1111111111111 data length " + attachment.getData().length);
+			//Obs complexObs = saveComplexData(conceptId, omrsPatient, attachment);
+			//omrsInstance.addGroupMember(complexObs);
 		}
-		return seriesObs;
+		return omrsInstance;
 	}
 
 	public static Obs saveComplexData(int complexConceptId, org.openmrs.Patient patient, AttachmentDt attachment) {
@@ -145,6 +180,7 @@ public class FHIRImagingStudyUtil {
 
 		Obs complexObs = new Obs(person, conceptComplex, attachment.getCreation(), null);
 		ComplexData complexData = new ComplexData(attachment.getTitle(), attachment.getData());
+		attachment.getSize();
 		/**
 		 * TODO: Not available in OpenMRS 1.10.0 version
 		 * complexData.setMimeType(attachment.getContentType());

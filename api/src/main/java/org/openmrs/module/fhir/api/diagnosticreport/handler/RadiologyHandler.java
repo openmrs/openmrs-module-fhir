@@ -31,8 +31,8 @@ import org.openmrs.Obs;
 import org.openmrs.Person;
 import org.openmrs.Provider;
 import org.openmrs.api.EncounterService;
+import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.ObsService;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRImagingStudyUtil;
@@ -233,6 +233,7 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 			log.debug("SaveFHIRDiagnosticReport " + diagnosticReport.getId().getIdPart());
 		}
 		EncounterService encounterService = Context.getEncounterService();
+		ObsService obsService = Context.getObsService();
 		Encounter omrsDiagnosticReport = new Encounter();
 
 		// Set `Name` as a Obs
@@ -310,12 +311,12 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 				// Get Id of the Observation
 				String observationID = referenceDt.getReference().getIdPart();
 				// Assume that the given Observation is stored in the OpenMRS database
-				observation = Context.getService(ObsService.class).getObs(observationID);
+				observation = Context.getService(org.openmrs.module.fhir.api.ObsService.class).getObs(observationID);
 			}
 			observation = this.prepareForGenerateOpenMRSObs(observation, diagnosticReport);
 			Obs obs = FHIRObsUtil.generateOpenMRSObs(observation, errors);
 			if (errors.isEmpty()) {
-				obs = Context.getObsService().saveObs(obs, null);
+				obs = obsService.saveObs(obs, null);
 				resultObsGroupMembersSet.add(obs);
 			} else {
 				StringBuilder errorMessage = new StringBuilder(FHIRConstants.REQUEST_ISSUE_LIST);
@@ -338,7 +339,7 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 				resultObsGroup.addGroupMember(obs);
 			}
 			resultObsGroup.setEncounter(omrsEncounter);
-			Context.getObsService().saveObs(resultObsGroup, null);
+			obsService.saveObs(resultObsGroup, null);
 		} //-- END of set `result`
 
 		/****************************** Set `ImagingStudy` as a set of Obs *********************************/
@@ -363,7 +364,7 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 				// Get `ImagingStudy` Obs from external server
 				obs = this.getOpenMRSImagingStudyObs(imagingStudyId);
 			}
-			obs = Context.getObsService().saveObs(obs, null);
+			obs = obsService.saveObs(obs, null);
 			imagingStudyObsGroupMembersSet.add(obs);
 		}
 		if (!imagingStudyObsGroupMembersSet.isEmpty()) {
@@ -378,7 +379,7 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 				imagingStudyObsGroup.addGroupMember(obs);
 			}
 			imagingStudyObsGroup.setEncounter(omrsEncounter);
-			Context.getObsService().saveObs(imagingStudyObsGroup, null);
+			obsService.saveObs(imagingStudyObsGroup, null);
 		} //-- Set `ImagingStudy` as a set of Obs
 
 		// Set Binary Obs Handler which used to store `PresentedForm`
@@ -389,9 +390,7 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 			}
 			saveComplexData(omrsDiagnosticReport, conceptId, omrsPatient, attachment);
 		}
-		/**
-		 * TODO: Not working properly. Need to test it. omrsDiagnosticReport.setObs(obsList);
-		 */
+		// TODO: Not working properly. Need to test it. omrsDiagnosticReport.setObs(obsList);
 
 		diagnosticReport.setId(new IdDt("DiagnosticReport", omrsEncounter.getUuid()));
 		return diagnosticReport;
@@ -440,6 +439,9 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 	 * http://hl7.org/fhir/2015May/resource.html#identifiers. It's better to use Identifiers.
 	 */
 	private org.openmrs.Patient getOpenMRSPatient(String uuid) {
+		if(log.isDebugEnabled()) {
+			log.debug("GetOpenMRSPatient " + uuid);
+		}
 		//Check whether Patient is already exist
 		org.openmrs.Patient omrsPatient = Context.getPatientService().getPatientByUuid(uuid);
 		if (omrsPatient == null) {
