@@ -17,6 +17,7 @@ package org.openmrs.module.fhir.api.util;
 import ca.uhn.fhir.model.dstu2.composite.AttachmentDt;
 import ca.uhn.fhir.model.dstu2.resource.ImagingStudy;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
+import ca.uhn.fhir.model.primitive.Base64BinaryDt;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import org.apache.commons.logging.Log;
@@ -194,7 +195,7 @@ public class FHIRImagingStudyUtil {
 		for (AttachmentDt attachment : instance.getContent()) {
 			int conceptId = FHIRUtils.getImagingStudySeriesInstanceContentConcept().getConceptId();
 			if (attachment.getCreation() == null) {
-				attachment.setCreation(new DateTimeDt());
+				attachment.setCreation(new DateTimeDt(new Date()));
 			}
 			Obs complexObs = saveComplexData(conceptId, omrsPatient, attachment);
 			omrsInstance.addGroupMember(complexObs);
@@ -207,16 +208,22 @@ public class FHIRImagingStudyUtil {
 		ConceptComplex conceptComplex = Context.getConceptService().getConceptComplex(complexConceptId);
 
 		Obs complexObs = new Obs(person, conceptComplex, attachment.getCreation(), null);
-		if (attachment.getData() != null) {
-			ComplexData complexData = new ComplexData(attachment.getTitle(), attachment.getData());
-			attachment.getSize();
-			/**
-			 * TODO: Not available in OpenMRS 1.10.0 version
-			 * complexData.setMimeType(attachment.getContentType());
-			 * complexData.setLength(attachment.getSize().longValue());
-			 */
-			complexObs.setComplexData(complexData);
+		// If data is not given, set some sample data
+		if (attachment.getData() == null) {
+			byte[] bytes = "Test Complex Data".getBytes();
+			Base64BinaryDt base64BinaryDt = new Base64BinaryDt(bytes);
+			attachment.setData(base64BinaryDt);
 		}
+		if(attachment.getTitle() == null) {
+			attachment.setTitle("Title");
+		}
+		ComplexData complexData = new ComplexData(attachment.getTitle(), attachment.getData());
+		/**
+		 * TODO: Not available in OpenMRS 1.10.0 version
+		 * complexData.setMimeType(attachment.getContentType());
+		 * complexData.setLength(attachment.getSize().longValue());
+		 */
+		complexObs.setComplexData(complexData);
 		if (attachment.getUrl() != null) {
 			complexObs.setComment(attachment.getUrl());
 		}
