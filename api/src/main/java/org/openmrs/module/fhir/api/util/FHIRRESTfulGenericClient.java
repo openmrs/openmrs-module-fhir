@@ -16,6 +16,7 @@ package org.openmrs.module.fhir.api.util;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
+import ca.uhn.fhir.model.dstu2.resource.ImagingStudy;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.dstu2.resource.Practitioner;
 import ca.uhn.fhir.rest.client.IGenericClient;
@@ -41,6 +42,15 @@ public class FHIRRESTfulGenericClient {
 		IGenericClient client = ctx.newRestfulGenericClient(serverBase);
 		return client.read()
 				.resource(Practitioner.class)
+				.withId(theID)
+				.execute();
+	}
+
+	public static ImagingStudy readImagingStudyById(String serverBase,
+	                                                String theID) {
+		IGenericClient client = ctx.newRestfulGenericClient(serverBase);
+		return client.read()
+				.resource(ImagingStudy.class)
 				.withId(theID)
 				.execute();
 	}

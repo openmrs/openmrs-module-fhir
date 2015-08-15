@@ -214,8 +214,24 @@ public class FHIRUtils {
 		return getConceptByConceptId("fhir.diagnosticreport.result");
 	}
 
+	public static Concept getDiagnosticReportImagingStudyConcept() {
+		return getConceptByConceptId("fhir.diagnosticreport.imagingstudy");
+	}
+
+	public static Concept getImagingStudySeriesConcept() {
+		return getConceptByConceptId("fhir.imagingstudy.series");
+	}
+
+	public static Concept getImagingStudySeriesInstanceConcept() {
+		return getConceptByConceptId("fhir.imagingstudy.series.instance");
+	}
+
 	public static Concept getDiagnosticReportPresentedFormConcept() {
 		return getConceptByConceptId("fhir.diagnosticreport.presentedform");
+	}
+
+	public static Concept getImagingStudySeriesInstanceContentConcept() {
+		return getConceptByConceptId("fhir.imagingstudy.series.instance.content");
 	}
 
 	public static String getDiagnosticReportRadiologyBaseServerURL() {
