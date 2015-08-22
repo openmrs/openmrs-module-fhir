@@ -51,7 +51,7 @@ public class FHIRObservationResource extends Resource {
 		ObsService obsService = Context.getService(ObsService.class);
 		Map<String, String> conceptNamesAndURIs = new HashMap<String, String>();
 		for (BaseCodingDt baseCodingDt : codes.getListAsCodings()) {
-			conceptNamesAndURIs.put(baseCodingDt.getValueAsQueryToken(), baseCodingDt.getSystemElement().getValue());
+			conceptNamesAndURIs.put(baseCodingDt.getCodeElement().getValue(), baseCodingDt.getSystemElement().getValue());
 		}
 		return obsService.searchObsByPatientAndConcept(person.getIdPart(), conceptNamesAndURIs);
 	}
@@ -60,7 +60,7 @@ public class FHIRObservationResource extends Resource {
 		ObsService obsService = Context.getService(ObsService.class);
 		Map<String, String> conceptNamesAndURIs = new HashMap<String, String>();
 		for (BaseCodingDt baseCodingDt : codes.getListAsCodings()) {
-			conceptNamesAndURIs.put(baseCodingDt.getValueAsQueryToken(), baseCodingDt.getSystemElement().getValue());
+			conceptNamesAndURIs.put(baseCodingDt.getCodeElement().getValue(), baseCodingDt.getSystemElement().getValue());
 		}
 		return obsService.searchObsByCode(conceptNamesAndURIs);
 	}
