@@ -342,6 +342,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 	public DiagnosticReport updateFHIRDiagnosticReport(DiagnosticReport diagnosticReport, String theId) {
 		log.debug("Laboratory Handler : UpdateFHIRDiagnosticReport");
 
+		org.openmrs.api.ObsService obsService = Context.getObsService();
 		EncounterService encounterService = Context.getEncounterService();
 		Encounter omrsDiagnosticReport = encounterService.getEncounterByUuid(theId);
 
@@ -416,11 +417,45 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		Encounter omrsEncounter = encounterService.saveEncounter(omrsDiagnosticReport);
 
 		// Set parsed obsSet (`Result` as Set of Obs)
+		// Void existing `Result` values. Since this field is saved as an Obs Group, all group members will be voided.
+		java.util.Date date = new java.util.Date();
+		for (Obs resultObs : obsSetsMap.get(FHIRConstants.DIAGNOSTIC_REPORT_RESULT)) {
+			obsService.voidObs(resultObs, "Due to update DiagnosticReport on " + new Timestamp(date.getTime()));
+		}
+		// Store new `Result` values
+		Set<Obs> resultObsGroupMembersSet = new HashSet<Obs>();
+		// Iterate through 'result' Observations and adding to the OpenMRS Obs group
+		for (ResourceReferenceDt referenceDt : diagnosticReport.getResult()) {
+			List<String> errors = new ArrayList<String>();
+			Observation observation;
+			if (referenceDt.getReference().isLocal()) {
+				observation = (Observation) referenceDt.getResource();
+			} else {
+				// Get Id of the Observation
+				String observationID = referenceDt.getReference().getIdPart();
+				// Assume that the given Observation is stored in the OpenMRS database
+				observation = Context.getService(ObsService.class).getObs(observationID);
+			}
 
+			observation = prepareForGenerateOpenMRSObs(observation, diagnosticReport);
+			Obs obs = FHIRObsUtil.generateOpenMRSObs(observation, errors);
+			obs = Context.getObsService().saveObs(obs, null);
+			resultObsGroupMembersSet.add(obs);
+		}
+		if (!resultObsGroupMembersSet.isEmpty()) {
+			Concept resultConcept = FHIRUtils.getDiagnosticReportResultConcept();
+			Obs resultObsGroup = new Obs(Context.getPersonService().getPersonByUuid(omrsPatient.getUuid()), resultConcept,
+					diagnosticReport.getIssued(), null);
+			for (Obs obs : resultObsGroupMembersSet) {
+				resultObsGroup.addGroupMember(obs);
+			}
+			resultObsGroup.setEncounter(omrsEncounter);
+			Context.getObsService().saveObs(resultObsGroup, null);
+		}
 
 		// Update Binary Obs Handler which used to store `PresentedForm`
 		// Void existing `PresentedForm` values
-		for(Obs attachmentObs : obsSetsMap.get(FHIRConstants.DIAGNOSTIC_REPORT_PRESENTED_FORM)) {
+		for (Obs attachmentObs : obsSetsMap.get(FHIRConstants.DIAGNOSTIC_REPORT_PRESENTED_FORM)) {
 			voidAttachment(attachmentObs);
 		}
 		obsSetsMap.remove(FHIRConstants.DIAGNOSTIC_REPORT_PRESENTED_FORM);
@@ -441,7 +476,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		org.openmrs.api.ObsService obsService = Context.getObsService();
 		int obsId = attachmentObs.getObsId();
 		Obs complexObs = obsService.getComplexObs(obsId, OpenmrsConstants.RAW_VIEW);
-		java.util.Date date= new java.util.Date();
+		java.util.Date date = new java.util.Date();
 		obsService.voidObs(complexObs, "Due to update DiagnosticReport on " + new Timestamp(date.getTime()));
 		return complexObs;
 	}
