@@ -38,6 +38,7 @@ import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.openmrs.obs.ComplexData;
 import org.openmrs.util.OpenmrsConstants;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -340,8 +341,12 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 	@Override
 	public DiagnosticReport updateFHIRDiagnosticReport(DiagnosticReport diagnosticReport, String theId) {
 		log.debug("Laboratory Handler : UpdateFHIRDiagnosticReport");
+
 		EncounterService encounterService = Context.getEncounterService();
 		Encounter omrsDiagnosticReport = encounterService.getEncounterByUuid(theId);
+
+		// Separate Obs into different field such as `Name`, `Status`, `Result` and `PresentedForm` based on Concept Id
+		Map<String, Set<Obs>> obsSetsMap = separateObs(omrsDiagnosticReport.getObsAtTopLevel(false));
 
 		// Set `Name` as a Obs
 		// Set `Status` as a Obs
@@ -411,10 +416,34 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		Encounter omrsEncounter = encounterService.saveEncounter(omrsDiagnosticReport);
 
 		// Set parsed obsSet (`Result` as Set of Obs)
+
+
 		// Update Binary Obs Handler which used to store `PresentedForm`
+		// Void existing `PresentedForm` values
+		for(Obs attachmentObs : obsSetsMap.get(FHIRConstants.DIAGNOSTIC_REPORT_PRESENTED_FORM)) {
+			voidAttachment(attachmentObs);
+		}
+		obsSetsMap.remove(FHIRConstants.DIAGNOSTIC_REPORT_PRESENTED_FORM);
+		// Store new `PresentedForm` values
+		for (AttachmentDt attachment : diagnosticReport.getPresentedForm()) {
+			int conceptId = FHIRUtils.getDiagnosticReportPresentedFormConcept().getConceptId();
+			if (attachment.getCreation() == null) {
+				attachment.setCreation(diagnosticReport.getIssuedElement());
+			}
+			Obs complexObs = saveComplexData(omrsDiagnosticReport, conceptId, omrsPatient, attachment);
+		}
 
 		diagnosticReport.setId(new IdDt("DiagnosticReport", omrsEncounter.getUuid()));
 		return diagnosticReport;
+	}
+
+	private Obs voidAttachment(Obs attachmentObs) {
+		org.openmrs.api.ObsService obsService = Context.getObsService();
+		int obsId = attachmentObs.getObsId();
+		Obs complexObs = obsService.getComplexObs(obsId, OpenmrsConstants.RAW_VIEW);
+		java.util.Date date= new java.util.Date();
+		obsService.voidObs(complexObs, "Due to update DiagnosticReport on " + new Timestamp(date.getTime()));
+		return complexObs;
 	}
 
 	@Override
