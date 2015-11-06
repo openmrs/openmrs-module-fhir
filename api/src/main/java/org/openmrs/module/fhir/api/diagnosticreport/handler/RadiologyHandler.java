@@ -214,7 +214,7 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 		AttachmentDt attachmentDt = new AttachmentDt();
 		int obsId = attachmentObs.getObsId();
 
-		Obs complexObs = Context.getObsService().getComplexObs(obsId, OpenmrsConstants.RAW_VIEW);
+		Obs complexObs = Context.getObsService().getComplexObs(obsId, "RAW_VIEW");
 		ComplexData complexData = complexObs.getComplexData();
 		attachmentDt.setTitle(complexData.getTitle());
 		attachmentDt.setData(new Base64BinaryDt(((byte[]) complexData.getData())));
@@ -413,7 +413,7 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 		Context.getObsService().saveObs(complexObs, null);
 
 		Integer obsId = complexObs.getObsId();
-		return Context.getObsService().getComplexObs(obsId, OpenmrsConstants.RAW_VIEW);
+		return Context.getObsService().getComplexObs(obsId, "RAW_VIEW");
 	}
 
 	/**

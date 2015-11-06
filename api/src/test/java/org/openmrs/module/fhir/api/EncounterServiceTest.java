@@ -75,7 +75,6 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 		visitRefId.setValue(visitRefUri);
 		visitRef.setReference(visitRefId);
 		fhirEncounter.setPartOf(visitRef);
-
 		fhirEncounter = getService().createFHIREncounter(fhirEncounter);
 		assertNotNull(fhirEncounter);
 		assertEquals(fhirEncounter.getPeriod().getStart().toString(), "2005-01-01 00:00:00.0");

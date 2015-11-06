@@ -95,7 +95,7 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 		org.openmrs.api.PatientService patientService = Context.getPatientService();
 		List<PatientIdentifierType> patientIdentifierTypes = new ArrayList<PatientIdentifierType>();
 		patientIdentifierTypes.add(patientService.getPatientIdentifierTypeByName(identifierTypeName));
-		List<org.openmrs.Patient> patientList = patientService.getPatients(null, identifierValue, patientIdentifierTypes,
+		List<org.openmrs.Patient> patientList = patientService.getPatients(identifierValue, null, patientIdentifierTypes,
 		    true);
 		List<Patient> fhirPatientList = new ArrayList<Patient>();
 		for (org.openmrs.Patient patient : patientList) {
@@ -111,7 +111,7 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 		org.openmrs.api.PatientService patientService = Context.getPatientService();
 		List<PatientIdentifierType> allPatientIdentifierTypes = patientService.getAllPatientIdentifierTypes();
 		List<org.openmrs.Patient> patientList = patientService
-		        .getPatients(null, identifier, allPatientIdentifierTypes, true);
+		        .getPatients(identifier, null, allPatientIdentifierTypes, true);
 		List<Patient> fhirPatientList = new ArrayList<Patient>();
 		for (org.openmrs.Patient patient : patientList) {
 			fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));

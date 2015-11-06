@@ -22,8 +22,8 @@ import ca.uhn.fhir.model.dstu2.valueset.AllergyIntoleranceCriticalityEnum;
 import ca.uhn.fhir.model.dstu2.valueset.AllergyIntoleranceStatusEnum;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import org.openmrs.ConceptMap;
-import org.openmrs.module.allergyapi.Allergy;
-import org.openmrs.module.allergyapi.AllergyReaction;
+import org.openmrs.Allergy;
+import org.openmrs.AllergyReaction;
 
 import java.util.Collection;
 import java.util.List;
@@ -60,7 +60,7 @@ public class FHIRAllergyIntoleranceAllergyAPIUtil {
 				case DRUG:
 					allergyIntolerance.setCategory(AllergyIntoleranceCategoryEnum.MEDICATION);
 					break;
-				case ENVIRONMENTAL:
+				case ENVIRONMENT:
 					allergyIntolerance.setCategory(AllergyIntoleranceCategoryEnum.ENVIRONMENT);
 					break;
 				case FOOD:

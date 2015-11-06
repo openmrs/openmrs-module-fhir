@@ -16,6 +16,7 @@ package org.openmrs.module.fhir.api;
 
 import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
@@ -28,6 +29,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * @author leonard
  */
+@Ignore
 public class AllergyIntoleranceServiceTest extends BaseModuleContextSensitiveTest {
 	
 	protected static final String ALLERGY_INITIAL_DATA_XML = "AllergyIntoleranceServiceTest-initialData.xml";

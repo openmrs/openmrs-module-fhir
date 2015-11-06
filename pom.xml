@@ -61,7 +61,7 @@
     </modules>
 
     <properties>
-        <openMRSVersion>1.10.0</openMRSVersion>
+        <openMRSVersion>2.0.0-SNAPSHOT</openMRSVersion>
         <pholocCommonsVersion>4.3.5</pholocCommonsVersion>
         <slf4jApiVersion>1.6.0</slf4jApiVersion>
         <slf4jLog4j12Version>1.6.0</slf4jLog4j12Version>

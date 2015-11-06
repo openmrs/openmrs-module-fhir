@@ -17,12 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.openmrs.Concept;
-import org.openmrs.EncounterProvider;
-import org.openmrs.EncounterRole;
-import org.openmrs.Obs;
-import org.openmrs.PersonName;
-import org.openmrs.VisitType;
+import org.openmrs.*;
 import org.openmrs.api.context.Context;
 
 import ca.uhn.fhir.model.dstu2.composite.BoundCodeableConceptDt;
@@ -209,6 +204,12 @@ public class FHIREncounterUtil {
 			visitRef.setReference(visitRefId);
 			encounter.setPartOf(visitRef);
 		}
+
+		String encounterType = omrsEncounter.getEncounterType().getName();
+		CodingDt dt = new CodingDt();
+		dt.setDisplay(encounterType);
+		encounter.getTypeFirstRep().getCoding().add(dt);
+
 		//TODO uncomment the validation and check what's going wrong
 		//FHIRUtils.validate(encounter);
 		return encounter;
@@ -304,6 +305,11 @@ public class FHIREncounterUtil {
 				omrsEncounter.setLocation(omrsLocation);
 			}
 		}
+
+		String encounterTypeName = encounter.getTypeFirstRep().getCodingFirstRep().getDisplay();
+		EncounterType encounterType = Context.getEncounterService().getEncounterType(encounterTypeName);
+		omrsEncounter.setEncounterType(encounterType);
+
 		return omrsEncounter;
 	}
 	
