@@ -72,6 +72,7 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 	public Encounter getEncounter(String id) {
 
 		org.openmrs.Encounter omrsEncounter = Context.getEncounterService().getEncounterByUuid(id);
+
 		if (omrsEncounter == null || omrsEncounter.isVoided()) {
 			Visit visit = Context.getVisitService().getVisitByUuid(id);
 			if (visit != null && !visit.isVoided()) {
@@ -107,7 +108,7 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 		org.openmrs.api.PatientService patientService = Context.getPatientService();
 		List<PatientIdentifierType> allPatientIdentifierTypes = patientService.getAllPatientIdentifierTypes();
 		List<org.openmrs.Patient> patientList = patientService
-		        .getPatients(null, identifier, allPatientIdentifierTypes, true);
+		        .getPatients(identifier, null, allPatientIdentifierTypes, true);
 		List<Encounter> fhirEncountersList = new ArrayList<Encounter>();
 
 		for (Patient patient : patientList) {
@@ -233,7 +234,7 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 	public List<Encounter> searchEncountersByPatientIdentifierAndPartOf(String patientIdentifier, String partOf) {
 		org.openmrs.api.PatientService patientService = Context.getPatientService();
 		List<PatientIdentifierType> allPatientIdentifierTypes = patientService.getAllPatientIdentifierTypes();
-		List<org.openmrs.Patient> patientList = patientService.getPatients(null, patientIdentifier,
+		List<org.openmrs.Patient> patientList = patientService.getPatients(patientIdentifier, null,
 		    allPatientIdentifierTypes, true);
 		List<Encounter> fhirEncountersList = new ArrayList<Encounter>();
 
@@ -338,6 +339,7 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 			}
 			throw new UnprocessableEntityException(errorMessage.toString());
 		}
+
 		if (encounterRef != null && !encounterRef.isEmpty()) {
 			encounterToCreate = Context.getEncounterService().saveEncounter(encounterToCreate);
 			return FHIREncounterUtil.generateEncounter(encounterToCreate);

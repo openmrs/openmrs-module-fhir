@@ -170,7 +170,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		AttachmentDt attachmentDt = new AttachmentDt();
 		int obsId = attachmentObs.getObsId();
 
-		Obs complexObs = Context.getObsService().getComplexObs(obsId, OpenmrsConstants.RAW_VIEW);
+		Obs complexObs = Context.getObsService().getComplexObs(obsId, "RAW_VIEW");
 		ComplexData complexData = complexObs.getComplexData();
 		attachmentDt.setTitle(complexData.getTitle());
 		attachmentDt.setData(new Base64BinaryDt(((byte[]) complexData.getData())));
@@ -329,7 +329,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		Context.getObsService().saveObs(complexObs, null);
 
 		Integer obsId = complexObs.getObsId();
-		return Context.getObsService().getComplexObs(obsId, OpenmrsConstants.RAW_VIEW);
+		return Context.getObsService().getComplexObs(obsId, "RAW_VIEW");
 	}
 
 	public Observation prepareForGenerateOpenMRSObs(Observation observation, DiagnosticReport diagnosticReport) {
@@ -475,7 +475,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 	private Obs voidAttachment(Obs attachmentObs) {
 		org.openmrs.api.ObsService obsService = Context.getObsService();
 		int obsId = attachmentObs.getObsId();
-		Obs complexObs = obsService.getComplexObs(obsId, OpenmrsConstants.RAW_VIEW);
+		Obs complexObs = obsService.getComplexObs(obsId, "RAW_VIEW");
 		java.util.Date date = new java.util.Date();
 		obsService.voidObs(complexObs, "Due to update DiagnosticReport on " + new Timestamp(date.getTime()));
 		return complexObs;

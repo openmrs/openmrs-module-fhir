@@ -115,7 +115,7 @@ public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 		String name = "Jean";
 		Bundle patients = getService().searchPatientsByName(name);
 		assertNotNull(patients);
-		assertEquals(2, patients.getEntry().size());
+		assertEquals(3, patients.getEntry().size());
 	}
 
 	@Test
@@ -131,7 +131,7 @@ public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 		String name = "Doe";
 		Bundle patients = getService().searchPatientsByFamilyName(name);
 		assertNotNull(patients);
-		assertEquals(2, patients.getEntry().size());
+		assertEquals(3, patients.getEntry().size());
 	}
 
 	@Test
@@ -145,7 +145,7 @@ public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 	public void searchInActivePatients_shouldReturnBundle() {
 		List<Patient> patients = getService().searchPatients(false);
 		assertNotNull(patients);
-		assertEquals(2, patients.size());
+		assertEquals(3, patients.size());
 	}
 	
 	@Test

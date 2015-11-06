@@ -230,7 +230,7 @@ public class FHIRImagingStudyUtil {
 		Context.getObsService().saveObs(complexObs, null);
 
 		Integer obsId = complexObs.getObsId();
-		return Context.getObsService().getComplexObs(obsId, OpenmrsConstants.RAW_VIEW);
+		return Context.getObsService().getComplexObs(obsId, "RAW_VIEW");
 	}
 
 }

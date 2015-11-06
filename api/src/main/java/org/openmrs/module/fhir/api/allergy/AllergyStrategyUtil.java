@@ -22,10 +22,8 @@ public class AllergyStrategyUtil {
 		String strategy = FHIRUtils.getAllergyStrategy();
 		if (FHIRConstants.OBS_ALLERGY_STRATEGY.equals(strategy)) {
 			return new ObsAllergyStrategy();
-		} else if (FHIRConstants.ALLERGY_API_ALLERGY_STRATEGY.equals(strategy)) {
-			return new AllergyApiModuleAllergyStrategy();
 		} else {
-			return new ActiveListAllergyStrategy();
+			return new AllergyApiStrategy();
 		}
 	}
 }
