@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Transactional
-public interface FamilyHistoryService extends OpenmrsService {
+public interface FamilyMemberHistoryService extends OpenmrsService {
 
 	/**
 	 * Search family history by person

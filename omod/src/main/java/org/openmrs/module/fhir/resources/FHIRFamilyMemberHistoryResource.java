@@ -13,20 +13,21 @@
  */
 package org.openmrs.module.fhir.resources;
 
+import java.util.List;
+
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.FamilyMemberHistoryService;
+
 import ca.uhn.fhir.model.dstu2.resource.FamilyMemberHistory;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.FamilyHistoryService;
 
-import java.util.List;
-
-public class FHIRFamilyHistoryResource extends Resource {
+public class FHIRFamilyMemberHistoryResource extends Resource {
 
 	public FamilyMemberHistory getByUniqueId(IdDt id) {
-		FamilyHistoryService familyHistoryService = Context.getService(FamilyHistoryService.class);
+		FamilyMemberHistoryService familyHistoryService = Context.getService(FamilyMemberHistoryService.class);
 		FamilyMemberHistory familyHistory = familyHistoryService.getRelationshipById(id.getIdPart());
 		if (familyHistory == null) {
 			throw new ResourceNotFoundException("Family history is not found for the given Id " + id.getIdPart());
@@ -35,12 +36,12 @@ public class FHIRFamilyHistoryResource extends Resource {
 	}
 
 	public List<FamilyMemberHistory> searchFamilyHistoryByUniqueId(TokenParam id) {
-		FamilyHistoryService familyHistoryService = Context.getService(FamilyHistoryService.class);
+		FamilyMemberHistoryService familyHistoryService = Context.getService(FamilyMemberHistoryService.class);
 		return familyHistoryService.searchRelationshipsById(id.getValue());
 	}
 
 	public List<FamilyMemberHistory> searchFamilyHistoryByPerson(ReferenceParam id) {
-		FamilyHistoryService familyHistoryService = Context.getService(FamilyHistoryService.class);
+		FamilyMemberHistoryService familyHistoryService = Context.getService(FamilyMemberHistoryService.class);
 		return familyHistoryService.searchFamilyHistoryByPersonId(id.getIdPart());
 	}
 }

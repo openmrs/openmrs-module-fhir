@@ -24,7 +24,7 @@ import org.openmrs.module.fhir.providers.RestfulAllergyIntoleranceResourceProvid
 import org.openmrs.module.fhir.providers.RestfulConditionResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulDiagnosticReportResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulEncounterResourceProvider;
-import org.openmrs.module.fhir.providers.RestfulFamilyHistoryResourceProvider;
+import org.openmrs.module.fhir.providers.RestfulFamilyMemberHistoryResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulLocationResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulObservationResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulPatientResourceProvider;
@@ -57,7 +57,7 @@ public class FHIRRESTServer extends RestfulServer {
 		resourceProviders.add(new RestfulPatientResourceProvider());
 		resourceProviders.add(new RestfulAllergyIntoleranceResourceProvider());
 		resourceProviders.add(new RestfulEncounterResourceProvider());
-		resourceProviders.add(new RestfulFamilyHistoryResourceProvider());
+		resourceProviders.add(new RestfulFamilyMemberHistoryResourceProvider());
 		resourceProviders.add(new RestfulLocationResourceProvider());
 		resourceProviders.add(new RestfulObservationResourceProvider());
 		resourceProviders.add(new RestfulPractitionerResourceProvider());
