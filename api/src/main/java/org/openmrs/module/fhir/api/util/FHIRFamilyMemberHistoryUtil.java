@@ -27,7 +27,7 @@ import org.openmrs.Relationship;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FHIRFamilyHistoryUtil {
+public class FHIRFamilyMemberHistoryUtil {
 
 	public static FamilyMemberHistory generateFamilyHistory(Relationship relationship, Person person) {
 		FamilyMemberHistory familyMemberHistory = new FamilyMemberHistory();

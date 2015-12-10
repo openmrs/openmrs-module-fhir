@@ -24,7 +24,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class FamilyHistoryServiceTest extends BaseModuleContextSensitiveTest {
+public class FamilyMemberHistoryServiceTest extends BaseModuleContextSensitiveTest {
 
 	protected static final String RELATIONSHIPS_INITIAL_DATA_XML =
 			"org/openmrs/api/include/PersonServiceTest-createRelationship.xml";
@@ -34,8 +34,8 @@ public class FamilyHistoryServiceTest extends BaseModuleContextSensitiveTest {
 		executeDataSet(RELATIONSHIPS_INITIAL_DATA_XML);
 	}
 
-	public FamilyHistoryService getService() {
-		return Context.getService(FamilyHistoryService.class);
+	public FamilyMemberHistoryService getService() {
+		return Context.getService(FamilyMemberHistoryService.class);
 	}
 
 	@Test

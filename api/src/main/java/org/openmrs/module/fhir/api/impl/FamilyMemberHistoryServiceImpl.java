@@ -13,21 +13,22 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import ca.uhn.fhir.model.dstu2.resource.FamilyMemberHistory;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Person;
 import org.openmrs.Relationship;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
-import org.openmrs.module.fhir.api.FamilyHistoryService;
+import org.openmrs.module.fhir.api.FamilyMemberHistoryService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
-import org.openmrs.module.fhir.api.util.FHIRFamilyHistoryUtil;
+import org.openmrs.module.fhir.api.util.FHIRFamilyMemberHistoryUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import ca.uhn.fhir.model.dstu2.resource.FamilyMemberHistory;
 
-public class FamilyHistoryServiceImpl extends BaseOpenmrsService implements FamilyHistoryService {
+public class FamilyMemberHistoryServiceImpl extends BaseOpenmrsService implements FamilyMemberHistoryService {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 
@@ -59,7 +60,7 @@ public class FamilyHistoryServiceImpl extends BaseOpenmrsService implements Fami
 		}
 		if (relationships != null && relationships.size() > 0) {
 			for (Relationship relationship : relationships) {
-				fhirFamilyHistory.add(FHIRFamilyHistoryUtil.generateFamilyHistory(relationship, person));
+				fhirFamilyHistory.add(FHIRFamilyMemberHistoryUtil.generateFamilyHistory(relationship, person));
 			}
 		}
 		return fhirFamilyHistory;
@@ -71,7 +72,7 @@ public class FamilyHistoryServiceImpl extends BaseOpenmrsService implements Fami
 	public FamilyMemberHistory getRelationshipById(String id) {
 		Person person = Context.getPersonService().getPersonByUuid(id);
 		List<Relationship> relationships = Context.getPersonService().getRelationshipsByPerson(person);
-		return FHIRFamilyHistoryUtil.generateFamilyHistory(relationships.get(0), person);
+		return FHIRFamilyMemberHistoryUtil.generateFamilyHistory(relationships.get(0), person);
 	}
 
 	/**
@@ -83,7 +84,7 @@ public class FamilyHistoryServiceImpl extends BaseOpenmrsService implements Fami
 		List<Relationship> relationships = Context.getPersonService().getRelationshipsByPerson(person);
 		if (relationships != null) {
 			for (Relationship relationship : relationships) {
-				familyHistories.add(FHIRFamilyHistoryUtil.generateFamilyHistory(relationship, person));
+				familyHistories.add(FHIRFamilyMemberHistoryUtil.generateFamilyHistory(relationship, person));
 			}
 		}
 		return familyHistories;

@@ -26,7 +26,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.EncounterService;
-import org.openmrs.module.fhir.api.FamilyHistoryService;
+import org.openmrs.module.fhir.api.FamilyMemberHistoryService;
 import org.openmrs.module.fhir.api.PatientService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRLocationUtil;
@@ -228,7 +228,7 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 	public Bundle getPatientOperationsById(String patientId) {
 		org.openmrs.Patient omsrPatient = null;
 		EncounterService encounterService = Context.getService(EncounterService.class);
-		FamilyHistoryService familyHistoryService = Context.getService(FamilyHistoryService.class);
+		FamilyMemberHistoryService familyHistoryService = Context.getService(FamilyMemberHistoryService.class);
 		omsrPatient = Context.getPatientService().getPatientByUuid(patientId);
 		Bundle bundle = new Bundle();
 
