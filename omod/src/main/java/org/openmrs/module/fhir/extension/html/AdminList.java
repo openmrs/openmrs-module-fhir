@@ -21,7 +21,7 @@ import java.util.Map;
  * This class defines the links that will appear on the administration page under the
  * "fhir.title" heading.
  */
-public class AdminList {
+public class AdminList extends Extension{
 	
 	/**
 	 * @see AdministrationSectionExt#getMediaType()
