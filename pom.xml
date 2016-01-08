@@ -18,7 +18,7 @@
 
     <groupId>org.openmrs.module</groupId>
     <artifactId>fhir</artifactId>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>FHIR Module</name>
     <description>Helps to start writing OpenMRS modules</description>
