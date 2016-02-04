@@ -15,6 +15,7 @@ package org.openmrs.module.fhir.api.impl;
 
 import ca.uhn.fhir.model.dstu2.resource.Appointment;
 import org.openmrs.module.fhir.api.AppointmentService;
+import org.openmrs.module.fhir.appointment.AppointmentStrategyUtil;
 
 import java.util.List;
 
@@ -27,8 +28,7 @@ public class AppointmentServiceImpl implements AppointmentService {
      * @return appointment obj
      */
     public Appointment getAppointmentById(String uuid) {
-        //TODO
-        return null;
+        return AppointmentStrategyUtil.getAppointmentStrategy().getAppointmentById(uuid);
     }
 
     /**
@@ -38,8 +38,7 @@ public class AppointmentServiceImpl implements AppointmentService {
      * @return appointment obj
      */
     public List<Appointment> searchAppointmentById(String uuid) {
-        //TODO
-        return null;
+        return AppointmentStrategyUtil.getAppointmentStrategy().searchAppointmentsById(uuid);
     }
 
 
@@ -50,8 +49,7 @@ public class AppointmentServiceImpl implements AppointmentService {
      * @return appointment obj
      */
     public List<Appointment> searchAppointmentsByPatient(String patientUuid) {
-        //TODO
-        return null;
+        return AppointmentStrategyUtil.getAppointmentStrategy().searchAppointmentsByPatient(patientUuid);
     }
 
 }

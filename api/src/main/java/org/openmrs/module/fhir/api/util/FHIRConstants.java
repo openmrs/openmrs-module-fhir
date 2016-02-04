@@ -178,6 +178,8 @@ public final class FHIRConstants {
 
 	public static final String OBS_ALLERGY_STRATEGY = "ObsAllergyStrategy";
 
+	public static final String APPOINTMENT_MODULE_STRATEGY = "AppointmentModuleStrategy";
+
 	public static final String OPENMRS_CONCEPT_CODING_SYSTEM = "OPENMRS";
 
 	public static final String NONE = "none";
