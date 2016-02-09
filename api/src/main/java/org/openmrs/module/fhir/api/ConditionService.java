@@ -40,10 +40,10 @@ public interface ConditionService {
 	/**
 	 * Search conditions by name
 	 *
-	 * @param name the name to be search
+	 * @param patientUuid the name to be search
 	 * @return fhir contion resource list
 	 */
-	List<Condition> searchConditionsByName(String name);
+	List<Condition> searchConditionsByPatient(String patientUuid);
 
 	/**
 	 * creates a oms Condition from FHIR personn

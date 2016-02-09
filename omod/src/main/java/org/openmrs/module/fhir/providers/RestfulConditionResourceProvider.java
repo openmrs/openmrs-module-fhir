@@ -14,53 +14,67 @@
 package org.openmrs.module.fhir.providers;
 
 import ca.uhn.fhir.model.api.IResource;
+import ca.uhn.fhir.model.dstu2.resource.Appointment;
 import ca.uhn.fhir.model.dstu2.resource.Condition;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+import org.openmrs.module.fhir.resources.FHIRAppointmentResource;
 import org.openmrs.module.fhir.resources.FHIRConditionResource;
 
 import java.util.List;
 
 public class RestfulConditionResourceProvider implements IResourceProvider {
 
-	private FHIRConditionResource conditionResource;
+    private FHIRConditionResource conditionResource;
 
-	public RestfulConditionResourceProvider() {
-		this.conditionResource = new FHIRConditionResource();
-	}
+    public RestfulConditionResourceProvider() {
+        conditionResource = new FHIRConditionResource();
+    }
 
-	@Override
-	public Class<? extends IResource> getResourceType() {
-		return Condition.class;
-	}
+    @Override
+    public Class<? extends IResource> getResourceType() {
+        return Condition.class;
+    }
 
-	/**
-	 * The "@Read" annotation indicates that this method supports the read operation. Read
-	 * operations should return a single resource instance.
-	 *
-	 * @param theId The read operation takes one parameter, which must be of type IdDt and must be
-	 *              annotated with the "@Read.IdParam" annotation.
-	 * @return Returns a resource matching this identifier, or null if none exists.
-	 */
-	@Read()
-	public Condition getResourceById(@IdParam IdDt theId) {
-		Condition result = null;
-		result = conditionResource.getByUniqueId(theId);
-		return result;
-	}
+    /**
+     * The "@Read" annotation indicates that this method supports the
+     * read operation. Read operations should return a single resource
+     * instance.
+     *
+     * @param theId The read operation takes one parameter, which must be of type
+     *              IdDt and must be annotated with the "@Read.IdParam" annotation.
+     * @return Returns a resource matching this identifier, or null if none exists.
+     */
+    @Read()
+    public Condition getResourceById(@IdParam IdDt theId) {
+        return conditionResource.getByUniqueId(theId);
+    }
 
-	/**
-	 * Search condition by unique id
-	 *
-	 * @param id object contaning the requested person
-	 */
-	@Search()
-	public List<Condition> searchPractitionerByUniqueId(@RequiredParam(name = Condition.SP_RES_ID) TokenParam id) {
-		return conditionResource.searchByUniqueId(id);
-	}
+    /**
+     * Search appointments by unique id
+     *
+     * @param id object containing the requested id
+     */
+    @Search()
+    public List<Condition> searchConditionsByUniqueId(
+            @RequiredParam(name = Condition.SP_RES_ID) TokenParam id) {
+        return conditionResource.searchConditionsById(id);
+    }
+
+    /**
+     * Search appointments by unique id
+     *
+     * @param patient object containing the patient details
+     */
+    @Search()
+    public List<Condition> searchConditionssByPatient(
+            @RequiredParam(name = Condition.SP_PATIENT) ReferenceParam patient) {
+        return conditionResource.searchConditionsByPatient(patient);
+    }
 }

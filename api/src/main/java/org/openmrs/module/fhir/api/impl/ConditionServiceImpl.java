@@ -66,7 +66,7 @@ public class ConditionServiceImpl implements ConditionService {
 	}
 
 	@Override
-	public List<Condition> searchConditionsByName(String name) {
+	public List<Condition> searchConditionsByPatient(String patientUuid) {
 		return null;
 	}
 
