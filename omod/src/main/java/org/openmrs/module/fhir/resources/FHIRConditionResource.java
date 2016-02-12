@@ -15,6 +15,7 @@ package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.model.dstu2.resource.Condition;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.openmrs.api.context.Context;
@@ -24,17 +25,20 @@ import java.util.List;
 
 public class FHIRConditionResource extends Resource {
 
-	public Condition getByUniqueId(IdDt id) {
-		ConditionService conditionService = Context.getService(ConditionService.class);
-		Condition condition = conditionService.getCondition(id.getIdPart());
-		if (condition == null) {
-			throw new ResourceNotFoundException("Condition is not found for the given Id " + id.getIdPart());
-		}
-		return condition;
-	}
+    public Condition getByUniqueId(IdDt id) {
+        ConditionService conditionService = Context.getService(ConditionService.class);
+        Condition condition = conditionService.getCondition(id.getIdPart());
+        if (condition == null) {
+            throw new ResourceNotFoundException("Condition is not found for the given Id " + id.getIdPart());
+        }
+        return condition;
+    }
 
-	public List<Condition> searchByUniqueId(TokenParam id) {
-		ConditionService conditionService = Context.getService(ConditionService.class);
-		return conditionService.searchConditionById(id.getValue());
-	}
+    public List<Condition> searchConditionsById(TokenParam id) {
+        return Context.getService(ConditionService.class).searchConditionById(id.getValue());
+    }
+
+    public List<Condition> searchConditionsByPatient(ReferenceParam patient) {
+        return Context.getService(ConditionService.class).searchConditionsByPatient(patient.getValue());
+    }
 }
