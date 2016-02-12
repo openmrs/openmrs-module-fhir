@@ -14,12 +14,33 @@
 package org.openmrs.module.fhir.api.impl;
 
 import ca.uhn.fhir.model.dstu2.resource.Appointment;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.fhir.api.AppointmentService;
+import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.appointment.AppointmentStrategyUtil;
 
 import java.util.List;
 
 public class AppointmentServiceImpl implements AppointmentService {
+
+    protected final Log log = LogFactory.getLog(this.getClass());
+
+    private FHIRDAO dao;
+    
+    /**
+     * @return the dao
+     */
+    public FHIRDAO getDao() {
+        return dao;
+    }
+
+    /**
+     * @param dao the dao to set
+     */
+    public void setDao(FHIRDAO dao) {
+        this.dao = dao;
+    }
 
     /**
      * Get appointment by uuid
