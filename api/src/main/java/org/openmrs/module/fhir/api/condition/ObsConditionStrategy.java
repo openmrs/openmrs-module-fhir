@@ -11,9 +11,8 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.fhir.api.condition.allergy;
+package org.openmrs.module.fhir.api.condition;
 
-import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
 import ca.uhn.fhir.model.dstu2.resource.Condition;
 
 import java.util.List;
