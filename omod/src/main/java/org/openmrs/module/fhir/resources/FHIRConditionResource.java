@@ -34,6 +34,21 @@ public class FHIRConditionResource extends Resource {
         return condition;
     }
 
+    /**
+     * Gets the FHIR Condition for the OpenMRs Obs which has the id
+     * @param id id of the OpenMrs Obs
+     * @return
+     */
+    public Condition getConditionByObsUniqueId(IdDt id) {
+        ConditionService conditionService = Context.getService(ConditionService.class);
+        Condition condition = conditionService.getConditionByObsId(id.getIdPart());
+        if (condition == null) {
+            throw new ResourceNotFoundException("Condition is not found for the given Observatoin Id " + id.getIdPart
+                    ());
+        }
+        return condition;
+    }
+
     public List<Condition> searchConditionsById(TokenParam id) {
         return Context.getService(ConditionService.class).searchConditionById(id.getValue());
     }

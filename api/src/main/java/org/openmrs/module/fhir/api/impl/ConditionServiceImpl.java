@@ -56,6 +56,14 @@ public class ConditionServiceImpl implements ConditionService {
 	}
 
 	@Override
+	public Condition getConditionByObsId(String id) {
+		org.openmrs.Obs obs = Context.getObsService().getObsByUuid(id);
+		if (obs == null || obs.isVoided()) {
+			return null;
+		}
+		return FHIRConditionUtil.generateFHIRConditionForOpenMRSObs(obs);
+	}
+	@Override
 	public List<Condition> searchConditionById(String id) {
 		org.openmrs.Condition condition = Context.getService(org.openmrs.api.ConditionService.class).getConditionByUuid(id);
 		List<Condition> conditionList = new ArrayList<Condition>();

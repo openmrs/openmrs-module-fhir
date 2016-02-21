@@ -57,6 +57,19 @@ public class RestfulConditionResourceProvider implements IResourceProvider {
     }
 
     /**
+     * The "@Read" annotation indicates that this method supports the
+     * read operation. Read operations should return a single resource
+     * instance.
+     *
+     * @param theId id of the OpenMrs Obs
+     * @return Returns a resource matching to the OpenMrs Obs which has the identifier theId, or null if none exists.
+     */
+    @Read()
+    public Condition getResourceByObsUID(@IdParam IdDt theId) {
+        return conditionResource.getConditionByObsUniqueId(theId);
+    }
+
+    /**
      * Search appointments by unique id
      *
      * @param id object containing the requested id
