@@ -208,7 +208,13 @@
         <description>The URL of third party FHIR base server that use to retrieve Radiology Diagnostic Reports
         </description>
     </globalProperty>
-
+    <globalProperty>
+        <property>${project.parent.artifactId}.concepts.conditions</property>
+        <defaultValue></defaultValue>
+        <description>The set of IDs of the concepts that can be matched to conditions which is needed to be stored as
+            Observations
+        </description>
+    </globalProperty>
     <privilege>
         <name>View FHIR Client</name>
         <description>Gives access to FHIR rest client</description>
