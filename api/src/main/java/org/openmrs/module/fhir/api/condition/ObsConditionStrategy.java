@@ -19,6 +19,7 @@ import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu2.resource.Condition;
 import ca.uhn.fhir.model.primitive.DateDt;
 import ca.uhn.fhir.model.primitive.IdDt;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.ConceptMap;
 import org.openmrs.Obs;
@@ -35,14 +36,11 @@ public class ObsConditionStrategy implements GenericConditionStrategy {
 
 	@Override
 	public Condition getConditionById(String uuid) {
-		String conceptsAsConditions = Context.getAdministrationService().getGlobalProperty("fhir.concepts.conditions");
-		List<String> concepts = new ArrayList<String>();
-		if (StringUtils.isNotBlank(conceptsAsConditions)) {
-			concepts = Arrays.asList(conceptsAsConditions.split(","));
-		}
+		int[] conceptsAsConditions = FHIRUtils.getConceptIdsOfConditions();
 		Obs obs = Context.getObsService().getObsByUuid(uuid);
-		String conceptID = Integer.toString(obs.getConcept().getId());
-		if (obs == null || obs.isVoided() || !concepts.contains(conceptID)) {
+		int conceptID = obs.getConcept().getId();
+		if (obs == null || obs.isVoided() || conceptsAsConditions == null || !ArrayUtils.contains
+				(conceptsAsConditions, conceptID)) {
 			return null;
 		}
 		return generateFHIRConditionForOpenMRSObs(obs);

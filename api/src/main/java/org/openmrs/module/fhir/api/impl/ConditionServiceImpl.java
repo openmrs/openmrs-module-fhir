@@ -60,9 +60,11 @@ public class ConditionServiceImpl implements ConditionService {
 	public Condition getConditionByObsId(String id) {
 		return ConditionStrategyUtil.getConditionStrategy().getConditionById(id);
 	}
+
 	@Override
 	public List<Condition> searchConditionById(String id) {
-		org.openmrs.Condition condition = Context.getService(org.openmrs.api.ConditionService.class).getConditionByUuid(id);
+		org.openmrs.Condition condition = Context.getService(org.openmrs.api.ConditionService.class)
+				.getConditionByUuid(id);
 		List<Condition> conditionList = new ArrayList<Condition>();
 		if (condition != null) {
 			conditionList.add(FHIRConditionUtil.generateFHIRCondition(condition));
