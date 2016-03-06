@@ -34,15 +34,20 @@ import java.util.List;
 
 public class ObsConditionStrategy implements GenericConditionStrategy {
 
+	/**
+	 *
+	 * @param uuid the uuid of the Observation
+	 * @return fhir condition resource and will return null if condition is not found for the given id
+	 */
 	@Override
 	public Condition getConditionById(String uuid) {
 		int[] conceptsAsConditions = FHIRUtils.getConceptIdsOfConditions();
 		Obs obs = Context.getObsService().getObsByUuid(uuid);
-		int conceptID = obs.getConcept().getId();
 		if (obs == null || obs.isVoided() || conceptsAsConditions == null || !ArrayUtils.contains
-				(conceptsAsConditions, conceptID)) {
+				(conceptsAsConditions, obs.getConcept().getId())) {
 			return null;
 		}
+
 		return generateFHIRConditionForOpenMRSObs(obs);
 	}
 
