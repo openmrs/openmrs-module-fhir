@@ -16,7 +16,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.Date;
 
 /**
- * Created by chamara on 3/6/16.
+ * This test class will test the functionalities of the Condition Service.
  */
 public class ConditionServiceTest extends BaseModuleContextSensitiveTest {
     protected static final String OBS_INITIAL_DATA_XML = "org/openmrs/api/include/ObsServiceTest-initial.xml";
