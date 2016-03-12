@@ -124,6 +124,30 @@ public class FHIRUtils {
 		return reference;
 	}
 
+	/**
+	 * Generates practitioner referenceDt
+	 *
+	 * @param provider the provider ob
+	 *
+	 * @return the practitioner resource reference
+     */
+	public static ResourceReferenceDt buildPractitionerReference(org.openmrs.Provider provider) {
+		ResourceReferenceDt providerDt = new ResourceReferenceDt();
+		StringBuilder providerNameDisplay = new StringBuilder();
+		providerNameDisplay.append(provider.getName());
+		providerNameDisplay.append("(");
+		providerNameDisplay.append(FHIRConstants.IDENTIFIER);
+		providerNameDisplay.append(":");
+		providerNameDisplay.append(provider.getIdentifier());
+		providerNameDisplay.append(")");
+		providerDt.setDisplay(providerNameDisplay.toString());
+		IdDt providerRef = new IdDt();
+		String providerUri = FHIRConstants.PRACTITIONER + "/" + provider.getUuid();
+		providerRef.setValue(providerUri);
+		providerDt.setReference(providerRef);
+		return providerDt;
+	}
+
 	public static CodingDt getCodingDtByConceptMappings(ConceptMap conceptMap) {
 		//Set concept source concept name as the display value and set concept uuid if name is empty
 		String display = conceptMap.getConceptReferenceTerm().getName();

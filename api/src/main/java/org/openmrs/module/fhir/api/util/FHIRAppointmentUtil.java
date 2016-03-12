@@ -44,12 +44,24 @@ public class FHIRAppointmentUtil {
         IdentifierDt identifier = new IdentifierDt();
         identifier.setValue(Integer.toString(appointment.getAppointmentId()));
         fhirAppointment.addIdentifier(identifier);
+
         //Set patient reference
         ResourceReferenceDt patient = FHIRUtils.buildPatientOrPersonResourceReference(appointment.getPatient());
+
+        //Set practitioner reference
+        ResourceReferenceDt practitioner = FHIRUtils.buildPractitionerReference(appointment.getTimeSlot().getAppointmentBlock().getProvider());
+
         List<ca.uhn.fhir.model.dstu2.resource.Appointment.Participant> participants = new ArrayList<ca.uhn.fhir.model.dstu2.resource.Appointment.Participant>();
-        ca.uhn.fhir.model.dstu2.resource.Appointment.Participant participant = new ca.uhn.fhir.model.dstu2.resource.Appointment.Participant();
-        participant.setActor(patient);
-        participants.add(participant);
+        ca.uhn.fhir.model.dstu2.resource.Appointment.Participant participantPatient = new ca.uhn.fhir.model.dstu2.resource.Appointment.Participant();
+        participantPatient.setActor(patient);
+
+        ca.uhn.fhir.model.dstu2.resource.Appointment.Participant participantPractitioner = new ca.uhn.fhir.model.dstu2.resource.Appointment.Participant();
+        participantPractitioner.setActor(practitioner);
+
+        //Add participant and provider
+        participants.add(participantPatient);
+        participants.add(participantPractitioner);
+
         fhirAppointment.setParticipant(participants);
 
         //Set appointment status
