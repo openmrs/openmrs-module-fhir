@@ -73,6 +73,10 @@
         <phlocSchematronVersion>2.7.1</phlocSchematronVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <appointmentschedulingVersion>1.5</appointmentschedulingVersion>
+        <reportingModuleApiVersion>0.9.2</reportingModuleApiVersion>
+        <calculationModuleApiVersion>1.0</calculationModuleApiVersion>
+        <serializationModuleApiVersion>0.2.7</serializationModuleApiVersion>
+        <emrApiConditionModuleApiVersion>1.5</emrApiConditionModuleApiVersion>
     </properties>
 
     <dependencyManagement>

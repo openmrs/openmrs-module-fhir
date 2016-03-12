@@ -88,7 +88,7 @@
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>emrapi-condition-list</artifactId>
-            <version>1.5</version>
+            <version>${emrApiConditionModuleApiVersion}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -100,19 +100,19 @@
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>reporting-api</artifactId>
-            <version>0.9.2</version>
+            <version>${reportingModuleApiVersion}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>calculation-api</artifactId>
-            <version>1.0</version>
+            <version>${calculationModuleApiVersion}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>serialization.xstream-api</artifactId>
-            <version>0.2.7</version>
+            <version>${serializationModuleApiVersion}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
