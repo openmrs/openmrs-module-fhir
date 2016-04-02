@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.ConditionService;
+import org.openmrs.module.fhir.api.condition.ConditionStrategyUtil;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRConditionUtil;
 
@@ -56,8 +57,14 @@ public class ConditionServiceImpl implements ConditionService {
 	}
 
 	@Override
+	public Condition getConditionByObsId(String id) {
+		return ConditionStrategyUtil.getConditionStrategy().getConditionById(id);
+	}
+
+	@Override
 	public List<Condition> searchConditionById(String id) {
-		org.openmrs.Condition condition = Context.getService(org.openmrs.api.ConditionService.class).getConditionByUuid(id);
+		org.openmrs.Condition condition = Context.getService(org.openmrs.api.ConditionService.class)
+				.getConditionByUuid(id);
 		List<Condition> conditionList = new ArrayList<Condition>();
 		if (condition != null) {
 			conditionList.add(FHIRConditionUtil.generateFHIRCondition(condition));

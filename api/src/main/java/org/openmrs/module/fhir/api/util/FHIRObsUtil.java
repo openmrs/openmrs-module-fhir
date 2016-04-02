@@ -262,7 +262,6 @@ public class FHIRObsUtil {
 	
 	public static Obs generateOpenMRSObs(Observation observation, List<String> errors) {
 		Obs obs = new Obs();
-		
 		obs.setComment(observation.getComments());
 		if (observation.getSubject() != null) {
 			ResourceReferenceDt subjectref = observation.getSubject();

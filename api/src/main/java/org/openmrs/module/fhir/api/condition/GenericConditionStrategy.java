@@ -19,6 +19,11 @@ import java.util.List;
 
 public interface GenericConditionStrategy {
 
+	/**
+	 *
+	 * @param uuid
+	 * @return fhir Condition fhir condition resource and will return null if condition is not found for the given id
+	 */
 	Condition getConditionById(String uuid);
 
 	List<Condition> searchConditionById(String uuid);
