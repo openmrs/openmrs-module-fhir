@@ -23,6 +23,7 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.LocationService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRLocationUtil;
+import org.apache.commons.lang.StringUtils;
 
 import ca.uhn.fhir.model.dstu2.resource.Location;
 import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
@@ -83,7 +84,7 @@ public class LocationServiceImpl extends BaseOpenmrsService implements LocationS
 		List<org.openmrs.Location> omrsLocations = Context.getLocationService().getLocations(name);
 		List<Location> locationList = new ArrayList<Location>();
 		for (org.openmrs.Location location : omrsLocations) {
-			if (name.equalsIgnoreCase(location.getName())) {
+			if (StringUtils.startsWithIgnoreCase(location.getName(), name)){
 				locationList.add(FHIRLocationUtil.generateLocation(location));
 			}
 		}
