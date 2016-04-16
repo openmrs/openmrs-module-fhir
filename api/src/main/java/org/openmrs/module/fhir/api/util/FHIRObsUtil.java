@@ -100,11 +100,13 @@ public class FHIRObsUtil {
 		if (obs.getConcept().isNumeric()) {
 			ConceptNumeric cn = Context.getConceptService().getConceptNumeric(obs.getConcept().getId());
 			QuantityDt quantity = new QuantityDt();
-			quantity.setValue(obs.getValueNumeric());
-			quantity.setSystem(FHIRConstants.NUMERIC_CONCEPT_MEASURE_URI);
-			quantity.setUnits(cn.getUnits());
-			quantity.setCode(cn.getUnits());
-			observation.setValue(quantity);
+			if(obs.getValueNumeric() != null) {
+				quantity.setValue(obs.getValueNumeric());
+				quantity.setSystem(FHIRConstants.NUMERIC_CONCEPT_MEASURE_URI);
+				quantity.setUnits(cn.getUnits());
+				quantity.setCode(cn.getUnits());
+				observation.setValue(quantity);
+			}
 			//Set high and low ranges
 			List<Observation.ReferenceRange> referenceRanges = new ArrayList<Observation.ReferenceRange>();
 			Observation.ReferenceRange referenceRange = new Observation.ReferenceRange();

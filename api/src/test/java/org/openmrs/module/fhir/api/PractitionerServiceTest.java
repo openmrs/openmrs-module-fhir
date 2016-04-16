@@ -16,6 +16,7 @@ package org.openmrs.module.fhir.api;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -143,7 +144,8 @@ public class PractitionerServiceTest extends BaseModuleContextSensitiveTest {
 		List<StringDt> gvnNames = humanNameDt.getGiven();
 		assertEquals(gvnNames.get(0).getValue(), "yyy");
 		assertEquals(practitionerNew.getGender(), "male");
-		assertEquals(practitionerNew.getBirthDate(), bdate);
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		assertEquals(dateFormat.format(practitionerNew.getBirthDate()), dateFormat.format(bdate.getTime()));
 		List<IdentifierDt> idtifiers = practitionerNew.getIdentifier();
 		IdentifierDt ident = identifiers.get(0);
 		assertEquals(ident.getValue(), "fhirTest");
