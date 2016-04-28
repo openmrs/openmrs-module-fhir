@@ -90,6 +90,14 @@
             <type>pom</type>
         </dependency>
         <!-- End OpenMRS core -->
+        
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>legacyui-omod</artifactId>
+            <version>0.1</version>
+            <scope>provided</scope>
+        </dependency>
+        
     </dependencies>
 
     <build>

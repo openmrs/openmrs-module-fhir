@@ -45,6 +45,7 @@
 
     <aware_of_modules>
         <aware_of_module version="1.1-SNAPSHOT">org.openmrs.module.allergyapi</aware_of_module>
+        <aware_of_module>org.openmrs.module.legacyui</aware_of_module>
     </aware_of_modules>
 
     <!-- Maps hibernate file's, if present -->
