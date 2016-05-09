@@ -85,6 +85,14 @@
         <url-pattern>/ws/fhir/*</url-pattern>
     </filter-mapping>
     <filter>
+        <filter-name>FHIR Authorization Direct</filter-name>
+        <filter-class>org.openmrs.module.fhir.filter.AuthorizationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>FHIR Authorization Direct</filter-name>
+        <url-pattern>/ms/fhir/fhirServelet/*</url-pattern>
+    </filter-mapping>
+    <filter>
         <filter-name>forwardingFilterr</filter-name>
         <filter-class>org.openmrs.module.fhir.filter.ForwardingFilter</filter-class>
     </filter>
