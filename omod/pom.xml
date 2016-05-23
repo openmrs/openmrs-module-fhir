@@ -39,6 +39,10 @@
                     <groupId>log4j</groupId>
                     <artifactId>log4j</artifactId>
                 </exclusion>
+                <exclusion>
+                	<artifactId>woodstox-core-asl</artifactId>
+                	<groupId>org.codehaus.woodstox</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
