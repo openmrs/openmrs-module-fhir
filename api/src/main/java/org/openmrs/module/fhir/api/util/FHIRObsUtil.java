@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
 import org.openmrs.ConceptNumeric;
+import org.openmrs.Encounter;
 import org.openmrs.EncounterProvider;
 import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
@@ -378,6 +379,13 @@ public class FHIRObsUtil {
 				obs.setEncounter(Context.getEncounterService().getEncounterByUuid(encounterUuid));
 			}
 		}
+		return obs;
+	}
+
+	public static Obs generateOpenMRSObsWithEncounter(Observation observation, List<String> errors, Encounter
+			encounter) {
+		Obs obs = generateOpenMRSObs(observation, errors);
+		obs.setEncounter(encounter);
 		return obs;
 	}
 	
