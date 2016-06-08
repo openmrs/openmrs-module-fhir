@@ -14,6 +14,9 @@
 package org.openmrs.module.fhir.appointment;
 
 import ca.uhn.fhir.model.dstu2.resource.Appointment;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.appointmentscheduling.api.AppointmentService;
+import org.openmrs.module.fhir.api.util.FHIRAppointmentUtil;
 
 import java.util.List;
 
@@ -21,7 +24,9 @@ public class AppointmentModuleStrategy implements GenericAppointmentStrategy {
 
 	@Override
 	public Appointment getAppointmentById(String uuid) {
-		return null;
+		AppointmentService appointmentService = Context.getService(AppointmentService.class);
+		org.openmrs.module.appointmentscheduling.Appointment appointment = appointmentService.getAppointmentByUuid(uuid);
+		return FHIRAppointmentUtil.generateFHIRAppointment(appointment);
 	}
 
 	@Override

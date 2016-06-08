@@ -72,6 +72,11 @@
         <thymeleafVersion>2.1.4.RELEASE</thymeleafVersion>
         <phlocSchematronVersion>2.7.1</phlocSchematronVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <appointmentschedulingVersion>1.5</appointmentschedulingVersion>
+        <reportingModuleApiVersion>0.10.0</reportingModuleApiVersion>
+        <calculationModuleApiVersion>1.0</calculationModuleApiVersion>
+        <serializationModuleApiVersion>0.2.11</serializationModuleApiVersion>
+        <emrApiConditionModuleApiVersion>1.13</emrApiConditionModuleApiVersion>
     </properties>
 
     <dependencyManagement>
