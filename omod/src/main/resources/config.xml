@@ -59,6 +59,11 @@
         <servlet-name>fhirServelet</servlet-name>
         <servlet-class>org.openmrs.module.fhir.server.FHIRRESTServer</servlet-class>
     </servlet>
+
+    <servlet>
+        <servlet-name>fhirDocServelet</servlet-name>
+        <servlet-class>org.openmrs.module.fhir.swagger.SwaggerSpecificationController</servlet-class>
+    </servlet>
     <!-- Internationalization -->
     <!-- All message codes should start with ${project.parent.artifactId}. -->
     <messages>
@@ -96,9 +101,21 @@
         <filter-name>forwardingFilterr</filter-name>
         <filter-class>org.openmrs.module.fhir.filter.ForwardingFilter</filter-class>
     </filter>
+    <filter>
+        <filter-name>swaggerForwardingFilterr</filter-name>
+        <filter-class>org.openmrs.module.fhir.filter.SwaggerForwardingFilter</filter-class>
+    </filter>
     <filter-mapping>
         <filter-name>forwardingFilterr</filter-name>
         <url-pattern>/ws/fhir/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>forwardingFilterr</filter-name>
+        <url-pattern>/ms/fhir/fhirServelet/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>swaggerForwardingFilterr</filter-name>
+        <url-pattern>/module/fhir/rest/swagger.json</url-pattern>
     </filter-mapping>
 
     <globalProperty>
@@ -223,6 +240,10 @@
         <description>The set of IDs of the concepts that can be matched to conditions which is needed to be stored as
             Observations
         </description>
+    </globalProperty>
+    <globalProperty>
+        <property>${project.parent.artifactId}.uriPrefix</property>
+        <description>The URI prefix through which clients consuming web services will connect to the web application, should be of the form http://{ipAddress}:{port}/{contextPath}</description>
     </globalProperty>
     <privilege>
         <name>View FHIR Client</name>
