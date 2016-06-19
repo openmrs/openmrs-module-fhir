@@ -36,8 +36,8 @@ public class SwaggerForwardingFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		String requestURI = request.getRequestURI();
 
-		if (requestURI.startsWith(openmrsPath + "/ws/docs/fhir/swagger")) {
-			String newURI = requestURI.replace("/openmrs/ws/docs/fhir/swagger", "/ms/fhir/fhirDocServelet");
+		if (requestURI.startsWith(openmrsPath + "/module/fhir/rest/swagger.json")) {
+			String newURI = requestURI.replace("/openmrs/module/fhir/rest/swagger.json", "/ms/fhir/fhirDocServelet");
 			req.getRequestDispatcher(newURI).forward(req, res);
 		} else {
 			chain.doFilter(req, res);
