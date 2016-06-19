@@ -13,11 +13,15 @@
  */
 package org.openmrs.module.fhir.swagger;
 
+import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu2.resource.Conformance;
+import ca.uhn.fhir.model.dstu2.resource.OperationDefinition;
 import ca.uhn.fhir.model.primitive.CodeDt;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.openmrs.module.fhir.resources.Resource;
 import org.openmrs.module.fhir.server.ConformanceProvider;
 import org.openmrs.module.fhir.swagger.docs.Contact;
 import org.openmrs.module.fhir.swagger.docs.Definition;
@@ -438,6 +442,86 @@ public class SwaggerSpecificationCreator {
                 }
                 createDefinition(resourceName);
             }
+
+            //Add $everything
+            for(Conformance.RestOperation restOperation : restResource.getOperation()) {
+                if(SwaggerDocConstants.EVERYTHING.equalsIgnoreCase(restOperation.getName())) {
+                    OperationDefinition resource = (OperationDefinition) restOperation.getDefinition().getResource();
+                    String resourceName = resource.getType().get(0).getValue();
+                    String pathId = "/" + resourceName + "/" + SwaggerDocConstants.POST_RESOURCE_PATH + "/" + SwaggerDocConstants.EVERYTHING;
+                    Path everything;
+                    Map<String, Operation> everythingOperationsMap;
+                    if(pathMap.containsKey(pathId)) {
+                        everything = pathMap.get(pathId);
+                        everythingOperationsMap = everything.getOperations();
+                        if(everythingOperationsMap == null) {
+                            everythingOperationsMap = new HashMap<String, Operation>();
+                        }
+                    } else {
+                        everything = new Path();
+                        everythingOperationsMap = new HashMap<String, Operation>();
+                    }
+
+                    Operation everythingOp = new Operation();
+                    //readOperation.setDescritpion(SwaggerDocConstants.GET_DESCRIPTION + " " + resourceName + " "
+                    //                                + SwaggerDocConstants.RESOURCE_BY_ID);
+                    everythingOp.setSummary(SwaggerDocConstants.RETURNS + " " + resourceName + " " + SwaggerDocConstants.EVERYTHING_OF_GIVEN_ID);
+                    List<String> produces = new ArrayList<String>();
+                    //Set mime type supported
+                    produces.add(SwaggerDocConstants.PRODUCES_JSON);
+                    produces.add(SwaggerDocConstants.PRODUCES_XML);
+                    List<CodeDt> formats = conformance.getFormat();
+                    for(CodeDt format : formats) {
+                        produces.add(format.getValue());
+                    }
+
+                    everythingOp.setProduces(produces);
+
+                    List<Parameter> parameters = new ArrayList<Parameter>();
+                    Parameter parameter = new Parameter();
+                    parameter.setDescription(SwaggerDocConstants.ID_DESCRIPTION + " " + resourceName + " " + SwaggerDocConstants.RESOURCE);
+                    parameter.setName(SwaggerDocConstants.ID);
+                    parameter.setIn(SwaggerDocConstants.IN_PATH);
+                    parameter.setRequired(true);
+                    parameters.add(parameter);
+
+                    Parameter parameterBody = new Parameter();
+                    parameterBody.setDescription(resourceName + " " + SwaggerDocConstants.RESOURCE + " " + SwaggerDocConstants.BODY_SAMPLE_VALUE);
+                    parameterBody.setName(SwaggerDocConstants.BODY);
+                    parameterBody.setIn(SwaggerDocConstants.IN_BODY);
+                    parameterBody.setType(null);
+                    parameterBody.setRequired(true);
+                    Schema schema = new Schema();
+                    schema.setRef(getSchemaRef(resourceName));
+                    parameterBody.setSchema(schema);
+                    parameters.add(parameterBody);
+
+                    everythingOp.setParameters(parameters);
+
+                    Map<String, Response> responseMap = new HashMap<String, Response>();
+                    Response responseSuccess = new Response();
+                    responseSuccess.setDescription(SwaggerDocConstants.RETURNS + " " + resourceName + " " + SwaggerDocConstants.EVERYTHING_OF_GIVEN_ID);
+                    Schema schemaSuccess = new Schema();
+                    schemaSuccess.setRef(getSchemaRef(resourceName));
+                    schemaSuccess.setType(SwaggerDocConstants.OBJECT);
+                    responseSuccess.setSchema(schemaSuccess);
+                    responseMap.put(SwaggerDocConstants.SUCCESS_RESPONSE_CODE, responseSuccess);
+
+                    Response responseError = new Response();
+                    responseError.setDescription(SwaggerDocConstants.ERROR_OCCURRED);
+                    Schema schemaError = new Schema();
+                    schemaError.setRef(getSchemaRef(SwaggerDocConstants.GENERAL_ERROR));
+                    schemaError.setType(SwaggerDocConstants.OBJECT);
+                    responseError.setSchema(schemaError);
+                    responseMap.put(SwaggerDocConstants.ERROR_RESPONSE_CODE, responseError);
+                    everythingOp.setResponses(responseMap);
+
+                    everythingOperationsMap.put(SwaggerDocConstants.POST, everythingOp);
+                    everything.setOperations(everythingOperationsMap);
+                    pathMap.put(pathId, everything);
+                }
+            }
+
             createDefinition(SwaggerDocConstants.GENERAL_ERROR);
             createDefinition(SwaggerDocConstants.OPERATION_OUTCOME);
             createDefinition(SwaggerDocConstants.BUNDLE);

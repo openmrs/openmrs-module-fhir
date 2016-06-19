@@ -57,13 +57,16 @@ public class SwaggerDocConstants {
     public static final String UPDATR_RESOURCE = "Update";
     public static final String RESOURCE_BY_ID = "resource by id";
     public static final String READ_RESOURCE_PATH = "{id}";
+    public static final String POST_RESOURCE_PATH = "{id}";
     public static final String UPDATE_RESOURCE_PATH = "{id}";
     public static final String DELETE_RESOURCE_PATH = "{id}";
     public static final String DETAILS_OF_GIVEN_ID = "details of given id";
+    public static final String EVERYTHING_OF_GIVEN_ID = "everything of given id";
     public static final String CONTENT_OF_THE_REQUEST = "from the content of the request";
     public static final String RETURNS = "Returns";
     public static final String ID_DESCRIPTION = "Id of the ";
     public static final String RESOURCE = "resource";
+    public static final String BODY_SAMPLE_VALUE = "constant body parameter";
     public static final String ID = "id";
     public static final String _ID = "_id";
     public static final String IN_PATH = "path";
@@ -77,6 +80,7 @@ public class SwaggerDocConstants {
     public static final String ERROR_RESPONSE_CODE = "404";
     public static final String FORMAT_PARAM = "_format";
     public static final String GENERAL_ERROR = "GeneralError";
+    public static final String EVERYTHING = "$everything";
     public static final String ERROR_OCCURRED = "When error occurred";
     public static final String FORMAT_PARAM_NAME = "formatParam";
     public static final String NAME_PATIENT = "patient";
