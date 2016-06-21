@@ -30,6 +30,14 @@ public interface ConditionService {
 	Condition getCondition(String id);
 
 	/**
+	 * Get the fhir condition resource by the uuid of Openmrs Observation
+	 *
+	 * @param id uuid of the Openmrs Obs
+	 * @return fhir condition resource and will return null if condition is not found for the given id
+	 */
+	Condition getConditionByObsId(String id);
+
+	/**
 	 * Search condition by uuid
 	 *
 	 * @param id the uuid to be search

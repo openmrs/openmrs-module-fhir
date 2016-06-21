@@ -45,6 +45,7 @@
 
     <aware_of_modules>
         <aware_of_module version="1.1-SNAPSHOT">org.openmrs.module.allergyapi</aware_of_module>
+        <aware_of_module>org.openmrs.module.legacyui</aware_of_module>
     </aware_of_modules>
 
     <!-- Maps hibernate file's, if present -->
@@ -82,6 +83,14 @@
     <filter-mapping>
         <filter-name>FHIR Authorization</filter-name>
         <url-pattern>/ws/fhir/*</url-pattern>
+    </filter-mapping>
+    <filter>
+        <filter-name>FHIR Authorization Direct</filter-name>
+        <filter-class>org.openmrs.module.fhir.filter.AuthorizationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>FHIR Authorization Direct</filter-name>
+        <url-pattern>/ms/fhir/fhirServelet/*</url-pattern>
     </filter-mapping>
     <filter>
         <filter-name>forwardingFilterr</filter-name>
@@ -208,7 +217,13 @@
         <description>The URL of third party FHIR base server that use to retrieve Radiology Diagnostic Reports
         </description>
     </globalProperty>
-
+    <globalProperty>
+        <property>${project.parent.artifactId}.concepts.conditions</property>
+        <defaultValue></defaultValue>
+        <description>The set of IDs of the concepts that can be matched to conditions which is needed to be stored as
+            Observations
+        </description>
+    </globalProperty>
     <privilege>
         <name>View FHIR Client</name>
         <description>Gives access to FHIR rest client</description>

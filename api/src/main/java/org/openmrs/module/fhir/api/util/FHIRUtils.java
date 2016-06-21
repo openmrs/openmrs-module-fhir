@@ -21,6 +21,7 @@ import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.ValidationResult;
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
 import org.openmrs.EncounterRole;
@@ -80,6 +81,22 @@ public class FHIRUtils {
 
 	public static String getAppointmentStrategy() {
 		return Context.getAdministrationService().getGlobalProperty("fhir.appointment.strategy");
+	}
+
+	public static int[] getConceptIdsOfConditions() {
+		String conceptsAsConditions = Context.getAdministrationService().getGlobalProperty(FHIRConstants
+				.CONCEPTS_CONVERTABLE_TO_CONDITIONS_STORED_AS_OBS);
+		if (StringUtils.isNotBlank(conceptsAsConditions)) {
+			String[] concepts = conceptsAsConditions.split(",");
+			int[] conceptIds = new int[concepts.length];
+			int counter = 0;
+			for (String str : concepts) {
+				conceptIds[counter] = Integer.parseInt(str);
+			}
+			return conceptIds;
+		} else {
+			return null;
+		}
 	}
 
 	public static String getObsAllergyStrategyConceptUuid() {

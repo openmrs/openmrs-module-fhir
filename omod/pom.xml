@@ -18,7 +18,7 @@
     <parent>
         <groupId>org.openmrs.module</groupId>
         <artifactId>fhir</artifactId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.5-SNAPSHOT</version>
     </parent>
 
     <artifactId>fhir-omod</artifactId>
@@ -38,6 +38,10 @@
                 <exclusion>
                     <groupId>log4j</groupId>
                     <artifactId>log4j</artifactId>
+                </exclusion>
+                <exclusion>
+                	<artifactId>woodstox-core-asl</artifactId>
+                	<groupId>org.codehaus.woodstox</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -90,6 +94,14 @@
             <type>pom</type>
         </dependency>
         <!-- End OpenMRS core -->
+        
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>legacyui-omod</artifactId>
+            <version>0.1</version>
+            <scope>provided</scope>
+        </dependency>
+        
     </dependencies>
 
     <build>

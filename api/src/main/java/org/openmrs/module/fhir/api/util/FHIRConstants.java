@@ -243,5 +243,8 @@ public final class FHIRConstants {
 	public static final String PARAMETER_IDENTIFIER = "identifier";
 	
 	public static final String REQUEST_ISSUE_LIST = "The request cannot be processed due to following issues \n";
+
+	//Global Property Names
+	public static final String CONCEPTS_CONVERTABLE_TO_CONDITIONS_STORED_AS_OBS = "fhir.concepts.conditions";
 	
 }

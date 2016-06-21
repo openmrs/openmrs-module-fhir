@@ -18,10 +18,10 @@
 
     <groupId>org.openmrs.module</groupId>
     <artifactId>fhir</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.5-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>FHIR Module</name>
-    <description>Helps to start writing OpenMRS modules</description>
+    <description>This module expose OpenMRS resources through FHIR API</description>
     <url>https://wiki.openmrs.org/display/docs/FHIR+Module+Module</url>
 
     <developers>
@@ -49,11 +49,11 @@
     </organization>
 
     <scm>
-        <connection>scm:git:git@github.com:openmrs/openmrs-module-fhir.git</connection>
-        <developerConnection>scm:git:git@github.com:openmrs/openmrs-module-fhir.git</developerConnection>
-        <url>https://github.com/openmrs/openmrs-module-fhir.git</url>
-        <tag>1.0</tag>
-    </scm>
+        <connection>scm:git:https://github.com/openmrs/openmrs-module-fhir</connection>
+        <developerConnection>scm:git:https://github.com/openmrs/openmrs-module-fhir</developerConnection>
+        <url>https://github.com/openmrs/openmrs-module-fhir</url>
+      <tag>HEAD</tag>
+  </scm>
 
     <modules>
         <module>api</module>
@@ -61,7 +61,7 @@
     </modules>
 
     <properties>
-        <openMRSVersion>2.0.0-alpha</openMRSVersion>
+        <openMRSVersion>2.0.0-beta</openMRSVersion>
         <pholocCommonsVersion>4.3.5</pholocCommonsVersion>
         <slf4jApiVersion>1.6.0</slf4jApiVersion>
         <slf4jLog4j12Version>1.6.0</slf4jLog4j12Version>

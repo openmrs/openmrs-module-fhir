@@ -173,6 +173,7 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		assertNotNull(newObs);
 		assertEquals(openmrsPersonUuid, fhirPatientUuid);
 		assertEquals(openmrsConceptUuid, fhirConceptUuid);
-		assertEquals(openmrsDateApplies, fhirDppliesDate);
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		assertEquals(dateFormat.format(openmrsDateApplies), dateFormat.format(fhirDppliesDate));
 	}
 }

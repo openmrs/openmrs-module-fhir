@@ -24,6 +24,7 @@ import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAddress;
 import org.openmrs.PersonName;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 
 import ca.uhn.fhir.model.dstu2.composite.AddressDt;
@@ -199,6 +200,15 @@ public class FHIRPatientUtil {
 				errors.add("No PatientIdentifierType exists for the given PatientIdentifierTypeName");
 			}
 			patientIdentifier.setIdentifierType(type);
+
+			if(type != null) {
+				PatientIdentifierType.LocationBehavior lb = type.getLocationBehavior();
+				if (lb == null || lb == PatientIdentifierType.LocationBehavior.REQUIRED) {
+					LocationService locationService = Context.getLocationService();
+					patientIdentifier.setLocation(locationService.getLocation(1));
+				}
+			}
+
 			idList.add(patientIdentifier);
 		}
 		omrsPatient.setIdentifiers(idList);

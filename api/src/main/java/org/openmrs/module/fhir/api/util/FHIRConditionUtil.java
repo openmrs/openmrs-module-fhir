@@ -20,6 +20,7 @@ import ca.uhn.fhir.model.primitive.DateDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import org.openmrs.ConceptMap;
 import org.openmrs.Condition;
+import org.openmrs.Obs;
 
 import java.util.Collection;
 import java.util.List;
