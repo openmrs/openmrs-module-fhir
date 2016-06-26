@@ -13,11 +13,15 @@
  */
 package org.openmrs.module.fhir.swagger.docs;
 
+import java.util.Map;
+
 public class Response {
 
     private String description;
 
     private Schema schema;
+
+    private Map<String, String> examples;
 
     public Response() {
 
@@ -49,5 +53,13 @@ public class Response {
      */
     public void setSchema(Schema schema) {
         this.schema = schema;
+    }
+
+    public Map<String, String> getExamples() {
+        return examples;
+    }
+
+    public void setExamples(Map<String, String> examples) {
+        this.examples = examples;
     }
 }

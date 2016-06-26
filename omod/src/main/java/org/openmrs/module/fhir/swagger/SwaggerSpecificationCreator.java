@@ -13,19 +13,15 @@
  */
 package org.openmrs.module.fhir.swagger;
 
-import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu2.resource.Conformance;
 import ca.uhn.fhir.model.dstu2.resource.OperationDefinition;
 import ca.uhn.fhir.model.primitive.CodeDt;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.openmrs.module.fhir.resources.Resource;
 import org.openmrs.module.fhir.server.ConformanceProvider;
 import org.openmrs.module.fhir.swagger.docs.Contact;
 import org.openmrs.module.fhir.swagger.docs.Definition;
-import org.openmrs.module.fhir.swagger.docs.DefinitionProperty;
 import org.openmrs.module.fhir.swagger.docs.Definitions;
 import org.openmrs.module.fhir.swagger.docs.ExternalDocs;
 import org.openmrs.module.fhir.swagger.docs.Info;
@@ -35,19 +31,14 @@ import org.openmrs.module.fhir.swagger.docs.Operation;
 import org.openmrs.module.fhir.swagger.docs.Parameter;
 import org.openmrs.module.fhir.swagger.docs.Path;
 import org.openmrs.module.fhir.swagger.docs.Paths;
-import org.openmrs.module.fhir.swagger.docs.Properties;
 import org.openmrs.module.fhir.swagger.docs.Response;
 import org.openmrs.module.fhir.swagger.docs.Schema;
 import org.openmrs.module.fhir.swagger.docs.SwaggerSpecification;
-import org.openmrs.module.fhir.swagger.docs.Xml;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class SwaggerSpecificationCreator {
 
@@ -170,6 +161,7 @@ public class SwaggerSpecificationCreator {
                         Schema schemaSuccess = new Schema();
                         schemaSuccess.setRef(getSchemaRef(resourceName));
                         schemaSuccess.setType(SwaggerDocConstants.OBJECT);
+                        setExamples(resourceName, responseSuccess);
                         responseSuccess.setSchema(schemaSuccess);
                         responseMap.put(SwaggerDocConstants.SUCCESS_RESPONSE_CODE, responseSuccess);
 
@@ -179,6 +171,9 @@ public class SwaggerSpecificationCreator {
                         schemaError.setRef(getSchemaRef(SwaggerDocConstants.GENERAL_ERROR));
                         schemaError.setType(SwaggerDocConstants.OBJECT);
                         responseError.setSchema(schemaError);
+                        Map<String, String> examplesError = new HashMap<String, String>();
+                        examplesError.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.ERROR_PAYLOAD);
+                        responseError.setExamples(examplesError);
                         responseMap.put(SwaggerDocConstants.ERROR_RESPONSE_CODE, responseError);
                         readOperation.setResponses(responseMap);
 
@@ -234,6 +229,9 @@ public class SwaggerSpecificationCreator {
                         schemaSuccess.setRef(getSchemaRef(SwaggerDocConstants.OPERATION_OUTCOME));
                         schemaSuccess.setType(SwaggerDocConstants.OBJECT);
                         responseSuccess.setSchema(schemaSuccess);
+                        Map<String, String> examplesSuccess = new HashMap<String, String>();
+                        examplesSuccess.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.SUCCESS_PAYLOAD);
+                        responseSuccess.setExamples(examplesSuccess);
                         responseMap.put(SwaggerDocConstants.SUCCESS_RESPONSE_CODE, responseSuccess);
 
                         Response responseError = new Response();
@@ -241,6 +239,9 @@ public class SwaggerSpecificationCreator {
                         Schema schemaError = new Schema();
                         schemaError.setRef(getSchemaRef(SwaggerDocConstants.GENERAL_ERROR));
                         schemaError.setType(SwaggerDocConstants.OBJECT);
+                        Map<String, String> examplesError = new HashMap<String, String>();
+                        examplesError.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.ERROR_PAYLOAD);
+                        responseError.setExamples(examplesError);
                         responseError.setSchema(schemaError);
                         responseMap.put(SwaggerDocConstants.ERROR_RESPONSE_CODE, responseError);
                         createOperation.setResponses(responseMap);
@@ -307,6 +308,9 @@ public class SwaggerSpecificationCreator {
                         schemaSuccess.setRef(getSchemaRef(SwaggerDocConstants.OPERATION_OUTCOME));
                         schemaSuccess.setType(SwaggerDocConstants.OBJECT);
                         responseSuccess.setSchema(schemaSuccess);
+                        Map<String, String> examplesSuccess = new HashMap<String, String>();
+                        examplesSuccess.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.SUCCESS_PAYLOAD);
+                        responseSuccess.setExamples(examplesSuccess);
                         responseMap.put(SwaggerDocConstants.SUCCESS_RESPONSE_CODE, responseSuccess);
 
                         Response responseError = new Response();
@@ -315,6 +319,9 @@ public class SwaggerSpecificationCreator {
                         schemaError.setRef(getSchemaRef(SwaggerDocConstants.GENERAL_ERROR));
                         schemaError.setType(SwaggerDocConstants.OBJECT);
                         responseError.setSchema(schemaError);
+                        Map<String, String> examplesError = new HashMap<String, String>();
+                        examplesError.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.ERROR_PAYLOAD);
+                        responseError.setExamples(examplesError);
                         responseMap.put(SwaggerDocConstants.ERROR_RESPONSE_CODE, responseError);
                         updateOperation.setResponses(responseMap);
 
@@ -361,6 +368,9 @@ public class SwaggerSpecificationCreator {
                         Map<String, Response> responseMap = new HashMap<String, Response>();
                         Response responseSuccess = new Response();
                         responseSuccess.setDescription(SwaggerDocConstants.DELETE_DESCRIPTION + " " + resourceName + " " + SwaggerDocConstants.DETAILS_OF_GIVEN_ID);
+                        Map<String, String> examplesSuccess = new HashMap<String, String>();
+                        examplesSuccess.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.SUCCESS_PAYLOAD);
+                        responseSuccess.setExamples(examplesSuccess);
                         responseMap.put(SwaggerDocConstants.SUCCESS_RESPONSE_CODE, responseSuccess);
 
                         Response responseError = new Response();
@@ -368,6 +378,9 @@ public class SwaggerSpecificationCreator {
                         Schema schemaError = new Schema();
                         schemaError.setRef(getSchemaRef(SwaggerDocConstants.GENERAL_ERROR));
                         schemaError.setType(SwaggerDocConstants.OBJECT);
+                        Map<String, String> examplesError = new HashMap<String, String>();
+                        examplesError.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.ERROR_PAYLOAD);
+                        responseError.setExamples(examplesError);
                         responseError.setSchema(schemaError);
                         responseMap.put(SwaggerDocConstants.ERROR_RESPONSE_CODE, responseError);
                         deleteOperation.setResponses(responseMap);
@@ -420,6 +433,7 @@ public class SwaggerSpecificationCreator {
                         schemaSuccess.setRef(getSchemaRef(resourceName));
                         schemaSuccess.setType(SwaggerDocConstants.ARRAY);
                         responseSuccess.setSchema(schemaSuccess);
+                        setExamples(resourceName, responseSuccess);
                         responseMap.put(SwaggerDocConstants.SUCCESS_RESPONSE_CODE, responseSuccess);
 
                         Response responseError = new Response();
@@ -428,6 +442,9 @@ public class SwaggerSpecificationCreator {
                         schemaError.setRef(getSchemaRef(SwaggerDocConstants.GENERAL_ERROR));
                         schemaError.setType(SwaggerDocConstants.OBJECT);
                         responseError.setSchema(schemaError);
+                        Map<String, String> examplesError = new HashMap<String, String>();
+                        examplesError.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.ERROR_PAYLOAD);
+                        responseError.setExamples(examplesError);
                         responseMap.put(SwaggerDocConstants.ERROR_RESPONSE_CODE, responseError);
                         searchOperation.setResponses(responseMap);
                         List<Parameter> parametersAvailable = new ArrayList<Parameter>();
@@ -513,6 +530,9 @@ public class SwaggerSpecificationCreator {
                     schemaError.setRef(getSchemaRef(SwaggerDocConstants.GENERAL_ERROR));
                     schemaError.setType(SwaggerDocConstants.OBJECT);
                     responseError.setSchema(schemaError);
+                    Map<String, String> examplesError = new HashMap<String, String>();
+                    examplesError.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.ERROR_PAYLOAD);
+                    responseError.setExamples(examplesError);
                     responseMap.put(SwaggerDocConstants.ERROR_RESPONSE_CODE, responseError);
                     everythingOp.setResponses(responseMap);
 
@@ -593,5 +613,29 @@ public class SwaggerSpecificationCreator {
 
     private String getSchemaRef(String resourceName) {
         return "#/definitions/" + resourceName;
+    }
+
+    private void setExamples(String resourceName, Response responseSuccess) {
+        Map<String, String> examples = new HashMap<String, String>();
+        if(SwaggerDocConstants.PERSON_RESOURCE.equalsIgnoreCase(resourceName)) {
+            examples.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.PERSON_PAYLOAD);
+        } else if(SwaggerDocConstants.PATIENT_RESOURCE.equalsIgnoreCase(resourceName)) {
+            examples.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.PATIENT_PAYLOAD);
+        } else if(SwaggerDocConstants.PRACTITIONER_RESOURCE.equalsIgnoreCase(resourceName)) {
+            examples.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.PRACTITIONER_PAYLOAD);
+        } else if(SwaggerDocConstants.ENCOUNTER_RESOURCE.equalsIgnoreCase(resourceName)) {
+            examples.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.ENCOUNTER_PAYLOAD);
+        } else if(SwaggerDocConstants.FAMILY_HISTORY_RESOURCE.equalsIgnoreCase(resourceName)) {
+            examples.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.FAMILY_HISTORY_PAYLOAD);
+        } else if(SwaggerDocConstants.ALLERGY_RESOURCE.equalsIgnoreCase(resourceName)) {
+            examples.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.ALLERGY_PAYLOAD);
+        } else if(SwaggerDocConstants.OBSERVATION_RESOURCE.equalsIgnoreCase(resourceName)) {
+            examples.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.OBSERVATION_PAYLOAD);
+        } else if(SwaggerDocConstants.LOCATION_RESOURCE.equalsIgnoreCase(resourceName)) {
+            examples.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.LOCATION_PAYLOAD);
+        } else {
+            examples.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.EMPTY);
+        }
+        responseSuccess.setExamples(examples);
     }
 }
