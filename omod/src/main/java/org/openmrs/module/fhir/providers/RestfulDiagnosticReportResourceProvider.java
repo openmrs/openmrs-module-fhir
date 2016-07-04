@@ -121,7 +121,7 @@ public class RestfulDiagnosticReportResourceProvider implements IResourceProvide
 	@Search
 	public List<DiagnosticReport> searchByPatientAndServiceCategory(
 			@RequiredParam(name = DiagnosticReport.SP_SUBJECT, chainWhitelist = Patient.SP_GIVEN) ReferenceParam theSubject,
-			@OptionalParam(name = DiagnosticReport.SP_SERVICE) TokenParam theService) {
+			@OptionalParam(name = DiagnosticReport.SP_CATEGORY) TokenParam theService) {
 		return diagnosticReportResource.getDiagnosticReportByPatientNameAndServiceCategory(theSubject, theService);
 	}
 }

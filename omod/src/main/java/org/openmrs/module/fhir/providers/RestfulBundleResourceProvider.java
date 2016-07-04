@@ -56,12 +56,12 @@ public class RestfulBundleResourceProvider implements IResourceProvider {
 		List<IResource> putResources = new ArrayList<IResource>();
 		List<String> deleteResources = new ArrayList<String>();
 		for (Entry entry : theResources.getEntry()) {
-			if("POST".equals(entry.getTransaction().getMethod())){
+			if("POST".equals(entry.getRequest().getMethod())){
 				postResources.add(entry.getResource());
-			}else if("PUT".equals(entry.getTransaction().getMethod())){
+			}else if("PUT".equals(entry.getRequest().getMethod())){
 				putResources.add(entry.getResource());
-			}else if("DELETE".equals(entry.getTransaction().getMethod())){
-				deleteResources.add(entry.getTransaction().getUrl());
+			}else if("DELETE".equals(entry.getRequest().getMethod())){
+				deleteResources.add(entry.getRequest().getUrl());
 			}
         }
 		

@@ -103,7 +103,7 @@ public class FHIRAllergyIntoleranceAllergyAPIUtil {
 		if (allergy.getReactions().size() > 0) {
 			List<CodingDt> dts = allergyIntolerance.getSubstance().getCoding();
 			for (AllergyReaction reaction : allergy.getReactions()) {
-				AllergyIntolerance.Event event = allergyIntolerance.addEvent();
+				AllergyIntolerance.Reaction event = allergyIntolerance.addReaction();
 				event.setCertainty(AllergyIntoleranceCertaintyEnum.LIKELY);
 				CodeableConceptDt manifest = event.getManifestationFirstRep();
 				List<CodingDt> manifestCodes = manifest.getCoding();

@@ -40,7 +40,7 @@ public class FHIRConditionUtil {
 		//Set on set date
 		DateDt dateDt = new DateDt();
 		dateDt.setValue(condition.getDateChanged());
-		fhirCondition.setDateAsserted(dateDt);
+		fhirCondition.setDateRecorded(dateDt);
 
 		//Set condtion concept
 		if (condition.getConcept() != null) {
