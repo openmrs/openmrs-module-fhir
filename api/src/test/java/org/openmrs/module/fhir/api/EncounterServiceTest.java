@@ -13,22 +13,8 @@
  */
 package org.openmrs.module.fhir.api;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.openmrs.Visit;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.util.FHIRConstants;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
-
 import ca.uhn.fhir.model.dstu2.composite.BoundCodeableConceptDt;
+import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu2.resource.Bundle;
@@ -37,6 +23,20 @@ import ca.uhn.fhir.model.dstu2.resource.Encounter;
 import ca.uhn.fhir.model.dstu2.valueset.EncounterTypeEnum;
 import ca.uhn.fhir.model.primitive.CodeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
+import org.junit.Before;
+import org.junit.Test;
+import org.openmrs.Visit;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.test.BaseModuleContextSensitiveTest;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 
@@ -86,7 +86,7 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 	public void FHIREncounter_shouldCreateVisit() {
 		String encounterUuid = "430bbb70-6a9c-4e1e-badb-9d1034b1b5e9";
 		Encounter fhirEncounter = getService().getEncounter(encounterUuid);
-		BoundCodeableConceptDt<EncounterTypeEnum> typeAsCode = new BoundCodeableConceptDt<EncounterTypeEnum>(null);
+		BoundCodeableConceptDt<EncounterTypeEnum> typeAsCode = new BoundCodeableConceptDt<EncounterTypeEnum>();
 		List<CodingDt> typeCoding = new ArrayList<CodingDt>();
 		CodingDt code = new CodingDt();
 		CodeDt codeValue = new CodeDt();

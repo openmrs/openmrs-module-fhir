@@ -95,7 +95,7 @@ public class ObsConditionStrategy implements GenericConditionStrategy {
 		//Set Asserter
 		DateDt dateDt = new DateDt();
 		dateDt.setValue(openMrsObs.getDateCreated());
-		fhirCondition.setDateAsserted(dateDt);
+		fhirCondition.setDateRecorded(dateDt);
 
 		if (openMrsObs.getConcept() != null) {
 			CodeableConceptDt conceptDt = fhirCondition.getCode();

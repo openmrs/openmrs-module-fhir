@@ -13,18 +13,6 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import static java.lang.String.valueOf;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
-import org.openmrs.Patient;
-import org.openmrs.PersonAddress;
-import org.openmrs.PersonName;
-import org.openmrs.api.context.Context;
-
 import ca.uhn.fhir.model.dstu2.composite.AddressDt;
 import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
 import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
@@ -32,9 +20,20 @@ import ca.uhn.fhir.model.dstu2.resource.Person;
 import ca.uhn.fhir.model.dstu2.valueset.AddressUseEnum;
 import ca.uhn.fhir.model.dstu2.valueset.AdministrativeGenderEnum;
 import ca.uhn.fhir.model.dstu2.valueset.NameUseEnum;
-import ca.uhn.fhir.model.primitive.DateTimeDt;
+import ca.uhn.fhir.model.primitive.DateDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.StringDt;
+import org.openmrs.Patient;
+import org.openmrs.PersonAddress;
+import org.openmrs.PersonName;
+import org.openmrs.api.context.Context;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import static java.lang.String.valueOf;
 
 public class FHIRPersonUtil {
 	
@@ -101,7 +100,7 @@ public class FHIRPersonUtil {
 			if (address.isPreferred()) {
 				fhirAddress.setUse(AddressUseEnum.HOME);
 			} else {
-				fhirAddress.setUse(AddressUseEnum.OLD);
+				fhirAddress.setUse(AddressUseEnum.OLD___INCORRECT);
 			}
 			addressList.add(fhirAddress);
 		}
@@ -114,8 +113,8 @@ public class FHIRPersonUtil {
 		} else {
 			person.setGender(AdministrativeGenderEnum.UNKNOWN);
 		}
-		
-		DateTimeDt fhirBirthDate = new DateTimeDt();
+
+		DateDt fhirBirthDate = new DateDt();
 		fhirBirthDate.setValue(omrsPerson.getBirthdate());
 		person.setBirthDate(fhirBirthDate);
 		if (!omrsPerson.isVoided()) {
@@ -250,7 +249,7 @@ public class FHIRPersonUtil {
 			if (String.valueOf(AddressUseEnum.HOME).equalsIgnoreCase(fhirAddress.getUse())) {
 				address.setPreferred(true);
 			}
-			if (String.valueOf(AddressUseEnum.OLD).equalsIgnoreCase(fhirAddress.getUse())) {
+			if (String.valueOf(AddressUseEnum.OLD___INCORRECT).equalsIgnoreCase(fhirAddress.getUse())) {
 				address.setPreferred(false);
 			}
 			addresses.add(address);

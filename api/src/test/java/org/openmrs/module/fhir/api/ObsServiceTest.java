@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ca.uhn.fhir.model.primitive.InstantDt;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Concept;
@@ -166,8 +167,8 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		ResourceReferenceDt subjectref = newObs.getSubject();
 		IdDt id = subjectref.getReference();
 		String fhirPatientUuid = id.getIdPart();
-		
-		DateTimeDt dateApplies = (DateTimeDt) newObs.getApplies();
+
+		InstantDt dateApplies = newObs.getIssuedElement();
 		Date fhirDppliesDate = dateApplies.getValue();
 
 		assertNotNull(newObs);

@@ -107,7 +107,7 @@ public class FHIRPractitionerUtil {
 				if (address.isPreferred()) {
 					fhirAddress.setUse(AddressUseEnum.HOME);
 				} else {
-					fhirAddress.setUse(AddressUseEnum.OLD);
+					fhirAddress.setUse(AddressUseEnum.OLD___INCORRECT);
 				}
 				addressList.add(fhirAddress);
 			}
@@ -239,7 +239,7 @@ public class FHIRPractitionerUtil {
 			if (String.valueOf(AddressUseEnum.HOME).equalsIgnoreCase(fhirAddress.getUse())) {
 				address.setPreferred(true);
 			}
-			if (String.valueOf(AddressUseEnum.OLD).equalsIgnoreCase(fhirAddress.getUse())) {
+			if (String.valueOf(AddressUseEnum.OLD___INCORRECT).equalsIgnoreCase(fhirAddress.getUse())) {
 				address.setPreferred(false);
 			}
 			addresses.add(address);
@@ -368,7 +368,7 @@ public class FHIRPractitionerUtil {
 					if (String.valueOf(AddressUseEnum.HOME).equalsIgnoreCase(fhirAddress.getUse())) {
 						address.setPreferred(true);
 					}
-					if (String.valueOf(AddressUseEnum.OLD).equalsIgnoreCase(fhirAddress.getUse())) {
+					if (String.valueOf(AddressUseEnum.OLD___INCORRECT).equalsIgnoreCase(fhirAddress.getUse())) {
 						address.setPreferred(false);
 					}
 					allAddress.add(address);

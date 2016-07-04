@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import ca.uhn.fhir.model.dstu2.composite.SimpleQuantityDt;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -38,7 +39,6 @@ import ca.uhn.fhir.model.dstu2.composite.QuantityDt;
 import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu2.resource.Observation;
 import ca.uhn.fhir.model.dstu2.valueset.ObservationRelationshipTypeEnum;
-import ca.uhn.fhir.model.dstu2.valueset.ObservationReliabilityEnum;
 import ca.uhn.fhir.model.dstu2.valueset.ObservationStatusEnum;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
@@ -111,7 +111,7 @@ public class FHIRObsUtil {
 			List<Observation.ReferenceRange> referenceRanges = new ArrayList<Observation.ReferenceRange>();
 			Observation.ReferenceRange referenceRange = new Observation.ReferenceRange();
 			if (cn.getHiAbsolute() != null) {
-				QuantityDt high = new QuantityDt();
+				SimpleQuantityDt high = new SimpleQuantityDt();
 				high.setUnits(cn.getUnits());
 				high.setCode(cn.getUnits());
 				high.setSystem(FHIRConstants.NUMERIC_CONCEPT_MEASURE_URI);
@@ -119,12 +119,12 @@ public class FHIRObsUtil {
 				referenceRange.setHigh(high);
 			}
 			if (cn.getLowAbsolute() != null) {
-				QuantityDt low = new QuantityDt();
+				SimpleQuantityDt low = new SimpleQuantityDt();
 				low.setUnits(cn.getUnits());
 				low.setCode(cn.getUnits());
 				low.setSystem(FHIRConstants.NUMERIC_CONCEPT_MEASURE_URI);
 				low.setValue(cn.getLowAbsolute());
-				referenceRange.setHigh(low);
+				referenceRange.setLow(low);
 			}
 			referenceRanges.add(referenceRange);
 			observation.setReferenceRange(referenceRanges);
@@ -201,11 +201,10 @@ public class FHIRObsUtil {
 		}
 
 		observation.setStatus(ObservationStatusEnum.FINAL);
-		observation.setReliability(ObservationReliabilityEnum.OK);
 
-		DateTimeDt dateIssued = new DateTimeDt();
+		InstantDt dateIssued = new InstantDt();
         	dateIssued.setValue(obs.getObsDatetime());
-		observation.setApplies(dateIssued);
+		observation.setIssued(dateIssued);
 
 		//Set reference observations
 		List<Observation.Related> relatedObs = null;
@@ -215,7 +214,7 @@ public class FHIRObsUtil {
 			Observation.Related related;
 			for (Obs ob : obs.getGroupMembers()) {
 				related = new Observation.Related();
-				related.setType(ObservationRelationshipTypeEnum.HAS_COMPONENT);
+				related.setType(ObservationRelationshipTypeEnum.HAS_MEMBER);
 				resourceReferenceDt = new ResourceReferenceDt();
 				resourceReferenceDt.setDisplay(ob.getConcept().getName().getName());
 				IdDt providerRef = new IdDt();
@@ -278,12 +277,12 @@ public class FHIRObsUtil {
 		} else {
 			errors.add("Subject cannot be empty");
 		}
-		
-		DateTimeDt dateApplies = (DateTimeDt) observation.getApplies();
+
+		Date dateApplies = observation.getIssued();
 		if (dateApplies == null) {
 			errors.add("Observation DateTime cannot be empty");
 		} else {
-			obs.setObsDatetime(dateApplies.getValue());
+			obs.setObsDatetime(dateApplies);
 		}
 		
 		Date instant = observation.getIssued();

@@ -10,6 +10,7 @@ import ca.uhn.fhir.model.dstu2.resource.Practitioner;
 import ca.uhn.fhir.model.primitive.Base64BinaryDt;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.model.primitive.InstantDt;
 import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.apache.commons.logging.Log;
@@ -84,7 +85,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		// Get Obs and set as `Status`
 
 		// @required: Get EncounterDateTime and set as `Issued` date
-		diagnosticReport.setIssued(new DateTimeDt(omrsDiagnosticReport.getEncounterDatetime()));
+		diagnosticReport.setIssued(new InstantDt(omrsDiagnosticReport.getEncounterDatetime()));
 
 		// @required: Get Encounter Patient and set as `Subject`
 		org.openmrs.Patient omrsPatient = omrsDiagnosticReport.getPatient();
@@ -103,7 +104,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		String serviceCategory = omrsDiagnosticReport.getEncounterType().getName();
 		List<CodingDt> serviceCategoryList = new ArrayList<CodingDt>();
 		serviceCategoryList.add(new CodingDt("http://hl7.org/fhir/v2/0074", serviceCategory));
-		diagnosticReport.getServiceCategory().setCoding(serviceCategoryList);
+		diagnosticReport.getCategory().setCoding(serviceCategoryList);
 
 		// Get valueDateTime in Obs and Set `Diagnosis[x]->DateTime`
 		// Get valueDateTime in Obs and Set `Diagnosis[x]->Period`
@@ -237,7 +238,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		}
 
 		// Set `ServiceCategory` as EncounterType
-		List<CodingDt> codingList = diagnosticReport.getServiceCategory().getCoding();
+		List<CodingDt> codingList = diagnosticReport.getCategory().getCoding();
 		String encounterType = "DEFAULT"; // If serviceCategory is not present in the DiagnosticReport, then use "DEFAULT"
 		if (!codingList.isEmpty()) {
 			encounterType = codingList.get(0).getCode();
@@ -299,7 +300,10 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		for (AttachmentDt attachment : diagnosticReport.getPresentedForm()) {
 			int conceptId = FHIRUtils.getDiagnosticReportPresentedFormConcept().getConceptId();
 			if (attachment.getCreation() == null) {
-				attachment.setCreation(diagnosticReport.getIssuedElement());
+				if(diagnosticReport.getIssued() != null) {
+					DateTimeDt dateDt = new DateTimeDt(diagnosticReport.getIssued());
+					attachment.setCreation(dateDt);
+				}
 			}
 			Obs complexObs = saveComplexData(omrsDiagnosticReport, conceptId, omrsPatient, attachment);
 			obsList.add(complexObs);
@@ -334,7 +338,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 
 	public Observation prepareForGenerateOpenMRSObs(Observation observation, DiagnosticReport diagnosticReport) {
 		observation.setSubject(diagnosticReport.getSubject());
-		observation.setApplies(diagnosticReport.getDiagnostic());
+		observation.setIssued(diagnosticReport.getIssuedElement());
 		return observation;
 	}
 
@@ -403,7 +407,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		}
 
 		// Set `ServiceCategory` as EncounterType
-		List<CodingDt> codingList = diagnosticReport.getServiceCategory().getCoding();
+		List<CodingDt> codingList = diagnosticReport.getCategory().getCoding();
 		String encounterType = null;
 		if (!codingList.isEmpty()) {
 			encounterType = codingList.get(0).getCode();
@@ -463,7 +467,10 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		for (AttachmentDt attachment : diagnosticReport.getPresentedForm()) {
 			int conceptId = FHIRUtils.getDiagnosticReportPresentedFormConcept().getConceptId();
 			if (attachment.getCreation() == null) {
-				attachment.setCreation(diagnosticReport.getIssuedElement());
+				if(diagnosticReport.getIssued() != null) {
+					DateTimeDt dateDt = new DateTimeDt(diagnosticReport.getIssued());
+					attachment.setCreation(dateDt);
+				}
 			}
 			Obs complexObs = saveComplexData(omrsDiagnosticReport, conceptId, omrsPatient, attachment);
 		}
