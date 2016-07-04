@@ -13,6 +13,8 @@
  */
 package org.openmrs.module.fhir.filter;
 
+import org.openmrs.module.fhir.util.FHIROmodConstants;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -36,8 +38,8 @@ public class SwaggerForwardingFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		String requestURI = request.getRequestURI();
 
-		if (requestURI.startsWith(openmrsPath + "/module/fhir/rest/swagger.json")) {
-			String newURI = requestURI.replace("/openmrs/module/fhir/rest/swagger.json", "/ms/fhir/fhirDocServelet");
+		if (requestURI.startsWith(openmrsPath + FHIROmodConstants.OPENMRS_FHIR_SWAGGER_SHORT_PATH)) {
+			String newURI = requestURI.replace(FHIROmodConstants.OPENMRS_FHIR_SWAGGER_LONG_PATH, FHIROmodConstants.OPENMRS_FHIR_SWAGGER_ORG_PATH);
 			req.getRequestDispatcher(newURI).forward(req, res);
 		} else {
 			chain.doFilter(req, res);

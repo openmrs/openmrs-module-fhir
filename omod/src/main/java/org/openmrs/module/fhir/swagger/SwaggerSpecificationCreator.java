@@ -19,6 +19,8 @@ import ca.uhn.fhir.model.primitive.CodeDt;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.fhir.server.ConformanceProvider;
 import org.openmrs.module.fhir.swagger.docs.Contact;
 import org.openmrs.module.fhir.swagger.docs.Definition;
@@ -41,12 +43,12 @@ import java.util.List;
 import java.util.Map;
 
 public class SwaggerSpecificationCreator {
-
+    protected Log log = LogFactory.getLog(getClass());
     private SwaggerSpecification swaggerSpecification;
     private Conformance conformance;
     private String baseUrl;
     private String basePath;
-    Map<String, Definition> definitionMap = new HashMap<String, Definition>();
+    private Map<String, Definition> definitionMap = new HashMap<String, Definition>();
 
     public SwaggerSpecificationCreator(String baseUrl, String basePath) {
         this.swaggerSpecification = new SwaggerSpecification();
@@ -65,6 +67,9 @@ public class SwaggerSpecificationCreator {
         return createSwaggerSpecification();
     }
 
+    /*
+     * Creating the information section of the swagger including base path licence
+     */
     private void createApiDefinition() {
         Info info = new Info();
         info.setVersion(SwaggerDocConstants.VERSION);
@@ -107,10 +112,13 @@ public class SwaggerSpecificationCreator {
         swaggerSpecification.setExternalDocs(externalDocs);
     }
 
+    /**
+     * Creating paths section swagger documentation
+     */
     private void addPaths() {
         List<Conformance.Rest> resources = conformance.getRest();
-        Paths fullPaths = new Paths();
-        Map<String, Path> pathMap = new HashMap<String, Path>();
+        Paths fullPaths = new Paths();//Hold full path list
+        Map<String, Path> pathMap = new HashMap<String, Path>();//Map holding path to path object mappings
         for (Conformance.Rest restResource : resources) {
             for (Conformance.RestResource resource : restResource.getResource()) {
                 String resourceName = resource.getType();
@@ -118,7 +126,9 @@ public class SwaggerSpecificationCreator {
                     continue;
                 }
                 List<Conformance.RestResourceInteraction> restResourceInteractions = resource.getInteraction();
+                //Iterating over available opearations
                 for(Conformance.RestResourceInteraction restResourceInteraction : restResourceInteractions) {
+                    //Add GET operation paths
                     if(SwaggerDocConstants.READ.equalsIgnoreCase(restResourceInteraction.getCode())) {
                         String pathId = "/" + resourceName + "/" + SwaggerDocConstants.READ_RESOURCE_PATH;
                         Path read;
@@ -134,8 +144,6 @@ public class SwaggerSpecificationCreator {
                             readOperationsMap = new HashMap<String, Operation>();
                         }
                         Operation readOperation = new Operation();
-                        //readOperation.setDescritpion(SwaggerDocConstants.GET_DESCRIPTION + " " + resourceName + " "
-                        //                                + SwaggerDocConstants.RESOURCE_BY_ID);
                         readOperation.setSummary(SwaggerDocConstants.RETURNS + " " + resourceName + " " + SwaggerDocConstants.DETAILS_OF_GIVEN_ID);
                         List<String> produces = new ArrayList<String>();
                         //Set mime type supported
@@ -146,6 +154,7 @@ public class SwaggerSpecificationCreator {
                             produces.add(format.getValue());
                         }
                         readOperation.setProduces(produces);
+                        //Set parameters
                         List<Parameter> parameters = new ArrayList<Parameter>();
                         Parameter parameter = new Parameter();
                         parameter.setDescription(SwaggerDocConstants.ID_DESCRIPTION + " " + resourceName + " " + SwaggerDocConstants.RESOURCE);
@@ -156,6 +165,7 @@ public class SwaggerSpecificationCreator {
                         readOperation.setParameters(parameters);;
 
                         Map<String, Response> responseMap = new HashMap<String, Response>();
+                        //Set response schemas and example responses
                         Response responseSuccess = new Response();
                         responseSuccess.setDescription(SwaggerDocConstants.RETURNS + " " + resourceName + " " + SwaggerDocConstants.DETAILS_OF_GIVEN_ID);
                         Schema schemaSuccess = new Schema();
@@ -181,6 +191,7 @@ public class SwaggerSpecificationCreator {
                         read.setOperations(readOperationsMap);
                         pathMap.put(pathId, read);
                     } else if(SwaggerDocConstants.CREATE.equalsIgnoreCase(restResourceInteraction.getCode())) {
+                        //Set POST operation path properties
                         String pathId = "/" + resourceName;
                         Path create;
                         Map<String, Operation> createOperationsMap;
@@ -195,8 +206,6 @@ public class SwaggerSpecificationCreator {
                             createOperationsMap = new HashMap<String, Operation>();
                         }
                         Operation createOperation = new Operation();
-                        //createOperation.setDescritpion(SwaggerDocConstants.CREATE_RESOURCE + " " + resourceName + " "
-                        //        + SwaggerDocConstants.RESOURCE);
                         createOperation.setSummary(SwaggerDocConstants.CREATE_RESOURCE + " " + resourceName
                                                 + " " + SwaggerDocConstants.RESOURCE + " " + SwaggerDocConstants.CONTENT_OF_THE_REQUEST);
                         List<String> produces = new ArrayList<String>();
@@ -208,7 +217,7 @@ public class SwaggerSpecificationCreator {
                             produces.add(format.getValue());
                         }
                         createOperation.setProduces(produces);
-
+                        //Set parameters
                         List<Parameter> parameters = new ArrayList<Parameter>();
                         Parameter parameter = new Parameter();
                         parameter.setDescription(resourceName + " " + SwaggerDocConstants.RESOURCE + " " + SwaggerDocConstants.OBJECT);
@@ -222,6 +231,7 @@ public class SwaggerSpecificationCreator {
                         parameters.add(parameter);
                         createOperation.setParameters(parameters);
 
+                        //Set response properties
                         Map<String, Response> responseMap = new HashMap<String, Response>();
                         Response responseSuccess = new Response();
                         responseSuccess.setDescription(SwaggerDocConstants.RETURNS_SUCCESS_OPERATION_OUTCOME);
@@ -250,6 +260,7 @@ public class SwaggerSpecificationCreator {
                         create.setOperations(createOperationsMap);
                         pathMap.put(pathId, create);
                     } else if(SwaggerDocConstants.UPDATE.equalsIgnoreCase(restResourceInteraction.getCode())) {
+                        //Configure PUT operation path properties
                         String pathId = "/" + resourceName + "/" + SwaggerDocConstants.UPDATE_RESOURCE_PATH;
                         Path update;
                         Map<String, Operation> updateOperationsMap;
@@ -264,8 +275,6 @@ public class SwaggerSpecificationCreator {
                             updateOperationsMap = new HashMap<String, Operation>();
                         }
                         Operation updateOperation = new Operation();
-                        //updateOperation.setDescritpion(SwaggerDocConstants.CREATE_RESOURCE + " " + resourceName + " "
-                        //        + SwaggerDocConstants.RESOURCE);
                         updateOperation.setSummary(SwaggerDocConstants.UPDATR_RESOURCE + " " + resourceName
                                 + " " + SwaggerDocConstants.RESOURCE + " " + SwaggerDocConstants.CONTENT_OF_THE_REQUEST);
                         List<String> produces = new ArrayList<String>();
@@ -277,7 +286,7 @@ public class SwaggerSpecificationCreator {
                             produces.add(format.getValue());
                         }
                         updateOperation.setProduces(produces);
-
+                        //Set put operation parameters and responses
                         List<Parameter> parameters = new ArrayList<Parameter>();
                         Parameter parameter = new Parameter();
                         parameter.setDescription(resourceName + " " + SwaggerDocConstants.RESOURCE + " " + SwaggerDocConstants.OBJECT);
@@ -329,6 +338,7 @@ public class SwaggerSpecificationCreator {
                         update.setOperations(updateOperationsMap);
                         pathMap.put(pathId, update);
                     } else if(SwaggerDocConstants.DELETE.equalsIgnoreCase(restResourceInteraction.getCode())) {
+                        //Set DELETE operation path properties
                         String pathId = "/" + resourceName + "/" + SwaggerDocConstants.DELETE_RESOURCE_PATH;
                         Path delete;
                         Map<String, Operation> deleteOperationMap;
@@ -343,8 +353,6 @@ public class SwaggerSpecificationCreator {
                             deleteOperationMap = new HashMap<String, Operation>();
                         }
                         Operation deleteOperation = new Operation();
-                        //deleteOperation.setDescritpion(SwaggerDocConstants.DELETE_DESCRIPTION + " " + resourceName + " "
-                        //        + SwaggerDocConstants.RESOURCE_BY_ID);
                         deleteOperation.setSummary(SwaggerDocConstants.RETURNS + " " + resourceName + " " + SwaggerDocConstants.DETAILS_OF_GIVEN_ID);
 
                         List<String> produces = new ArrayList<String>();
@@ -389,6 +397,7 @@ public class SwaggerSpecificationCreator {
                         delete.setOperations(deleteOperationMap);
                         pathMap.put(pathId, delete);
                     } else if(SwaggerDocConstants.SEARCH_TYPE.equalsIgnoreCase(restResourceInteraction.getCode())) {
+                        //Set search operation GET method parameters
                         String pathId = "/" + resourceName;
                         Path search;
                         Map<String, Operation> searchOperationMap;
@@ -403,7 +412,6 @@ public class SwaggerSpecificationCreator {
                             searchOperationMap = new HashMap<String, Operation>();
                         }
                         Operation searchOperation = new Operation();
-                        //searchOperation.setDescritpion(SwaggerDocConstants.SEARCH_RESOURCE + " " + resourceName + " " + SwaggerDocConstants.SEARCH_RESOURCE_BY_PARAMETERS);
                         searchOperation.setSummary(SwaggerDocConstants.RETURNS + " " + resourceName + " " + SwaggerDocConstants.RETURNS_MATCHING_RESTULS);
 
                         List<String> produces = new ArrayList<String>();
@@ -460,7 +468,7 @@ public class SwaggerSpecificationCreator {
                 createDefinition(resourceName);
             }
 
-            //Add $everything
+            //Set $everything operation properties
             for(Conformance.RestOperation restOperation : restResource.getOperation()) {
                 if(SwaggerDocConstants.EVERYTHING.equalsIgnoreCase(restOperation.getName())) {
                     OperationDefinition resource = (OperationDefinition) restOperation.getDefinition().getResource();
@@ -480,8 +488,6 @@ public class SwaggerSpecificationCreator {
                     }
 
                     Operation everythingOp = new Operation();
-                    //readOperation.setDescritpion(SwaggerDocConstants.GET_DESCRIPTION + " " + resourceName + " "
-                    //                                + SwaggerDocConstants.RESOURCE_BY_ID);
                     everythingOp.setSummary(SwaggerDocConstants.RETURNS + " " + resourceName + " " + SwaggerDocConstants.EVERYTHING_OF_GIVEN_ID);
                     List<String> produces = new ArrayList<String>();
                     //Set mime type supported
@@ -581,7 +587,7 @@ public class SwaggerSpecificationCreator {
             mapper.getSerializerProvider().setNullKeySerializer(new NullSerializer());
             json = mapper.writeValueAsString(swaggerSpecification);
         } catch (Exception exp) {
-            exp.printStackTrace();
+            log.error("Error while creating object mapper", exp);
         }
         return json;
     }
