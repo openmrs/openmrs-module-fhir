@@ -18,6 +18,8 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
+import ca.uhn.fhir.model.dstu2.resource.Conformance;
+import ca.uhn.fhir.rest.server.provider.dstu2.ServerConformanceProvider;
 import org.openmrs.module.fhir.addressstrategy.OpenMRSFHIRRequestAddressStrategy;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.openmrs.module.fhir.providers.RestfulAllergyIntoleranceResourceProvider;
@@ -85,6 +87,10 @@ public class FHIRRESTServer extends RestfulServer {
 		loggingInterceptor.setLoggerName("test.accesslog");
 		loggingInterceptor
 		        .setMessageFormat("Source[${remoteAddr}] Operation[${operationType} ${idOrResourceName}] UA[${requestHeader.user-agent}] Params[${requestParameters}]");
+		ServerConformanceProvider sc = new ServerConformanceProvider(this);
+		this.setServerConformanceProvider(sc);
+		ConformanceProvider provider = new ConformanceProvider();
+		provider.setRestfulServer(this);
 	}
 
 	protected String getRequestPath(String requestFullPath, String servletContextPath, String servletPath) {

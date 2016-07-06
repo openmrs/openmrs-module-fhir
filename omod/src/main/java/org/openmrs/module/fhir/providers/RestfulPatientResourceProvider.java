@@ -158,7 +158,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 * @param patientId if of the patient
 	 * @return bundle
 	 */
-	@Operation(name = "$everything")
+	@Operation(name = "$everything", type = Patient.class)
 	public Bundle patientInstanceOperation(@IdParam IdDt patientId) {
 		return patientResource.getPatientOperationsById(patientId);
 	}
