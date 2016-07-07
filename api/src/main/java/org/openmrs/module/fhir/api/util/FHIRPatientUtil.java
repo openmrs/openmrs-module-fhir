@@ -132,7 +132,7 @@ public class FHIRPatientUtil {
 			if (address.isPreferred()) {
 				fhirAddress.setUse(AddressUseEnum.HOME);
 			} else {
-				fhirAddress.setUse(AddressUseEnum.OLD);
+				fhirAddress.setUse(AddressUseEnum.OLD___INCORRECT);
 			}
 			fhirAddresses.add(fhirAddress);
 		}
@@ -301,7 +301,7 @@ public class FHIRPatientUtil {
 			if (String.valueOf(AddressUseEnum.HOME).equalsIgnoreCase(fhirAddress.getUse())) {
 				address.setPreferred(true);
 			}
-			if (String.valueOf(AddressUseEnum.OLD).equalsIgnoreCase(fhirAddress.getUse())) {
+			if (String.valueOf(AddressUseEnum.OLD___INCORRECT).equalsIgnoreCase(fhirAddress.getUse())) {
 				address.setPreferred(false);
 			}
 			addresses.add(address);

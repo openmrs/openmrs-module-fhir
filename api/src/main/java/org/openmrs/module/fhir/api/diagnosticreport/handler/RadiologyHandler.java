@@ -14,8 +14,10 @@ import ca.uhn.fhir.model.dstu2.resource.Observation;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.dstu2.resource.Practitioner;
 import ca.uhn.fhir.model.primitive.Base64BinaryDt;
+import ca.uhn.fhir.model.primitive.DateDt;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.model.primitive.InstantDt;
 import ca.uhn.fhir.model.primitive.StringDt;
 import ca.uhn.fhir.rest.gclient.ICriterion;
 import ca.uhn.fhir.rest.gclient.ReferenceClientParam;
@@ -89,7 +91,7 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 		String serverBase = FHIRUtils.getDiagnosticReportRadiologyBaseServerURL();
 		ICriterion<ReferenceClientParam> diagnosticReportBySubject = DiagnosticReport.SUBJECT.hasChainedProperty(
 				Patient.GIVEN.matches().value(name));
-		ICriterion<TokenClientParam> diagnosticReportByService = DiagnosticReport.SERVICE.exactly().code("RAD");
+		ICriterion<TokenClientParam> diagnosticReportByService = DiagnosticReport.CATEGORY.exactly().code("RAD");
 		Bundle bundle = FHIRRESTfulGenericClient.searchWhereReferenceAndToken(serverBase, DiagnosticReport.class,
 				diagnosticReportBySubject,
 				diagnosticReportByService);
@@ -127,7 +129,7 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 		// Get Obs and set as `Status`
 
 		// @required: Get EncounterDateTime and set as `Issued` date
-		diagnosticReport.setIssued(new DateTimeDt(omrsDiagnosticReport.getEncounterDatetime()));
+		diagnosticReport.setIssued(new InstantDt(omrsDiagnosticReport.getEncounterDatetime()));
 
 		// @required: Get Encounter Patient and set as `Subject`
 		org.openmrs.Patient omrsPatient = omrsDiagnosticReport.getPatient();
@@ -146,7 +148,7 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 		String serviceCategory = omrsDiagnosticReport.getEncounterType().getName();
 		List<CodingDt> serviceCategoryList = new ArrayList<CodingDt>();
 		serviceCategoryList.add(new CodingDt("http://hl7.org/fhir/v2/0074", serviceCategory));
-		diagnosticReport.getServiceCategory().setCoding(serviceCategoryList);
+		diagnosticReport.getCategory().setCoding(serviceCategoryList);
 
 		// Get valueDateTime in Obs and Set `Diagnosis[x]->DateTime`
 		// Get valueDateTime in Obs and Set `Diagnosis[x]->Period`
@@ -279,7 +281,7 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 		}
 
 		// Set `ServiceCategory` as EncounterType
-		List<CodingDt> codingList = diagnosticReport.getServiceCategory().getCoding();
+		List<CodingDt> codingList = diagnosticReport.getCategory().getCoding();
 		String encounterType = "DEFAULT"; // If serviceCategory is not present in the DiagnosticReport, then use "DEFAULT"
 		if (!codingList.isEmpty()) {
 			//TODO: Need to fix. multiple codes
@@ -386,7 +388,10 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 		for (AttachmentDt attachment : diagnosticReport.getPresentedForm()) {
 			int conceptId = FHIRUtils.getDiagnosticReportPresentedFormConcept().getConceptId();
 			if (attachment.getCreation() == null) {
-				attachment.setCreation(diagnosticReport.getIssuedElement());
+				if(diagnosticReport.getIssued() != null) {
+					DateTimeDt dateDt = new DateTimeDt(diagnosticReport.getIssued());
+					attachment.setCreation(dateDt);
+				}
 			}
 			saveComplexData(omrsDiagnosticReport, conceptId, omrsPatient, attachment);
 		}
@@ -425,7 +430,7 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 	 */
 	private Observation prepareForGenerateOpenMRSObs(Observation observation, DiagnosticReport diagnosticReport) {
 		observation.setSubject(diagnosticReport.getSubject());
-		observation.setApplies(diagnosticReport.getDiagnostic());
+		observation.setIssued(diagnosticReport.getIssuedElement());
 		return observation;
 	}
 

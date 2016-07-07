@@ -73,8 +73,8 @@ public class FHIRImagingStudyUtil {
 		omrsImagingStudy.setValueText(value);
 		// Set `clinicalInformation` and `description` as Obs comment
 		String comment = "";
-		if (imagingStudy.getClinicalInformation() != null) {
-			comment += "clinicalInformation:".concat(imagingStudy.getClinicalInformation() + ",");
+		if (imagingStudy.getDescriptionElement() != null) {
+			comment += "clinicalInformation:".concat(imagingStudy.getDescriptionElement().toString() + ",");
 		}
 		if (imagingStudy.getDescription() != null) {
 			comment += "description:".concat(imagingStudy.getDescription());
@@ -136,8 +136,8 @@ public class FHIRImagingStudyUtil {
 		Concept conceptSeries = FHIRUtils.getImagingStudySeriesConcept();
 		// Set `dateTime` as Obs DateTime
 		Date dateTime = new Date();
-		if (series.getDateTime() != null) {
-			dateTime = series.getDateTime();// Will not be null
+		if (series.getStartedElement() != null) {
+			dateTime = series.getStartedElement().getValue();// Will not be null
 		}
 		// Create a Obs for store Series
 		Obs omrsSeries = new Obs(omrsPatient, conceptSeries, dateTime, null);

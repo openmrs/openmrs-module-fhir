@@ -13,14 +13,8 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.openmrs.*;
-import org.openmrs.api.context.Context;
-
 import ca.uhn.fhir.model.dstu2.composite.BoundCodeableConceptDt;
+import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.composite.PeriodDt;
 import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
@@ -38,6 +32,18 @@ import ca.uhn.fhir.model.dstu2.valueset.ParticipantTypeEnum;
 import ca.uhn.fhir.model.primitive.CodeDt;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
+import org.openmrs.Concept;
+import org.openmrs.EncounterProvider;
+import org.openmrs.EncounterRole;
+import org.openmrs.EncounterType;
+import org.openmrs.Obs;
+import org.openmrs.PersonName;
+import org.openmrs.VisitType;
+import org.openmrs.api.context.Context;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class FHIREncounterUtil {
 
@@ -98,14 +104,13 @@ public class FHIREncounterUtil {
 
 		//Set location
 		Section locationSection = composition.addSection();
-		ResourceReferenceDt locationRef = new ResourceReferenceDt();
+		ResourceReferenceDt locationRef = locationSection.addEntry();
 		locationRef.setDisplay(FHIRConstants.LOCATION);
 		String locationUri = FHIRConstants.LOCATION + "/" + omrsEncounter.getLocation().getUuid();
 
 		IdDt locatioId = new IdDt();
 		locatioId.setValue(locationUri);
 		locationRef.setReference(locatioId);
-		locationSection.setContent(locationRef);
 
 		//Set observation section
 		if (omrsEncounter.getAllObs(false).size() > 0) {
@@ -114,11 +119,11 @@ public class FHIREncounterUtil {
 			String obsUri;
 			IdDt obsId;
 			for (Obs obs : omrsEncounter.getAllObs(false)) {
-				obsRef = new ResourceReferenceDt();
+				obsRef = obsSection.addEntry();
 				obsUri = FHIRConstants.OBSERVATION + "/" + obs.getUuid();
 				obsId = new IdDt();
 				obsId.setValue(obsUri);
-				obsSection.setContent(obsRef);
+				obsRef.setReference(obsId);
 			}
 		}
 		return composition;
@@ -327,7 +332,7 @@ public class FHIREncounterUtil {
 			}
 		}
 		List<BoundCodeableConceptDt<EncounterTypeEnum>> types = encounter.getType();
-		for (BoundCodeableConceptDt<EncounterTypeEnum> type : types) {
+		for (CodeableConceptDt type : types) {
 			List<CodingDt> typeCodings = type.getCoding();
 			VisitType visitType = null;
 			if (typeCodings != null && !typeCodings.isEmpty()) {

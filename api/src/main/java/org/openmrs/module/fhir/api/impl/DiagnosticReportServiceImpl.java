@@ -70,8 +70,8 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 
 	@Override
 	public DiagnosticReport createFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
-		log.info("DiagnosticReportServiceImpl : createFHIRDiagnosticReport");
-		List<CodingDt> codingList = diagnosticReport.getServiceCategory().getCoding();
+		log.debug("DiagnosticReportServiceImpl : createFHIRDiagnosticReport");
+		List<CodingDt> codingList = diagnosticReport.getCategory().getCoding();
 
 		// If serviceCategory is not present in the DiagnosticReport, then use "DEFAULT"
 		String handlerName = "DEFAULT";
@@ -84,7 +84,7 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 
 	@Override
 	public DiagnosticReport updateFHIRDiagnosticReport(DiagnosticReport diagnosticReport, String theId) {
-		log.info("DiagnosticReportServiceImpl : updateFHIRDiagnosticReport");
+		log.debug("DiagnosticReportServiceImpl : updateFHIRDiagnosticReport");
 		// Find Diagnostic Report (Encounter) in OpenMRS database
 		EncounterService encounterService = Context.getEncounterService();
 		Encounter omrsDiagnosticReport = encounterService.getEncounterByUuid(theId);

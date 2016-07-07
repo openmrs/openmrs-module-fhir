@@ -67,8 +67,9 @@
         <slf4jLog4j12Version>1.6.0</slf4jLog4j12Version>
         <xmlStreamVersion>1.0-2</xmlStreamVersion>
         <SaxonHEVersion>9.4</SaxonHEVersion>
-        <hapiFhirBaseVersion>1.1</hapiFhirBaseVersion>
-        <hapiFhirStructuresDstuVersion>1.1</hapiFhirStructuresDstuVersion>
+        <hapiFhirBaseVersion>1.4</hapiFhirBaseVersion>
+        <hapiFhirStructuresDstuVersion>1.4</hapiFhirStructuresDstuVersion>
+        <hapiValidationResources>1.4</hapiValidationResources>
         <thymeleafVersion>2.1.4.RELEASE</thymeleafVersion>
         <phlocSchematronVersion>2.7.1</phlocSchematronVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -210,6 +211,12 @@
                         <artifactId>slf4j-api</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>ca.uhn.hapi.fhir</groupId>
+                <artifactId>hapi-fhir-validation-resources-dstu2</artifactId>
+                <version>${hapiValidationResources}</version>
             </dependency>
 
             <dependency>
