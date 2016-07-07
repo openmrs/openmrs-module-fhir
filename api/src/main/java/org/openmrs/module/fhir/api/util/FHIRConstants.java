@@ -246,5 +246,8 @@ public final class FHIRConstants {
 
 	//Global Property Names
 	public static final String CONCEPTS_CONVERTABLE_TO_CONDITIONS_STORED_AS_OBS = "fhir.concepts.conditions";
+	//module id or name
+	public static final String MODULE_ID = "fhir";
+	public static final String URI_PREFIX_GLOBAL_PROPERTY_NAME = MODULE_ID + ".uriPrefix";
 	
 }

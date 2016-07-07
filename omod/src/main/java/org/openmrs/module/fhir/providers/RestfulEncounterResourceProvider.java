@@ -56,7 +56,7 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	 *
 	 * @param theId The read operation takes one parameter, which must be of type IdDt and must be
 	 *            annotated with the "@Read.IdParam" annotation.
-	 * @return Returns a resource matching this identifier, or null if none exists.
+	 * @return Returns a resource matching this identifier, or nu	ll if none exists.
 	 */
 	@Read()
 	public Encounter getResourceById(@IdParam IdDt theId) {
@@ -115,7 +115,7 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	 * @param encounterId if of the encounter
 	 * @return bundle
 	 */
-	@Operation(name = "$everything")
+	@Operation(name = "$everything", type = Encounter.class)
 	public Bundle encounterInstanceOperation(@IdParam IdDt encounterId) {
 		return encounterResource.getEncounterOperationsById(encounterId);
 	}

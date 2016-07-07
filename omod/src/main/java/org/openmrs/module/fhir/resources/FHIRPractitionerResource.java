@@ -41,7 +41,7 @@ public class FHIRPractitionerResource extends Resource {
 		return patientService.searchPractitionersById(id.getValue());
 	}
 
-	//search by patient identifier. ex: GET [base-url]/Practitioner?identifier=12345
+	//search by patient identifier. ex: GET_DESCRIPTION [base-url]/Practitioner?identifier=12345
 	//returns a bundle of practitioners
 	public List<Practitioner> searchByIdentifier(TokenParam identifier) {
 		org.openmrs.module.fhir.api.PractitionerService patientService = Context
