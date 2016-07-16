@@ -47,6 +47,7 @@ public class AdminList extends AdministrationSectionExt {
 		map.put("/module/fhir/manage.form", "fhir.manage");
 		map.put("/module/fhir/settings.form", "fhir.settings");
 		map.put("/module/fhir/client.form", "fhir.client");
+		map.put("/module/fhir/apidocs.form", "swagger.docs");
 		return map;
 	}
 	
