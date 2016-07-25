@@ -44,5 +44,5 @@
 </script>
 
 <div id="swaggerDocumentation" class="swagger-ui-wrap">
-	<img src="<openmrs:contextPath/>/moduleResources/fhir/js/swagger-ui/dist/images/inprogress.gif" style="display: block; margin-left: auto; margin-right: auto;"/>
+	 <img src="<openmrs:contextPath/>/moduleResources/fhir/js/swagger-ui/dist/images/inprogress.gif" style="display: block; margin-left: auto; margin-right: auto;"/>
 <div id="swaggerError" ></div>
