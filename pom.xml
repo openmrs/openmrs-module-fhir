@@ -18,7 +18,7 @@
 
     <groupId>org.openmrs.module</groupId>
     <artifactId>fhir</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.5</version>
     <packaging>pom</packaging>
     <name>FHIR Module</name>
     <description>This module expose OpenMRS resources through FHIR API</description>
@@ -52,7 +52,7 @@
         <connection>scm:git:https://github.com/openmrs/openmrs-module-fhir</connection>
         <developerConnection>scm:git:https://github.com/openmrs/openmrs-module-fhir</developerConnection>
         <url>https://github.com/openmrs/openmrs-module-fhir</url>
-      <tag>HEAD</tag>
+      <tag>1.5</tag>
   </scm>
 
     <modules>
