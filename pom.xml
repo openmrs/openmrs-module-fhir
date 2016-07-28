@@ -77,7 +77,7 @@
         <reportingModuleApiVersion>0.10.0</reportingModuleApiVersion>
         <calculationModuleApiVersion>1.0</calculationModuleApiVersion>
         <serializationModuleApiVersion>0.2.11</serializationModuleApiVersion>
-        <emrApiConditionModuleApiVersion>1.15</emrApiConditionModuleApiVersion>
+        <emrApiConditionModuleApiVersion>1.16-SNAPSHOT</emrApiConditionModuleApiVersion>
     </properties>
 
     <dependencyManagement>
