@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/openmrs/openmrs-module-fhir.svg?branch=master)](https://travis-ci.org/openmrs/openmrs-module-fhir)
+
 openmrs-module-fhir
 ===================
 
