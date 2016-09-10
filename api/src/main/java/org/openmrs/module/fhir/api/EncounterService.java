@@ -52,7 +52,7 @@ public interface EncounterService extends OpenmrsService {
 	 * @param id to be search
 	 * @return fhir encounter resource list
 	 */
-	public List<Encounter> searchEncounterById(String id);
+	List<Encounter> searchEncounterById(String id);
 
 	/**
 	 * Search encounters by patient identifier
@@ -60,7 +60,7 @@ public interface EncounterService extends OpenmrsService {
 	 * @param identifier to be search
 	 * @return fhir encounter resource list
 	 */
-	public List<Encounter> searchEncountersByPatientIdentifier(String identifier);
+	List<Encounter> searchEncountersByPatientIdentifier(String identifier);
 
 	/**
 	 * Search encounters by id and returned composition
@@ -68,7 +68,7 @@ public interface EncounterService extends OpenmrsService {
 	 * @param id the encounter id to be search
 	 * @return fhir composition list
 	 */
-	public List<Composition> searchEncounterComposition(String id);
+	List<Composition> searchEncounterComposition(String id);
 
 	/**
 	 * Search encounters by patient id and returned composition
@@ -76,7 +76,7 @@ public interface EncounterService extends OpenmrsService {
 	 * @param patientId the patient id to be search encounters
 	 * @return fhir composition list
 	 */
-	public List<Composition> searchEncounterCompositionByPatientId(String patientId);
+	List<Composition> searchEncounterCompositionByPatientId(String patientId);
 
 	/**
 	 * Search encounters by patient id and returned composition
@@ -84,7 +84,7 @@ public interface EncounterService extends OpenmrsService {
 	 * @param encounterId the encounter id to be search encounters
 	 * @return fhir composition list
 	 */
-	public List<Composition> searchEncounterCompositionByEncounterId(String encounterId);
+	List<Composition> searchEncounterCompositionByEncounterId(String encounterId);
 
 	/**
 	 * Get Encounter operations bundle resource
@@ -92,7 +92,7 @@ public interface EncounterService extends OpenmrsService {
 	 * @param encounterId the encounter id to be search encounters
 	 * @return encounter resource bundle for operations
 	 */
-	public Bundle getEncounterOperationsById(String encounterId);
+	Bundle getEncounterOperationsById(String encounterId);
 
 	/**
 	 * Get Encounter operations bundle resource with providing external bundle resource
@@ -101,14 +101,14 @@ public interface EncounterService extends OpenmrsService {
 	 * @param bundle      the provided bundle
 	 * @return contents of encounter resource bundle for operations
 	 */
-	public Bundle getEncounterOperationsById(String encounterId, Bundle bundle, boolean includePatient);
+	Bundle getEncounterOperationsById(String encounterId, Bundle bundle, boolean includePatient);
 
 	/**
 	 * Delete encounter by id
 	 *
 	 * @param id the encounter id
 	 */
-	public void deleteEncounter(String id);
+	void deleteEncounter(String id);
 
 	/**
 	 * Search encounters by patient identifier and part of which is the top level visit
@@ -119,7 +119,7 @@ public interface EncounterService extends OpenmrsService {
 	 *                          level visit
 	 * @return fhir encounter list
 	 */
-	public List<Encounter> searchEncountersByPatientIdentifierAndPartOf(String patientIdentifier, String partOf);
+	List<Encounter> searchEncountersByPatientIdentifierAndPartOf(String patientIdentifier, String partOf);
 
 	/**
 	 * Search encounters by encounter id and part of which is the top level visit
@@ -130,7 +130,7 @@ public interface EncounterService extends OpenmrsService {
 	 *                    level visit
 	 * @return fhir encounter list
 	 */
-	public List<Encounter> searchEncountersByEncounterIdAndPartOf(String encounterId, String partOf);
+	List<Encounter> searchEncountersByEncounterIdAndPartOf(String encounterId, String partOf);
 	
 	/**
 	 * Create encounter
@@ -138,6 +138,6 @@ public interface EncounterService extends OpenmrsService {
 	 * @param encounter the encounter to create
 	 * @return fhir encounter
 	 */
-	public Encounter createFHIREncounter(Encounter encounter);
+	Encounter createFHIREncounter(Encounter encounter);
 
 }

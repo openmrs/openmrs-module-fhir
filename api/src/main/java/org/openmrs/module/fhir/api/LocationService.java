@@ -45,7 +45,7 @@ public interface LocationService extends OpenmrsService {
 	 * @param status boolean status
 	 * @return fhir location resource list
 	 */
-	public List<Location> searchLocationsByStatus(boolean status);
+	List<Location> searchLocationsByStatus(boolean status);
 
 	/**
 	 * Search locations by name
@@ -53,14 +53,14 @@ public interface LocationService extends OpenmrsService {
 	 * @param name location name to be search
 	 * @return fhir location resource list
 	 */
-	public List<Location> searchLocationsByName(String name);
+	List<Location> searchLocationsByName(String name);
 	
 	/**
 	 * Delete location by id
 	 *
 	 * @param id uuid of Location
 	 */
-	public void deleteLocation(String id);
+	void deleteLocation(String id);
 
 	/**
 	 * Update location
@@ -68,13 +68,13 @@ public interface LocationService extends OpenmrsService {
 	 * @param id location uuid
 	 * @param location representation of location fhir resource
 	 */
-	public Location updateLocation(String id, Location location);
+	Location updateLocation(String id, Location location);
 	
 	/**
 	 * Create location 
 	 *
 	 * @param location representation of location fhir resource
 	 */
-	public Location createLocation(Location location);
+	Location createLocation(Location location);
 
 }

@@ -41,7 +41,7 @@ public interface AllergyIntoleranceService {
 	 * @param identifier to be search
 	 * @return fhir allergy resource list
 	 */
-	public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(String identifier);
+	List<AllergyIntolerance> searchAllergiesByPatientIdentifier(String identifier);
 
 	/**
 	 * Search allergies by patient name
@@ -49,7 +49,7 @@ public interface AllergyIntoleranceService {
 	 * @param name to be search
 	 * @return fhir allergy resource list
 	 */
-	public List<AllergyIntolerance> searchAllergiesByPatientName(String name);
+	List<AllergyIntolerance> searchAllergiesByPatientName(String name);
 
 	/**
 	 * Ger allergies by peron uuid
@@ -57,6 +57,6 @@ public interface AllergyIntoleranceService {
 	 * @param personId uuid
 	 * @return
 	 */
-	public List<AllergyIntolerance> getAllergiesByPersonId(String personId);
+	List<AllergyIntolerance> getAllergiesByPersonId(String personId);
 
 }

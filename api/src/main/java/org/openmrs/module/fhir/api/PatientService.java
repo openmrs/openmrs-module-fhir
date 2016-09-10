@@ -91,21 +91,21 @@ public interface PatientService extends OpenmrsService {
 	 * @param patientId the patient id to be search patients
 	 * @return patient resource bundle for operations
 	 */
-	public Bundle getPatientOperationsById(String patientId);
+	Bundle getPatientOperationsById(String patientId);
 
 	/**
 	 * Delete patient by id
 	 *
 	 * @param id uuid of the patient
 	 */
-	public void deletePatient(String id);
+	void deletePatient(String id);
 	
 	/**
 	 * Create patient
 	 *
 	 * @param patient the patient to create
 	 */
-	public Patient createFHIRPatient(Patient patient);
+	Patient createFHIRPatient(Patient patient);
 	
 	/**
 	 * Update patient
@@ -113,5 +113,5 @@ public interface PatientService extends OpenmrsService {
 	 * @param patient the patient to update
 	 * @param theId the uuid ofpatient to update
 	 */
-	public Patient updatePatient(Patient patient, String theId);
+	Patient updatePatient(Patient patient, String theId);
 }
