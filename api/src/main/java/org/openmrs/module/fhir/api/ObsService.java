@@ -31,7 +31,7 @@ public interface ObsService extends OpenmrsService {
 	 * @param id uuid of the observation
 	 * @return observation fhir resource
 	 */
-	public Observation getObs(String id);
+	Observation getObs(String id);
 
 	/**
 	 * Search observations by patient and concepts
@@ -40,7 +40,7 @@ public interface ObsService extends OpenmrsService {
 	 * @param conceptNamesAndURIs names of the concepts with system uris in a map
 	 * @return fhir obs resource list
 	 */
-	public List<Observation> searchObsByPatientAndConcept(String patientUUid, Map<String, String> conceptNamesAndURIs);
+	List<Observation> searchObsByPatientAndConcept(String patientUUid, Map<String, String> conceptNamesAndURIs);
 
 	/**
 	 * Search observations by patient and concepts
@@ -48,7 +48,7 @@ public interface ObsService extends OpenmrsService {
 	 * @param id obs uuid
 	 * @return fhir obs resource list
 	 */
-	public List<Observation> searchObsById(String id);
+	List<Observation> searchObsById(String id);
 
 	/**
 	 * Search observations by observation name
@@ -56,7 +56,7 @@ public interface ObsService extends OpenmrsService {
 	 * @param conceptNamesAndURIs obs codes and system uris
 	 * @return fhir obs resource list
 	 */
-	public List<Observation> searchObsByCode(Map<String, String> conceptNamesAndURIs);
+	List<Observation> searchObsByCode(Map<String, String> conceptNamesAndURIs);
 
 	/**
 	 * Search observations by observation date
@@ -64,7 +64,7 @@ public interface ObsService extends OpenmrsService {
 	 * @param date obs date
 	 * @return fhir obs resource list
 	 */
-	public List<Observation> searchObsByDate(Date date);
+	List<Observation> searchObsByDate(Date date);
 
 	/**
 	 * Search observations by person
@@ -72,7 +72,7 @@ public interface ObsService extends OpenmrsService {
 	 * @param personUuid person uuid of the person which observations needs to search for
 	 * @return fhir obs resource list
 	 */
-	public List<Observation> searchObsByPerson(String personUuid);
+	List<Observation> searchObsByPerson(String personUuid);
 
 	/**
 	 * Search observations by value concept
@@ -80,7 +80,7 @@ public interface ObsService extends OpenmrsService {
 	 * @param conceptName value concept name
 	 * @return fhir obs resource list
 	 */
-	public List<Observation> searchObsByValueConcept(String conceptName);
+	List<Observation> searchObsByValueConcept(String conceptName);
 
 	/**
 	 * Search observations by patient identifier
@@ -88,14 +88,14 @@ public interface ObsService extends OpenmrsService {
 	 * @param identifier to be search
 	 * @return fhir observation resource list
 	 */
-	public List<Observation> searchObsByPatientIdentifier(String identifier);
+	List<Observation> searchObsByPatientIdentifier(String identifier);
 
 	/**
 	 * Delete observation by id
 	 *
 	 * @param id uuid of the observation
 	 */
-	public void deleteObs(String id);
+	void deleteObs(String id);
 	
 	/**
 	 * Create observation
@@ -103,7 +103,7 @@ public interface ObsService extends OpenmrsService {
 	 * @param observation the fhir observation to create
 	 * @return observation fhir resource
 	 */
-	public Observation createFHIRObservation(Observation observation);
+	Observation createFHIRObservation(Observation observation);
 	
 	/**
 	 * Update observation
@@ -112,6 +112,6 @@ public interface ObsService extends OpenmrsService {
 	 * @param theId the uuid of the obs
 	 * @return observation fhir resource
 	 */
-	public Observation updateFHIRObservation(Observation observation, String theId);
+	Observation updateFHIRObservation(Observation observation, String theId);
 
 }

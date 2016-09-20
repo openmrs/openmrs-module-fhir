@@ -29,12 +29,12 @@ public class AllergyApiStrategy implements GenericAllergyStrategy {
 	
 	@Override
 	public AllergyIntolerance getAllergyById(String uuid) {
-		throw new NotImplementedOperationException("Allergy API module not supported for get allergies by Id ");
+		throw new NotImplementedOperationException("Allergy API module isn't supported for get allergies by Id ");
 	}
 
 	@Override
 	public List<AllergyIntolerance> searchAllergyById(String uuid) {
-		throw new NotImplementedOperationException("Allergy API module not supported for search allergies by Id ");
+		throw new NotImplementedOperationException("Allergy API module isn't supported for search allergies by Id ");
 	}
 
 	@Override

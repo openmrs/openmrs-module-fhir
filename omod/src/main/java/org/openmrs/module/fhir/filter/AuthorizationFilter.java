@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 
 /**
- * Filter intended for all /ws/rest calls that allows the user to authenticate via Basic
+ * Filter intended for all /ws/fhir calls that allows the user to authenticate via Basic
  * authentication. (It will not fail on invalid or missing credentials. We count on the API to throw
  * exceptions if an unauthenticated user tries to do something they are not allowed to do.) <br/>
  * <br/>
@@ -46,7 +46,7 @@ public class AuthorizationFilter implements Filter {
 	 */
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
-		log.debug("Initializing REST WS Authorization filter");
+		log.debug("Initializing FHIR Module Authorization filter");
 	}
 
 	/**

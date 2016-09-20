@@ -38,7 +38,7 @@ public class ObsConditionStrategy implements GenericConditionStrategy {
 	/**
 	 *
 	 * @param uuid the uuid of the Observation
-	 * @return fhir condition resource and will return null if condition is not found for the given id
+	 * @return fhir condition resource and if condition is not found for the given id then return null
 	 */
 	@Override
 	public Condition getConditionById(String uuid) {
