@@ -472,6 +472,9 @@ public class SwaggerSpecificationCreator {
             for(Conformance.RestOperation restOperation : restResource.getOperation()) {
                 if(SwaggerDocConstants.EVERYTHING.equalsIgnoreCase(restOperation.getName())) {
                     OperationDefinition resource = (OperationDefinition) restOperation.getDefinition().getResource();
+                    if (resource == null) {
+                    	continue;
+                    }
                     String resourceName = resource.getType().get(0).getValue();
                     String pathId = "/" + resourceName + "/" + SwaggerDocConstants.POST_RESOURCE_PATH + "/" + SwaggerDocConstants.EVERYTHING;
                     Path everything;

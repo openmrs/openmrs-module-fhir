@@ -35,9 +35,10 @@
 					  docExpansion: "none",
                       apisSorter: "alpha",
                       onFailure: function(data) {
-                          console.log("Unable to Load SwaggerUI");
+                          console.log(data);
                           jQuery("#swaggerError").innerHTML = "Error Loading Swagger UI";
-                        }
+                        },
+                        validatorUrl: null
 					});
 					swaggerUi.load();
 
