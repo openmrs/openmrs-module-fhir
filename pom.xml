@@ -49,8 +49,8 @@
     </organization>
 
     <scm>
-        <connection>scm:git:https://github.com/openmrs/openmrs-module-fhir</connection>
-        <developerConnection>scm:git:https://github.com/openmrs/openmrs-module-fhir</developerConnection>
+        <connection>scm:git:git@github.com:openmrs/openmrs-module-fhir.git</connection>
+        <developerConnection>scm:git:git@github.com:openmrs/openmrs-module-fhir.git</developerConnection>
         <url>https://github.com/openmrs/openmrs-module-fhir</url>
       <tag>HEAD</tag>
   </scm>
