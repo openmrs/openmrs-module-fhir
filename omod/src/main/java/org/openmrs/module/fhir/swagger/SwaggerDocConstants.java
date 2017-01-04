@@ -17,14 +17,12 @@ public class SwaggerDocConstants {
 
     public static final String VERSION = "1.0.0";
     public static final String UTF_8 = "UTF-8";
-    public static final String SHORT_FHIR_REST_PREFIX = "/openmrs/ws/fhir";
     public static final String HTTP = "http";
     public static final String HTTPS = "https";
     public static final String STR_EMPTY = "";
     public static final String HTTP_WITH_SLASHES = "http://";
     public static final String HTTPS_WITH_SLASHES = "https://";
     public static final String SLASHES = "://";
-    public static final String OPENMRS_PREFIX = "/openmrs";
     public static final String COLON = ":";
     public static final String OPERATION_OUTCOME = "OperationOutcome";
     public static final String TITLE = "OpenMRS FHIR REST Services";

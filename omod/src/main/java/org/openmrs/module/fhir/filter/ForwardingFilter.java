@@ -24,7 +24,7 @@ import java.io.IOException;
 
 public class ForwardingFilter implements Filter {
 
-	private String openmrsPath;
+	private static String openmrsPath;
 
 	@Override
 	public void init(FilterConfig fc) throws ServletException {
@@ -49,4 +49,7 @@ public class ForwardingFilter implements Filter {
 	public void destroy() {
 	}
 
+	public static String getContextPath() {
+		return openmrsPath;
+	}
 }

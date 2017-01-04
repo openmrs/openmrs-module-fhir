@@ -17,6 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.module.fhir.filter.ForwardingFilter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -46,13 +47,13 @@ public class SwaggerSpecificationController extends HttpServlet {
             baseUrl.append(request.getContextPath());
             String resourcesUrl = Context.getAdministrationService().getGlobalProperty(FHIRConstants.URI_PREFIX_GLOBAL_PROPERTY_NAME, baseUrl.toString());
             String urlWithoutScheme = "";
-            String basePath = SwaggerDocConstants.SHORT_FHIR_REST_PREFIX;
+            String basePath = ForwardingFilter.getContextPath() + "/ws/fhir";
             if (SwaggerDocConstants.HTTP.equals(scheme)) {
                 urlWithoutScheme = resourcesUrl.replace(SwaggerDocConstants.HTTP_WITH_SLASHES, SwaggerDocConstants.STR_EMPTY);
             } else if (SwaggerDocConstants.HTTPS.equals(scheme)) {
                 urlWithoutScheme = resourcesUrl.replace(SwaggerDocConstants.HTTPS_WITH_SLASHES, SwaggerDocConstants.STR_EMPTY);
             }
-            urlWithoutScheme = urlWithoutScheme.replace(SwaggerDocConstants.OPENMRS_PREFIX, SwaggerDocConstants.STR_EMPTY);
+            urlWithoutScheme = urlWithoutScheme.replace(ForwardingFilter.getContextPath(), SwaggerDocConstants.STR_EMPTY);
             SwaggerSpecificationCreator creator = new SwaggerSpecificationCreator(urlWithoutScheme, basePath);
             swaggerSpecificationJSON = creator.buildJSON();
             response.setContentType(SwaggerDocConstants.PRODUCES_JSON);

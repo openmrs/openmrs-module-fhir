@@ -19,6 +19,5 @@ public class FHIROmodConstants {
 	public static final String OPENMRS_FHIR_SERVER_VERSION = "0.9-SNAPSHOT";
 	public static final String OPENMRS_FHIR_SERVER_DES = "OpenMRS FHIR Resources";
 	public static final String OPENMRS_FHIR_SWAGGER_SHORT_PATH = "/module/fhir/rest/swagger.json";
-	public static final String OPENMRS_FHIR_SWAGGER_LONG_PATH = "/openmrs/module/fhir/rest/swagger.json";
 	public static final String OPENMRS_FHIR_SWAGGER_ORG_PATH = "/ms/fhir/fhirDocServelet";
 }
