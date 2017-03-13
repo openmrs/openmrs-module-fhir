@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
+import org.openmrs.Encounter;
 import org.openmrs.GlobalProperty;
 import org.openmrs.Obs;
 import org.openmrs.Person;
@@ -176,5 +178,16 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals(openmrsConceptUuid, fhirConceptUuid);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		assertEquals(dateFormat.format(openmrsDateApplies), dateFormat.format(fhirDppliesDate));
+	}
+
+	@Test
+	public void generateOpenMRSObsWithEncounter_shouldGenerateOpenMRSObswithEncounter() {
+
+		String obsUuid = "be3a4d7a-f9ab-47bb-aaad-bc0b452fcda4";
+		Observation fhirObservation = getService().getObs(obsUuid);
+		Encounter encounter = Context.getEncounterService().getEncounter(3);
+		Obs obs = FHIRObsUtil.generateOpenMRSObsWithEncounter(fhirObservation, encounter, new ArrayList<String>());
+		assertNotNull(obs);
+		assertNotNull(obs.getEncounter());
 	}
 }

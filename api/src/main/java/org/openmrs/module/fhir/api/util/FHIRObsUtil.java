@@ -267,8 +267,8 @@ public class FHIRObsUtil {
 	 * @param observation fhir observation
 	 * @param encounter encounter to link
 	 * @param errors error list
-     * @return created observation
-     */
+	 * @return created observation
+	*/
 	public static Obs generateOpenMRSObsWithEncounter(Observation observation, Encounter encounter, List<String> errors) {
 		Obs createdObs = generateOpenMRSObs(observation, errors);
 		createdObs.setEncounter(encounter);
