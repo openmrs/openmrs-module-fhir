@@ -158,7 +158,8 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		
 		Observation newObs = FHIRObsUtil.generateObs(obsn);
 		newObs = Context.getService(ObsService.class).createFHIRObservation(newObs);
-		
+		obsn = Context.getObsService().getObsByUuid(newObs.getId().getIdPart());
+
 		CodeableConceptDt dt = newObs.getCode();
 		List<CodingDt> dts = dt.getCoding();
 		CodingDt coding = dts.get(0);
@@ -168,13 +169,16 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		IdDt id = subjectref.getReference();
 		String fhirPatientUuid = id.getIdPart();
 
-		InstantDt dateApplies = newObs.getIssuedElement();
-		Date fhirDppliesDate = dateApplies.getValue();
+		Date fhirEffectiveDate = ((DateTimeDt) newObs.getEffective()).getValue();
+
+		InstantDt dateIssued = newObs.getIssuedElement();
+		Date fhirIssuedDate = dateIssued.getValue();
 
 		assertNotNull(newObs);
 		assertEquals(openmrsPersonUuid, fhirPatientUuid);
 		assertEquals(openmrsConceptUuid, fhirConceptUuid);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		assertEquals(dateFormat.format(openmrsDateApplies), dateFormat.format(fhirDppliesDate));
+		assertEquals(dateFormat.format(openmrsDateApplies), dateFormat.format(fhirEffectiveDate));
+		assertEquals(dateFormat.format(obsn.getDateCreated()), dateFormat.format(fhirIssuedDate));
 	}
 }
