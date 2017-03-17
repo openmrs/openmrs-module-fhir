@@ -60,6 +60,11 @@ public class FHIRObsUtil {
 		instant.setValue(obs.getDateCreated());
 		observation.setIssued(instant);
 
+		//Set effective date
+		DateTimeDt effective = new DateTimeDt();
+		effective.setValue(obs.getObsDatetime());
+		observation.setEffective(effective);
+
 		//Set fhir observation comment
 		observation.setComments(obs.getComment());
 		observation.setSubject(FHIRUtils.buildPatientOrPersonResourceReference(obs.getPerson()));
@@ -292,15 +297,31 @@ public class FHIRObsUtil {
 			errors.add("Subject cannot be empty");
 		}
 
-		Date dateApplies = observation.getIssued();
-		if (dateApplies == null) {
-			errors.add("Observation DateTime cannot be empty");
+		Date dateCreated = observation.getIssued();
+		if (dateCreated == null) {
+			obs.setDateCreated(new Date());
 		} else {
-			obs.setObsDatetime(dateApplies);
+			obs.setDateCreated(dateCreated);
 		}
-		
-		Date instant = observation.getIssued();
-		obs.setDateCreated(instant);
+
+		Date dateEffective = null;
+		if(observation.getEffective() instanceof DateTimeDt) {
+			dateEffective = ((DateTimeDt) observation.getEffective()).getValue();
+			if (dateEffective == null) {
+				errors.add("Observation DateTime cannot be empty");
+			} else {
+				obs.setObsDatetime(dateEffective);
+			}
+		} else if (observation.getEffective() instanceof PeriodDt) {
+			dateEffective = ((PeriodDt) observation.getEffective()).getStart();
+			if (dateEffective == null) {
+				errors.add("Observation DateTime cannot be empty");
+			} else {
+				obs.setObsDatetime(dateEffective);
+			}
+		} else {
+			errors.add("Observation DateTime cannot be empty");
+		}
 		
 		String conceptCode = null;
 		String system = null;
