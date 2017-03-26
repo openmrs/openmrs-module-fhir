@@ -285,7 +285,7 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 			throw new ResourceNotFoundException(Patient.class, new IdDt("Patient", id));
 		}
 		try {
-			patient = Context.getPatientService().voidPatient(patient, "DELETED by FHIR request");
+			Context.getPatientService().voidPatient(patient, "DELETED by FHIR request");
 		} catch (APIException ex) {
 			// refused to retire resource.  return with 405
 			throw new MethodNotAllowedException("The OpenMRS API refused to retire the Patient via the FHIR request.");

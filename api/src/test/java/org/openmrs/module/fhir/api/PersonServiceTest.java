@@ -104,9 +104,8 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 	public void generateOpenMRSPerson_shouldGenerateOmsPerson() throws Exception {
 		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
 		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);
-		person.setUuid(
-				""); // remove the uuid value from the Person. This will let this resource to be persist on the db with
-		// random uuid
+		person.setUuid(""); // remove the uuid value from the Person. This will let this
+							// resource to be persist on the db with random uuid
 		Person fhirPerson = FHIRPersonUtil.generatePerson(person);
 		fhirPerson = Context.getService(PersonService.class).createFHIRPerson(fhirPerson);
 		assertNotNull(fhirPerson);
@@ -116,16 +115,16 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 	 * @verifies update Person, where there is no person associates with the uuid
 	 */
 	@Test
-	public void updateperson_shouldGenerateOmsPerson() throws Exception {
+	public void updatePerson_shouldGenerateOmsPerson() throws Exception {
 		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
 		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);
 		Person fhirPerson = FHIRPersonUtil.generatePerson(person);
-		String requestnUuid = "vvvv524f-27ce-4bb2-86d6-6d1d05312bd5";
+		String requestUuid = "vvvv524f-27ce-4bb2-86d6-6d1d05312bd5";
 		IdDt uuid = new IdDt();
-		uuid.setValue(requestnUuid); // set a uuid which is not associated with any Person
+		uuid.setValue(requestUuid); // set a uuid which is not associated with any Person
 		fhirPerson.setId(uuid);
-		fhirPerson = Context.getService(PersonService.class).updateFHIRPerson(fhirPerson, requestnUuid);
-		org.openmrs.Person retrievedPerson = Context.getPersonService().getPersonByUuid(requestnUuid);
+		Context.getService(PersonService.class).updateFHIRPerson(fhirPerson, requestUuid);
+		org.openmrs.Person retrievedPerson = Context.getPersonService().getPersonByUuid(requestUuid);
 		assertNotNull(retrievedPerson);
 	}
 
@@ -133,7 +132,7 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 	 * @verifies update Person
 	 */
 	@Test
-	public void updateperson_shouldUpdateOmsPerson() throws Exception {
+	public void updatepPerson_shouldUpdateOmsPerson() throws Exception {
 		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
 		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);
 		Person fhirPerson = FHIRPersonUtil.generatePerson(person);
@@ -170,8 +169,8 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 		addressList.add(fhirAddress);
 		fhirPerson.setAddress(addressList);
 		//update the person
-		fhirPerson = Context.getService(PersonService.class).updateFHIRPerson(fhirPerson, personUuid);
-		//retreive the updated person
+		Context.getService(PersonService.class).updateFHIRPerson(fhirPerson, personUuid);
+		//retrieve the updated person
 		org.openmrs.Person updatedPerson = Context.getPersonService().getPersonByUuid(personUuid);
 		assertNotNull(updatedPerson);
 		// check whether each attribute updated correctly

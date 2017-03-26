@@ -40,8 +40,7 @@ import static org.junit.Assert.assertTrue;
 
 public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 
-	protected static final String ENCOUNTER_INITIAL_DATA_XML = "org/openmrs/api/include/EncounterServiceTest-initialData"
-	        + ".xml";
+	protected static final String ENCOUNTER_INITIAL_DATA_XML = "org/openmrs/api/include/EncounterServiceTest-initialData.xml";
 	
 	protected static final String VISIT_INITIAL_DATA_XML = "org/openmrs/api/include/VisitServiceTest-includeVisitsAndTypeToAutoClose.xml";
 
@@ -98,11 +97,11 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 		typeList.add(typeAsCode);
 		fhirEncounter.setType(typeList);
 		fhirEncounter = getService().createFHIREncounter(fhirEncounter);
-		Visit visi = Context.getVisitService().getVisitByUuid(fhirEncounter.getId().getIdPart());
-		assertEquals(visi.getUuid(), fhirEncounter.getId().getIdPart());
-		assertEquals(visi.getVisitType().getVisitTypeId().toString(), "1");
-		assertEquals(visi.getStartDatetime().toString(), "2005-01-01 00:00:00.0");
-		assertNotNull(visi);
+		Visit visit = Context.getVisitService().getVisitByUuid(fhirEncounter.getId().getIdPart());
+		assertEquals(visit.getUuid(), fhirEncounter.getId().getIdPart());
+		assertEquals(visit.getVisitType().getVisitTypeId().toString(), "1");
+		assertEquals(visit.getStartDatetime().toString(), "2005-01-01 00:00:00.0");
+		assertNotNull(visit);
 	}
 
 	@Test

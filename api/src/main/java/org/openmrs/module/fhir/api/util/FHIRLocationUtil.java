@@ -130,11 +130,11 @@ public class FHIRLocationUtil {
 		}
 
 		Position position = location.getPosition();
-		BigDecimal latitute = position.getLatitude();
-		BigDecimal longitute = position.getLongitude();
-		if (latitute != null && longitute != null) {
-			omrsLocation.setLatitude(latitute.toString());
-			omrsLocation.setLongitude(longitute.toString());
+		BigDecimal latitude = position.getLatitude();
+		BigDecimal longitude = position.getLongitude();
+		if (latitude != null && longitude != null) {
+			omrsLocation.setLatitude(latitude.toString());
+			omrsLocation.setLongitude(longitude.toString());
 		}
 		String status = location.getStatus().toString();
 		if (status.equalsIgnoreCase(LocationStatusEnum.ACTIVE.toString())) {
@@ -150,7 +150,6 @@ public class FHIRLocationUtil {
 
 		ResourceReferenceDt parent = location.getPartOf();
 		if (parent != null) {
-			String parentName = parent.getDisplay().toString();
 			String parentUuid = parent.getReference().getIdPart();
 			org.openmrs.Location omrsLocationParent = Context.getLocationService().getLocationByUuid(parentUuid);
 			if (omrsLocationParent != null) {

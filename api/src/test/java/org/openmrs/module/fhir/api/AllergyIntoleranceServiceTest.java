@@ -78,7 +78,6 @@ public class AllergyIntoleranceServiceTest extends BaseModuleContextSensitiveTes
 	 */
 	@Test
 	public void searchAllergiesByPatientIdentifier_shouldReturnMatchingAllergyIntoleranceList() {
-		String patientUuid = "61b38324-e2fd-4feb-95b7-9e9a2a4400df";
 		String allergyUuid = "1234567987";
 		String identifierValue = "1234";
 		List<AllergyIntolerance> allergies = getService().searchAllergiesByPatientIdentifier(identifierValue);

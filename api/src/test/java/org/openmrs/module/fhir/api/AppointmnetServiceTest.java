@@ -26,7 +26,7 @@ import static org.junit.Assert.assertNotNull;
 @Ignore
 public class AppointmnetServiceTest extends BaseModuleContextSensitiveTest {
 
-	protected static final String APPOINMENT_INITIAL_DATA_XML = "org/openmrs/api/include/ProviderServiceTest-initial.xml";
+	protected static final String APPOINTMENT_INITIAL_DATA_XML = "org/openmrs/api/include/ProviderServiceTest-initial.xml";
 
 	public AppointmentService getService() {
 		return Context.getService(AppointmentService.class);
@@ -34,7 +34,7 @@ public class AppointmnetServiceTest extends BaseModuleContextSensitiveTest {
 
 	@Before
 	public void runBeforeEachTest() throws Exception {
-		executeDataSet(APPOINMENT_INITIAL_DATA_XML);
+		executeDataSet(APPOINTMENT_INITIAL_DATA_XML);
 	}
 
 	@Test

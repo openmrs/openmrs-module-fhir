@@ -107,9 +107,9 @@ public class FHIRPatientUtil {
 		patient.setName(humanNameDts);
 
 		//Set gender in fhir patient object
-		if (omrsPatient.getGender().equals("M")) {
+		if ("M".equals(omrsPatient.getGender())) {
 			patient.setGender(AdministrativeGenderEnum.MALE);
-		} else if (omrsPatient.getGender().equals("F")) {
+		} else if ("F".equals(omrsPatient.getGender())) {
 			patient.setGender(AdministrativeGenderEnum.FEMALE);
 		} else {
 			patient.setGender(AdministrativeGenderEnum.UNKNOWN);
@@ -371,8 +371,6 @@ public class FHIRPatientUtil {
 		}
 		retrievedPatient.setBirthdate(omrsPatient.getBirthdate());
 		retrievedPatient.setGender(omrsPatient.getGender());
-		//retrievedPerson.getActiveAttributes().get(0).setValue("Test");
-		//	retrievedPerson.getActiveAttributes().get(1).setValue("Test");
 		return retrievedPatient;
 	}
 
