@@ -200,7 +200,6 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		// @required: Set `Subject` as Encounter Patient
 		org.openmrs.Patient omrsPatient = null;
 		if (diagnosticReport.getSubject().getReference().isLocal()) {
-			Patient patient = (Patient) diagnosticReport.getSubject().getResource();
 			//TODO: org.openmrs.Patient omrsParient = FHIRPatientUtil.generateOpenMRSPatient(patient);
 			omrsPatient = new org.openmrs.Patient();
 			omrsDiagnosticReport.setPatient(omrsPatient);
@@ -208,9 +207,6 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 			// Get Id of the Patient
 			String patientID = diagnosticReport.getSubject().getReference().getIdPart();
 			// Assume that Patient is stored in the OpenMRS database
-			PatientService fhirPatientService = Context.getService(PatientService.class);
-			Patient patient = fhirPatientService.getPatient(patientID);
-			// org.openmrs.Patient omrsPatient = FHIRPatientUtil.generatePatient(patient);
 			omrsPatient = Context.getPatientService().getPatientByUuid(patientID);
 			omrsDiagnosticReport.setPatient(omrsPatient);
 		}
@@ -366,7 +362,6 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		IdDt subjectReference = diagnosticReport.getSubject().getReference();
 		if (!subjectReference.isEmpty()) {
 			if (subjectReference.isLocal()) {
-				Patient patient = (Patient) diagnosticReport.getSubject().getResource();
 				//TODO: org.openmrs.Patient omrsParient = FHIRPatientUtil.generateOpenMRSPatient(patient);
 				omrsPatient = new org.openmrs.Patient();
 				omrsDiagnosticReport.setPatient(omrsPatient);
@@ -374,9 +369,6 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 				// Get Id of the Patient
 				String patientID = subjectReference.getIdPart();
 				// Assume that Patient is stored in the OpenMRS database
-				PatientService fhirPatientService = Context.getService(PatientService.class);
-				Patient patient = fhirPatientService.getPatient(patientID);
-				// org.openmrs.Patient omrsPatient = FHIRPatientUtil.generatePatient(patient);
 				omrsPatient = Context.getPatientService().getPatientByUuid(patientID);
 				omrsDiagnosticReport.setPatient(omrsPatient);
 			}
@@ -388,7 +380,6 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		IdDt performerReference = diagnosticReport.getPerformer().getReference();
 		if (!performerReference.isEmpty()) {
 			if (performerReference.isLocal()) {
-				Practitioner practitioner = (Practitioner) diagnosticReport.getPerformer().getResource();
 				//TODO: org.openmrs.Provider omrsProvider = FHIRPractitionerUtil.generatePractitioner();
 				Provider omrsProvider = new Provider();
 				omrsDiagnosticReport.setProvider(new EncounterRole(), omrsProvider);
@@ -396,8 +387,6 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 				// Get Id of the Performer
 				String practitionerID = performerReference.getIdPart();
 				// Assume that Performer is stored in the OpenMRS database
-				PractitionerService fhirPractitionerService = Context.getService(PractitionerService.class);
-				Practitioner practitioner = fhirPractitionerService.getPractitioner(practitionerID);
 				//TODO: org.openmrs.Provider omrsProvider = FHIRPractitionerUtil.generateOpenMRSPractitioner();
 				Provider omrsProvider = Context.getProviderService().getProviderByUuid(practitionerID);
 				//TODO: Get EncounterRole from DiagnosticReport (remove hard coded value)
@@ -472,7 +461,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 					attachment.setCreation(dateDt);
 				}
 			}
-			Obs complexObs = saveComplexData(omrsDiagnosticReport, conceptId, omrsPatient, attachment);
+			saveComplexData(omrsDiagnosticReport, conceptId, omrsPatient, attachment);
 		}
 
 		diagnosticReport.setId(new IdDt("DiagnosticReport", omrsEncounter.getUuid()));
@@ -504,7 +493,6 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 			return;
 		}
 		try {
-			//encounterService.purgeEncounter(omrsDiagnosticReport, true);
 			encounterService.voidEncounter(omrsDiagnosticReport, "Voided by FHIR Request.");
 		}
 		catch (APIException exAPI) {

@@ -131,9 +131,9 @@ public class PractitionerServiceTest extends BaseModuleContextSensitiveTest {
 		practitioner.setBirthDate(fhirBirthDate);
 		
 		List<IdentifierDt> identifiers = new ArrayList<IdentifierDt>();
-		IdentifierDt idnt = new IdentifierDt();
-		idnt.setValue("fhirTest");
-		identifiers.add(idnt);
+		IdentifierDt identifier = new IdentifierDt();
+		identifier.setValue("fhirTest");
+		identifiers.add(identifier);
 		practitioner.setIdentifier(identifiers);
 		
 		Practitioner practitionerNew = getService().createFHIRPractitioner(practitioner);
@@ -146,9 +146,9 @@ public class PractitionerServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals(practitionerNew.getGender(), "male");
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		assertEquals(dateFormat.format(practitionerNew.getBirthDate()), dateFormat.format(bdate.getTime()));
-		List<IdentifierDt> idtifiers = practitionerNew.getIdentifier();
-		IdentifierDt ident = identifiers.get(0);
-		assertEquals(ident.getValue(), "fhirTest");
+		identifiers = practitionerNew.getIdentifier();
+		identifier = identifiers.get(0);
+		assertEquals(identifier.getValue(), "fhirTest");
 	}
 	
 	@Test
@@ -181,6 +181,7 @@ public class PractitionerServiceTest extends BaseModuleContextSensitiveTest {
 		
 		Set<org.openmrs.Person> personList = Context.getPersonService().getSimilarPeople(name.getFullName(),
 		    1900 + person.getBirthdate().getYear(), person.getGender());
-		assertEquals(personList.size(), 1); // which means no new person created for the given representation. It has mapped the representation to a existing person.
+		assertEquals(personList.size(), 1); // which means no new person created for the given representation.
+											// It has mapped the representation to a existing person.
 	}
 }

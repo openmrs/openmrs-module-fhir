@@ -188,16 +188,6 @@ public class FHIRObsUtil {
 		} else if (FHIRConstants.ED_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
 			AttachmentDt attachmentDt = new AttachmentDt();
 			attachmentDt.setUrl(FHIRConstants.COMPLEX_DATA_URL + obs.getId());
-			//ByteArrayOutputStream out = new ByteArrayOutputStream();
-			/*ObjectOutputStream os = null;
-			try {
-				os = new ObjectOutputStream(out);
-				os.writeObject(obs.getComplexData().getData());
-			}
-			catch (IOException e) {
-				log.error("Error while converting object data to stream");
-				attachmentDt.setData(out.toByteArray());
-			}*/
 			attachmentDt.setData(obs.getValueComplex().getBytes());
 			observation.setValue(attachmentDt);
 		} else {
@@ -249,15 +239,6 @@ public class FHIRObsUtil {
 			relatedObs.add(related);
 		}
 		observation.setRelated(relatedObs);
-
-		//As per discussions, obs location will be deprecated from openmrs. So it will no need of setting it
-		/*if (obs.getLocation() != null) {
-			StringDt location = new StringDt();
-			location.setValue(FHIRConstants.LOCATION + "/" + obs.getLocation().getUuid());
-			ExtensionDt locationExt = new ExtensionDt(false, FHIRConstants.LOCATION_EXTENTION_URI, location);
-			observation.addUndeclaredExtension(locationExt);
-		}*/
-
 		if (obs.getEncounter() != null) {
 			ResourceReferenceDt encounter = new ResourceReferenceDt();
 			encounter.setReference(FHIRConstants.ENCOUNTER + "/" + obs.getEncounter().getUuid());

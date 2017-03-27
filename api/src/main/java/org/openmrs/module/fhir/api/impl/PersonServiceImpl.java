@@ -119,7 +119,7 @@ public class PersonServiceImpl implements PersonService {
 			return FHIRPersonUtil.generatePerson(retrievedPerson);
 		} else { // no person is associated with the given uuid. so create a new person with the given uuid
 			if (thePerson.getId() == null) { // since we need to PUT the Person to a specific URI, we need to set the uuid
-			// here, if it is not
+				// here, if it is not
 				// already set.
 				IdDt uuid = new IdDt();
 				uuid.setValue(theId);

@@ -73,7 +73,7 @@ public class ObsConditionStrategy implements GenericConditionStrategy {
 	 * FhirCondition.Note: Obs.comment
 	 *
 	 * @param openMrsObs Openmrs Obs object to be mapped to fhir Condition
-	 * @return
+	 * @return FHIR condition resource
 	 */
 	private Condition generateFHIRConditionForOpenMRSObs(Obs openMrsObs) {
 

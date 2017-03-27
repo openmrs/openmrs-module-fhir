@@ -108,9 +108,9 @@ public class FHIREncounterUtil {
 		locationRef.setDisplay(FHIRConstants.LOCATION);
 		String locationUri = FHIRConstants.LOCATION + "/" + omrsEncounter.getLocation().getUuid();
 
-		IdDt locatioId = new IdDt();
-		locatioId.setValue(locationUri);
-		locationRef.setReference(locatioId);
+		IdDt locationId = new IdDt();
+		locationId.setValue(locationUri);
+		locationRef.setReference(locationId);
 
 		//Set observation section
 		if (omrsEncounter.getAllObs(false).size() > 0) {

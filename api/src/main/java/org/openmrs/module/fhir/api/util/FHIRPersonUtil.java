@@ -156,7 +156,7 @@ public class FHIRPersonUtil {
 	public static org.openmrs.Person generateOpenMRSPerson(ca.uhn.fhir.model.dstu2.resource.Person personFHIR,
 	                                                       List<String> errors) {
 		org.openmrs.Person omrsPerson = new org.openmrs.Person();
-		boolean preferedPresent = false, givennamePresent = false, familynamePresent = false, doCheckName = true;
+		boolean preferredPresent = false, givennamePresent = false, familynamePresent = false, doCheckName = true;
 		
 		if (personFHIR.getId() != null) {
 			omrsPerson.setUuid(personFHIR.getId().getIdPart());
@@ -171,7 +171,7 @@ public class FHIRPersonUtil {
 				String getUse = humanNameDt.getUse();
 				if (String.valueOf(NameUseEnum.USUAL).equalsIgnoreCase(getUse)
 				        || String.valueOf(NameUseEnum.OFFICIAL).equalsIgnoreCase(getUse)) {
-					preferedPresent = true;
+					preferredPresent = true;
 					personName.setPreferred(true);
 				}
 				if (String.valueOf(NameUseEnum.OLD).equalsIgnoreCase(getUse)) {
@@ -206,18 +206,18 @@ public class FHIRPersonUtil {
 				personName.setFamilyName(valueOf(familyName));
 			}
 			names.add(personName);
-			if (preferedPresent && givennamePresent && familynamePresent) { //if all are present in one name, further checkings are not needed
-				doCheckName = false; // cancel future checkings
+			if (preferredPresent && givennamePresent && familynamePresent) { //if all are present in one name, further checking are not needed
+				doCheckName = false; // cancel future checking
 			}
 			if (doCheckName) { // if no suitable names found, these variables should be reset
-				preferedPresent = false;
+				preferredPresent = false;
 				givennamePresent = false;
 				familynamePresent = false;
 			}
 		}
 		omrsPerson.setNames(names);
 		if (doCheckName) {
-			errors.add("Person should have atleast one prefered name with family name and given name");
+			errors.add("Person should have atleast one preferred name with family name and given name");
 		}
 		
 		Set<PersonAddress> addresses = new TreeSet<PersonAddress>();
@@ -288,13 +288,13 @@ public class FHIRPersonUtil {
 	 */
 	public static org.openmrs.Person updatePersonAttributes(org.openmrs.Person omrsPerson, org.openmrs.Person retrievedPerson) {
 		Set<PersonName> all = retrievedPerson.getNames();
-		boolean needToSetPrefferedName = false; // indicate wheter any preffered names are in the request body. 
+		boolean needToSetPreferredName = false; // indicate whether any preferred names are in the request body.
 		for (PersonName name : omrsPerson.getNames()) {
-			if (name.getPreferred()) { // detecting any preffered names are in the request body
-				needToSetPrefferedName = true;
+			if (name.getPreferred()) { // detecting any preferred names are in the request body
+				needToSetPreferredName = true;
 			}
 		}
-		if (needToSetPrefferedName) { // unset the existing preffered name, 
+		if (needToSetPreferredName) { // unset the existing preferred name,
 			for (PersonName name : all) {
 				name.setPreferred(false);
 			}

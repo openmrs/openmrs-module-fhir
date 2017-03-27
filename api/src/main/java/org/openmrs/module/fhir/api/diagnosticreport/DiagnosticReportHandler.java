@@ -9,16 +9,16 @@ import java.util.Set;
 
 public interface DiagnosticReportHandler {
 
-	public String getServiceCategory();
+	String getServiceCategory();
 
-	public DiagnosticReport getFHIRDiagnosticReportById(String id);
+	DiagnosticReport getFHIRDiagnosticReportById(String id);
 
-	public List<DiagnosticReport> getFHIRDiagnosticReportBySubjectName(String name);
+	List<DiagnosticReport> getFHIRDiagnosticReportBySubjectName(String name);
 
-	public DiagnosticReport saveFHIRDiagnosticReport(DiagnosticReport diagnosticReport);
+	DiagnosticReport saveFHIRDiagnosticReport(DiagnosticReport diagnosticReport);
 
-	public DiagnosticReport updateFHIRDiagnosticReport(DiagnosticReport diagnosticReport, String theId);
+	DiagnosticReport updateFHIRDiagnosticReport(DiagnosticReport diagnosticReport, String theId);
 
-	public void retireFHIRDiagnosticReport(String id);
+	void retireFHIRDiagnosticReport(String id);
 
 }
