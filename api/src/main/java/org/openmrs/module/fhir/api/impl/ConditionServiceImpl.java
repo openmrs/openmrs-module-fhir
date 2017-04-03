@@ -18,6 +18,7 @@ import ca.uhn.fhir.rest.server.exceptions.NotModifiedException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.ConditionService;
 import org.openmrs.module.fhir.api.condition.ConditionStrategyUtil;
@@ -74,7 +75,13 @@ public class ConditionServiceImpl implements ConditionService {
 
 	@Override
 	public List<Condition> searchConditionsByPatient(String patientUuid) {
-		return null;
+		Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
+		List<org.openmrs.Condition> openMRSConditionList = Context.getService(org.openmrs.api.ConditionService.class).getActiveConditions(patient);
+		List<Condition> conditionList = new ArrayList<Condition>();
+		for(org.openmrs.Condition condition:openMRSConditionList){
+			conditionList.add(FHIRConditionUtil.generateFHIRCondition(condition));
+		}
+		return conditionList;
 	}
 
 	@Override
