@@ -43,6 +43,7 @@ public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 	public void runBeforeEachTest() throws Exception {
 		executeDataSet(PAT_INITIAL_DATA_XML);
 		executeDataSet(PAT_SEARCH_DATA_XML);
+		updateSearchIndex();
 	}
 
 	@Test

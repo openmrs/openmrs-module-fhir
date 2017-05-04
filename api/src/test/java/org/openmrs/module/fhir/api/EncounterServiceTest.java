@@ -52,6 +52,7 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 	public void runBeforeEachTest() throws Exception {
 		executeDataSet(ENCOUNTER_INITIAL_DATA_XML);
 		executeDataSet(VISIT_INITIAL_DATA_XML);
+		updateSearchIndex();
 	}
 
 	@Test
