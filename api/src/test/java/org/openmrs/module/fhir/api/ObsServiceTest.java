@@ -35,6 +35,8 @@ import org.openmrs.ConceptMap;
 import org.openmrs.Encounter;
 import org.openmrs.GlobalProperty;
 import org.openmrs.Obs;
+import org.openmrs.Obs.Interpretation;
+import org.openmrs.Obs.Status;
 import org.openmrs.Person;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
@@ -45,6 +47,7 @@ import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu2.resource.Observation;
+import ca.uhn.fhir.model.dstu2.valueset.ObservationStatusEnum;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 
@@ -64,6 +67,7 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		executeDataSet(OBS_INITIAL_DATA_XML);
 		executeDataSet(CONCEPT_CUSTOM_INITIAL_DATA_XML);
 		executeDataSet(PERSOM_INITIAL_DATA_XML);
+		updateSearchIndex();
 	}
 
 	@Test
@@ -95,7 +99,7 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		concepts.put(conceptCode, "http://loinc.org");
 		List<Observation> obs = getService().searchObsByPatientAndConcept(personUuid, concepts);
 		assertNotNull(obs);
-		assertEquals(2, obs.size());
+		assertEquals(3, obs.size());
 	}
 
 	@Test
@@ -115,7 +119,7 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		codes.put(code2, null);
 		List<Observation> obs = getService().searchObsByCode(codes);
 		assertNotNull(obs);
-		assertEquals(12, obs.size());
+		assertEquals(14, obs.size());
 	}
 
 	@Test
@@ -124,7 +128,7 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = df.parse(obsDate);
 		List<Observation> obs = getService().searchObsByDate(date);
-		assertEquals(1, obs.size());
+		assertEquals(2, obs.size());
 	}
 
 	@Test
@@ -132,7 +136,7 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		String personUuid = "da7f524f-27ce-4bb2-86d6-6d1d05312bd5";
 		List<Observation> obs = getService().searchObsByPerson(personUuid);
 		assertNotNull(obs);
-		assertEquals(3, obs.size());
+		assertEquals(5, obs.size());
 	}
 	
 	@Test
@@ -157,6 +161,8 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		Concept concept = Context.getConceptService().getConceptByUuid(openmrsConceptUuid);
 		Obs obsn = new Obs(person, concept, openmrsDateApplies, null);
 		obsn.setValueNumeric(8d);
+		obsn.setStatus(Status.PRELIMINARY);
+		obsn.setInterpretation(Interpretation.HIGH);
 		
 		Observation newObs = FHIRObsUtil.generateObs(obsn);
 		newObs = Context.getService(ObsService.class).createFHIRObservation(newObs);
@@ -182,6 +188,8 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		assertEquals(dateFormat.format(openmrsDateApplies), dateFormat.format(fhirEffectiveDate));
 		assertEquals(dateFormat.format(obsn.getDateCreated()), dateFormat.format(fhirIssuedDate));
+		assertEquals(Status.PRELIMINARY.name(), newObs.getStatus().toUpperCase());
+		assertEquals(Interpretation.HIGH.name(), newObs.getInterpretation().getText());
 	}
 
 	@Test
@@ -189,9 +197,17 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 
 		String obsUuid = "be3a4d7a-f9ab-47bb-aaad-bc0b452fcda4";
 		Observation fhirObservation = getService().getObs(obsUuid);
+		fhirObservation.setStatus(ObservationStatusEnum.AMENDED);
+		
+		CodeableConceptDt interpretation = new CodeableConceptDt();
+		interpretation.setText("CRITICALLY_LOW");
+		fhirObservation.setInterpretation(interpretation);
+		
 		Encounter encounter = Context.getEncounterService().getEncounter(3);
 		Obs obs = FHIRObsUtil.generateOpenMRSObsWithEncounter(fhirObservation, encounter, new ArrayList<String>());
 		assertNotNull(obs);
 		assertNotNull(obs.getEncounter());
+		assertEquals(Status.AMENDED, obs.getStatus());
+		assertEquals(Interpretation.CRITICALLY_LOW, obs.getInterpretation());
 	}
 }

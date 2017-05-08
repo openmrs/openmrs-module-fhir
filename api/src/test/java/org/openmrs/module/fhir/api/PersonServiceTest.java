@@ -53,6 +53,7 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 	@Before
 	public void runBeforeEachTest() throws Exception {
 		executeDataSet(PERSOM_INITIAL_DATA_XML);
+		updateSearchIndex();
 	}
 
 	@Test

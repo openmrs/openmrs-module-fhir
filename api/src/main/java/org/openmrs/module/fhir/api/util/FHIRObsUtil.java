@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import ca.uhn.fhir.model.dstu2.composite.SimpleQuantityDt;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -29,6 +29,8 @@ import org.openmrs.ConceptNumeric;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterProvider;
 import org.openmrs.Obs;
+import org.openmrs.Obs.Interpretation;
+import org.openmrs.Obs.Status;
 import org.openmrs.api.context.Context;
 import org.openmrs.obs.ComplexData;
 
@@ -38,6 +40,7 @@ import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.composite.PeriodDt;
 import ca.uhn.fhir.model.dstu2.composite.QuantityDt;
 import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
+import ca.uhn.fhir.model.dstu2.composite.SimpleQuantityDt;
 import ca.uhn.fhir.model.dstu2.resource.Observation;
 import ca.uhn.fhir.model.dstu2.valueset.ObservationRelationshipTypeEnum;
 import ca.uhn.fhir.model.dstu2.valueset.ObservationStatusEnum;
@@ -196,7 +199,27 @@ public class FHIRObsUtil {
 			observation.setValue(value);
 		}
 
-		observation.setStatus(ObservationStatusEnum.FINAL);
+		
+		CodeableConceptDt interpretation = null;
+		ObservationStatusEnum status = ObservationStatusEnum.FINAL;
+		try {
+			Status stat = obs.getStatus();
+			if (stat != null) {
+				status = ObservationStatusEnum.valueOf(stat.name());
+			}
+			
+			Interpretation interpret = obs.getInterpretation();
+			if (interpret != null) {
+				interpretation = new CodeableConceptDt();
+				interpretation.setText(interpret.name());
+			}
+		}
+		catch (NoSuchMethodError ex) {
+			//must be running below platform 2.1
+		}
+		
+		observation.setStatus(status);
+		observation.setInterpretation(interpretation);
 
 		InstantDt dateIssued = new InstantDt();
         	dateIssued.setValue(obs.getObsDatetime());
@@ -393,6 +416,23 @@ public class FHIRObsUtil {
 				obs.setEncounter(Context.getEncounterService().getEncounterByUuid(encounterUuid));
 			}
 		}
+		
+		CodeableConceptDt interpretation = observation.getInterpretation();
+		ObservationStatusEnum status = ObservationStatusEnum.valueOf(observation.getStatus().toUpperCase());
+		
+		try {
+			if (status != null) {
+				obs.setStatus(Status.valueOf(status.name()));
+			}
+			
+			if (interpretation != null && StringUtils.isNotBlank(interpretation.getText())) {
+				obs.setInterpretation(Interpretation.valueOf(interpretation.getText()));
+			}
+		}
+		catch (NoSuchMethodError ex) {
+			//must be running below platform 2.1
+		}
+		
 		return obs;
 	}
 	
