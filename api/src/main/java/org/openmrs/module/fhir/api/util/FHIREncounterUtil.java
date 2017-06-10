@@ -13,7 +13,6 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import ca.uhn.fhir.model.dstu2.composite.BoundCodeableConceptDt;
 import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.composite.PeriodDt;
@@ -27,7 +26,6 @@ import ca.uhn.fhir.model.dstu2.resource.Encounter.Participant;
 import ca.uhn.fhir.model.dstu2.valueset.CompositionStatusEnum;
 import ca.uhn.fhir.model.dstu2.valueset.EncounterClassEnum;
 import ca.uhn.fhir.model.dstu2.valueset.EncounterStateEnum;
-import ca.uhn.fhir.model.dstu2.valueset.EncounterTypeEnum;
 import ca.uhn.fhir.model.dstu2.valueset.ParticipantTypeEnum;
 import ca.uhn.fhir.model.primitive.CodeDt;
 import ca.uhn.fhir.model.primitive.DateTimeDt;
@@ -331,7 +329,7 @@ public class FHIREncounterUtil {
 				visit.setPatient(patient);
 			}
 		}
-		List<BoundCodeableConceptDt<EncounterTypeEnum>> types = encounter.getType();
+		List<CodeableConceptDt> types = encounter.getType();
 		for (CodeableConceptDt type : types) {
 			List<CodingDt> typeCodings = type.getCoding();
 			VisitType visitType = null;
