@@ -13,14 +13,12 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu2.composite.BoundCodeableConceptDt;
 import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
 import ca.uhn.fhir.model.dstu2.composite.CodingDt;
 import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu2.resource.Bundle;
 import ca.uhn.fhir.model.dstu2.resource.Composition;
 import ca.uhn.fhir.model.dstu2.resource.Encounter;
-import ca.uhn.fhir.model.dstu2.valueset.EncounterTypeEnum;
 import ca.uhn.fhir.model.primitive.CodeDt;
 import ca.uhn.fhir.model.primitive.IdDt;
 import org.junit.Before;
@@ -86,7 +84,7 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 	public void FHIREncounter_shouldCreateVisit() {
 		String encounterUuid = "430bbb70-6a9c-4e1e-badb-9d1034b1b5e9";
 		Encounter fhirEncounter = getService().getEncounter(encounterUuid);
-		BoundCodeableConceptDt<EncounterTypeEnum> typeAsCode = new BoundCodeableConceptDt<EncounterTypeEnum>();
+		CodeableConceptDt typeAsCode = new CodeableConceptDt();
 		List<CodingDt> typeCoding = new ArrayList<CodingDt>();
 		CodingDt code = new CodingDt();
 		CodeDt codeValue = new CodeDt();
@@ -94,7 +92,7 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 		code.setCode(codeValue);
 		typeCoding.add(code);
 		typeAsCode.setCoding(typeCoding);
-		List<BoundCodeableConceptDt<EncounterTypeEnum>> typeList = new ArrayList<BoundCodeableConceptDt<EncounterTypeEnum>>();
+		List<CodeableConceptDt> typeList = new ArrayList<CodeableConceptDt>();
 		typeList.add(typeAsCode);
 		fhirEncounter.setType(typeList);
 		fhirEncounter = getService().createFHIREncounter(fhirEncounter);
