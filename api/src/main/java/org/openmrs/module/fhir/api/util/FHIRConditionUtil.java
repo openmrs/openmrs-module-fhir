@@ -13,41 +13,37 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
-import ca.uhn.fhir.model.dstu2.composite.CodingDt;
-import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
-import ca.uhn.fhir.model.primitive.DateDt;
-import ca.uhn.fhir.model.primitive.IdDt;
+import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Reference;
 import org.openmrs.ConceptMap;
 import org.openmrs.Condition;
-import org.openmrs.Obs;
 
 import java.util.Collection;
 import java.util.List;
 
 public class FHIRConditionUtil {
 
-	public static ca.uhn.fhir.model.dstu2.resource.Condition generateFHIRCondition(Condition condition) {
-		ca.uhn.fhir.model.dstu2.resource.Condition fhirCondition = new ca.uhn.fhir.model.dstu2.resource.Condition();
-		IdDt id = new IdDt();
+	public static org.hl7.fhir.dstu3.model.Condition generateFHIRCondition(Condition condition) {
+		org.hl7.fhir.dstu3.model.Condition fhirCondition = new org.hl7.fhir.dstu3.model.Condition();
+		IdType id = new IdType();
 		id.setValue(condition.getUuid());
 		fhirCondition.setId(id);
 
 		//Set patient reference
-		ResourceReferenceDt patient = FHIRUtils.buildPatientOrPersonResourceReference(condition.getPatient());
-		fhirCondition.setPatient(patient);
+		Reference patient = FHIRUtils.buildPatientOrPersonResourceReference(condition.getPatient());
+		fhirCondition.setSubject(patient);
 
 		//Set on set date
-		DateDt dateDt = new DateDt();
-		dateDt.setValue(condition.getDateChanged());
-		fhirCondition.setDateRecorded(dateDt);
+		fhirCondition.setAssertedDate(condition.getDateChanged());
 
 		//Set condtion concept
 		if (condition.getConcept() != null) {
-			CodeableConceptDt conceptDt = fhirCondition.getCode();
+			CodeableConcept conceptDt = fhirCondition.getCode();
 			//Set allergen
 			Collection<ConceptMap> mappings = condition.getConcept().getConceptMappings();
-			List<CodingDt> dts = conceptDt.getCoding();
+			List<Coding> dts = conceptDt.getCoding();
 
 			//Set concept codings
 			if (mappings != null && !mappings.isEmpty()) {
@@ -60,10 +56,10 @@ public class FHIRConditionUtil {
 
 			//Setting default omrs concept
 			if (condition.getConcept().getName() != null) {
-				dts.add(new CodingDt().setCode(condition.getConcept().getUuid()).setDisplay(
+				dts.add(new Coding().setCode(condition.getConcept().getUuid()).setDisplay(
 						condition.getConcept().getName().getName()).setSystem(FHIRConstants.OPENMRS_URI));
 			} else {
-				dts.add(new CodingDt().setCode(condition.getConcept().getUuid()).setSystem(
+				dts.add(new Coding().setCode(condition.getConcept().getUuid()).setSystem(
 						FHIRConstants.OPENMRS_URI));
 			}
 			conceptDt.setCoding(dts);

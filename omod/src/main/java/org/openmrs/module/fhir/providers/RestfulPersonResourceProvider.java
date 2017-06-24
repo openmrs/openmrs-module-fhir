@@ -13,15 +13,6 @@
  */
 package org.openmrs.module.fhir.providers;
 
-import java.util.List;
-
-import org.openmrs.module.fhir.api.util.FHIRConstants;
-import org.openmrs.module.fhir.resources.FHIRPersonResource;
-
-import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu2.resource.OperationOutcome;
-import ca.uhn.fhir.model.dstu2.resource.Person;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.ConditionalUrlParam;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
@@ -37,6 +28,16 @@ import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.PreconditionFailedException;
+import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.OperationOutcome;
+import org.hl7.fhir.dstu3.model.Person;
+import org.hl7.fhir.dstu3.model.Resource;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.module.fhir.resources.FHIRPersonResource;
+
+import java.util.List;
 
 public class RestfulPersonResourceProvider implements IResourceProvider {
 
@@ -47,7 +48,7 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	}
 
 	@Override
-	public Class<? extends IResource> getResourceType() {
+	public Class<? extends Resource> getResourceType() {
 		return Person.class;
 	}
 
@@ -60,7 +61,7 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read()
-	public Person getResourceById(@IdParam IdDt theId) {
+	public Person getResourceById(@IdParam IdType theId) {
 		Person result = null;
 		result = personResource.getByUniqueId(theId);
 		return result;
@@ -116,29 +117,38 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	public MethodOutcome createFHIRPerson(@ResourceParam Person person) {
 		person = personResource.createFHIRPerson(person);
 		MethodOutcome retVal = new MethodOutcome();
-		retVal.setId(new IdDt(FHIRConstants.PERSON, person.getId().getIdPart()));
+		retVal.setId(new IdType(FHIRConstants.PERSON, person.getId()));
 		OperationOutcome outcome = new OperationOutcome();
-		outcome.addIssue().setDetails("Person is successfully created");
+		CodeableConcept concept = new CodeableConcept();
+		Coding coding = concept.addCoding();
+		coding.setDisplay("Person is successfully created with id " + person.getId());
+		outcome.addIssue().setDetails(concept);
 		retVal.setOperationOutcome(outcome);
 		return retVal;
 	}
 
 	@Update
-	public MethodOutcome updatePersonConditional(@ResourceParam Person thePerson, @IdParam IdDt theId) {
+	public MethodOutcome updatePersonConditional(@ResourceParam Person thePerson, @IdParam IdType theId) {
 		MethodOutcome retVal = new MethodOutcome();
 		OperationOutcome outcome = new OperationOutcome();
 		try {
-			Person person = personResource.updateFHIRPerson(thePerson, theId.getIdPart());
+			 thePerson = personResource.updateFHIRPerson(thePerson, theId.getIdPart());
 		} catch (Exception e) {
-			outcome.addIssue()
-					.setDetails(
-							"No Person is associated with the given UUID to update. Please"
+			CodeableConcept concept = new CodeableConcept();
+			Coding coding = concept.addCoding();
+			coding.setDisplay(
+					"No Person is associated with the given UUID to update. Please"
 							+ " make sure you have set at lease one non-delete name, Gender and Birthdate to create a new "
 							+ "Person with the given UUID");
+			outcome.addIssue()
+					.setDetails(concept);
 			retVal.setOperationOutcome(outcome);
 			return retVal;
 		}
-		outcome.addIssue().setDetails("Person is successfully updated");
+		CodeableConcept concept = new CodeableConcept();
+		Coding coding = concept.addCoding();
+		coding.setDisplay("Person is successfully updated with id " + thePerson.getId());
+		outcome.addIssue().setDetails(concept);
 		retVal.setOperationOutcome(outcome);
 		return retVal;
 	}
@@ -149,7 +159,7 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	 * @param theId object containing the id
 	 */
 	@Delete()
-	public void deletePerson(@IdParam IdDt theId) {
+	public void deletePerson(@IdParam IdType theId) {
 		personResource.deletePerson(theId);
 	}
 	
@@ -164,7 +174,7 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	 * @return MethodOutcome which contains the status of the operation
 	 */
 	@Update()
-	public MethodOutcome updatePersonByName(@ResourceParam Person person, @IdParam IdDt theId,
+	public MethodOutcome updatePersonByName(@ResourceParam Person person, @IdParam IdType theId,
 	                                        @ConditionalUrlParam String theConditional) {
 		MethodOutcome methodOutcome = new MethodOutcome();
 		String name = null;
@@ -176,8 +186,8 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 				if (personList.size() == 0) {
 					methodOutcome = updatePersonConditional(person, null);
 				} else if (personList.size() == 1) {
-					IdDt id = new IdDt();
-					id.setValue(personList.get(0).getId().getIdPart());
+					IdType id = new IdType();
+					id.setValue(personList.get(0).getId());
 					methodOutcome = updatePersonConditional(person, id);
 				} else {
 					throw new PreconditionFailedException("There are more than one person for the given name");

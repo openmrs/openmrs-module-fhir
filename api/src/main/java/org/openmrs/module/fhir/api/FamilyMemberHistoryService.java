@@ -13,7 +13,7 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu2.resource.FamilyMemberHistory;
+import org.hl7.fhir.dstu3.model.FamilyMemberHistory;
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
 

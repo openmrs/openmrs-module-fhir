@@ -13,11 +13,11 @@
  */
 package org.openmrs.module.fhir.resources;
 
-import ca.uhn.fhir.model.dstu2.resource.Appointment;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import org.hl7.fhir.dstu3.model.Appointment;
+import org.hl7.fhir.dstu3.model.IdType;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.AppointmentService;
 
@@ -25,7 +25,7 @@ import java.util.List;
 
 public class FHIRAppointmentResource extends Resource {
 
-    public Appointment getByUniqueId(IdDt id) {
+    public Appointment getByUniqueId(IdType id) {
         AppointmentService appointmentService = Context.getService(AppointmentService.class);
         Appointment appointment = appointmentService.getAppointmentById(id.getIdPart());
         if (appointment == null) {

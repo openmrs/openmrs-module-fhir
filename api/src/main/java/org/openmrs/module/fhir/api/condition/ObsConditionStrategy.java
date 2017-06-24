@@ -13,14 +13,14 @@
  */
 package org.openmrs.module.fhir.api.condition;
 
-import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
-import ca.uhn.fhir.model.dstu2.composite.CodingDt;
-import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
-import ca.uhn.fhir.model.dstu2.resource.Condition;
-import ca.uhn.fhir.model.primitive.DateDt;
-import ca.uhn.fhir.model.primitive.IdDt;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hl7.fhir.dstu3.model.Annotation;
+import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.Condition;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Reference;
 import org.openmrs.ConceptMap;
 import org.openmrs.Obs;
 import org.openmrs.PersonName;
@@ -29,7 +29,6 @@ import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -77,30 +76,28 @@ public class ObsConditionStrategy implements GenericConditionStrategy {
 	 */
 	private Condition generateFHIRConditionForOpenMRSObs(Obs openMrsObs) {
 
-		ca.uhn.fhir.model.dstu2.resource.Condition fhirCondition = new ca.uhn.fhir.model.dstu2.resource.Condition();
-		IdDt id = new IdDt();
+		org.hl7.fhir.dstu3.model.Condition fhirCondition = new org.hl7.fhir.dstu3.model.Condition();
+		IdType id = new IdType();
 		id.setValue(openMrsObs.getUuid());
 		fhirCondition.setId(id);
 
 		if (openMrsObs.getPerson().isPatient()) {
-			ResourceReferenceDt patient = FHIRUtils.buildPatientOrPersonResourceReference(openMrsObs.getPerson());
-			fhirCondition.setPatient(patient);
+			Reference patient = FHIRUtils.buildPatientOrPersonResourceReference(openMrsObs.getPerson());
+			fhirCondition.setSubject(patient);
 			//Set Encounter
 			if (openMrsObs.getEncounter() != null) {
-				fhirCondition.setEncounter(buildPatientReference(openMrsObs.getEncounter()));
+				fhirCondition.setContext(buildPatientReference(openMrsObs.getEncounter()));
 			}
 		}
 
 
 		//Set Asserter
-		DateDt dateDt = new DateDt();
-		dateDt.setValue(openMrsObs.getDateCreated());
-		fhirCondition.setDateRecorded(dateDt);
+		fhirCondition.setAssertedDate(openMrsObs.getDateCreated());
 
 		if (openMrsObs.getConcept() != null) {
-			CodeableConceptDt conceptDt = fhirCondition.getCode();
+			CodeableConcept conceptDt = fhirCondition.getCode();
 			Collection<ConceptMap> mappings = openMrsObs.getConcept().getConceptMappings();
-			List<CodingDt> dts = conceptDt.getCoding();
+			List<Coding> dts = conceptDt.getCoding();
 			if (mappings != null && !mappings.isEmpty()) {
 				for (ConceptMap map : mappings) {
 					if (map.getConceptReferenceTerm() != null) {
@@ -109,24 +106,29 @@ public class ObsConditionStrategy implements GenericConditionStrategy {
 				}
 			}
 			if (openMrsObs.getConcept().getName() != null) {
-				dts.add(new CodingDt().setCode(openMrsObs.getConcept().getUuid()).setDisplay(
+				dts.add(new Coding().setCode(openMrsObs.getConcept().getUuid()).setDisplay(
 						openMrsObs.getConcept().getName().getName()).setSystem(FHIRConstants.OPENMRS_URI));
 			} else {
-				dts.add(new CodingDt().setCode(openMrsObs.getConcept().getUuid()).setSystem(
+				dts.add(new Coding().setCode(openMrsObs.getConcept().getUuid()).setSystem(
 						FHIRConstants.OPENMRS_URI));
 			}
 			conceptDt.setCoding(dts);
 			fhirCondition.setCode(conceptDt);
 		}
 
-		fhirCondition.setNotes(openMrsObs.getComment());
+		if(!StringUtils.isEmpty(openMrsObs.getComment())) {
+			List<Annotation> annotations = new ArrayList<Annotation>();
+			Annotation annotation = new Annotation();
+			annotation.setText(openMrsObs.getComment());
+			fhirCondition.setNote(annotations);
+		}
 
 		return fhirCondition;
 	}
 
-	private ResourceReferenceDt buildPatientReference(org.openmrs.Encounter omrsEncounter) {
+	private Reference buildPatientReference(org.openmrs.Encounter omrsEncounter) {
 		//Build and set patient reference
-		ResourceReferenceDt patientReference = new ResourceReferenceDt();
+		Reference patientReference = new Reference();
 		PersonName name = omrsEncounter.getPatient().getPersonName();
 		StringBuilder nameDisplay = new StringBuilder();
 		nameDisplay.append(name.getGivenName());
@@ -139,9 +141,7 @@ public class ObsConditionStrategy implements GenericConditionStrategy {
 		nameDisplay.append(omrsEncounter.getPatient().getPatientIdentifier().getIdentifier());
 		nameDisplay.append(")");
 		patientUri = FHIRConstants.PATIENT + "/" + omrsEncounter.getPatient().getUuid();
-		IdDt patientRef = new IdDt();
-		patientRef.setValue(patientUri);
-		patientReference.setReference(patientRef);
+		patientReference.setReference(patientUri);
 		patientReference.setDisplay(nameDisplay.toString());
 		return patientReference;
 	}

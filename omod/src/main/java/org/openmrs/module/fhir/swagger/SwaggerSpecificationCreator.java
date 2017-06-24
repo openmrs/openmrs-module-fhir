@@ -13,14 +13,14 @@
  */
 package org.openmrs.module.fhir.swagger;
 
-import ca.uhn.fhir.model.dstu2.resource.Conformance;
-import ca.uhn.fhir.model.dstu2.resource.OperationDefinition;
-import ca.uhn.fhir.model.primitive.CodeDt;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hl7.fhir.dstu3.model.CapabilityStatement;
+import org.hl7.fhir.dstu3.model.CodeType;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.openmrs.module.fhir.server.ConformanceProvider;
 import org.openmrs.module.fhir.swagger.docs.Contact;
 import org.openmrs.module.fhir.swagger.docs.Definition;
@@ -37,6 +37,7 @@ import org.openmrs.module.fhir.swagger.docs.Response;
 import org.openmrs.module.fhir.swagger.docs.Schema;
 import org.openmrs.module.fhir.swagger.docs.SwaggerSpecification;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,14 +46,14 @@ import java.util.Map;
 public class SwaggerSpecificationCreator {
     protected Log log = LogFactory.getLog(getClass());
     private SwaggerSpecification swaggerSpecification;
-    private Conformance conformance;
+    private CapabilityStatement conformance;
     private String baseUrl;
     private String basePath;
     private Map<String, Definition> definitionMap = new HashMap<String, Definition>();
 
-    public SwaggerSpecificationCreator(String baseUrl, String basePath) {
+    public SwaggerSpecificationCreator(String baseUrl, String basePath, HttpServletRequest request) {
         this.swaggerSpecification = new SwaggerSpecification();
-        this.conformance = ConformanceProvider.getConformance();
+        this.conformance = ConformanceProvider.getConformance(request);
         this.baseUrl = baseUrl;
         this.basePath = basePath;
     }
@@ -92,8 +93,8 @@ public class SwaggerSpecificationCreator {
         //Set mime type supported
         produces.add(SwaggerDocConstants.PRODUCES_JSON);
         produces.add(SwaggerDocConstants.PRODUCES_XML);
-        List<CodeDt> formats = conformance.getFormat();
-        for(CodeDt format : formats) {
+        List<CodeType> formats = conformance.getFormat();
+        for(CodeType format : formats) {
             produces.add(format.getValue());
         }
         List<String> consumes = new ArrayList<String>();
@@ -116,20 +117,20 @@ public class SwaggerSpecificationCreator {
      * Creating paths section swagger documentation
      */
     private void addPaths() {
-        List<Conformance.Rest> resources = conformance.getRest();
+        List<CapabilityStatement.CapabilityStatementRestComponent> resources = conformance.getRest();
         Paths fullPaths = new Paths();//Hold full path list
         Map<String, Path> pathMap = new HashMap<String, Path>();//Map holding path to path object mappings
-        for (Conformance.Rest restResource : resources) {
-            for (Conformance.RestResource resource : restResource.getResource()) {
+        for (CapabilityStatement.CapabilityStatementRestComponent restResource : resources) {
+            for (CapabilityStatement.CapabilityStatementRestResourceComponent resource : restResource.getResource()) {
                 String resourceName = resource.getType();
                 if(SwaggerDocConstants.STRUCTURE_DEFINITION.equalsIgnoreCase(resourceName)) {
                     continue;
                 }
-                List<Conformance.RestResourceInteraction> restResourceInteractions = resource.getInteraction();
+                List<CapabilityStatement.ResourceInteractionComponent> restResourceInteractions = resource.getInteraction();
                 //Iterating over available opearations
-                for(Conformance.RestResourceInteraction restResourceInteraction : restResourceInteractions) {
+                for(CapabilityStatement.ResourceInteractionComponent restResourceInteraction : restResourceInteractions) {
                     //Add GET operation paths
-                    if(SwaggerDocConstants.READ.equalsIgnoreCase(restResourceInteraction.getCode())) {
+                    if(SwaggerDocConstants.READ.equalsIgnoreCase(restResourceInteraction.getCode().toCode())) {
                         String pathId = "/" + resourceName + "/" + SwaggerDocConstants.READ_RESOURCE_PATH;
                         Path read;
                         Map<String, Operation> readOperationsMap;
@@ -149,8 +150,8 @@ public class SwaggerSpecificationCreator {
                         //Set mime type supported
                         produces.add(SwaggerDocConstants.PRODUCES_JSON);
                         produces.add(SwaggerDocConstants.PRODUCES_XML);
-                        List<CodeDt> formats = conformance.getFormat();
-                        for(CodeDt format : formats) {
+                        List<CodeType> formats = conformance.getFormat();
+                        for(CodeType format : formats) {
                             produces.add(format.getValue());
                         }
                         readOperation.setProduces(produces);
@@ -190,7 +191,7 @@ public class SwaggerSpecificationCreator {
                         readOperationsMap.put(SwaggerDocConstants.GET, readOperation);
                         read.setOperations(readOperationsMap);
                         pathMap.put(pathId, read);
-                    } else if(SwaggerDocConstants.CREATE.equalsIgnoreCase(restResourceInteraction.getCode())) {
+                    } else if(SwaggerDocConstants.CREATE.equalsIgnoreCase(restResourceInteraction.getCode().toCode())) {
                         //Set POST operation path properties
                         String pathId = "/" + resourceName;
                         Path create;
@@ -212,8 +213,8 @@ public class SwaggerSpecificationCreator {
                         //Set mime type supported
                         produces.add(SwaggerDocConstants.PRODUCES_JSON);
                         produces.add(SwaggerDocConstants.PRODUCES_XML);
-                        List<CodeDt> formats = conformance.getFormat();
-                        for(CodeDt format : formats) {
+                        List<CodeType> formats = conformance.getFormat();
+                        for(CodeType format : formats) {
                             produces.add(format.getValue());
                         }
                         createOperation.setProduces(produces);
@@ -259,7 +260,7 @@ public class SwaggerSpecificationCreator {
                         createOperationsMap.put(SwaggerDocConstants.POST, createOperation);
                         create.setOperations(createOperationsMap);
                         pathMap.put(pathId, create);
-                    } else if(SwaggerDocConstants.UPDATE.equalsIgnoreCase(restResourceInteraction.getCode())) {
+                    } else if(SwaggerDocConstants.UPDATE.equalsIgnoreCase(restResourceInteraction.getCode().toCode())) {
                         //Configure PUT operation path properties
                         String pathId = "/" + resourceName + "/" + SwaggerDocConstants.UPDATE_RESOURCE_PATH;
                         Path update;
@@ -281,8 +282,8 @@ public class SwaggerSpecificationCreator {
                         //Set mime type supported
                         produces.add(SwaggerDocConstants.PRODUCES_JSON);
                         produces.add(SwaggerDocConstants.PRODUCES_XML);
-                        List<CodeDt> formats = conformance.getFormat();
-                        for(CodeDt format : formats) {
+                        List<CodeType> formats = conformance.getFormat();
+                        for(CodeType format : formats) {
                             produces.add(format.getValue());
                         }
                         updateOperation.setProduces(produces);
@@ -337,7 +338,7 @@ public class SwaggerSpecificationCreator {
                         updateOperationsMap.put(SwaggerDocConstants.PUT, updateOperation);
                         update.setOperations(updateOperationsMap);
                         pathMap.put(pathId, update);
-                    } else if(SwaggerDocConstants.DELETE.equalsIgnoreCase(restResourceInteraction.getCode())) {
+                    } else if(SwaggerDocConstants.DELETE.equalsIgnoreCase(restResourceInteraction.getCode().toCode())) {
                         //Set DELETE operation path properties
                         String pathId = "/" + resourceName + "/" + SwaggerDocConstants.DELETE_RESOURCE_PATH;
                         Path delete;
@@ -359,8 +360,8 @@ public class SwaggerSpecificationCreator {
                         //Set mime type supported
                         produces.add(SwaggerDocConstants.PRODUCES_JSON);
                         produces.add(SwaggerDocConstants.PRODUCES_XML);
-                        List<CodeDt> formats = conformance.getFormat();
-                        for(CodeDt format : formats) {
+                        List<CodeType> formats = conformance.getFormat();
+                        for(CodeType format : formats) {
                             produces.add(format.getValue());
                         }
                         deleteOperation.setProduces(produces);
@@ -396,7 +397,7 @@ public class SwaggerSpecificationCreator {
                         deleteOperationMap.put(SwaggerDocConstants.DELETE, deleteOperation);
                         delete.setOperations(deleteOperationMap);
                         pathMap.put(pathId, delete);
-                    } else if(SwaggerDocConstants.SEARCH_TYPE.equalsIgnoreCase(restResourceInteraction.getCode())) {
+                    } else if(SwaggerDocConstants.SEARCH_TYPE.equalsIgnoreCase(restResourceInteraction.getCode().toCode())) {
                         //Set search operation GET method parameters
                         String pathId = "/" + resourceName;
                         Path search;
@@ -418,14 +419,14 @@ public class SwaggerSpecificationCreator {
                         //Set mime type supported
                         produces.add(SwaggerDocConstants.PRODUCES_JSON);
                         produces.add(SwaggerDocConstants.PRODUCES_XML);
-                        List<CodeDt> formats = conformance.getFormat();
-                        for(CodeDt format : formats) {
+                        List<CodeType> formats = conformance.getFormat();
+                        for(CodeType format : formats) {
                             produces.add(format.getValue());
                         }
                         searchOperation.setProduces(produces);
                         Map<String, Parameter> parameters = new HashMap<String, Parameter>();
-                        List<Conformance.RestResourceSearchParam> searchParams = resource.getSearchParam();
-                        for(Conformance.RestResourceSearchParam searchParam : searchParams) {
+                        List<CapabilityStatement.CapabilityStatementRestResourceSearchParamComponent> searchParams = resource.getSearchParam();
+                        for(CapabilityStatement.CapabilityStatementRestResourceSearchParamComponent searchParam : searchParams) {
                             Parameter parameter = new Parameter();
                             parameter.setDescription(searchParam.getDocumentation());
                             parameter.setName(searchParam.getName());
@@ -469,13 +470,13 @@ public class SwaggerSpecificationCreator {
             }
 
             //Set $everything operation properties
-            for(Conformance.RestOperation restOperation : restResource.getOperation()) {
+            for(CapabilityStatement.CapabilityStatementRestOperationComponent restOperation : restResource.getOperation()) {
                 if(SwaggerDocConstants.EVERYTHING.equalsIgnoreCase(restOperation.getName())) {
-                    OperationDefinition resource = (OperationDefinition) restOperation.getDefinition().getResource();
+                    IBaseResource resource = restOperation.getDefinition().getResource();
                     if (resource == null) {
                     	continue;
                     }
-                    String resourceName = resource.getType().get(0).getValue();
+                    String resourceName = resource.getIdElement().getValue();
                     String pathId = "/" + resourceName + "/" + SwaggerDocConstants.POST_RESOURCE_PATH + "/" + SwaggerDocConstants.EVERYTHING;
                     Path everything;
                     Map<String, Operation> everythingOperationsMap;
@@ -496,8 +497,8 @@ public class SwaggerSpecificationCreator {
                     //Set mime type supported
                     produces.add(SwaggerDocConstants.PRODUCES_JSON);
                     produces.add(SwaggerDocConstants.PRODUCES_XML);
-                    List<CodeDt> formats = conformance.getFormat();
-                    for(CodeDt format : formats) {
+                    List<CodeType> formats = conformance.getFormat();
+                    for(CodeType format : formats) {
                         produces.add(format.getValue());
                     }
 

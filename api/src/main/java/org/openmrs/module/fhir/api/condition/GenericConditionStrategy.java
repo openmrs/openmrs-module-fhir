@@ -13,7 +13,7 @@
  */
 package org.openmrs.module.fhir.api.condition;
 
-import ca.uhn.fhir.model.dstu2.resource.Condition;
+import org.hl7.fhir.dstu3.model.Condition;
 
 import java.util.List;
 

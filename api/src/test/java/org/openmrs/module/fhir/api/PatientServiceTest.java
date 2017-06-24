@@ -13,22 +13,21 @@
  */
 package org.openmrs.module.fhir.api;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
+import org.hl7.fhir.dstu3.model.Bundle;
+import org.hl7.fhir.dstu3.model.Identifier;
+import org.hl7.fhir.dstu3.model.Patient;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.exception.FHIRValidationException;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
-import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
-import ca.uhn.fhir.model.dstu2.resource.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 
@@ -81,7 +80,7 @@ public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals(fhirPatient.getId().toString(), returned_patientUuid);
 		boolean exist = false;
 		for (Patient patient : patients) {
-			for (IdentifierDt identifierDt : patient.getIdentifier()) {
+			for (Identifier identifierDt : patient.getIdentifier()) {
 				if (identifierValue.equals(identifierDt.getValue())) {
 					exist = true;
 				}
@@ -102,7 +101,7 @@ public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals(fhirPatient.getId().toString(), returned_patientUuid);
 		boolean exist = false;
 		for (Patient patient : patients) {
-			for (IdentifierDt identifierDt : patient.getIdentifier()) {
+			for (Identifier identifierDt : patient.getIdentifier()) {
 				if (identifierValue.equals(identifierDt.getValue())) {
 					exist = true;
 				}

@@ -13,13 +13,12 @@
  */
 package org.openmrs.module.fhir.api;
 
-import java.util.List;
-
+import org.hl7.fhir.dstu3.model.Bundle;
+import org.hl7.fhir.dstu3.model.Patient;
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
 
-import ca.uhn.fhir.model.dstu2.resource.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
+import java.util.List;
 
 @Transactional
 public interface PatientService extends OpenmrsService {

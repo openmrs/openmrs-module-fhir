@@ -13,7 +13,7 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
+import org.hl7.fhir.dstu3.model.DiagnosticReport;
 import org.openmrs.api.APIException;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
 

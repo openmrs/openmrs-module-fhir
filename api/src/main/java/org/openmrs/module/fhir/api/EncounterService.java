@@ -13,14 +13,13 @@
  */
 package org.openmrs.module.fhir.api;
 
-import java.util.List;
-
+import org.hl7.fhir.dstu3.model.Bundle;
+import org.hl7.fhir.dstu3.model.Composition;
+import org.hl7.fhir.dstu3.model.Encounter;
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
 
-import ca.uhn.fhir.model.dstu2.resource.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.Composition;
-import ca.uhn.fhir.model.dstu2.resource.Encounter;
+import java.util.List;
 
 /**
  * This service exposes module's core functionality. It is a Spring managed bean which is configured in

@@ -13,19 +13,6 @@
  */
 package org.openmrs.module.fhir.providers;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.openmrs.module.fhir.api.util.FHIRConstants;
-import org.openmrs.module.fhir.resources.FHIRPatientResource;
-
-import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu2.resource.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.OperationOutcome;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.ConditionalUrlParam;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
@@ -37,12 +24,24 @@ import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Search;
 import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
-import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import ca.uhn.fhir.rest.server.exceptions.NotImplementedOperationException;
 import ca.uhn.fhir.rest.server.exceptions.PreconditionFailedException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hl7.fhir.dstu3.model.Bundle;
+import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.OperationOutcome;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.Resource;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.module.fhir.resources.FHIRPatientResource;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RestfulPatientResourceProvider implements IResourceProvider {
 
@@ -55,7 +54,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	}
 
 	@Override
-	public Class<? extends IResource> getResourceType() {
+	public Class<? extends Resource> getResourceType() {
 		return Patient.class;
 	}
 
@@ -66,7 +65,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read()
-	public Patient getResourceById(@IdParam IdDt id) {
+	public Patient getResourceById(@IdParam IdType id) {
 		Patient patient = null;
 		patient = patientResource.getByUniqueId(id);
 		return patient;
@@ -141,25 +140,13 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	}
 
 	/**
-	 * Find patients by provider
-	 *
-	 * @param provider the provider of the patient
-	 * @return This method returns a list of Patients. This list may contain multiple matching
-	 *         resources, or it may also be empty.
-	 */
-	@Search()
-	public List<Patient> searchPatientsByProvider(@RequiredParam(name = Patient.SP_CAREPROVIDER) ReferenceParam provider) {
-		throw new NotImplementedOperationException("Find patients by provider is not implemented yet");
-	}
-
-	/**
 	 * Implementation of $everything operation which returns content of a patient
 	 *
 	 * @param patientId if of the patient
 	 * @return bundle
 	 */
 	@Operation(name = "$everything", type = Patient.class)
-	public Bundle patientInstanceOperation(@IdParam IdDt patientId) {
+	public Bundle patientInstanceOperation(@IdParam IdType patientId) {
 		return patientResource.getPatientOperationsById(patientId);
 	}
 
@@ -169,7 +156,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 * @param theId
 	 */
 	@Delete
-	public void deletePatient(@IdParam IdDt theId) {
+	public void deletePatient(@IdParam IdType theId) {
 		patientResource.deletePatient(theId);
 	}
 	
@@ -184,19 +171,25 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	public MethodOutcome createFHIRPatient(@ResourceParam Patient patient) {
 		patient = patientResource.createFHIRPatient(patient);
 		MethodOutcome retVal = new MethodOutcome();
-		retVal.setId(new IdDt(FHIRConstants.PATIENT, patient.getId().getIdPart()));
+		retVal.setId(new IdType(FHIRConstants.PATIENT, patient.getId()));
 		OperationOutcome outcome = new OperationOutcome();
-		outcome.addIssue().setDetails("Patient is successfully created with");
+		CodeableConcept concept = new CodeableConcept();
+		Coding coding = concept.addCoding();
+		coding.setDisplay("Patient is successfully created with id" + patient.getId());
+		outcome.addIssue().setDetails(concept);
 		retVal.setOperationOutcome(outcome);
 		return retVal;
 	}
 	
 	@Update
-	public MethodOutcome updatePatient(@ResourceParam Patient patient, @IdParam IdDt theId) {
+	public MethodOutcome updatePatient(@ResourceParam Patient patient, @IdParam IdType theId) {
 		MethodOutcome retVal = new MethodOutcome();
 		OperationOutcome outcome = new OperationOutcome();
-		patient = patientResource.updatePatient(patient, theId.getIdPart());
-		outcome.addIssue().setDetails("Patient is successfully updated");
+		patientResource.updatePatient(patient, theId.getIdPart());
+		CodeableConcept concept = new CodeableConcept();
+		Coding coding = concept.addCoding();
+		coding.setDisplay("Patient is successfully updated with id " + patient.getId());
+		outcome.addIssue().setDetails(concept);
 		retVal.setOperationOutcome(outcome);
 		return retVal;
 	}
@@ -212,7 +205,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 * @return MethodOutcome which contains the status of the update operation
 	 */
 	@Update()
-	public MethodOutcome updatePatientByIdentifier(@ResourceParam Patient patient, @IdParam IdDt theId,
+	public MethodOutcome updatePatientByIdentifier(@ResourceParam Patient patient, @IdParam IdType theId,
 	                                               @ConditionalUrlParam String theConditional) {
 		MethodOutcome outcome = new MethodOutcome();
 		OperationOutcome operationoutcome = null;
@@ -228,7 +221,10 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 				paramValue = paraArgs[1];
 			} catch (Exception e) { // will catch nullpointerexceptions and indexoutofboundexceptions
 				operationoutcome = new OperationOutcome();
-				operationoutcome.addIssue().setDetails("Please check Condition URL format");
+				CodeableConcept concept = new CodeableConcept();
+				Coding coding = concept.addCoding();
+				coding.setDisplay("Please check Condition URL format");
+				operationoutcome.addIssue().setDetails(concept);
 				outcome.setOperationOutcome(operationoutcome);
 				return outcome;
 			}
@@ -240,7 +236,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 					if (patientBundle.getEntry().size() > 0) {
 						patientList = new ArrayList<Patient>();
 					}
-					for (Bundle.Entry entry : patientBundle.getEntry()) {
+					for (Bundle.BundleEntryComponent entry : patientBundle.getEntry()) {
 						Patient fhirPatient = (Patient) entry.getResource();
 						patientList.add(fhirPatient);
 					}
@@ -257,7 +253,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 					if (patientBundle.getEntry().size() > 0) {
 						patientList = new ArrayList<Patient>();
 					}
-					for (Bundle.Entry entry : patientBundle.getEntry()) {
+					for (Bundle.BundleEntryComponent entry : patientBundle.getEntry()) {
 						Patient fhirPatient = (Patient) entry.getResource();
 						patientList.add(fhirPatient);
 					}
@@ -267,7 +263,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 				if (patientList.size() == 0) {
 					outcome = updatePatient(patient, null);
 				} else if (patientList.size() == 1) {
-					outcome = updatePatient(patient, patientList.get(0).getId());
+					outcome = updatePatient(patient, patientList.get(0).getIdElement());
 				} else {
 					throw new PreconditionFailedException("There are more than one patient for the given condition");
 				}

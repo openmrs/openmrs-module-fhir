@@ -13,9 +13,6 @@
  */
 package org.openmrs.module.fhir.providers;
 
-import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu2.resource.Appointment;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
@@ -23,6 +20,9 @@ import ca.uhn.fhir.rest.annotation.Search;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+import org.hl7.fhir.dstu3.model.Appointment;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Resource;
 import org.openmrs.module.fhir.resources.FHIRAppointmentResource;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public class RestfulAppointmentResourceProvider implements IResourceProvider {
     }
 
     @Override
-    public Class<? extends IResource> getResourceType() {
+    public Class<? extends Resource> getResourceType() {
         return Appointment.class;
     }
 
@@ -50,7 +50,7 @@ public class RestfulAppointmentResourceProvider implements IResourceProvider {
      * @return Returns a resource matching this identifier, or null if none exists.
      */
     @Read()
-    public Appointment getResourceById(@IdParam IdDt theId) {
+    public Appointment getResourceById(@IdParam IdType theId) {
         return appointmentResource.getByUniqueId(theId);
     }
 

@@ -13,13 +13,12 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import ca.uhn.fhir.model.dstu2.composite.AgeDt;
-import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
-import ca.uhn.fhir.model.dstu2.composite.CodingDt;
-import ca.uhn.fhir.model.dstu2.resource.FamilyMemberHistory;
-import ca.uhn.fhir.model.dstu2.valueset.AdministrativeGenderEnum;
-import ca.uhn.fhir.model.primitive.DateDt;
-import ca.uhn.fhir.model.primitive.IdDt;
+import org.hl7.fhir.dstu3.model.Age;
+import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.Enumerations;
+import org.hl7.fhir.dstu3.model.FamilyMemberHistory;
+import org.hl7.fhir.dstu3.model.IdType;
 import org.openmrs.Person;
 import org.openmrs.PersonName;
 import org.openmrs.Relationship;
@@ -31,11 +30,11 @@ public class FHIRFamilyMemberHistoryUtil {
 
 	public static FamilyMemberHistory generateFamilyHistory(Relationship relationship, Person person) {
 		FamilyMemberHistory familyMemberHistory = new FamilyMemberHistory();
-		IdDt id = new IdDt();
+		IdType id = new IdType();
 		id.setValue(person.getUuid());
 		familyMemberHistory.setId(id);
 		familyMemberHistory.setPatient(FHIRUtils.buildPatientOrPersonResourceReference(person));
-		CodeableConceptDt relationshipCode = familyMemberHistory.getRelationship();
+		CodeableConcept relationshipCode = familyMemberHistory.getRelationship();
 		Person relatedPerson;
 		String relationshipType;
 
@@ -50,8 +49,8 @@ public class FHIRFamilyMemberHistoryUtil {
 		}
 
 		//Set relationship coding
-		List<CodingDt> relations = new ArrayList<CodingDt>();
-		CodingDt openmrsRelation = new CodingDt();
+		List<Coding> relations = new ArrayList<Coding>();
+		Coding openmrsRelation = new Coding();
 		openmrsRelation.setSystem(FHIRConstants.OPENMRS_URI).setCode(relationshipType);
 		relations.add(openmrsRelation);
 		relationshipCode.setCoding(relations);
@@ -67,22 +66,17 @@ public class FHIRFamilyMemberHistoryUtil {
 			familyMemberHistory.setName(relatedPersonNameDisplay.toString());
 		}
 
-		//Set born date
-		DateDt born = new DateDt();
-		born.setValue(relatedPerson.getBirthdate());
-		familyMemberHistory.setBorn(born);
-
 		//Set gender in fhir relation person gender
 		if (relatedPerson.getGender().equals("M")) {
-			familyMemberHistory.setGender(AdministrativeGenderEnum.MALE);
+			familyMemberHistory.setGender(Enumerations.AdministrativeGender.MALE);
 		} else if (relatedPerson.getGender().equals("F")) {
-			familyMemberHistory.setGender(AdministrativeGenderEnum.FEMALE);
+			familyMemberHistory.setGender(Enumerations.AdministrativeGender.FEMALE);
 		} else {
-			familyMemberHistory.setGender(AdministrativeGenderEnum.UNKNOWN);
+			familyMemberHistory.setGender(Enumerations.AdministrativeGender.UNKNOWN);
 		}
 
 		if (relatedPerson.getAge() != null) {
-			AgeDt age = new AgeDt();
+			Age age = new Age();
 			age.setValue(relatedPerson.getAge());
 			familyMemberHistory.setAge(age);
 		}

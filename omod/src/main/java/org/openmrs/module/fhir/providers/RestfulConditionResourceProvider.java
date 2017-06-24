@@ -13,10 +13,6 @@
  */
 package org.openmrs.module.fhir.providers;
 
-import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu2.resource.Appointment;
-import ca.uhn.fhir.model.dstu2.resource.Condition;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
@@ -24,7 +20,9 @@ import ca.uhn.fhir.rest.annotation.Search;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.openmrs.module.fhir.resources.FHIRAppointmentResource;
+import org.hl7.fhir.dstu3.model.Condition;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Resource;
 import org.openmrs.module.fhir.resources.FHIRConditionResource;
 
 import java.util.List;
@@ -38,7 +36,7 @@ public class RestfulConditionResourceProvider implements IResourceProvider {
     }
 
     @Override
-    public Class<? extends IResource> getResourceType() {
+    public Class<? extends Resource> getResourceType() {
         return Condition.class;
     }
 
@@ -52,7 +50,7 @@ public class RestfulConditionResourceProvider implements IResourceProvider {
      * @return Returns a resource matching this identifier, or null if none exists.
      */
     @Read()
-    public Condition getResourceById(@IdParam IdDt theId) {
+    public Condition getResourceById(@IdParam IdType theId) {
         return conditionResource.getByUniqueId(theId);
     }
 
@@ -65,7 +63,7 @@ public class RestfulConditionResourceProvider implements IResourceProvider {
      * @return Returns a resource matching to the OpenMrs Obs which has the identifier theId, or null if none exists.
      */
     @Read()
-    public Condition getResourceByObsUID(@IdParam IdDt theId) {
+    public Condition getResourceByObsUID(@IdParam IdType theId) {
         return conditionResource.getConditionByObsUniqueId(theId);
     }
 

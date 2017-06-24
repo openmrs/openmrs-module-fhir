@@ -13,9 +13,9 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import ca.uhn.fhir.model.dstu2.resource.Appointment;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hl7.fhir.dstu3.model.Appointment;
 import org.openmrs.module.fhir.api.AppointmentService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.appointment.AppointmentStrategyUtil;

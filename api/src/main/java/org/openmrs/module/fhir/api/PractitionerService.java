@@ -13,13 +13,12 @@
  */
 package org.openmrs.module.fhir.api;
 
-import java.util.List;
-
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Practitioner;
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
 
-import ca.uhn.fhir.model.dstu2.resource.Practitioner;
-import ca.uhn.fhir.model.primitive.IdDt;
+import java.util.List;
 
 /**
  * This service exposes module's core functionality. It is a Spring managed bean which is configured
@@ -97,5 +96,5 @@ public interface PractitionerService extends OpenmrsService {
 	 * @param  theId , the uuid of the practitioner to update
 	 * @return fhir practitioner resource list
 	 */
-	Practitioner updatePractitioner(Practitioner practitioner, IdDt theId);
+	Practitioner updatePractitioner(Practitioner practitioner, String theId);
 }

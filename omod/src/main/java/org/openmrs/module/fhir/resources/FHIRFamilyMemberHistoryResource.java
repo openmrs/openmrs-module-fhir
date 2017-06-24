@@ -13,20 +13,19 @@
  */
 package org.openmrs.module.fhir.resources;
 
-import java.util.List;
-
-import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.FamilyMemberHistoryService;
-
-import ca.uhn.fhir.model.dstu2.resource.FamilyMemberHistory;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import org.hl7.fhir.dstu3.model.FamilyMemberHistory;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.FamilyMemberHistoryService;
+
+import java.util.List;
 
 public class FHIRFamilyMemberHistoryResource extends Resource {
 
-	public FamilyMemberHistory getByUniqueId(IdDt id) {
+	public FamilyMemberHistory getByUniqueId(IdType id) {
 		FamilyMemberHistoryService familyHistoryService = Context.getService(FamilyMemberHistoryService.class);
 		FamilyMemberHistory familyHistory = familyHistoryService.getRelationshipById(id.getIdPart());
 		if (familyHistory == null) {

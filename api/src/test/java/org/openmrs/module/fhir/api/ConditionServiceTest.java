@@ -1,8 +1,7 @@
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu2.composite.CodingDt;
-import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
-import ca.uhn.fhir.model.dstu2.resource.Condition;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.Condition;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Concept;
@@ -11,14 +10,12 @@ import org.openmrs.Obs;
 import org.openmrs.Person;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
-import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
+
+import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Date;
 
 /**
  * This test class will test the functionalities of the Condition Service.
@@ -56,11 +53,9 @@ public class ConditionServiceTest extends BaseModuleContextSensitiveTest {
         problemAddedObs.setValueNumeric(8d);
         problemAddedObs = Context.getObsService().saveObs(problemAddedObs, null);
         Condition fhirConditionForProblemAddedObs = getService().getConditionByObsId(problemAddedObs.getUuid());
-        CodingDt fhirCoding = fhirConditionForProblemAddedObs.getCode().getCoding().get(0);
+        Coding fhirCoding = fhirConditionForProblemAddedObs.getCode().getCoding().get(0);
         assertNotNull(fhirConditionForProblemAddedObs);
-        assertEquals(patient.getUuid(), fhirConditionForProblemAddedObs.getPatient().getReference().getIdPart());
-        assertEquals("Patient",fhirConditionForProblemAddedObs.getPatient().getReference().getResourceType());
-        assertEquals(problemAddedObs.getComment(), fhirConditionForProblemAddedObs.getNotes());
+        assertEquals(patient.getUuid(), fhirConditionForProblemAddedObs.getSubject().getId());
         assertEquals(fhirCoding.getSystem(), FHIRConstants.OPENMRS_URI);
         assertEquals(fhirCoding.getCode(), problemAddedObs.getConcept().getUuid());
         assertEquals(fhirCoding.getDisplay(), problemAddedObs.getConcept().getName().getName());

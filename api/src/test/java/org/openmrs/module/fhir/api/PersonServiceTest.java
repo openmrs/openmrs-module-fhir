@@ -13,15 +13,13 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu2.composite.AddressDt;
-import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
-import ca.uhn.fhir.model.dstu2.resource.Person;
-import ca.uhn.fhir.model.dstu2.valueset.AddressUseEnum;
-import ca.uhn.fhir.model.dstu2.valueset.AdministrativeGenderEnum;
-import ca.uhn.fhir.model.dstu2.valueset.NameUseEnum;
-import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.model.primitive.StringDt;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import org.hl7.fhir.dstu3.model.Address;
+import org.hl7.fhir.dstu3.model.Enumerations;
+import org.hl7.fhir.dstu3.model.HumanName;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Person;
+import org.hl7.fhir.dstu3.model.StringType;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -121,7 +119,7 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);
 		Person fhirPerson = FHIRPersonUtil.generatePerson(person);
 		String requestUuid = "vvvv524f-27ce-4bb2-86d6-6d1d05312bd5";
-		IdDt uuid = new IdDt();
+		IdType uuid = new IdType();
 		uuid.setValue(requestUuid); // set a uuid which is not associated with any Person
 		fhirPerson.setId(uuid);
 		Context.getService(PersonService.class).updateFHIRPerson(fhirPerson, requestUuid);
@@ -137,36 +135,32 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
 		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);
 		Person fhirPerson = FHIRPersonUtil.generatePerson(person);
-		List<HumanNameDt> humanNames = new ArrayList<HumanNameDt>(); // add a new name to update
-		HumanNameDt fhirName = new HumanNameDt();
-		StringDt familyName = new StringDt();
-		familyName.setValue("Bais");
-		List<StringDt> familyNames = new ArrayList<StringDt>();
-		familyNames.add(familyName);
-		fhirName.setFamily(familyNames);
-		StringDt givenName = new StringDt();
+		List<HumanName> humanNames = new ArrayList<HumanName>(); // add a new name to update
+		HumanName fhirName = new HumanName();
+		fhirName.setFamily("Bais");
+		StringType givenName = new StringType();
 		givenName.setValue("cope");
-		List<StringDt> givenNames = new ArrayList<StringDt>();
+		List<StringType> givenNames = new ArrayList<StringType>();
 		givenNames.add(givenName);
 		fhirName.setGiven(givenNames);
-		fhirName.setUse(NameUseEnum.USUAL);
+		fhirName.setUse(HumanName.NameUse.USUAL);
 		humanNames.add(fhirName);
 		fhirPerson.setName(humanNames);
-		fhirPerson.setGender(AdministrativeGenderEnum.FEMALE); // change the gender
-		List<AddressDt> addressList = new ArrayList<AddressDt>(); // add a new address to update
-		AddressDt fhirAddress = new AddressDt();
+		fhirPerson.setGender(Enumerations.AdministrativeGender.FEMALE); // change the gender
+		List<Address> addressList = new ArrayList<Address>(); // add a new address to update
+		Address fhirAddress = new Address();
 		fhirAddress.setCity("abc");
 		fhirAddress.setCountry("bcd");
 		fhirAddress.setState("cde");
 		fhirAddress.setPostalCode("def");
-		List<StringDt> addressStrings = new ArrayList<StringDt>();
-		addressStrings.add(new StringDt("pqr"));
-		addressStrings.add(new StringDt("qrs"));
-		addressStrings.add(new StringDt("rst"));
-		addressStrings.add(new StringDt("stu"));
-		addressStrings.add(new StringDt("tuv"));
+		List<StringType> addressStrings = new ArrayList<StringType>();
+		addressStrings.add(new StringType("pqr"));
+		addressStrings.add(new StringType("qrs"));
+		addressStrings.add(new StringType("rst"));
+		addressStrings.add(new StringType("stu"));
+		addressStrings.add(new StringType("tuv"));
 		fhirAddress.setLine(addressStrings);
-		fhirAddress.setUse(AddressUseEnum.HOME);
+		fhirAddress.setUse(Address.AddressUse.HOME);
 		addressList.add(fhirAddress);
 		fhirPerson.setAddress(addressList);
 		//update the person

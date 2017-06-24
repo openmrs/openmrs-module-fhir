@@ -13,9 +13,9 @@
  */
 package org.openmrs.module.fhir.swagger.docs;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
+
+import java.util.Map;
 
 //Holds the relative path to the individual endpoints. The path is appended to the basePath in order to construct the full URL
 public class Path {

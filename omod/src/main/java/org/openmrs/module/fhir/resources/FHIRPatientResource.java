@@ -13,24 +13,23 @@
  */
 package org.openmrs.module.fhir.resources;
 
-import java.util.List;
-
-import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.PatientService;
-
-import ca.uhn.fhir.model.dstu2.resource.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import org.hl7.fhir.dstu3.model.Bundle;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.PatientService;
+
+import java.util.List;
 
 public class FHIRPatientResource extends Resource {
 
-	public Patient getByUniqueId(IdDt id) {
+	public Patient getByUniqueId(IdType id) {
 		org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
 				org.openmrs.module.fhir.api.PatientService.class);
-		ca.uhn.fhir.model.dstu2.resource.Patient fhirPatient = patientService.getPatient(id.getIdPart());
+		org.hl7.fhir.dstu3.model.Patient fhirPatient = patientService.getPatient(id.getIdPart());
 		if (fhirPatient == null) {
 			throw new ResourceNotFoundException("Patient is not found for the given Id " + id.getIdPart());
 		}
@@ -82,11 +81,11 @@ public class FHIRPatientResource extends Resource {
 		}
 	}
 
-	public Bundle getPatientOperationsById(IdDt id) {
+	public Bundle getPatientOperationsById(IdType id) {
 		return Context.getService(PatientService.class).getPatientOperationsById(id.getIdPart());
 	}
 
-	public void deletePatient(IdDt id) {
+	public void deletePatient(IdType id) {
 		PatientService patientService = Context.getService(PatientService.class);
 		patientService.deletePatient(id.getIdPart());
 	}

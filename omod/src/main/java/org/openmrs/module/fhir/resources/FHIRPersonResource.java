@@ -13,20 +13,19 @@
  */
 package org.openmrs.module.fhir.resources;
 
-import java.util.List;
-
-import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.PersonService;
-
-import ca.uhn.fhir.model.dstu2.resource.Person;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Person;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.PersonService;
+
+import java.util.List;
 
 public class FHIRPersonResource extends Resource {
 
-	public Person getByUniqueId(IdDt id) {
+	public Person getByUniqueId(IdType id) {
 		PersonService personService = Context.getService(PersonService.class);
 		Person fhirPerson = personService.getPerson(id.getIdPart());
 		if (fhirPerson == null) {
@@ -66,7 +65,7 @@ public class FHIRPersonResource extends Resource {
 	 * @param theId object containing the id
 	 * @throws ResourceNotFoundException when no person with given id is found
 	 */
-	public void deletePerson(IdDt theId) throws ResourceNotFoundException {
+	public void deletePerson(IdType theId) throws ResourceNotFoundException {
 		PersonService personService = Context.getService(PersonService.class);
 		personService.retirePerson(theId.getIdPart());
 	}

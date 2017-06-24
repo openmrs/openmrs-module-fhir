@@ -11,22 +11,14 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu2.composite.AddressDt;
-import ca.uhn.fhir.model.dstu2.resource.Location;
-import ca.uhn.fhir.model.dstu2.valueset.LocationStatusEnum;
-
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.Ignore;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.Verifies;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class DiagnosticReportServiceTest extends BaseModuleContextSensitiveTest {
 

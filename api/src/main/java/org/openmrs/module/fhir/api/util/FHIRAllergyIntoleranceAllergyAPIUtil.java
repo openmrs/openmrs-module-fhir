@@ -13,18 +13,15 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
-import ca.uhn.fhir.model.dstu2.composite.CodingDt;
-import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
-import ca.uhn.fhir.model.dstu2.valueset.AllergyIntoleranceCategoryEnum;
-import ca.uhn.fhir.model.dstu2.valueset.AllergyIntoleranceCertaintyEnum;
-import ca.uhn.fhir.model.dstu2.valueset.AllergyIntoleranceCriticalityEnum;
-import ca.uhn.fhir.model.dstu2.valueset.AllergyIntoleranceStatusEnum;
-import ca.uhn.fhir.model.primitive.DateTimeDt;
-import org.openmrs.ConceptMap;
+import org.hl7.fhir.dstu3.model.AllergyIntolerance;
+import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.Enumeration;
 import org.openmrs.Allergy;
 import org.openmrs.AllergyReaction;
+import org.openmrs.ConceptMap;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -37,99 +34,96 @@ public class FHIRAllergyIntoleranceAllergyAPIUtil {
 		allergyIntolerance.setPatient(FHIRUtils.buildPatientOrPersonResourceReference(allergy.getPatient()));
 
 		//Set record date
-		DateTimeDt recordedDate = new DateTimeDt();
-		recordedDate.setValue(allergy.getDateLastUpdated());
-		allergyIntolerance.setRecordedDate(recordedDate);
+		allergyIntolerance.setAssertedDate(allergy.getDateLastUpdated());
 
 		//Set critically
 		if (allergy.getSeverity() != null) {
 			if (allergy.getSeverity().equals(FHIRUtils.getMildSeverityConcept())) {
-				allergyIntolerance.setCriticality(AllergyIntoleranceCriticalityEnum.LOW_RISK);
+				allergyIntolerance.setCriticality(AllergyIntolerance.AllergyIntoleranceCriticality.LOW);
 			} else if (allergy.getSeverity().equals(FHIRUtils.getModerateSeverityConcept())) {
-				allergyIntolerance.setCriticality(AllergyIntoleranceCriticalityEnum.LOW_RISK);
+				allergyIntolerance.setCriticality(AllergyIntolerance.AllergyIntoleranceCriticality.LOW);
 			} else if (allergy.getSeverity().equals(FHIRUtils.getSevereSeverityConcept())) {
-				allergyIntolerance.setCriticality(AllergyIntoleranceCriticalityEnum.HIGH_RISK);
+				allergyIntolerance.setCriticality(AllergyIntolerance.AllergyIntoleranceCriticality.HIGH);
 			} else {
-				allergyIntolerance.setCriticality(AllergyIntoleranceCriticalityEnum.UNABLE_TO_DETERMINE);
+				allergyIntolerance.setCriticality(AllergyIntolerance.AllergyIntoleranceCriticality.UNABLETOASSESS);
 			}
 		}
 
 		//Set allergy category
 		if (allergy.getAllergen().getAllergenType() != null) {
+			List<Enumeration<AllergyIntolerance.AllergyIntoleranceCategory>> catagories =
+											new ArrayList<Enumeration<AllergyIntolerance.AllergyIntoleranceCategory>>();
+			Enumeration<AllergyIntolerance.AllergyIntoleranceCategory> enumeration =
+											new Enumeration(new AllergyIntolerance.AllergyIntoleranceCategoryEnumFactory());
 			switch (allergy.getAllergen().getAllergenType()) {
 				case DRUG:
-					allergyIntolerance.setCategory(AllergyIntoleranceCategoryEnum.MEDICATION);
+					enumeration.setValue(AllergyIntolerance.AllergyIntoleranceCategory.MEDICATION);
 					break;
 				case ENVIRONMENT:
-					allergyIntolerance.setCategory(AllergyIntoleranceCategoryEnum.ENVIRONMENT);
+					enumeration.setValue(AllergyIntolerance.AllergyIntoleranceCategory.ENVIRONMENT);
 					break;
 				case FOOD:
-					allergyIntolerance.setCategory(AllergyIntoleranceCategoryEnum.FOOD);
+					enumeration.setValue(AllergyIntolerance.AllergyIntoleranceCategory.FOOD);
 					break;
 				default:
-					allergyIntolerance.setCategory(AllergyIntoleranceCategoryEnum.ENVIRONMENT);
+					enumeration.setValue(AllergyIntolerance.AllergyIntoleranceCategory.ENVIRONMENT);
 					break;
 			}
+			catagories.add(enumeration);
+			allergyIntolerance.setCategory(catagories);
 		}
-
-		//Set allergen
-		if (allergy.getAllergen().getCodedAllergen() != null) {
-			Collection<ConceptMap> mappings = allergy.getAllergen().getCodedAllergen().getConceptMappings();
-			List<CodingDt> dts = allergyIntolerance.getSubstance().getCoding();
-
-			//Set concept codings
-			if (mappings != null && !mappings.isEmpty()) {
-				for (ConceptMap map : mappings) {
-					if (map.getConceptReferenceTerm() != null) {
-						dts.add(FHIRUtils.getCodingDtByConceptMappings(map));
-					}
-				}
-			}
-
-			//Setting default omrs concept
-			if (allergy.getAllergen().getCodedAllergen().getName() != null) {
-				dts.add(new CodingDt().setCode(allergy.getAllergen().getCodedAllergen().getUuid()).setDisplay(
-						allergy.getAllergen().getCodedAllergen().getName().getName()).setSystem(FHIRConstants.OPENMRS_URI));
-			} else {
-				dts.add(new CodingDt().setCode(allergy.getAllergen().getCodedAllergen().getUuid()).setSystem(
-						FHIRConstants.OPENMRS_URI));
-			}
-			allergyIntolerance.getSubstance().setCoding(dts);
-		}
-		//Set status
-		allergyIntolerance.setStatus(AllergyIntoleranceStatusEnum.CONFIRMED);
 
 		//Set adverse reaction details
 		if (allergy.getReactions().size() > 0) {
-			List<CodingDt> dts = allergyIntolerance.getSubstance().getCoding();
 			for (AllergyReaction reaction : allergy.getReactions()) {
-				AllergyIntolerance.Reaction event = allergyIntolerance.addReaction();
-				event.setCertainty(AllergyIntoleranceCertaintyEnum.LIKELY);
-				CodeableConceptDt manifest = event.getManifestationFirstRep();
-				List<CodingDt> manifestCodes = manifest.getCoding();
+				AllergyIntolerance.AllergyIntoleranceReactionComponent event = allergyIntolerance.addReaction();
+				List<CodeableConcept> manifest = event.getManifestation();
 
-				//Set concept codings
+				//Set allergen
+				if (allergy.getAllergen().getCodedAllergen() != null) {
+					Collection<ConceptMap> mappings = allergy.getAllergen().getCodedAllergen().getConceptMappings();
+
+					//Set concept codings
+					if (mappings != null && !mappings.isEmpty()) {
+						for (ConceptMap map : mappings) {
+							if (map.getConceptReferenceTerm() != null) {
+								allergyIntolerance.addReaction(FHIRUtils.getAllergyReactionComponent(map, event));
+							}
+						}
+					}
+
+					//Setting default omrs concept
+					Coding code = new Coding();
+					code.setSystem(FHIRConstants.OPENMRS_URI);
+					code.setCode(allergy.getAllergen().getCodedAllergen().getUuid());
+					CodeableConcept substance = new CodeableConcept();
+					if (allergy.getAllergen().getCodedAllergen().getName() != null) {
+						code.setDisplay(allergy.getAllergen().getCodedAllergen().getName().getName());
+					}
+					substance.addCoding(code);
+					event.setSubstance(substance);
+				}
+
+				//Set concept codings reactions
 				if (reaction.getReaction() != null) { //TODO need to think about how non coded reactions going to represent
 					Collection<ConceptMap> conceptMappings = reaction.getReaction().getConceptMappings();
 					if (conceptMappings != null && !conceptMappings.isEmpty()) {
 						for (ConceptMap map : conceptMappings) {
 							if (map.getConceptReferenceTerm() != null) {
-								manifestCodes.add(FHIRUtils.getCodingDtByConceptMappings(map));
+								manifest.add(FHIRUtils.getCodeableConceptConceptMappings(map));
 							}
 						}
 					}
 					//Setting omrs concept
 					if (reaction.getReaction().getName() != null) {
-						dts.add(new CodingDt().setCode(reaction.getReaction().getUuid()).setDisplay(
+						manifest.add(new CodeableConcept().addCoding(new Coding().setCode(reaction.getReaction().getUuid()).setDisplay(
 								reaction.getReaction().getName().getName())
-								.setSystem(FHIRConstants.OPENMRS_URI));
+								.setSystem(FHIRConstants.OPENMRS_URI)));
 					} else {
-						dts.add(new CodingDt().setCode(reaction.getReaction().getUuid()).setSystem(
-								FHIRConstants.OPENMRS_URI));
+						manifest.add(new CodeableConcept().addCoding(new Coding().setCode(reaction.getReaction().getUuid()).setSystem(
+								FHIRConstants.OPENMRS_URI)));
 					}
 				}
-				manifest.setCoding(manifestCodes);
-
 			}
 		}
 		return allergyIntolerance;

@@ -13,13 +13,13 @@
  */
 package org.openmrs.module.fhir.providers;
 
-import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu2.resource.Composition;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.Search;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+import org.hl7.fhir.dstu3.model.Composition;
+import org.hl7.fhir.dstu3.model.Resource;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.resources.FHIRCompositionResource;
 
@@ -34,7 +34,7 @@ public class RestfulCompositionResourceProvider implements IResourceProvider {
 	}
 
 	@Override
-	public Class<? extends IResource> getResourceType() {
+	public Class<? extends Resource> getResourceType() {
 		return Composition.class;
 	}
 

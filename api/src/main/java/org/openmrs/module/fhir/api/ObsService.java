@@ -13,14 +13,13 @@
  */
 package org.openmrs.module.fhir.api;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
+import org.hl7.fhir.dstu3.model.Observation;
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
 
-import ca.uhn.fhir.model.dstu2.resource.Observation;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Transactional
 public interface ObsService extends OpenmrsService {

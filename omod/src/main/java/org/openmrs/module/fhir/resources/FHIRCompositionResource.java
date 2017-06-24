@@ -13,9 +13,9 @@
  */
 package org.openmrs.module.fhir.resources;
 
-import ca.uhn.fhir.model.dstu2.resource.Composition;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
+import org.hl7.fhir.dstu3.model.Composition;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.EncounterService;
 

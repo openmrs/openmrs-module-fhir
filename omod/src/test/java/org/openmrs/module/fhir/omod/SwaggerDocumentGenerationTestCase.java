@@ -19,14 +19,25 @@ import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
-import ca.uhn.fhir.rest.server.provider.dstu2.ServerConformanceProvider;
+import org.hl7.fhir.dstu3.hapi.rest.server.ServerCapabilityStatementProvider;
 import org.junit.Test;
 import org.openmrs.module.fhir.addressstrategy.OpenMRSFHIRRequestAddressStrategy;
-import org.openmrs.module.fhir.providers.*;
+import org.openmrs.module.fhir.providers.RestfulAllergyIntoleranceResourceProvider;
+import org.openmrs.module.fhir.providers.RestfulConditionResourceProvider;
+import org.openmrs.module.fhir.providers.RestfulDiagnosticReportResourceProvider;
+import org.openmrs.module.fhir.providers.RestfulEncounterResourceProvider;
+import org.openmrs.module.fhir.providers.RestfulFamilyMemberHistoryResourceProvider;
+import org.openmrs.module.fhir.providers.RestfulLocationResourceProvider;
+import org.openmrs.module.fhir.providers.RestfulObservationResourceProvider;
+import org.openmrs.module.fhir.providers.RestfulPatientResourceProvider;
+import org.openmrs.module.fhir.providers.RestfulPersonResourceProvider;
+import org.openmrs.module.fhir.providers.RestfulPractitionerResourceProvider;
 import org.openmrs.module.fhir.server.ConformanceProvider;
 import org.openmrs.module.fhir.swagger.SwaggerSpecificationCreator;
 import org.openmrs.module.fhir.util.FHIROmodConstants;
+import org.springframework.mock.web.MockHttpServletRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +71,7 @@ public class SwaggerDocumentGenerationTestCase extends RestfulServer {
 		//Removing composition since we now not support for it
 		//resourceProviders.add(new RestfulCompositionResourceProvider());
 		resourceProviders.add(new RestfulPersonResourceProvider());
-		this.setFhirContext(FhirContext.forDstu2());
+		this.setFhirContext(FhirContext.forDstu3());
 		setResourceProviders(resourceProviders);
 		setServerName(FHIROmodConstants.OPENMRS_FHIR_SERVER_NAME);
 		setServerVersion(FHIROmodConstants.OPENMRS_FHIR_SERVER_VERSION);
@@ -74,7 +85,7 @@ public class SwaggerDocumentGenerationTestCase extends RestfulServer {
 		loggingInterceptor.setLoggerName("test.accesslog");
 		loggingInterceptor
 				.setMessageFormat("Source[${remoteAddr}] Operation[${operationType} ${idOrResourceName}] UA[${requestHeader.user-agent}] Params[${requestParameters}]");
-		ServerConformanceProvider sc = new ServerConformanceProvider(this);
+		ServerCapabilityStatementProvider sc = new ServerCapabilityStatementProvider(this);
 		this.setServerConformanceProvider(sc);
 		ConformanceProvider provider = new ConformanceProvider();
 		provider.setRestfulServer(this);
@@ -89,7 +100,8 @@ public class SwaggerDocumentGenerationTestCase extends RestfulServer {
 	public void generateSwaggerDocumentation_shouldGenerateSwaggerDocumentation() {
 		String urlWithoutScheme = "http";
 		String basePath = "/ws/fhir";
-		SwaggerSpecificationCreator creator = new SwaggerSpecificationCreator(urlWithoutScheme, basePath);
+		HttpServletRequest request = new MockHttpServletRequest();
+		SwaggerSpecificationCreator creator = new SwaggerSpecificationCreator(urlWithoutScheme, basePath, request);
 		String swaggerSpecificationJSON = creator.buildJSON();
 		assertNotNull(swaggerSpecificationJSON);
 		assertTrue(swaggerSpecificationJSON.contains("Auto-generated documentation for OpenMRS FHIR Rest services"));

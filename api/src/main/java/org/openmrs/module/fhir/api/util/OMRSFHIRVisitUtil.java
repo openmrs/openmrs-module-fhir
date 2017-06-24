@@ -13,46 +13,34 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.hl7.fhir.dstu3.model.Encounter;
+import org.hl7.fhir.dstu3.model.Period;
+import org.hl7.fhir.dstu3.model.Reference;
 import org.openmrs.PersonName;
 import org.openmrs.Visit;
 
-import ca.uhn.fhir.model.dstu2.composite.PeriodDt;
-import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
-import ca.uhn.fhir.model.dstu2.resource.Encounter;
-import ca.uhn.fhir.model.dstu2.valueset.EncounterClassEnum;
-import ca.uhn.fhir.model.dstu2.valueset.EncounterStateEnum;
-import ca.uhn.fhir.model.primitive.DateTimeDt;
-import ca.uhn.fhir.model.primitive.IdDt;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OMRSFHIRVisitUtil {
 
 	public static Encounter generateEncounter(Visit omrsVisit) {
 		Encounter encounter = new Encounter();
-		IdDt uuid = new IdDt();
-		uuid.setValue(omrsVisit.getUuid());
-		encounter.setId(uuid);
-		encounter.setStatus(EncounterStateEnum.FINISHED);
+		encounter.setId(omrsVisit.getUuid());
+		encounter.setStatus(Encounter.EncounterStatus.FINISHED);
 		//TODO what class element needs to be set
-		encounter.setClassElement(EncounterClassEnum.INPATIENT);
 		if (omrsVisit.getIndication() != null) {
-			ResourceReferenceDt indication = new ResourceReferenceDt();
+			Reference indication = new Reference();
 			indication.setDisplay(omrsVisit.getIndication().getName().getName());
 			String uri =
 					FHIRConstants.WEB_SERVICES_URI_PREFIX + "/" + FHIRConstants.CONCEPT + "/" + omrsVisit.getIndication()
 							.getUuid();
-			List<ResourceReferenceDt> indications = new ArrayList<ResourceReferenceDt>();
-			ResourceReferenceDt indicaton = new ResourceReferenceDt();
-			IdDt indicationRef = new IdDt();
-			indicationRef.setValue(uri);
-			indication.setReference(indicationRef);
-			indication.setReference(indicationRef);
-			encounter.setIndication(indications);
+			List<Reference> indications = new ArrayList<Reference>();
+			Reference indicaton = new Reference();
+			indication.setReference(uri);
 		}
 		//Build and set patient reference
-		ResourceReferenceDt patientReference = new ResourceReferenceDt();
+		Reference patientReference = new Reference();
 		PersonName name = omrsVisit.getPatient().getPersonName();
 		StringBuilder nameDisplay = new StringBuilder();
 		nameDisplay.append(name.getGivenName());
@@ -65,35 +53,27 @@ public class OMRSFHIRVisitUtil {
 		nameDisplay.append(omrsVisit.getPatient().getPatientIdentifier().getIdentifier());
 		nameDisplay.append(")");
 		patientUri = FHIRConstants.PATIENT + "/" + omrsVisit.getPatient().getUuid();
-		IdDt patientRef = new IdDt();
-		patientRef.setValue(patientUri);
-		patientReference.setReference(patientRef);
+		patientReference.setReference(patientUri);
 		patientReference.setDisplay(nameDisplay.toString());
-		encounter.setPatient(patientReference);
+		encounter.setSubject(patientReference);
 
 		//Set encounter period from omrs encounter
-		DateTimeDt encounterStartDate = new DateTimeDt();
-		encounterStartDate.setValue(omrsVisit.getStartDatetime());
-		DateTimeDt encounterEndDate = new DateTimeDt();
-		encounterEndDate.setValue(omrsVisit.getStopDatetime());
-		PeriodDt period = encounter.getPeriod();
-		period.setStart(encounterStartDate);
-		period.setEnd(encounterEndDate);
+		Period period = encounter.getPeriod();
+		period.setStart(omrsVisit.getStartDatetime());
+		period.setEnd(omrsVisit.getStopDatetime());
 		encounter.setPeriod(period);
 
 		//Set encounter location from omrs location
 		if (omrsVisit.getLocation() != null) {
-			List<Encounter.Location> locations = new ArrayList<Encounter.Location>();
-			Encounter.Location location = new Encounter.Location();
+			List<Encounter.EncounterLocationComponent> locations = new ArrayList<Encounter.EncounterLocationComponent>();
+			Encounter.EncounterLocationComponent location = new Encounter.EncounterLocationComponent();
 			//set encounter period
 			encounter.setPeriod(period);
 			location.setPeriod(period);
-			ResourceReferenceDt locationReference = new ResourceReferenceDt();
+			Reference locationReference = new Reference();
 			locationReference.setDisplay(omrsVisit.getLocation().getName());
-			IdDt locationRefId = new IdDt();
 			String locationRefUri = FHIRConstants.LOCATION + "/" + omrsVisit.getLocation().getUuid();
-			locationRefId.setValue(locationRefUri);
-			locationReference.setReference(locationRefId);
+			locationReference.setReference(locationRefUri);
 			location.setLocation(locationReference);
 			locations.add(location);
 			encounter.setLocation(locations);

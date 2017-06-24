@@ -13,23 +13,26 @@
  */
 package org.openmrs.module.fhir.server;
 
-import ca.uhn.fhir.model.dstu2.resource.Conformance;
 import ca.uhn.fhir.rest.server.RestfulServer;
-import ca.uhn.fhir.rest.server.provider.dstu2.ServerConformanceProvider;
+import org.hl7.fhir.dstu3.hapi.rest.server.ServerCapabilityStatementProvider;
+import org.hl7.fhir.dstu3.model.CapabilityStatement;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class ConformanceProvider {
 
-    private static Conformance conformance = null;
+    private static CapabilityStatement conformance = null;
     private static RestfulServer restfulServer;
 
-    public static void setConformance(Conformance conformanceStatement) {
+    public static void setConformance(CapabilityStatement conformanceStatement) {
         conformance = conformanceStatement;
     }
 
-    public static Conformance getConformance() {
+    public static CapabilityStatement getConformance(HttpServletRequest request) {
         if(conformance == null) {
-            ServerConformanceProvider confProvider = (ServerConformanceProvider) restfulServer.getServerConformanceProvider();
-            conformance = confProvider.getServerConformance(null);
+            //Get server conformance provider
+            ServerCapabilityStatementProvider confProvider = (ServerCapabilityStatementProvider)restfulServer.getServerConformanceProvider();
+            conformance = confProvider.getServerConformance(request);
             return conformance;
         } else {
             return conformance;

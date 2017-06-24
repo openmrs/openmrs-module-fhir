@@ -13,11 +13,9 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hl7.fhir.dstu3.model.FamilyMemberHistory;
 import org.openmrs.Person;
 import org.openmrs.Relationship;
 import org.openmrs.api.context.Context;
@@ -26,7 +24,9 @@ import org.openmrs.module.fhir.api.FamilyMemberHistoryService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRFamilyMemberHistoryUtil;
 
-import ca.uhn.fhir.model.dstu2.resource.FamilyMemberHistory;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class FamilyMemberHistoryServiceImpl extends BaseOpenmrsService implements FamilyMemberHistoryService {
 

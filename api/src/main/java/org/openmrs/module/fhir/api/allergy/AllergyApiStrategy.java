@@ -13,13 +13,13 @@
  */
 package org.openmrs.module.fhir.api.allergy;
 
-import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
 import ca.uhn.fhir.rest.server.exceptions.NotImplementedOperationException;
+import org.hl7.fhir.dstu3.model.AllergyIntolerance;
+import org.openmrs.Allergy;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
-import org.openmrs.api.context.Context;
-import org.openmrs.Allergy;
 import org.openmrs.api.PatientService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRAllergyIntoleranceAllergyAPIUtil;
 
 import java.util.ArrayList;
@@ -29,12 +29,12 @@ public class AllergyApiStrategy implements GenericAllergyStrategy {
 	
 	@Override
 	public AllergyIntolerance getAllergyById(String uuid) {
-		throw new NotImplementedOperationException("Allergy API module isn't supported for get allergies by Id ");
+		throw new NotImplementedOperationException("Allergy API module doesn't supported for get allergies by Id");
 	}
 
 	@Override
 	public List<AllergyIntolerance> searchAllergyById(String uuid) {
-		throw new NotImplementedOperationException("Allergy API module isn't supported for search allergies by Id ");
+		throw new NotImplementedOperationException("Allergy API module doesn't supported for search allergies by Id");
 	}
 
 	@Override

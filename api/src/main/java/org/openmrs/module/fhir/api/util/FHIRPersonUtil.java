@@ -13,16 +13,13 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import ca.uhn.fhir.model.dstu2.composite.AddressDt;
-import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
-import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
-import ca.uhn.fhir.model.dstu2.resource.Person;
-import ca.uhn.fhir.model.dstu2.valueset.AddressUseEnum;
-import ca.uhn.fhir.model.dstu2.valueset.AdministrativeGenderEnum;
-import ca.uhn.fhir.model.dstu2.valueset.NameUseEnum;
-import ca.uhn.fhir.model.primitive.DateDt;
-import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.model.primitive.StringDt;
+import org.apache.commons.lang.StringUtils;
+import org.hl7.fhir.dstu3.model.Address;
+import org.hl7.fhir.dstu3.model.Enumerations;
+import org.hl7.fhir.dstu3.model.HumanName;
+import org.hl7.fhir.dstu3.model.Person;
+import org.hl7.fhir.dstu3.model.Reference;
+import org.hl7.fhir.dstu3.model.StringType;
 import org.openmrs.Patient;
 import org.openmrs.PersonAddress;
 import org.openmrs.PersonName;
@@ -40,83 +37,75 @@ public class FHIRPersonUtil {
 	public static Person generatePerson(org.openmrs.Person omrsPerson) {
 		Person person = new Person();
 		//Set person ID
-		IdDt uuid = new IdDt();
-		uuid.setValue(omrsPerson.getUuid());
-		person.setId(uuid);
-		List<HumanNameDt> humanNames = new ArrayList<HumanNameDt>();
+		person.setId(omrsPerson.getUuid());
+		List<HumanName> humanNames = new ArrayList<HumanName>();
 		for (PersonName name : omrsPerson.getNames()) {
-			HumanNameDt fhirName = new HumanNameDt();
-			StringDt familyName = new StringDt();
-			familyName.setValue(name.getFamilyName());
-			List<StringDt> familyNames = new ArrayList<StringDt>();
-			familyNames.add(familyName);
-			fhirName.setFamily(familyNames);
-			StringDt givenName = new StringDt();
+			HumanName fhirName = new HumanName();
+			fhirName.setFamily(name.getFamilyName());
+			StringType givenName = new StringType();
 			givenName.setValue(name.getGivenName());
-			List<StringDt> givenNames = new ArrayList<StringDt>();
+			List<StringType> givenNames = new ArrayList<StringType>();
 			givenNames.add(givenName);
 			fhirName.setGiven(givenNames);
 			
 			if (name.getFamilyNameSuffix() != null) {
-				StringDt suffix = fhirName.addSuffix();
+				StringType suffix = new StringType();
 				suffix.setValue(name.getFamilyNameSuffix());
-				List<StringDt> suffixes = new ArrayList<StringDt>();
+				List<StringType> suffixes = new ArrayList<StringType>();
 				suffixes.add(suffix);
 				fhirName.setSuffix(suffixes);
 			}
 			
 			if (name.getFamilyNamePrefix() != null) {
-				StringDt prefix = fhirName.addPrefix();
+				StringType prefix = new StringType();
 				prefix.setValue(name.getPrefix());
-				List<StringDt> prefixes = new ArrayList<StringDt>();
+				List<StringType> prefixes = new ArrayList<StringType>();
 				prefixes.add(prefix);
 				fhirName.setPrefix(prefixes);
 			}
 			if (name.isPreferred()) {
-				fhirName.setUse(NameUseEnum.USUAL);
+				fhirName.setUse(HumanName.NameUse.USUAL);
 			} else {
-				fhirName.setUse(NameUseEnum.OLD);
+				fhirName.setUse(HumanName.NameUse.OLD);
 			}
 			humanNames.add(fhirName);
 		}
 		person.setName(humanNames);
 		
 		//Set address in FHIR person
-		List<AddressDt> addressList = new ArrayList<AddressDt>();
-		AddressDt fhirAddress;
+		List<Address> addressList = new ArrayList<Address>();
+		Address fhirAddress;
 		for (PersonAddress address : omrsPerson.getAddresses()) {
-			fhirAddress = new AddressDt();
+			fhirAddress = new Address();
 			fhirAddress.setCity(address.getCityVillage());
 			fhirAddress.setCountry(address.getCountry());
 			fhirAddress.setState(address.getStateProvince());
 			fhirAddress.setPostalCode(address.getPostalCode());
-			List<StringDt> addressStrings = new ArrayList<StringDt>();
-			addressStrings.add(new StringDt(address.getAddress1()));
-			addressStrings.add(new StringDt(address.getAddress2()));
-			addressStrings.add(new StringDt(address.getAddress3()));
-			addressStrings.add(new StringDt(address.getAddress4()));
-			addressStrings.add(new StringDt(address.getAddress5()));
+			List<StringType> addressStrings = new ArrayList<StringType>();
+			addressStrings.add(new StringType(address.getAddress1()));
+			addressStrings.add(new StringType(address.getAddress2()));
+			addressStrings.add(new StringType(address.getAddress3()));
+			addressStrings.add(new StringType(address.getAddress4()));
+			addressStrings.add(new StringType(address.getAddress5()));
 			fhirAddress.setLine(addressStrings);
 			if (address.isPreferred()) {
-				fhirAddress.setUse(AddressUseEnum.HOME);
+				fhirAddress.setUse(Address.AddressUse.HOME);
 			} else {
-				fhirAddress.setUse(AddressUseEnum.OLD___INCORRECT);
+				fhirAddress.setUse(Address.AddressUse.OLD);
 			}
 			addressList.add(fhirAddress);
 		}
 		person.setAddress(addressList);
 		//Set gender in fhir person object
 		if (omrsPerson.getGender().equals("M")) {
-			person.setGender(AdministrativeGenderEnum.MALE);
+			person.setGender(Enumerations.AdministrativeGender.MALE);
 		} else if (omrsPerson.getGender().equals("F")) {
-			person.setGender(AdministrativeGenderEnum.FEMALE);
+			person.setGender(Enumerations.AdministrativeGender.FEMALE);
 		} else {
-			person.setGender(AdministrativeGenderEnum.UNKNOWN);
+			person.setGender(Enumerations.AdministrativeGender.UNKNOWN);
 		}
-
-		DateDt fhirBirthDate = new DateDt();
-		fhirBirthDate.setValue(omrsPerson.getBirthdate());
-		person.setBirthDate(fhirBirthDate);
+		;
+		person.setBirthDate(omrsPerson.getBirthdate());
 		if (!omrsPerson.isVoided()) {
 			person.setActive(true);
 		} else {
@@ -126,19 +115,17 @@ public class FHIRPersonUtil {
 		//Check whether person converted to a patient
 		Patient patient = Context.getPatientService().getPatientByUuid(omrsPerson.getUuid());
 		if (patient != null) {
-			List<Person.Link> links = new ArrayList<Person.Link>();
-			Person.Link link = new Person.Link();
+			List<Person.PersonLinkComponent> links = new ArrayList<Person.PersonLinkComponent>();
+			Person.PersonLinkComponent link = new Person.PersonLinkComponent();
 			String uri = FHIRConstants.PATIENT + "/" + omrsPerson.getUuid();
-			ResourceReferenceDt other = new ResourceReferenceDt();
+			Reference other = new Reference();
 			PersonName name = omrsPerson.getPersonName();
 			StringBuilder nameDisplay = new StringBuilder();
 			nameDisplay.append(name.getGivenName());
 			nameDisplay.append(" ");
 			nameDisplay.append(name.getFamilyName());
 			other.setDisplay(nameDisplay.toString());
-			IdDt patientRef = new IdDt();
-			patientRef.setValue(uri);
-			other.setReference(patientRef);
+			other.setReference(uri);
 			link.setTarget(other);
 			links.add(link);
 			person.setLink(links);
@@ -153,58 +140,58 @@ public class FHIRPersonUtil {
 	 * @return OpenMRS person after giving a FHIR person
 	 * @should generate Oms Person
 	 */
-	public static org.openmrs.Person generateOpenMRSPerson(ca.uhn.fhir.model.dstu2.resource.Person personFHIR,
+	public static org.openmrs.Person generateOpenMRSPerson(org.hl7.fhir.dstu3.model.Person personFHIR,
 	                                                       List<String> errors) {
 		org.openmrs.Person omrsPerson = new org.openmrs.Person();
 		boolean preferredPresent = false, givennamePresent = false, familynamePresent = false, doCheckName = true;
 		
 		if (personFHIR.getId() != null) {
-			omrsPerson.setUuid(personFHIR.getId().getIdPart());
+			omrsPerson.setUuid(personFHIR.getId());
 		}
 		Set<PersonName> names = new TreeSet<PersonName>();
 		if (personFHIR.getName().size() == 0) {
 			errors.add("Name cannot be empty");
 		}
-		for (HumanNameDt humanNameDt : personFHIR.getName()) {
+		for (HumanName humanNameDt : personFHIR.getName()) {
 			PersonName personName = new PersonName();
 			if (humanNameDt.getUse() != null) {
-				String getUse = humanNameDt.getUse();
-				if (String.valueOf(NameUseEnum.USUAL).equalsIgnoreCase(getUse)
-				        || String.valueOf(NameUseEnum.OFFICIAL).equalsIgnoreCase(getUse)) {
+				String getUse = humanNameDt.getUse().toCode();
+				if (String.valueOf(HumanName.NameUse.USUAL).equalsIgnoreCase(getUse)
+				        || String.valueOf(HumanName.NameUse.OFFICIAL).equalsIgnoreCase(getUse)) {
 					preferredPresent = true;
 					personName.setPreferred(true);
 				}
-				if (String.valueOf(NameUseEnum.OLD).equalsIgnoreCase(getUse)) {
+				if (String.valueOf(HumanName.NameUse.OLD).equalsIgnoreCase(getUse)) {
 					personName.setPreferred(false);
 				}
 			}
 			if (humanNameDt.getSuffix() != null) {
-				List<StringDt> prefixes = humanNameDt.getSuffix();
+				List<StringType> prefixes = humanNameDt.getSuffix();
 				if (prefixes.size() > 0) {
-					StringDt prefix = prefixes.get(0);
+					StringType prefix = prefixes.get(0);
 					personName.setPrefix(valueOf(prefix));
 				}
 			}
 			if (humanNameDt.getSuffix() != null) {
-				List<StringDt> suffixes = humanNameDt.getSuffix();
+				List<StringType> suffixes = humanNameDt.getSuffix();
 				if (suffixes.size() > 0) {
-					StringDt suffix = suffixes.get(0);
+					StringType suffix = suffixes.get(0);
 					personName.setFamilyNameSuffix(valueOf(suffix));
 				}
 			}
 			
-			List<StringDt> givenNames = humanNameDt.getGiven();
+			List<StringType> givenNames = humanNameDt.getGiven();
 			if (givenNames != null) {
 				givennamePresent = true;
-				StringDt givenName = givenNames.get(0);
+				StringType givenName = givenNames.get(0);
 				personName.setGivenName(valueOf(givenName));
 			}
-			List<StringDt> familyNames = humanNameDt.getFamily();
-			if (familyNames != null) {
+			String familyName = humanNameDt.getFamily();
+			if (!StringUtils.isEmpty(familyName)) {
 				familynamePresent = true;
-				StringDt familyName = familyNames.get(0);
-				personName.setFamilyName(valueOf(familyName));
+				personName.setFamilyName(familyName);
 			}
+
 			names.add(personName);
 			if (preferredPresent && givennamePresent && familynamePresent) { //if all are present in one name, further checking are not needed
 				doCheckName = false; // cancel future checking
@@ -222,13 +209,13 @@ public class FHIRPersonUtil {
 		
 		Set<PersonAddress> addresses = new TreeSet<PersonAddress>();
 		PersonAddress address;
-		for (AddressDt fhirAddress : personFHIR.getAddress()) {
+		for (Address fhirAddress : personFHIR.getAddress()) {
 			address = new PersonAddress();
 			address.setCityVillage(fhirAddress.getCity());
 			address.setCountry(fhirAddress.getCountry());
 			address.setStateProvince(fhirAddress.getState());
 			address.setPostalCode(fhirAddress.getPostalCode());
-			List<StringDt> addressStrings = fhirAddress.getLine();
+			List<StringType> addressStrings = fhirAddress.getLine();
 			
 			if (addressStrings != null) {
 				for (int i = 0; i < addressStrings.size(); i++) {
@@ -246,20 +233,20 @@ public class FHIRPersonUtil {
 				}
 			}
 			
-			if (String.valueOf(AddressUseEnum.HOME).equalsIgnoreCase(fhirAddress.getUse())) {
+			if (String.valueOf(Address.AddressUse.HOME.toCode()).equalsIgnoreCase(fhirAddress.getUse().toCode())) {
 				address.setPreferred(true);
 			}
-			if (String.valueOf(AddressUseEnum.OLD___INCORRECT).equalsIgnoreCase(fhirAddress.getUse())) {
+			if (String.valueOf(Address.AddressUse.OLD.toCode()).equalsIgnoreCase(fhirAddress.getUse().toCode())) {
 				address.setPreferred(false);
 			}
 			addresses.add(address);
 		}
 		omrsPerson.setAddresses(addresses);
 		
-		if (personFHIR.getGender() != null && !personFHIR.getGender().isEmpty()) {
-			if (personFHIR.getGender().equalsIgnoreCase(String.valueOf(AdministrativeGenderEnum.MALE))) {
+		if (personFHIR.getGender() != null) {
+			if (personFHIR.getGender().toCode().equalsIgnoreCase(String.valueOf(Enumerations.AdministrativeGender.MALE))) {
 				omrsPerson.setGender(FHIRConstants.MALE);
-			} else if (personFHIR.getGender().equalsIgnoreCase(String.valueOf(AdministrativeGenderEnum.FEMALE))) {
+			} else if (personFHIR.getGender().toCode().equalsIgnoreCase(String.valueOf(Enumerations.AdministrativeGender.FEMALE))) {
 				omrsPerson.setGender(FHIRConstants.FEMALE);
 			}
 		} else {
@@ -321,7 +308,7 @@ public class FHIRPersonUtil {
 		retrievedPerson.setAddresses(allAddress);
 		retrievedPerson.setPersonVoided(omrsPerson.getVoided());
 		if (omrsPerson.getVoided()) {
-			retrievedPerson.setPersonVoidReason("Deleted from FHIR module"); // deleted reason is compulsory
+			retrievedPerson.setPersonVoidReason(FHIRConstants.PERSON_VOIDED_MESSAGE); // deleted reason is compulsory
 		}
 		retrievedPerson.setBirthdate(omrsPerson.getBirthdate());
 		retrievedPerson.setGender(omrsPerson.getGender());

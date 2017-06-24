@@ -13,12 +13,12 @@
  */
 package org.openmrs.module.fhir.resources;
 
-import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import org.hl7.fhir.dstu3.model.AllergyIntolerance;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.AllergyIntoleranceService;
 
@@ -27,7 +27,7 @@ import java.util.List;
 
 public class FHIRAllergyIntoleranceResource extends Resource {
 
-	public AllergyIntolerance getByUniqueId(IdDt id) {
+	public AllergyIntolerance getByUniqueId(IdType id) {
 		AllergyIntoleranceService allergyIntoleranceService = Context.getService(AllergyIntoleranceService.class);
 		AllergyIntolerance allergyIntolerance = allergyIntoleranceService.getAllergyById(id.getIdPart());
 		if (allergyIntolerance == null) {

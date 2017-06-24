@@ -13,21 +13,12 @@
  */
 package org.openmrs.module.fhir.api;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import ca.uhn.fhir.model.primitive.InstantDt;
+import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.DateType;
+import org.hl7.fhir.dstu3.model.InstantType;
+import org.hl7.fhir.dstu3.model.Observation;
+import org.hl7.fhir.dstu3.model.Reference;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Concept;
@@ -43,13 +34,19 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRObsUtil;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
-import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
-import ca.uhn.fhir.model.dstu2.composite.CodingDt;
-import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
-import ca.uhn.fhir.model.dstu2.resource.Observation;
-import ca.uhn.fhir.model.dstu2.valueset.ObservationStatusEnum;
-import ca.uhn.fhir.model.primitive.DateTimeDt;
-import ca.uhn.fhir.model.primitive.IdDt;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 
@@ -107,7 +104,7 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		String obsUuid = "be3a4d7a-f9ab-47bb-aaad-bc0b452fcda4";
 		List<Observation> fhirObservations = getService().searchObsById(obsUuid);
 		assertNotNull(fhirObservations);
-		assertEquals(fhirObservations.get(0).getId().getIdPart(), obsUuid);
+		assertEquals(fhirObservations.get(0).getId(), obsUuid);
 	}
 
 	@Test
@@ -166,20 +163,19 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		
 		Observation newObs = FHIRObsUtil.generateObs(obsn);
 		newObs = Context.getService(ObsService.class).createFHIRObservation(newObs);
-		obsn = Context.getObsService().getObsByUuid(newObs.getId().getIdPart());
+		obsn = Context.getObsService().getObsByUuid(newObs.getId());
 
-		CodeableConceptDt dt = newObs.getCode();
-		List<CodingDt> dts = dt.getCoding();
-		CodingDt coding = dts.get(0);
+		CodeableConcept dt = newObs.getCode();
+		List<Coding> dts = dt.getCoding();
+		Coding coding = dts.get(0);
 		String fhirConceptUuid = coding.getCode();
 		
-		ResourceReferenceDt subjectref = newObs.getSubject();
-		IdDt id = subjectref.getReference();
-		String fhirPatientUuid = id.getIdPart();
+		Reference subjectref = newObs.getSubject();
+		String fhirPatientUuid = subjectref.getId();
 
-		Date fhirEffectiveDate = ((DateTimeDt) newObs.getEffective()).getValue();
+		Date fhirEffectiveDate = ((DateType) newObs.getEffective()).getValue();
 
-		InstantDt dateIssued = newObs.getIssuedElement();
+		InstantType dateIssued = newObs.getIssuedElement();
 		Date fhirIssuedDate = dateIssued.getValue();
 
 		assertNotNull(newObs);
@@ -188,7 +184,7 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		assertEquals(dateFormat.format(openmrsDateApplies), dateFormat.format(fhirEffectiveDate));
 		assertEquals(dateFormat.format(obsn.getDateCreated()), dateFormat.format(fhirIssuedDate));
-		assertEquals(Status.PRELIMINARY.name(), newObs.getStatus().toUpperCase());
+		assertEquals(Status.PRELIMINARY.name().toLowerCase(), newObs.getStatus().toCode());
 		assertEquals(Interpretation.HIGH.name(), newObs.getInterpretation().getText());
 	}
 
@@ -197,9 +193,9 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 
 		String obsUuid = "be3a4d7a-f9ab-47bb-aaad-bc0b452fcda4";
 		Observation fhirObservation = getService().getObs(obsUuid);
-		fhirObservation.setStatus(ObservationStatusEnum.AMENDED);
+		fhirObservation.setStatus(Observation.ObservationStatus.AMENDED);
 		
-		CodeableConceptDt interpretation = new CodeableConceptDt();
+		CodeableConcept interpretation = new CodeableConcept();
 		interpretation.setText("CRITICALLY_LOW");
 		fhirObservation.setInterpretation(interpretation);
 		

@@ -14,7 +14,7 @@
 
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
+import org.hl7.fhir.dstu3.model.AllergyIntolerance;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -70,7 +70,7 @@ public class AllergyIntoleranceServiceTest extends BaseModuleContextSensitiveTes
 		String allergyUuid = "1234567987";
 		List<AllergyIntolerance> fhirAllergies = getService().searchAllergiesById(allergyUuid);
 		assertNotNull(fhirAllergies);
-		assertEquals(fhirAllergies.get(0).getId().getIdPart(), allergyUuid);
+		assertEquals(fhirAllergies.get(0).getId(), allergyUuid);
 	}
 	
 	/**

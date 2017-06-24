@@ -1,12 +1,13 @@
 package org.openmrs.module.fhir.api.diagnosticreport.handler;
 
-import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hl7.fhir.dstu3.model.DiagnosticReport;
 import org.openmrs.Encounter;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,7 @@ public class DefaultDiagnosticReportHandler extends AbstractHandler implements D
 
 	@Override
 	public String getServiceCategory() {
-		return "DEFAULT";
+		return FHIRConstants.DEFAULT;
 	}
 
 	@Override
@@ -56,7 +57,7 @@ public class DefaultDiagnosticReportHandler extends AbstractHandler implements D
 
 		//Set ID if available
 		if (diagnosticReport.getId() != null) {
-			omrsDiagnosticReport.setUuid(diagnosticReport.getId().getIdPart());
+			omrsDiagnosticReport.setUuid(diagnosticReport.getId());
 		}
 
 		// Set `Name` as a Obs

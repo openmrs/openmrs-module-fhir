@@ -13,7 +13,7 @@
  */
 package org.openmrs.module.fhir.appointment;
 
-import ca.uhn.fhir.model.dstu2.resource.Appointment;
+import org.hl7.fhir.dstu3.model.Appointment;
 
 import java.util.List;
 

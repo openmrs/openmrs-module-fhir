@@ -13,9 +13,9 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hl7.fhir.dstu3.model.DiagnosticReport;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
 
 import java.util.List;

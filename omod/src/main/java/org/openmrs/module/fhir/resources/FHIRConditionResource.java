@@ -13,11 +13,11 @@
  */
 package org.openmrs.module.fhir.resources;
 
-import ca.uhn.fhir.model.dstu2.resource.Condition;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import org.hl7.fhir.dstu3.model.Condition;
+import org.hl7.fhir.dstu3.model.IdType;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.ConditionService;
 
@@ -25,7 +25,7 @@ import java.util.List;
 
 public class FHIRConditionResource extends Resource {
 
-    public Condition getByUniqueId(IdDt id) {
+    public Condition getByUniqueId(IdType id) {
         ConditionService conditionService = Context.getService(ConditionService.class);
         Condition condition = conditionService.getCondition(id.getIdPart());
         if (condition == null) {
@@ -39,11 +39,11 @@ public class FHIRConditionResource extends Resource {
      * @param id id of the OpenMrs Obs
      * @return
      */
-    public Condition getConditionByObsUniqueId(IdDt id) {
+    public Condition getConditionByObsUniqueId(IdType id) {
         ConditionService conditionService = Context.getService(ConditionService.class);
         Condition condition = conditionService.getConditionByObsId(id.getIdPart());
         if (condition == null) {
-            throw new ResourceNotFoundException("Condition is not found for the given Observatoin Id " + id.getIdPart
+            throw new ResourceNotFoundException("Condition is not found for the given Observation Id " + id.getIdPart
                     ());
         }
         return condition;

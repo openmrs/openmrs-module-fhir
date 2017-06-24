@@ -13,7 +13,7 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
+import org.hl7.fhir.dstu3.model.AllergyIntolerance;
 import org.openmrs.Obs;
 
 public class FHIRAllergyIntoleranceObsAllergyUtil {

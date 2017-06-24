@@ -13,10 +13,10 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import ca.uhn.fhir.model.dstu2.composite.CodingDt;
-import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.DiagnosticReport;
 import org.openmrs.Encounter;
 import org.openmrs.api.APIException;
 import org.openmrs.api.EncounterService;
@@ -25,6 +25,7 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.DiagnosticReportService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRDiagnosticReportUtil;
 import org.openmrs.util.OpenmrsClassLoader;
 
@@ -70,11 +71,11 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 
 	@Override
 	public DiagnosticReport createFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
-		log.debug("DiagnosticReportServiceImpl : createFHIRDiagnosticReport");
-		List<CodingDt> codingList = diagnosticReport.getCategory().getCoding();
+		log.debug("DiagnosticReportServiceImpl : create FHIRDiagnostic Report");
+		List<Coding> codingList = diagnosticReport.getCategory().getCoding();
 
 		// If serviceCategory is not present in the DiagnosticReport, then use "DEFAULT"
-		String handlerName = "DEFAULT";
+		String handlerName = FHIRConstants.DEFAULT;
 		if (!codingList.isEmpty()) {
 			handlerName = codingList.get(0).getCode();
 		}
@@ -84,7 +85,7 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 
 	@Override
 	public DiagnosticReport updateFHIRDiagnosticReport(DiagnosticReport diagnosticReport, String theId) {
-		log.debug("DiagnosticReportServiceImpl : updateFHIRDiagnosticReport");
+		log.debug("DiagnosticReportServiceImpl : updateFHIRDiagnosticReport with ID " + theId);
 		// Find Diagnostic Report (Encounter) in OpenMRS database
 		EncounterService encounterService = Context.getEncounterService();
 		Encounter omrsDiagnosticReport = encounterService.getEncounterByUuid(theId);

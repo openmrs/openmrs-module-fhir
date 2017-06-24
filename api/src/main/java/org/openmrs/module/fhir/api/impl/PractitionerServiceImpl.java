@@ -13,13 +13,14 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import static java.lang.String.valueOf;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hl7.fhir.dstu3.model.HumanName;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Identifier;
+import org.hl7.fhir.dstu3.model.Practitioner;
+import org.hl7.fhir.dstu3.model.StringType;
 import org.openmrs.Person;
 import org.openmrs.PersonName;
 import org.openmrs.Provider;
@@ -30,12 +31,10 @@ import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRPractitionerUtil;
 
-import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
-import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
-import ca.uhn.fhir.model.dstu2.resource.Practitioner;
-import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.model.primitive.StringDt;
-import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.lang.String.valueOf;
 
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
@@ -137,7 +136,7 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 							practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
 						}
 					}
-				}
+					}
 			}
 		}
 		return practitioners;
@@ -167,29 +166,29 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 		List<String> errors = new ArrayList<String>();
 		String practionerName = "";
 		Person personFromRequest = FHIRPractitionerUtil.extractOpenMRSPerson(practitioner); // extracts openmrs person from the practitioner representation
-		List<IdentifierDt> identifiers = practitioner.getIdentifier();
+		List<Identifier> identifiers = practitioner.getIdentifier();
 		if (identifiers != null && !identifiers.isEmpty()) {
-			IdentifierDt idnt = identifiers.get(0);
+			Identifier idnt = identifiers.get(0);
 			provider.setIdentifier(idnt.getValue());
 		}// identifiers can be empty
 		if (personFromRequest == null) { // if this is true, that means the request doesn't have enough attributes to create a person from it, or attach a person from existing ones
-			HumanNameDt humanNameDt = practitioner.getName();
-			if (humanNameDt != null) { // check whether atleast one name is exist. if so we can create a practitioner without attaching a person, just with a name.
-				List<StringDt> givenNames = humanNameDt.getGiven();
-				if (givenNames != null && !givenNames.isEmpty()) {
-					StringDt givenName = givenNames.get(0);
-					practionerName = valueOf(givenName);
-				}
-				List<StringDt> familyNames = humanNameDt.getFamily();
-				if (familyNames != null && !familyNames.isEmpty()) {
-					StringDt familyName = familyNames.get(0);
-					practionerName = practionerName + " " + valueOf(familyName); // will create a name like "John David"
-				}
-				if ("".equals(practionerName)) { // there is no given name or family name. cannot proceed with the request
-					errors.add("Practioner should contain atleast given name or family name");
+			List<HumanName> humanNames = practitioner.getName();
+			if (humanNames != null) { // check whether atleast one name is exist. if so we can create a practitioner without attaching a person, just with a name.
+				for(HumanName humanName : humanNames) {
+					practionerName = humanName.getFamily();
+
+					List<StringType> givenNames = humanName.getGiven();
+					for(StringType givenName : humanName.getGiven()) {
+							practionerName = practionerName + " " + valueOf(givenName.getValue()); // will create a name like "John David"
+					}
+					if ("".equals(practionerName)) { // there is no given name or family name. cannot proceed with the request
+						errors.add("Practioner should contain atleast given name or family name");
+					}
+					//Take only the first name as no person can attached
+					break;
 				}
 			} else {
-				errors.add("Practioner should contain atleast given name or family name");
+				errors.add("Practitioner should contain atleast given name or family name");
 			}
 		}
 		if (!errors.isEmpty()) {
@@ -214,11 +213,11 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 	
 	/**
 	 * @see org.openmrs.module.fhir.api.PractitionerService#updatePractitioner(Practitioner
-	 *      practitioner, IdDt theId)
+	 *      practitioner, IdType theId)
 	 */
-	public Practitioner updatePractitioner(Practitioner practitioner, IdDt theId) {
+	public Practitioner updatePractitioner(Practitioner practitioner, String theId) {
 		org.openmrs.api.ProviderService providerService = Context.getProviderService();
-		org.openmrs.Provider retrievedProvider = providerService.getProviderByUuid(theId.getIdPart());
+		org.openmrs.Provider retrievedProvider = providerService.getProviderByUuid(theId);
 		if (retrievedProvider != null) { // update existing practitioner
 			retrievedProvider = FHIRPractitionerUtil.updatePractitionerAttributes(practitioner, retrievedProvider);
 			Provider p=Context.getProviderService().saveProvider(retrievedProvider);
@@ -227,8 +226,8 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 			if (practitioner.getId() == null) { // since we need to PUT the Person to a specific URI, we need to set the uuid
 				// here, if it is not
 				// already set.
-				IdDt uuid = new IdDt();
-				uuid.setValue(theId.getIdPart());
+				IdType uuid = new IdType();
+				uuid.setValue(theId);
 				practitioner.setId(uuid);
 			}
 			return createFHIRPractitioner(practitioner);

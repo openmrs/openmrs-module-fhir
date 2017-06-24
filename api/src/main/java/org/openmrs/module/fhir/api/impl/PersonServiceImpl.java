@@ -13,24 +13,24 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.openmrs.api.APIException;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.PersonService;
-import org.openmrs.module.fhir.api.db.FHIRDAO;
-import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
-
-import ca.uhn.fhir.model.dstu2.resource.Person;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
 import ca.uhn.fhir.rest.server.exceptions.NotModifiedException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Person;
+import org.openmrs.api.APIException;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.PersonService;
+import org.openmrs.module.fhir.api.db.FHIRDAO;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class PersonServiceImpl implements PersonService {
 
@@ -121,7 +121,7 @@ public class PersonServiceImpl implements PersonService {
 			if (thePerson.getId() == null) { // since we need to PUT the Person to a specific URI, we need to set the uuid
 				// here, if it is not
 				// already set.
-				IdDt uuid = new IdDt();
+				IdType uuid = new IdType();
 				uuid.setValue(theId);
 				thePerson.setId(uuid);
 			}
@@ -142,7 +142,7 @@ public class PersonServiceImpl implements PersonService {
 			return;
 		}
 		try {
-			Context.getPersonService().voidPerson(person, "Voided by FHIR Request");
+			Context.getPersonService().voidPerson(person, FHIRConstants.PERSON_VOIDED_MESSAGE);
 		} catch (APIException apie) {
 			throw new MethodNotAllowedException(String.format("OpenMRS has failed to retire person '%s': %s", id,
 					apie.getMessage()));
