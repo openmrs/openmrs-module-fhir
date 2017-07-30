@@ -472,12 +472,15 @@ public class SwaggerSpecificationCreator {
             //Set $everything operation properties
             for(CapabilityStatement.CapabilityStatementRestOperationComponent restOperation : restResource.getOperation()) {
                 if(SwaggerDocConstants.EVERYTHING.equalsIgnoreCase(restOperation.getName())) {
-                    IBaseResource resource = restOperation.getDefinition().getResource();
-                    if (resource == null) {
-                    	continue;
+                    String resourceNameRef = restOperation.getDefinition().getReference();
+                    String resourceName = "";
+                    //stu3 resource gives null hence iterating
+                    for(CapabilityStatement.CapabilityStatementRestResourceComponent restComponent : resources.get(0).getResource()) {
+                        if(resourceNameRef.contains(restComponent.getType()) && !SwaggerDocConstants.OPERATION_DEFINITON.equals(restComponent.getType())) {
+                            resourceName = restComponent.getType();
+                        }
                     }
-                    String resourceName = resource.getIdElement().getValue();
-                    String pathId = "/" + resourceName + "/" + SwaggerDocConstants.POST_RESOURCE_PATH + "/" + SwaggerDocConstants.EVERYTHING;
+                    String pathId = "/" + resourceName + "/" + SwaggerDocConstants.POST_RESOURCE_PATH + "/" + SwaggerDocConstants.EVERYTHING_WITH_DOLLAR_PREFIX;
                     Path everything;
                     Map<String, Operation> everythingOperationsMap;
                     if(pathMap.containsKey(pathId)) {

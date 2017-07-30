@@ -82,7 +82,7 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	 * @param identifier object containing the patient identifier
 	 */
 	@Search()
-	public List<Encounter> searchEncountersByPatientIdentifier(@RequiredParam(name = Encounter.SP_PATIENT, chainWhitelist = { Patient.SP_IDENTIFIER }) ReferenceParam identifier) {
+	public List<Encounter> searchEncountersByPatientIdentifier(@RequiredParam(name = Patient.SP_IDENTIFIER) ReferenceParam identifier) {
 		return encounterResource.searchEncountersByPatientIdentifier(identifier);
 	}
 
@@ -93,7 +93,7 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	 * @param partOf the top level visit
 	 */
 	@Search()
-	public List<Encounter> searchEncountersByPatientIdentifierAndPartOf(@RequiredParam(name = Encounter.SP_PATIENT, chainWhitelist = { Patient.SP_IDENTIFIER }) ReferenceParam patientIdentifier,
+	public List<Encounter> searchEncountersByPatientIdentifierAndPartOf(@RequiredParam(name = Patient.SP_IDENTIFIER) ReferenceParam patientIdentifier,
 	                                                                    @RequiredParam(name = Encounter.SP_PART_OF) ReferenceParam partOf) {
 		return encounterResource.searchEncountersByPatientIdentifierAndPartOf(patientIdentifier, partOf);
 	}

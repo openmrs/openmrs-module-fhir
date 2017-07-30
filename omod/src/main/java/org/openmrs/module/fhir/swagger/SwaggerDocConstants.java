@@ -88,7 +88,10 @@ public class SwaggerDocConstants {
     public static final String ERROR_RESPONSE_CODE = "404";
     public static final String FORMAT_PARAM = "_format";
     public static final String GENERAL_ERROR = "GeneralError";
-    public static final String EVERYTHING = "$everything";
+    public static final String EVERYTHING = "everything";
+    public static final String EVERYTHING_WITH_DOLLAR_PREFIX = "$everything";
+    public static final String OPERATION_DEFINITON = "OperationDefinition";
+    public static final String STRUCTURE_DEFINITON = "StructureDefinition";
     public static final String ERROR_OCCURRED = "When error occurred";
     public static final String FORMAT_PARAM_NAME = "formatParam";
     public static final String NAME_PATIENT = "patient";
