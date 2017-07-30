@@ -13,13 +13,11 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Observation;
 import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -32,9 +30,10 @@ import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRObsUtil;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 
-import ca.uhn.fhir.model.dstu2.resource.Observation;
-import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
@@ -224,7 +223,7 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	@Override
 	public void deleteObs(String id) {
 		Obs obs = Context.getObsService().getObsByUuid(id);
-		Context.getObsService().voidObs(obs, "DELETED by FHIR Request");
+		Context.getObsService().voidObs(obs, FHIRConstants.OBS_DELETE_MESSAGE);
 	}
 	
 	/**
@@ -241,7 +240,7 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 			}
 			throw new UnprocessableEntityException(errorMessage.toString());
 		}
-		obs = Context.getObsService().saveObs(obs, "CREATED by FHIR Request");
+		obs = Context.getObsService().saveObs(obs, FHIRConstants.OBS_CREATE_MESSAGE);
 		return FHIRObsUtil.generateObs(obs);
 	}
 	
@@ -261,13 +260,13 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 				}
 				throw new UnprocessableEntityException(errorMessage.toString());
 			}
-			omrsObs = Context.getObsService().saveObs(retrievedObs, "Updated via FHIR");
+			omrsObs = Context.getObsService().saveObs(retrievedObs, FHIRConstants.OBS_UPDATE_MESSAGE);
 			return FHIRObsUtil.generateObs(omrsObs);
 		} else { // no observation is associated with the given uuid. so create a new observation with the given uuid
 			if (observation.getId() == null) { // since we need to PUT the observation to a specific URI, we need to set the uuid
 				// here, if it is not
 				// already set.
-				IdDt uuid = new IdDt();
+				IdType uuid = new IdType();
 				uuid.setValue(theId);
 				observation.setId(uuid);
 			}

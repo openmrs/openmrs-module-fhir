@@ -13,16 +13,12 @@
  */
 package org.openmrs.module.fhir.api;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
+import org.hl7.fhir.dstu3.model.Enumerations;
+import org.hl7.fhir.dstu3.model.HumanName;
+import org.hl7.fhir.dstu3.model.Identifier;
+import org.hl7.fhir.dstu3.model.Person;
+import org.hl7.fhir.dstu3.model.Practitioner;
+import org.hl7.fhir.dstu3.model.StringType;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.PersonName;
@@ -31,13 +27,15 @@ import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
 import org.openmrs.module.fhir.exception.FHIRValidationException;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
-import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
-import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
-import ca.uhn.fhir.model.dstu2.resource.Person;
-import ca.uhn.fhir.model.dstu2.resource.Practitioner;
-import ca.uhn.fhir.model.dstu2.valueset.AdministrativeGenderEnum;
-import ca.uhn.fhir.model.primitive.DateDt;
-import ca.uhn.fhir.model.primitive.StringDt;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class PractitionerServiceTest extends BaseModuleContextSensitiveTest {
 
@@ -111,39 +109,35 @@ public class PractitionerServiceTest extends BaseModuleContextSensitiveTest {
 	public void createPractitioner_shoulcreateNewPerson() throws FHIRValidationException {
 		Practitioner practitioner = new Practitioner();
 		
-		HumanNameDt fhirName = new HumanNameDt();
-		StringDt familyName = new StringDt();
-		familyName.setValue("xxx");
-		List<StringDt> familyNames = new ArrayList<StringDt>();
-		familyNames.add(familyName);
-		fhirName.setFamily(familyNames);
-		StringDt givenName = new StringDt();
+		HumanName fhirName = new HumanName();
+		fhirName.setFamily("xxx");
+		StringType givenName = new StringType();
 		givenName.setValue("yyy");
-		List<StringDt> givenNames = new ArrayList<StringDt>();
+		List<StringType> givenNames = new ArrayList<StringType>();
 		givenNames.add(givenName);
 		fhirName.setGiven(givenNames);
-		practitioner.setName(fhirName);
+		List<HumanName> names = new ArrayList<HumanName>();
+		names.add(fhirName);
+		practitioner.setName(names);
 		
-		practitioner.setGender(AdministrativeGenderEnum.MALE);
+		practitioner.setGender(Enumerations.AdministrativeGender.MALE);
 		Date bdate = new Date();
-		DateDt fhirBirthDate = new DateDt();
-		fhirBirthDate.setValue(bdate);
-		practitioner.setBirthDate(fhirBirthDate);
+		practitioner.setBirthDate(bdate);
 		
-		List<IdentifierDt> identifiers = new ArrayList<IdentifierDt>();
-		IdentifierDt identifier = new IdentifierDt();
+		List<Identifier> identifiers = new ArrayList<Identifier>();
+		Identifier identifier = new Identifier();
 		identifier.setValue("fhirTest");
 		identifiers.add(identifier);
 		practitioner.setIdentifier(identifiers);
 		
 		Practitioner practitionerNew = getService().createFHIRPractitioner(practitioner);
 		assertNotNull(practitionerNew);
-		HumanNameDt humanNameDt = practitionerNew.getName();
-		List<StringDt> fmlyNames = humanNameDt.getFamily();
-		assertEquals(fmlyNames.get(0).getValue(), "xxx");
-		List<StringDt> gvnNames = humanNameDt.getGiven();
+		List<HumanName> humanNameDts = practitionerNew.getName();
+		String fmlyName = humanNameDts.get(0).getFamily();
+		assertEquals(fmlyName, "xxx");
+		List<StringType> gvnNames =  humanNameDts.get(0).getGiven();
 		assertEquals(gvnNames.get(0).getValue(), "yyy");
-		assertEquals(practitionerNew.getGender(), "male");
+		assertEquals(practitionerNew.getGender(), Enumerations.AdministrativeGender.MALE);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		assertEquals(dateFormat.format(practitionerNew.getBirthDate()), dateFormat.format(bdate.getTime()));
 		identifiers = practitionerNew.getIdentifier();
@@ -158,15 +152,13 @@ public class PractitionerServiceTest extends BaseModuleContextSensitiveTest {
 		Person personfhir = FHIRPersonUtil.generatePerson(person);
 		
 		Practitioner practitioner = new Practitioner();
-		practitioner.setGender(personfhir.getGenderElement());
-		DateDt fhirBirthDate = new DateDt();
-		fhirBirthDate.setValue(personfhir.getBirthDate());
-		practitioner.setBirthDate(fhirBirthDate);
+		practitioner.setGender(personfhir.getGenderElement().getValue());
+		practitioner.setBirthDate(personfhir.getBirthDate());
 		
-		practitioner.setName(personfhir.getName().get(0));
+		practitioner.setName(personfhir.getName());
 		
-		List<IdentifierDt> identifiers = new ArrayList<IdentifierDt>();
-		IdentifierDt idnt = new IdentifierDt();
+		List<Identifier> identifiers = new ArrayList<Identifier>();
+		Identifier idnt = new Identifier();
 		idnt.setValue("fhirTest");
 		identifiers.add(idnt);
 		practitioner.setIdentifier(identifiers);

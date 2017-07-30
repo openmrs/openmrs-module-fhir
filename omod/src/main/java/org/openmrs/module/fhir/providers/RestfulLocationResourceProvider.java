@@ -13,15 +13,6 @@
  */
 package org.openmrs.module.fhir.providers;
 
-import java.util.List;
-
-import org.openmrs.module.fhir.api.util.FHIRConstants;
-import org.openmrs.module.fhir.resources.FHIRLocationResource;
-
-import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu2.resource.Location;
-import ca.uhn.fhir.model.dstu2.resource.OperationOutcome;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.ConditionalUrlParam;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
@@ -36,6 +27,16 @@ import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.PreconditionFailedException;
+import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Location;
+import org.hl7.fhir.dstu3.model.OperationOutcome;
+import org.hl7.fhir.dstu3.model.Resource;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.module.fhir.resources.FHIRLocationResource;
+
+import java.util.List;
 
 public class RestfulLocationResourceProvider implements IResourceProvider {
 	
@@ -46,7 +47,7 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	}
 	
 	@Override
-	public Class<? extends IResource> getResourceType() {
+	public Class<? extends Resource> getResourceType() {
 		return Location.class;
 	}
 	
@@ -59,7 +60,7 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read()
-	public Location getResourceById(@IdParam IdDt theId) {
+	public Location getResourceById(@IdParam IdType theId) {
 		Location result = null;
 		result = locationResource.getByUniqueId(theId);
 		return result;
@@ -105,7 +106,7 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	 * @param theId object containing the id
 	 */
 	@Delete()
-	public void deleteLocation(@IdParam IdDt theId) {
+	public void deleteLocation(@IdParam IdType theId) {
 		locationResource.deleteLocation(theId);
 	}
 	
@@ -117,11 +118,14 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	 * @return Method outcome contains the status of the update operation
 	 */
 	@Update
-	public MethodOutcome updateLocation(@ResourceParam Location location, @IdParam IdDt theId) {
+	public MethodOutcome updateLocation(@ResourceParam Location location, @IdParam IdType theId) {
 		MethodOutcome retVal = new MethodOutcome();
 		OperationOutcome outcome = new OperationOutcome();
-		location = locationResource.updateLocation(theId.getIdPart(), location);
-		outcome.addIssue().setDetails("Location successfully updated");
+		locationResource.updateLocation(theId.getIdPart(), location);
+		CodeableConcept concept = new CodeableConcept();
+		Coding coding = concept.addCoding();
+		coding.setDisplay("Location successfully updated" + theId.getId());
+		outcome.addIssue().setDetails(concept);
 		retVal.setOperationOutcome(outcome);
 		return retVal;
 	}
@@ -129,7 +133,7 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	/**
 	 * Conditionally update location by name.
 	 * 
-	 * @param theLocation {@link ca.uhn.fhir.model.dstu2.resource.Location} object provided by the
+	 * @param theLocation {@link org.hl7.fhir.dstu3.model.Location} object provided by the
 	 *            {@link ca.uhn.fhir .rest.server.RestfulServer}
 	 * @param theId Only one of theId or theConditional will have a value and the other will be
 	 *            null, depending on the URL passed into the server
@@ -137,7 +141,7 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	 * @return MethodOutcome which contains the status of the operation
 	 */
 	@Update()
-	public MethodOutcome updateLocationByName(@ResourceParam Location theLocation, @IdParam IdDt theId,
+	public MethodOutcome updateLocationByName(@ResourceParam Location theLocation, @IdParam IdType theId,
 	                                          @ConditionalUrlParam String theConditional) {
 		MethodOutcome outcome = new MethodOutcome();
 		OperationOutcome operationoutcome = null;
@@ -147,7 +151,10 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 			String locationName = theConditional.substring(startIndex + 1);
 			if (locationName == null) {
 				operationoutcome = new OperationOutcome();
-				operationoutcome.addIssue().setDetails("Please check Condition URL format");
+				CodeableConcept concept = new CodeableConcept();
+				Coding coding = concept.addCoding();
+				coding.setDisplay("Please check Condition URL format");
+				operationoutcome.addIssue().setDetails(concept);
 				outcome.setOperationOutcome(operationoutcome);
 				return outcome;
 			}
@@ -157,7 +164,9 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 			if (locationList.size() == 0) {
 				outcome = updateLocation(theLocation, null);
 			} else if (locationList.size() == 1) {
-				outcome = updateLocation(theLocation, locationList.get(0).getId());
+				IdType idType = new IdType();
+				idType.setValue(locationList.get(0).getId());
+				outcome = updateLocation(theLocation, idType);
 			} else {
 				throw new PreconditionFailedException("There are more than one Location for the given condition");
 			}
@@ -177,9 +186,12 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	public MethodOutcome createFHIRLocation(@ResourceParam Location location) {
 		location = locationResource.createLocation(location);
 		MethodOutcome retVal = new MethodOutcome();
-		retVal.setId(new IdDt(FHIRConstants.LOCATION, location.getId().getIdPart()));
+		retVal.setId(new IdType(FHIRConstants.LOCATION, location.getId()));
 		OperationOutcome outcome = new OperationOutcome();
-		outcome.addIssue().setDetails("Location is successfully created");
+		CodeableConcept concept = new CodeableConcept();
+		Coding coding = concept.addCoding();
+		coding.setDisplay("Location is successfully created with id " + location.getId());
+		outcome.addIssue().setDetails(concept);
 		retVal.setOperationOutcome(outcome);
 		return retVal;
 	}

@@ -13,10 +13,10 @@
  */
 package org.openmrs.module.fhir.swagger.docs;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 import java.util.Map;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 //Describes an operation available on a single path
 public class Operation {

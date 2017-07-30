@@ -13,12 +13,12 @@
  */
 package org.openmrs.module.fhir.resources;
 
-import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import org.hl7.fhir.dstu3.model.DiagnosticReport;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.DiagnosticReportService;
 
@@ -26,7 +26,7 @@ import java.util.List;
 
 public class FHIRDiagnosticReportResource extends Resource {
 
-	public DiagnosticReport getByUniqueId(IdDt id) {
+	public DiagnosticReport getByUniqueId(IdType id) {
 		DiagnosticReportService diagnosticReportService = Context.getService(DiagnosticReportService.class);
 		DiagnosticReport fhirDiagnosticReport = diagnosticReportService.getDiagnosticReport(id.getIdPart());
 		if (fhirDiagnosticReport == null) {
@@ -45,7 +45,7 @@ public class FHIRDiagnosticReportResource extends Resource {
 		return diagnosticReportService.updateFHIRDiagnosticReport(diagnosticReport, theId);
 	}
 
-	public void retireDiagnosticReport(IdDt id) {
+	public void retireDiagnosticReport(IdType id) {
 		DiagnosticReportService diagnosticReportService = Context.getService(DiagnosticReportService.class);
 		diagnosticReportService.retireDiagnosticReport(id.getIdPart());
 	}

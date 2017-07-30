@@ -13,9 +13,9 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hl7.fhir.dstu3.model.AllergyIntolerance;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.AllergyIntoleranceService;
 import org.openmrs.module.fhir.api.allergy.AllergyStrategyUtil;

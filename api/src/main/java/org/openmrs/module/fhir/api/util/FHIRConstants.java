@@ -235,7 +235,8 @@ public final class FHIRConstants {
 	public static final String DIAGNOSTIC_REPORT_RESULT = "result";
 	public static final String DIAGNOSTIC_REPORT_IMAGING_STUDY = "imaging_study";
 	public static final String DIAGNOSTIC_REPORT_PRESENTED_FORM = "presentedForm";
-	
+	public static final String DIAGNOSTIC_REPORT = "DiagnosticReport";
+
 	public static final String PARAMETER_NAME = "name";
 	
 	public static final String PARAMETER_GIVENNAME = "givenName";
@@ -249,5 +250,18 @@ public final class FHIRConstants {
 	//module id or name
 	public static final String MODULE_ID = "fhir";
 	public static final String URI_PREFIX_GLOBAL_PROPERTY_NAME = MODULE_ID + ".uriPrefix";
-	
+
+	public static final String DEFAULT = "DEFAULT";
+	public static final String CODING_0074 = "http://hl7.org/fhir/v2/0074";
+	public static final String ENCOUNTER_DELETE_MESSAGE = "DELETED by FHIR request";
+	public static final String OBS_DELETE_MESSAGE = "DELETED by FHIR Request";
+	public static final String OBS_CREATE_MESSAGE = "CREATED by FHIR Request";
+	public static final String OBS_UPDATE_MESSAGE = "Updated via FHIR";
+	public static final String PATIENT_DELETE_MESSAGE  = "DELETED by FHIR request";
+	public static final String PERSON_VOIDED_MESSAGE  = "Voided by FHIR Request";
+	public static final String PATIENT_VOIDED_MESSAGE  = "Deleted from FHIR module";
+
+	public static final String POST  = "POST";
+	public static final String PUT  = "PUT";
+	public static final String DELETE  = "DELETE";
 }

@@ -13,7 +13,7 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu2.resource.Appointment;
+import org.hl7.fhir.dstu3.model.Appointment;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

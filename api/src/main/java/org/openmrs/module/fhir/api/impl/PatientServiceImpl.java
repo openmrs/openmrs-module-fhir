@@ -13,11 +13,15 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hl7.fhir.dstu3.model.Bundle;
+import org.hl7.fhir.dstu3.model.FamilyMemberHistory;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Patient;
 import org.openmrs.Encounter;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonName;
@@ -29,17 +33,13 @@ import org.openmrs.module.fhir.api.EncounterService;
 import org.openmrs.module.fhir.api.FamilyMemberHistoryService;
 import org.openmrs.module.fhir.api.PatientService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRLocationUtil;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 import org.openmrs.module.fhir.api.util.OMRSFHIRVisitUtil;
 
-import ca.uhn.fhir.model.dstu2.resource.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.FamilyMemberHistory;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
-import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
-import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
@@ -159,9 +159,9 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 			}
 		}
 		Bundle bundle = new Bundle();
-		List<Bundle.Entry> filteredList = new ArrayList<Bundle.Entry>();
+		List<Bundle.BundleEntryComponent> filteredList = new ArrayList<Bundle.BundleEntryComponent>();
 		for (Patient fhirPatient : fhirPatientList) {
-			Bundle.Entry entry = new Bundle.Entry();
+			Bundle.BundleEntryComponent entry = new Bundle.BundleEntryComponent();
 			entry.setResource(fhirPatient);
 			filteredList.add(entry);
 		}
@@ -188,9 +188,9 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 			}
 		}
 		Bundle bundle = new Bundle();
-		List<Bundle.Entry> filteredList = new ArrayList<Bundle.Entry>();
+		List<Bundle.BundleEntryComponent> filteredList = new ArrayList<Bundle.BundleEntryComponent>();
 		for (Patient fhirPatient : fhirPatientList) {
-			Bundle.Entry entry = new Bundle.Entry();
+			Bundle.BundleEntryComponent entry = new Bundle.BundleEntryComponent();
 			entry.setResource(fhirPatient);
 			filteredList.add(entry);
 		}
@@ -208,9 +208,9 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 			fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
 		}
 		Bundle bundle = new Bundle();
-		List<Bundle.Entry> filteredList = new ArrayList<Bundle.Entry>();
+		List<Bundle.BundleEntryComponent> filteredList = new ArrayList<Bundle.BundleEntryComponent>();
 		for (Patient fhirPatient : fhirPatientList) {
-			Bundle.Entry entry = new Bundle.Entry();
+			Bundle.BundleEntryComponent entry = new Bundle.BundleEntryComponent();
 			entry.setResource(fhirPatient);
 			filteredList.add(entry);
 		}
@@ -233,7 +233,7 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 		Bundle bundle = new Bundle();
 
 		if (omsrPatient != null) {
-			Bundle.Entry patient = bundle.addEntry();
+			Bundle.BundleEntryComponent patient = bundle.addEntry();
 			patient.setResource(FHIRPatientUtil.generatePatient(omsrPatient));
 
 			//Set Enconter resources using encounter everything operation
@@ -256,12 +256,12 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 			}
 
 			//Filter resources for duplicates
-			List<Bundle.Entry> filteredList = new ArrayList<Bundle.Entry>();
+			List<Bundle.BundleEntryComponent> filteredList = new ArrayList<Bundle.BundleEntryComponent>();
 			boolean contains;
-			for (Bundle.Entry temp : bundle.getEntry()) {
+			for (Bundle.BundleEntryComponent temp : bundle.getEntry()) {
 				contains = false;
-				for (Bundle.Entry filtered : filteredList) {
-					if (filtered.getResource().getId().getIdPart().equals(temp.getResource().getId().getIdPart())) {
+				for (Bundle.BundleEntryComponent filtered : filteredList) {
+					if (filtered.getResource().getId().equals(temp.getResource().getId())) {
 						contains = true;
 					}
 				}
@@ -282,10 +282,11 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 		org.openmrs.Patient patient = Context.getPatientService().getPatientByUuid(id);
 		// patient not found. return with 404
 		if (patient == null) {
-			throw new ResourceNotFoundException(Patient.class, new IdDt("Patient", id));
+			//Jira related https://issues.openmrs.org/browse/FM-194
+			throw new ResourceNotFoundException(new IdType(FHIRConstants.PATIENT, id));
 		}
 		try {
-			Context.getPatientService().voidPatient(patient, "DELETED by FHIR request");
+			Context.getPatientService().voidPatient(patient, FHIRConstants.PATIENT_DELETE_MESSAGE);
 		} catch (APIException ex) {
 			// refused to retire resource.  return with 405
 			throw new MethodNotAllowedException("The OpenMRS API refused to retire the Patient via the FHIR request.");
@@ -335,7 +336,7 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 			if (patient.getId() == null) { // since we need to PUT the patient to a specific URI, we need to set the uuid
 				// here, if it is not
 				// already set.
-				IdDt uuid = new IdDt();
+				IdType uuid = new IdType();
 				uuid.setValue(theId);
 				patient.setId(uuid);
 			}

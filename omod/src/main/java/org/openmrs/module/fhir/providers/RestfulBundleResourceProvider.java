@@ -13,9 +13,17 @@
  */
 package org.openmrs.module.fhir.providers;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import ca.uhn.fhir.rest.annotation.Transaction;
+import ca.uhn.fhir.rest.annotation.TransactionParam;
+import ca.uhn.fhir.rest.server.IResourceProvider;
+import org.hl7.fhir.dstu3.model.Bundle;
+import org.hl7.fhir.dstu3.model.Encounter;
+import org.hl7.fhir.dstu3.model.Location;
+import org.hl7.fhir.dstu3.model.Observation;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.Person;
+import org.hl7.fhir.dstu3.model.Resource;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.resources.FHIRBundleResource;
 import org.openmrs.module.fhir.resources.FHIREncounterResource;
 import org.openmrs.module.fhir.resources.FHIRLocationResource;
@@ -23,17 +31,8 @@ import org.openmrs.module.fhir.resources.FHIRObservationResource;
 import org.openmrs.module.fhir.resources.FHIRPatientResource;
 import org.openmrs.module.fhir.resources.FHIRPersonResource;
 
-import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu2.resource.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.Bundle.Entry;
-import ca.uhn.fhir.model.dstu2.resource.Encounter;
-import ca.uhn.fhir.model.dstu2.resource.Location;
-import ca.uhn.fhir.model.dstu2.resource.Observation;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.dstu2.resource.Person;
-import ca.uhn.fhir.rest.annotation.Transaction;
-import ca.uhn.fhir.rest.annotation.TransactionParam;
-import ca.uhn.fhir.rest.server.IResourceProvider;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RestfulBundleResourceProvider implements IResourceProvider {
 	
@@ -44,7 +43,7 @@ public class RestfulBundleResourceProvider implements IResourceProvider {
 	}
 	
 	@Override
-	public Class<? extends IResource> getResourceType() {
+	public Class<? extends Resource> getResourceType() {
 		return Bundle.class;
 	}
 	
@@ -52,20 +51,20 @@ public class RestfulBundleResourceProvider implements IResourceProvider {
 	public Bundle transaction(@TransactionParam Bundle theResources) {
 		// theResources will contain a complete bundle of all resources to persist
 		// in a single transaction
-		List<IResource> postResources = new ArrayList<IResource>();
-		List<IResource> putResources = new ArrayList<IResource>();
+		List<Resource> postResources = new ArrayList<Resource>();
+		List<Resource> putResources = new ArrayList<Resource>();
 		List<String> deleteResources = new ArrayList<String>();
-		for (Entry entry : theResources.getEntry()) {
-			if("POST".equals(entry.getRequest().getMethod())){
+		for (Bundle.BundleEntryComponent entry : theResources.getEntry()) {
+			if(FHIRConstants.POST.equals(entry.getRequest().getMethod())){
 				postResources.add(entry.getResource());
-			}else if("PUT".equals(entry.getRequest().getMethod())){
+			}else if(FHIRConstants.PUT.equals(entry.getRequest().getMethod())){
 				putResources.add(entry.getResource());
-			}else if("DELETE".equals(entry.getRequest().getMethod())){
+			}else if(FHIRConstants.DELETE.equals(entry.getRequest().getMethod())){
 				deleteResources.add(entry.getRequest().getUrl());
 			}
         }
 		
-		for (IResource next : postResources) {
+		for (Resource next : postResources) {
 			if (next instanceof Encounter) {
 				FHIREncounterResource encounterResource = new FHIREncounterResource();
 				encounterResource.createFHIREncounter((Encounter) next);
@@ -97,7 +96,7 @@ public class RestfulBundleResourceProvider implements IResourceProvider {
 		/*Bundle retVal = new Bundle();//(theResources);
 		for (IResource next : theResources) {
 			
-			IdDt newId = new IdDt("Patient", "1", "2");
+			IdType newId = new IdType("Patient", "1", "2");
 			next.setId(newId);
 		}*/
 		

@@ -13,17 +13,6 @@
  */
 package org.openmrs.module.fhir.providers;
 
-import java.util.List;
-
-import org.openmrs.module.fhir.api.util.FHIRConstants;
-import org.openmrs.module.fhir.resources.FHIREncounterResource;
-
-import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu2.resource.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.Encounter;
-import ca.uhn.fhir.model.dstu2.resource.OperationOutcome;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
@@ -36,6 +25,18 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+import org.hl7.fhir.dstu3.model.Bundle;
+import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.Encounter;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.OperationOutcome;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.Resource;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.module.fhir.resources.FHIREncounterResource;
+
+import java.util.List;
 
 public class RestfulEncounterResourceProvider implements IResourceProvider {
 
@@ -46,7 +47,7 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	}
 
 	@Override
-	public Class<? extends IResource> getResourceType() {
+	public Class<? extends Resource> getResourceType() {
 		return Encounter.class;
 	}
 
@@ -54,12 +55,12 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	 * The "@Read" annotation indicates that this method supports the read operation. Read
 	 * operations should return a single resource instance.
 	 *
-	 * @param theId The read operation takes one parameter, which must be of type IdDt and must be
+	 * @param theId The read operation takes one parameter, which must be of type IdType and must be
 	 *            annotated with the "@Read.IdParam" annotation.
 	 * @return Returns a resource matching this identifier, or nu	ll if none exists.
 	 */
 	@Read()
-	public Encounter getResourceById(@IdParam IdDt theId) {
+	public Encounter getResourceById(@IdParam IdType theId) {
 		Encounter result = null;
 		result = encounterResource.getByUniqueId(theId);
 		return result;
@@ -116,7 +117,7 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	 * @return bundle
 	 */
 	@Operation(name = "$everything", type = Encounter.class)
-	public Bundle encounterInstanceOperation(@IdParam IdDt encounterId) {
+	public Bundle encounterInstanceOperation(@IdParam IdType encounterId) {
 		return encounterResource.getEncounterOperationsById(encounterId);
 	}
 
@@ -126,7 +127,7 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	 * @param theId
 	 */
 	@Delete
-	public void deleteEncounter(@IdParam IdDt theId) {
+	public void deleteEncounter(@IdParam IdType theId) {
 		encounterResource.deleteEncounter(theId);
 	}
 	
@@ -141,9 +142,12 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	public MethodOutcome createFHIRPatient(@ResourceParam Encounter encounter) {
 		encounter = encounterResource.createFHIREncounter(encounter);
 		MethodOutcome retVal = new MethodOutcome();
-		retVal.setId(new IdDt(FHIRConstants.ENCOUNTER, encounter.getId().getIdPart()));
+		retVal.setId(new IdType(FHIRConstants.ENCOUNTER, encounter.getId()));
 		OperationOutcome outcome = new OperationOutcome();
-		outcome.addIssue().setDetails("Encounter is successfully created");
+		CodeableConcept concept = new CodeableConcept();
+		Coding coding = concept.addCoding();
+		coding.setDisplay("Encounter is successfully created");
+		outcome.addIssue().setDetails(concept);
 		retVal.setOperationOutcome(outcome);
 		return retVal;
 	}

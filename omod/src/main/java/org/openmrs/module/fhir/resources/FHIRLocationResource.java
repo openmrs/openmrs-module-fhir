@@ -13,21 +13,19 @@
  */
 package org.openmrs.module.fhir.resources;
 
-import java.util.List;
-
-import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.LocationService;
-
-import ca.uhn.fhir.model.dstu2.resource.Location;
-import ca.uhn.fhir.model.dstu2.valueset.LocationStatusEnum;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Location;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.LocationService;
+
+import java.util.List;
 
 public class FHIRLocationResource extends Resource {
 	
-	public Location getByUniqueId(IdDt id) {
+	public Location getByUniqueId(IdType id) {
 		LocationService locationService = Context.getService(LocationService.class);
 		Location fhirLocation = locationService.getLocation(id.getIdPart());
 		if (fhirLocation == null) {
@@ -41,7 +39,7 @@ public class FHIRLocationResource extends Resource {
 	}
 	
 	public List<Location> searchLocationsByStatus(TokenParam active) {
-		if (active != null && active.getValue().equalsIgnoreCase(LocationStatusEnum.ACTIVE.getCode())) {
+		if (active != null && active.getValue().equalsIgnoreCase(Location.LocationStatus.ACTIVE.toCode())) {
 			return Context.getService(LocationService.class).searchLocationsByStatus(true);
 		} else {
 			return Context.getService(LocationService.class).searchLocationsByStatus(false);
@@ -52,7 +50,7 @@ public class FHIRLocationResource extends Resource {
 		return Context.getService(LocationService.class).searchLocationsByName(name.getValue());
 	}
 	
-	public void deleteLocation(IdDt id) {
+	public void deleteLocation(IdType id) {
 		LocationService locationService = Context.getService(LocationService.class);
 		locationService.deleteLocation(id.getIdPart());
 	}

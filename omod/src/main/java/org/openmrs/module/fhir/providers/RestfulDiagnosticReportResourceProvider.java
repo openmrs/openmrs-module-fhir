@@ -13,11 +13,6 @@
  */
 package org.openmrs.module.fhir.providers;
 
-import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
-import ca.uhn.fhir.model.dstu2.resource.OperationOutcome;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
@@ -31,7 +26,13 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-
+import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.DiagnosticReport;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.OperationOutcome;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.Resource;
 import org.openmrs.module.fhir.resources.FHIRDiagnosticReportResource;
 
 import java.util.List;
@@ -45,7 +46,7 @@ public class RestfulDiagnosticReportResourceProvider implements IResourceProvide
 	}
 
 	@Override
-	public Class<? extends IResource> getResourceType() {
+	public Class<? extends Resource> getResourceType() {
 		return DiagnosticReport.class;
 	}
 
@@ -59,11 +60,15 @@ public class RestfulDiagnosticReportResourceProvider implements IResourceProvide
 	@Create
 	public MethodOutcome createFHIRDiagnosticReport(@ResourceParam DiagnosticReport diagnosticReport) {
 		diagnosticReport = diagnosticReportResource.createFHIRDiagnosticReport(diagnosticReport);
-		IdDt id = diagnosticReport.getId();
+		String id = diagnosticReport.getId();
+		IdType idType = new IdType();
 		MethodOutcome retVal = new MethodOutcome();
-		retVal.setId(id);
+		retVal.setId(idType);
 		OperationOutcome outcome = new OperationOutcome();
-		outcome.addIssue().setDetails("Diagnostic Report is successfully created at " + id.getValueAsString());
+		CodeableConcept concept = new CodeableConcept();
+		Coding coding = concept.addCoding();
+		coding.setDisplay("Diagnostic Report is successfully created at " + id);
+		outcome.addIssue().setDetails(concept);
 		retVal.setOperationOutcome(outcome);
 		return retVal;
 	}
@@ -77,26 +82,32 @@ public class RestfulDiagnosticReportResourceProvider implements IResourceProvide
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read()
-	public DiagnosticReport getResourceById(@IdParam IdDt theId) {
+	public DiagnosticReport getResourceById(@IdParam IdType theId) {
 		return diagnosticReportResource.getByUniqueId(theId);
 	}
 
 	@Update()
-	public MethodOutcome updateFHIRDiagnosticReport(@ResourceParam DiagnosticReport diagnosticReport, @IdParam IdDt theId) {
+	public MethodOutcome updateFHIRDiagnosticReport(@ResourceParam DiagnosticReport diagnosticReport, @IdParam IdType theId) {
 		MethodOutcome retVal = new MethodOutcome();
 		OperationOutcome outcome = new OperationOutcome();
 		try {
 			diagnosticReport = diagnosticReportResource.updateFHIRDiagnosticReport(diagnosticReport, theId.getIdPart());
 		}
 		catch (Exception e) {
+			CodeableConcept concept = new CodeableConcept();
+			Coding coding = concept.addCoding();
+			coding.setDisplay("No Diagnostic Report is associated with the given UUID to update. Please" +
+					" make sure you have set at lease one non-delete Issued, Subject, Performer and " +
+					"ServiceCategory to create a new Diagnostic Report with the given UUID.");
 			outcome.addIssue()
-					.setDetails("No Diagnostic Report is associated with the given UUID to update. Please" +
-							" make sure you have set at lease one non-delete Issued, Subject, Performer and " +
-							"ServiceCategory to create a new Diagnostic Report with the given UUID.");
+					.setDetails(concept);
 			retVal.setOperationOutcome(outcome);
 			return retVal;
 		}
-		outcome.addIssue().setDetails("Diagnostic Report is successfully updated.");
+		CodeableConcept concept = new CodeableConcept();
+		Coding coding = concept.addCoding();
+		coding.setDisplay("Diagnostic Report is successfully updated.");
+		outcome.addIssue().setDetails(concept);
 		retVal.setOperationOutcome(outcome);
 		return retVal;
 	}
@@ -107,7 +118,7 @@ public class RestfulDiagnosticReportResourceProvider implements IResourceProvide
 	 * @param theId object containing the id
 	 */
 	@Delete()
-	public void retireDiagnosticReport(@IdParam IdDt theId) {
+	public void retireDiagnosticReport(@IdParam IdType theId) {
 		diagnosticReportResource.retireDiagnosticReport(theId);
 	}
 

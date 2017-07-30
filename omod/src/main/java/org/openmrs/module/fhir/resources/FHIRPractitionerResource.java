@@ -13,20 +13,19 @@
  */
 package org.openmrs.module.fhir.resources;
 
-import java.util.List;
-
-import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.PractitionerService;
-
-import ca.uhn.fhir.model.dstu2.resource.Practitioner;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Practitioner;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.PractitionerService;
+
+import java.util.List;
 
 public class FHIRPractitionerResource extends Resource {
 
-	public Practitioner getByUniqueId(IdDt id) {
+	public Practitioner getByUniqueId(IdType id) {
 		PractitionerService practitionerService = Context.getService(PractitionerService.class);
 		Practitioner fhirPractitioner = practitionerService.getPractitioner(id.getIdPart());
 		if (fhirPractitioner == null) {
@@ -73,7 +72,7 @@ public class FHIRPractitionerResource extends Resource {
 		return practitionerService.createFHIRPractitioner(practitioner);
 	}
 	
-	public Practitioner updatePractitioner(Practitioner practitioner, IdDt theId) {
+	public Practitioner updatePractitioner(Practitioner practitioner, String theId) {
 		org.openmrs.module.fhir.api.PractitionerService practitionerService = Context
 		        .getService(org.openmrs.module.fhir.api.PractitionerService.class);
 		return practitionerService.updatePractitioner(practitioner, theId);

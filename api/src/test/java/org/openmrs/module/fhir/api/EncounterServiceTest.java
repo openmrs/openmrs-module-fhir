@@ -13,14 +13,13 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu2.composite.CodeableConceptDt;
-import ca.uhn.fhir.model.dstu2.composite.CodingDt;
-import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
-import ca.uhn.fhir.model.dstu2.resource.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.Composition;
-import ca.uhn.fhir.model.dstu2.resource.Encounter;
-import ca.uhn.fhir.model.primitive.CodeDt;
-import ca.uhn.fhir.model.primitive.IdDt;
+import org.apache.commons.lang.StringUtils;
+import org.hl7.fhir.dstu3.model.Bundle;
+import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.Composition;
+import org.hl7.fhir.dstu3.model.Encounter;
+import org.hl7.fhir.dstu3.model.Reference;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Visit;
@@ -66,17 +65,32 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 		String encounterUuid = "430bbb70-6a9c-4e1e-badb-9d1034b1b5e9";
 		Encounter fhirEncounter = getService().getEncounter(encounterUuid);
 		
-		ResourceReferenceDt visitRef = new ResourceReferenceDt();
+		Reference visitRef = new Reference();
 		visitRef.setDisplay("test");
-		IdDt visitRefId = new IdDt();
 		String visitRefUri = FHIRConstants.ENCOUNTER + "/" + "7fffd6b9-0970-4967-88c7-0b7b50f12ab9";
-		visitRefId.setValue(visitRefUri);
-		visitRef.setReference(visitRefId);
+		visitRef.setReference(visitRefUri);
 		fhirEncounter.setPartOf(visitRef);
 		fhirEncounter = getService().createFHIREncounter(fhirEncounter);
 		assertNotNull(fhirEncounter);
 		assertEquals(fhirEncounter.getPeriod().getStart().toString(), "2005-01-01 00:00:00.0");
-		assertEquals(fhirEncounter.getLocation().get(0).getLocation().getReference().getIdPart(),
+		Reference locationRef = fhirEncounter.getLocation().get(0).getLocation();
+		String locationId =  locationRef.getId();
+
+		if(StringUtils.isEmpty(locationId) && locationRef.getIdentifier() != null) {
+			if(!StringUtils.isEmpty(locationRef.getIdentifier().getId())) {
+				locationId = locationRef.getIdentifier().getId();
+			}
+		}
+
+		if(StringUtils.isEmpty(locationId)) {
+			String participantRefStr = locationRef.getReference();
+			String[] locationRefStrSplit = participantRefStr.split("/");
+			if(locationRefStrSplit.length > 1) {
+				locationId =locationRefStrSplit[1];
+			}
+		}
+
+		assertEquals(locationId,
 		    "c36006e5-9fbb-4f20-866b-0ece245615a1");
 	}
 	
@@ -84,20 +98,18 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 	public void FHIREncounter_shouldCreateVisit() {
 		String encounterUuid = "430bbb70-6a9c-4e1e-badb-9d1034b1b5e9";
 		Encounter fhirEncounter = getService().getEncounter(encounterUuid);
-		CodeableConceptDt typeAsCode = new CodeableConceptDt();
-		List<CodingDt> typeCoding = new ArrayList<CodingDt>();
-		CodingDt code = new CodingDt();
-		CodeDt codeValue = new CodeDt();
-		codeValue.setValue("1");
-		code.setCode(codeValue);
+		CodeableConcept typeAsCode = new CodeableConcept();
+		List<Coding> typeCoding = new ArrayList<Coding>();
+		Coding code = new Coding();
+		code.setCode("1");
 		typeCoding.add(code);
 		typeAsCode.setCoding(typeCoding);
-		List<CodeableConceptDt> typeList = new ArrayList<CodeableConceptDt>();
+		List<CodeableConcept> typeList = new ArrayList<CodeableConcept>();
 		typeList.add(typeAsCode);
 		fhirEncounter.setType(typeList);
 		fhirEncounter = getService().createFHIREncounter(fhirEncounter);
-		Visit visit = Context.getVisitService().getVisitByUuid(fhirEncounter.getId().getIdPart());
-		assertEquals(visit.getUuid(), fhirEncounter.getId().getIdPart());
+		Visit visit = Context.getVisitService().getVisitByUuid(fhirEncounter.getId());
+		assertEquals(visit.getUuid(), fhirEncounter.getId());
 		assertEquals(visit.getVisitType().getVisitTypeId().toString(), "1");
 		assertEquals(visit.getStartDatetime().toString(), "2005-01-01 00:00:00.0");
 		assertNotNull(visit);

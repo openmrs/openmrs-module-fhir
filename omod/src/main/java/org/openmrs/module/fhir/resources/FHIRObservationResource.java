@@ -13,27 +13,26 @@
  */
 package org.openmrs.module.fhir.resources;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.ObsService;
-
 import ca.uhn.fhir.model.base.composite.BaseCodingDt;
-import ca.uhn.fhir.model.dstu2.resource.Observation;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.DateParam;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenOrListParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Observation;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.ObsService;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class FHIRObservationResource extends Resource {
 
-	public Observation getByUniqueId(IdDt id) {
+	public Observation getByUniqueId(IdType id) {
 		ObsService obsService = Context.getService(ObsService.class);
 		Observation fhirObservation = obsService.getObs(id.getIdPart());
 		if (fhirObservation == null) {
@@ -90,7 +89,7 @@ public class FHIRObservationResource extends Resource {
 		return fhirEncounters;
 	}
 
-	public void deleteObservation(IdDt id) {
+	public void deleteObservation(IdType id) {
 		ObsService obsService = Context.getService(ObsService.class);
 		obsService.deleteObs(id.getIdPart());
 	}

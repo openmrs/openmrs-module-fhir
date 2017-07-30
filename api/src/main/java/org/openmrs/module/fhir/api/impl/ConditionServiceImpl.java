@@ -13,11 +13,11 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import ca.uhn.fhir.model.dstu2.resource.Condition;
 import ca.uhn.fhir.rest.server.exceptions.NotModifiedException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hl7.fhir.dstu3.model.Condition;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.ConditionService;
 import org.openmrs.module.fhir.api.condition.ConditionStrategyUtil;

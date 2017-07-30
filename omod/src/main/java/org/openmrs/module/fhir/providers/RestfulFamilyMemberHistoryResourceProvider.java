@@ -13,13 +13,6 @@
  */
 package org.openmrs.module.fhir.providers;
 
-import java.util.List;
-
-import org.openmrs.module.fhir.resources.FHIRFamilyMemberHistoryResource;
-
-import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu2.resource.FamilyMemberHistory;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
@@ -27,6 +20,12 @@ import ca.uhn.fhir.rest.annotation.Search;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+import org.hl7.fhir.dstu3.model.FamilyMemberHistory;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Resource;
+import org.openmrs.module.fhir.resources.FHIRFamilyMemberHistoryResource;
+
+import java.util.List;
 
 public class RestfulFamilyMemberHistoryResourceProvider implements IResourceProvider {
 
@@ -37,7 +36,7 @@ public class RestfulFamilyMemberHistoryResourceProvider implements IResourceProv
 	}
 
 	@Override
-	public Class<? extends IResource> getResourceType() {
+	public Class<? extends Resource> getResourceType() {
 		return FamilyMemberHistory.class;
 	}
 
@@ -51,7 +50,7 @@ public class RestfulFamilyMemberHistoryResourceProvider implements IResourceProv
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read()
-	public FamilyMemberHistory getResourceById(@IdParam IdDt theId) {
+	public FamilyMemberHistory getResourceById(@IdParam IdType theId) {
 		FamilyMemberHistory result = null;
 		result = familyHistoryResource.getByUniqueId(theId);
 		return result;

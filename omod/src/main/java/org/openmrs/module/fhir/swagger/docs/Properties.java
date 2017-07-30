@@ -13,9 +13,9 @@
  */
 package org.openmrs.module.fhir.swagger.docs;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
+
+import java.util.Map;
 
 // Describes properties of an object
 public class Properties {

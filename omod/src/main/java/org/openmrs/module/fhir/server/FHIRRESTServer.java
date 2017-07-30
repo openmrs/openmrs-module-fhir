@@ -13,13 +13,14 @@
  */
 package org.openmrs.module.fhir.server;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.ServletException;
-
-import ca.uhn.fhir.model.dstu2.resource.Conformance;
-import ca.uhn.fhir.rest.server.provider.dstu2.ServerConformanceProvider;
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
+import ca.uhn.fhir.rest.server.EncodingEnum;
+import ca.uhn.fhir.rest.server.IResourceProvider;
+import ca.uhn.fhir.rest.server.RestfulServer;
+import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
+import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
+import org.hl7.fhir.dstu3.hapi.rest.server.ServerCapabilityStatementProvider;
 import org.openmrs.module.fhir.addressstrategy.OpenMRSFHIRRequestAddressStrategy;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.openmrs.module.fhir.providers.RestfulAllergyIntoleranceResourceProvider;
@@ -34,13 +35,9 @@ import org.openmrs.module.fhir.providers.RestfulPersonResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulPractitionerResourceProvider;
 import org.openmrs.module.fhir.util.FHIROmodConstants;
 
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
-import ca.uhn.fhir.rest.server.EncodingEnum;
-import ca.uhn.fhir.rest.server.IResourceProvider;
-import ca.uhn.fhir.rest.server.RestfulServer;
-import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
-import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
+import javax.servlet.ServletException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FHIRRESTServer extends RestfulServer {
 
@@ -68,7 +65,7 @@ public class FHIRRESTServer extends RestfulServer {
 		//Removing composition since we now not support for it
 		//resourceProviders.add(new RestfulCompositionResourceProvider());
 		resourceProviders.add(new RestfulPersonResourceProvider());
-		this.setFhirContext(FhirContext.forDstu2());
+		this.setFhirContext(FhirContext.forDstu3());
 		setResourceProviders(resourceProviders);
 		setServerName(FHIROmodConstants.OPENMRS_FHIR_SERVER_NAME);
 		setServerVersion(FHIROmodConstants.OPENMRS_FHIR_SERVER_VERSION);
@@ -86,8 +83,9 @@ public class FHIRRESTServer extends RestfulServer {
 		registerInterceptor(loggingInterceptor);
 		loggingInterceptor.setLoggerName("test.accesslog");
 		loggingInterceptor
-		        .setMessageFormat("Source[${remoteAddr}] Operation[${operationType} ${idOrResourceName}] UA[${requestHeader.user-agent}] Params[${requestParameters}]");
-		ServerConformanceProvider sc = new ServerConformanceProvider(this);
+		        .setMessageFormat("Source[${remoteAddr}] Operation[${operationType} ${idOrResourceName}] " +
+						"UA[${requestHeader.user-agent}] Params[${requestParameters}]");
+		ServerCapabilityStatementProvider sc = new ServerCapabilityStatementProvider(this);
 		this.setServerConformanceProvider(sc);
 		ConformanceProvider provider = new ConformanceProvider();
 		provider.setRestfulServer(this);

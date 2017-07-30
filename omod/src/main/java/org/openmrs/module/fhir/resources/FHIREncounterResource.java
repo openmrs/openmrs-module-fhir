@@ -13,23 +13,22 @@
  */
 package org.openmrs.module.fhir.resources;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.EncounterService;
-
-import ca.uhn.fhir.model.dstu2.resource.Bundle;
-import ca.uhn.fhir.model.dstu2.resource.Encounter;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import org.hl7.fhir.dstu3.model.Bundle;
+import org.hl7.fhir.dstu3.model.Encounter;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.EncounterService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FHIREncounterResource extends Resource {
 
-	public Encounter getByUniqueId(IdDt id) {
+	public Encounter getByUniqueId(IdType id) {
 		EncounterService encounterService = Context.getService(EncounterService.class);
 		Encounter fhirEncounter = encounterService.getEncounter(id.getIdPart());
 		if (fhirEncounter == null) {
@@ -42,7 +41,7 @@ public class FHIREncounterResource extends Resource {
 		return Context.getService(EncounterService.class).searchEncounterById(id.getValue());
 	}
 
-	public Bundle getEncounterOperationsById(IdDt id) {
+	public Bundle getEncounterOperationsById(IdType id) {
 		return Context.getService(EncounterService.class).getEncounterOperationsById(id.getIdPart());
 	}
 
@@ -75,7 +74,7 @@ public class FHIREncounterResource extends Resource {
 		return fhirEncounters;
 	}
 
-	public void deleteEncounter(IdDt theId) {
+	public void deleteEncounter(IdType theId) {
 		EncounterService encounterService = Context.getService(EncounterService.class);
 		encounterService.deleteEncounter(theId.getIdPart());
 	}

@@ -13,20 +13,6 @@
  */
 package org.openmrs.module.fhir.providers;
 
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
-import org.openmrs.PersonName;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.util.FHIRConstants;
-import org.openmrs.module.fhir.resources.FHIRPractitionerResource;
-
-import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu2.resource.OperationOutcome;
-import ca.uhn.fhir.model.dstu2.resource.Person;
-import ca.uhn.fhir.model.dstu2.resource.Practitioner;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
@@ -38,6 +24,21 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.OperationOutcome;
+import org.hl7.fhir.dstu3.model.Person;
+import org.hl7.fhir.dstu3.model.Practitioner;
+import org.hl7.fhir.dstu3.model.Resource;
+import org.openmrs.PersonName;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.module.fhir.resources.FHIRPractitionerResource;
+
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class RestfulPractitionerResourceProvider implements IResourceProvider {
 
@@ -50,7 +51,7 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	}
 
 	@Override
-	public Class<? extends IResource> getResourceType() {
+	public Class<? extends Resource> getResourceType() {
 		return Practitioner.class;
 	}
 
@@ -58,12 +59,12 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	 * The "@Read" annotation indicates that this method supports the read operation. Read
 	 * operations should return a single resource instance.
 	 *
-	 * @param theId The read operation takes one parameter, which must be of type IdDt and must be
+	 * @param theId The read operation takes one parameter, which must be of type IdType and must be
 	 *            annotated with the "@Read.IdParam" annotation.
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read()
-	public Practitioner getResourceById(@IdParam IdDt theId) {
+	public Practitioner getResourceById(@IdParam IdType theId) {
 		Practitioner result = null;
 		result = practitionerResource.getByUniqueId(theId);
 		return result;
@@ -134,40 +135,38 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	public MethodOutcome createFHIRPractitioner(@ResourceParam Practitioner practitioner) {
 		practitioner = practitionerResource.createFHIRPractitioner(practitioner);
 		MethodOutcome retVal = new MethodOutcome();
-		retVal.setId(new IdDt(FHIRConstants.PERSON, practitioner.getId().getIdPart()));
+		retVal.setId(new IdType(FHIRConstants.PERSON, practitioner.getId()));
 		OperationOutcome outcome = new OperationOutcome();
-		outcome.addIssue().setDetails("Practitioner is successfully created");
+		CodeableConcept concept = new CodeableConcept();
+		Coding coding = concept.addCoding();
+		coding.setDisplay("Practitioner is successfully created with id " + practitioner.getId());
+		outcome.addIssue().setDetails(concept);
 		retVal.setOperationOutcome(outcome);
 		return retVal;
 	}
 	
 	@Update
-	public MethodOutcome updatePractitioner(@ResourceParam Person thePerson, @IdParam IdDt theId) {
+	public MethodOutcome updatePractitioner(@ResourceParam Practitioner practitioner, @IdParam IdType theId) {
 		MethodOutcome retVal = new MethodOutcome();
 		OperationOutcome outcome = new OperationOutcome();
-		org.openmrs.Person p = new org.openmrs.Person();
-		//p.setGender("m");
-		//p.setBirthdate(new Date());
-		
-		PersonName na = new PersonName();
-		Set<PersonName> set = new TreeSet<PersonName>();
-		na.setGivenName("buruwah");
-		na.setFamilyName("haha");
-		set.add(na);
-		//p.setNames(set);
-		p = Context.getPersonService().savePerson(p);
-		/*try {
-			Person person = personResource.updateFHIRPerson(thePerson, theId.getIdPart());
+		try {
+			practitioner = practitionerResource.updatePractitioner(practitioner, practitioner.getId());
 		} catch (Exception e) {
-			outcome.addIssue()
-					.setDetails(
-							"No Person is associated with the given UUID to update. Please"
-							+ " make sure you have set at lease one non-delete name, Gender and Birthdate to create a new "
-							+ "Person with the given UUID");
+			retVal.setOperationOutcome(outcome);
+			CodeableConcept concept = new CodeableConcept();
+			Coding coding = concept.addCoding();
+			coding.setDisplay(
+					"No Person is associated with the given UUID to update. Please"
+							+ " make sure you have set at lease one non-delete name, Gender and birthday to create a new "
+							+ "Person with the given Id" + practitioner.getId());
+			outcome.addIssue().setDetails(concept);
 			retVal.setOperationOutcome(outcome);
 			return retVal;
-		}*/
-		outcome.addIssue().setDetails("Person is successfully updated " + p.getUuid());
+		}
+		CodeableConcept concept = new CodeableConcept();
+		Coding coding = concept.addCoding();
+		coding.setDisplay("Person is successfully updated " + practitioner.getId());
+		outcome.addIssue().setDetails(concept);
 		retVal.setOperationOutcome(outcome);
 		return retVal;
 	}

@@ -3,28 +3,26 @@ package org.openmrs.module.fhir.api.diagnosticreport.handler;
 import ca.uhn.fhir.model.api.Bundle;
 import ca.uhn.fhir.model.api.BundleEntry;
 import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu2.composite.AttachmentDt;
-import ca.uhn.fhir.model.dstu2.composite.CodingDt;
-import ca.uhn.fhir.model.dstu2.composite.HumanNameDt;
-import ca.uhn.fhir.model.dstu2.composite.IdentifierDt;
-import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
-import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
-import ca.uhn.fhir.model.dstu2.resource.ImagingStudy;
-import ca.uhn.fhir.model.dstu2.resource.Observation;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.dstu2.resource.Practitioner;
-import ca.uhn.fhir.model.primitive.Base64BinaryDt;
-import ca.uhn.fhir.model.primitive.DateDt;
-import ca.uhn.fhir.model.primitive.DateTimeDt;
-import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.model.primitive.InstantDt;
-import ca.uhn.fhir.model.primitive.StringDt;
 import ca.uhn.fhir.rest.gclient.ICriterion;
 import ca.uhn.fhir.rest.gclient.ReferenceClientParam;
 import ca.uhn.fhir.rest.gclient.TokenClientParam;
 import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hl7.fhir.dstu3.model.Attachment;
+import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.DiagnosticReport;
+import org.hl7.fhir.dstu3.model.HumanName;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Identifier;
+import org.hl7.fhir.dstu3.model.ImagingStudy;
+import org.hl7.fhir.dstu3.model.Observation;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.Practitioner;
+import org.hl7.fhir.dstu3.model.Reference;
+import org.hl7.fhir.dstu3.model.StringType;
 import org.openmrs.Concept;
 import org.openmrs.ConceptComplex;
 import org.openmrs.Encounter;
@@ -44,7 +42,6 @@ import org.openmrs.module.fhir.api.util.FHIRPractitionerUtil;
 import org.openmrs.module.fhir.api.util.FHIRRESTfulGenericClient;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.openmrs.obs.ComplexData;
-import org.openmrs.util.OpenmrsConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -104,10 +101,10 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 			if (log.isDebugEnabled()) {
 				log.debug("Resource Type : " + resource.getResourceName());
 			}
-			if (resource.getResourceName().equals("DiagnosticReport")) {
+			if (FHIRConstants.DIAGNOSTIC_REPORT.equals(resource.getResourceName())) {
 				DiagnosticReport diagnosticReport = (DiagnosticReport) resource;
 				diagnosticReport = this.saveFHIRDiagnosticReport(diagnosticReport);
-				diagnosticReport = this.getFHIRDiagnosticReportById(diagnosticReport.getId().getIdPart());
+				diagnosticReport = this.getFHIRDiagnosticReportById(diagnosticReport.getId());
 
 				diagnosticReports.add(diagnosticReport);
 			}
@@ -123,13 +120,13 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 		Map<String, Set<Obs>> obsSetsMap = this.separateObs(omrsDiagnosticReport.getObsAtTopLevel(false));
 
 		// Set ID
-		diagnosticReport.setId(new IdDt("DiagnosticReport", omrsDiagnosticReport.getUuid()));
+		diagnosticReport.setId(new IdType(FHIRConstants.DIAGNOSTIC_REPORT, omrsDiagnosticReport.getUuid()));
 
 		// Get Obs and set as `Name`
 		// Get Obs and set as `Status`
 
 		// @required: Get EncounterDateTime and set as `Issued` date
-		diagnosticReport.setIssued(new InstantDt(omrsDiagnosticReport.getEncounterDatetime()));
+		diagnosticReport.setIssued(omrsDiagnosticReport.getEncounterDatetime());
 
 		// @required: Get Encounter Patient and set as `Subject`
 		org.openmrs.Patient omrsPatient = omrsDiagnosticReport.getPatient();
@@ -140,27 +137,36 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 		Set<Provider> omrsProviderList = omrsDiagnosticReport.getProvidersByRole(omrsEncounterRole);
 		// If at least one provider is set (1..1 mapping in FHIR Diagnostic Report)
 		if (!omrsProviderList.isEmpty()) {
-			Practitioner practitioner = FHIRPractitionerUtil.generatePractitioner(omrsProviderList.iterator().next());
-			diagnosticReport.getPerformer().setResource(practitioner);
+			//Role name to a coding display. Is that correct?
+			for(Provider practitioner : omrsProviderList) {
+				CodeableConcept roleConcept = new CodeableConcept();
+				Coding role = new Coding();
+				role.setDisplay(omrsEncounterRole.getName());
+				roleConcept.addCoding(role);
+				Reference practitionerReference = FHIRUtils.buildPractitionerReference(omrsProviderList.iterator().next());
+				DiagnosticReport.DiagnosticReportPerformerComponent performer = diagnosticReport.addPerformer();
+				performer.setRole(roleConcept);
+				performer.setActor(practitionerReference);
+			}
 		}
 
 		// Get EncounterType and Set `ServiceCategory`
 		String serviceCategory = omrsDiagnosticReport.getEncounterType().getName();
-		List<CodingDt> serviceCategoryList = new ArrayList<CodingDt>();
-		serviceCategoryList.add(new CodingDt("http://hl7.org/fhir/v2/0074", serviceCategory));
+		List<Coding> serviceCategoryList = new ArrayList<Coding>();
+		serviceCategoryList.add(new Coding(FHIRConstants.CODING_0074, serviceCategory, serviceCategory));
 		diagnosticReport.getCategory().setCoding(serviceCategoryList);
 
 		// Get valueDateTime in Obs and Set `Diagnosis[x]->DateTime`
 		// Get valueDateTime in Obs and Set `Diagnosis[x]->Period`
 
 		// ObsSet set as `Result`
-		List<ResourceReferenceDt> resultReferenceDtList = new ArrayList<ResourceReferenceDt>();
+		List<Reference> resultReferenceDtList = new ArrayList<Reference>();
 		for (Obs resultObs : obsSetsMap.get(FHIRConstants.DIAGNOSTIC_REPORT_RESULT)) {
 			for (Obs obs : resultObs.getGroupMembers()) {
 				Observation observation = FHIRObsUtil.generateObs(obs);
 				// To make it contained in side Diagnostic Report
-				observation.setId(new IdDt());
-				resultReferenceDtList.add(new ResourceReferenceDt(observation));
+				observation.setId(new IdType());
+				resultReferenceDtList.add(new Reference(observation));
 			}
 		}
 		if (!resultReferenceDtList.isEmpty()) {
@@ -168,7 +174,7 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 		}
 
 		// Binary Obs Handler `PresentedForm`
-		List<AttachmentDt> attachmentDtList = new ArrayList<AttachmentDt>();
+		List<Attachment> attachmentDtList = new ArrayList<Attachment>();
 		for (Obs attachmentObs : obsSetsMap.get(FHIRConstants.DIAGNOSTIC_REPORT_PRESENTED_FORM)) {
 			attachmentDtList.add(getAttachmentDt(attachmentObs));
 		}
@@ -212,15 +218,15 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 		}
 	}
 
-	private AttachmentDt getAttachmentDt(Obs attachmentObs) {
-		AttachmentDt attachmentDt = new AttachmentDt();
+	private Attachment getAttachmentDt(Obs attachmentObs) {
+		Attachment attachmentDt = new Attachment();
 		int obsId = attachmentObs.getObsId();
 
 		Obs complexObs = Context.getObsService().getComplexObs(obsId, "RAW_VIEW");
 		ComplexData complexData = complexObs.getComplexData();
 		attachmentDt.setTitle(complexData.getTitle());
-		attachmentDt.setData(new Base64BinaryDt(((byte[]) complexData.getData())));
-		attachmentDt.setCreation(new DateTimeDt(attachmentObs.getObsDatetime()));
+		attachmentDt.setData((byte[]) complexData.getData());
+		attachmentDt.setCreation(attachmentObs.getObsDatetime());
 		/**
 		 * TODO: Not available in OpenMRS 1.10.0 version
 		 * attachmentDt.setContentType(complexData.getMimeType());
@@ -232,7 +238,7 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 	@Override
 	public DiagnosticReport saveFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
 		if (log.isDebugEnabled()) {
-			log.debug("SaveFHIRDiagnosticReport " + diagnosticReport.getId().getIdPart());
+			log.debug("Saving FHIR DiagnosticReport " + diagnosticReport.getId());
 		}
 		EncounterService encounterService = Context.getEncounterService();
 		ObsService obsService = Context.getObsService();
@@ -245,44 +251,67 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 		omrsDiagnosticReport.setEncounterDatetime(diagnosticReport.getIssued());
 
 		// @required: Set `Subject` as Encounter Patient
+		Reference subjectReference = diagnosticReport.getSubject();
 		org.openmrs.Patient omrsPatient = null;
-		if (diagnosticReport.getSubject().getReference().isLocal()) {
-			Patient patient = (Patient) diagnosticReport.getSubject().getResource();
-			//TODO: org.openmrs.Patient omrsParient = FHIRPatientUtil.generateOpenMRSPatient(patient);
-			omrsPatient = new org.openmrs.Patient();
-			omrsDiagnosticReport.setPatient(omrsPatient);
-		} else {
-			// Get Id of the Patient
-			String patientID = diagnosticReport.getSubject().getReference().getIdPart();
-			if (log.isDebugEnabled()) {
-				log.debug("Get Patient : " + patientID);
+		if (!subjectReference.isEmpty()) {
+			if (subjectReference.isEmpty()) {
+				//TODO: org.openmrs.Patient omrsParient = FHIRPatientUtil.generateOpenMRSPatient(patient);
+				omrsPatient = new org.openmrs.Patient();
+				omrsDiagnosticReport.setPatient(omrsPatient);
+			} else {
+				// Get Id of the Patient
+				Identifier patientIdentifier = subjectReference.getIdentifier();
+				String patientId = "";
+				if(patientIdentifier != null) {
+					// Assume that Patient is stored in the OpenMRS database
+					patientId = patientIdentifier.getId();
+				} else {
+					String patientIdReference = subjectReference.getReference();
+					if(!StringUtils.isEmpty(patientIdReference) && "/".contains(patientIdReference)) {
+						patientId = patientIdReference.split("/")[1];
+					}
+				}
+				omrsPatient = Context.getPatientService().getPatientByUuid(patientId);
+				omrsDiagnosticReport.setPatient(omrsPatient);
 			}
-			omrsPatient = this.getOpenMRSPatient(patientID);
-			omrsDiagnosticReport.setPatient(omrsPatient);
+		} else {
+			omrsPatient = omrsDiagnosticReport.getPatient();
 		}
 
-		// Only support Practitioner (Not support Organization)
-		if ("Practitioner".equals(diagnosticReport.getPerformer().getReference().getResourceType())) {
-			// Set `Performer`(Practitioner) as Encounter Provider
-			if (diagnosticReport.getPerformer().getReference().isLocal()) {
-				/** TODO: Practitioner practitioner = (Practitioner) diagnosticReport.getPerformer().getResource();
-				 org.openmrs.Provider omrsProvider = FHIRPractitionerUtil.generatePractitioner();*/
-				Provider omrsProvider = new Provider();
-				omrsDiagnosticReport.setProvider(new EncounterRole(), omrsProvider);
-			} else {
-				// Get Id of the Performer
-				String practitionerID = diagnosticReport.getPerformer().getReference().getIdPart();
-				if (log.isDebugEnabled()) {
-					log.debug("Get Performer : " + practitionerID);
+		// Set `Performer`(Practitioner) as Encounter Provider
+		List<DiagnosticReport.DiagnosticReportPerformerComponent> performers = diagnosticReport.getPerformer();
+		if (!performers.isEmpty()) {
+			EncounterRole encounterRole = FHIRUtils.getEncounterRole();
+			Provider omrsProvider = null;
+			for (DiagnosticReport.DiagnosticReportPerformerComponent performerComponent : performers) {
+				if (performerComponent.isEmpty()) {
+					//TODO: org.openmrs.Provider omrsProvider = FHIRPractitionerUtil.generatePractitioner();
+					omrsProvider = new Provider();
+					omrsDiagnosticReport.addProvider(encounterRole, omrsProvider);
+				} else {
+					// Get Id of the Performer
+					Identifier practitionerIdentifier = performerComponent.getActor().getIdentifier();
+					String practitionerId = "";
+					if (practitionerIdentifier != null) {
+						// Assume that Performer is stored in the OpenMRS database
+						//TODO: org.openmrs.Provider omrsProvider = FHIRPractitionerUtil.generateOpenMRSPractitioner();
+						practitionerId = practitionerIdentifier.getId();
+						//TODO: Get EncounterRole from DiagnosticReport (remove hard coded value)
+					} else {
+						String practitionerIdReference = performerComponent.getActor().getReference();
+						if (!StringUtils.isEmpty(practitionerIdReference) && "/".contains(practitionerIdReference)) {
+							practitionerId = practitionerIdReference.split("/")[1];
+						}
+					}
+					omrsProvider = Context.getProviderService().getProviderByUuid(practitionerId);
+					omrsDiagnosticReport.addProvider(encounterRole, omrsProvider);
 				}
-				EncounterRole encounterRole = FHIRUtils.getEncounterRole();
-				omrsDiagnosticReport.setProvider(encounterRole, this.getOpenMRSProvider(practitionerID));
 			}
 		}
 
 		// Set `ServiceCategory` as EncounterType
-		List<CodingDt> codingList = diagnosticReport.getCategory().getCoding();
-		String encounterType = "DEFAULT"; // If serviceCategory is not present in the DiagnosticReport, then use "DEFAULT"
+		List<Coding> codingList = diagnosticReport.getCategory().getCoding();
+		String encounterType = FHIRConstants.DEFAULT; // If serviceCategory is not present in the DiagnosticReport, then use "DEFAULT"
 		if (!codingList.isEmpty()) {
 			//TODO: Need to fix. multiple codes
 			encounterType = codingList.get(1).getCode();
@@ -303,17 +332,25 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 		// Set parsed obsSet (`Result` as Set of Obs)
 		Set<Obs> resultObsGroupMembersSet = new HashSet<Obs>();
 		// Iterate through 'result' Observations and adding to the OpenMRS Obs group
-		for (ResourceReferenceDt referenceDt : diagnosticReport.getResult()) {
+		for (Reference referenceDt : diagnosticReport.getResult()) {
 			List<String> errors = new ArrayList<String>();
-			Observation observation;
+			Observation observation = null;
 
-			if (referenceDt.getReference().isLocal()) {
+			if (!referenceDt.getReference().isEmpty()) {
 				observation = (Observation) referenceDt.getResource();
 			} else {
 				// Get Id of the Observation
-				String observationID = referenceDt.getReference().getIdPart();
-				// Assume that the given Observation is stored in the OpenMRS database
-				observation = Context.getService(org.openmrs.module.fhir.api.ObsService.class).getObs(observationID);
+				String observationID = referenceDt.getId();
+				if(StringUtils.isEmpty(observationID)) {
+					// Assume that the given Observation is stored in the OpenMRS database
+					observation = Context.getService(org.openmrs.module.fhir.api.ObsService.class).getObs(observationID);
+				} else {
+					String observationReference = referenceDt.getReference();
+					if(!StringUtils.isEmpty(observationReference) && "/".contains(observationReference)) {
+						observationID = observationReference.split("/")[1];
+						observation = Context.getService(org.openmrs.module.fhir.api.ObsService.class).getObs(observationID);
+					}
+				}
 			}
 			observation = this.prepareForGenerateOpenMRSObs(observation, diagnosticReport);
 			Obs obs = FHIRObsUtil.generateOpenMRSObs(observation, errors);
@@ -347,9 +384,9 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 		/****************************** Set `ImagingStudy` as a set of Obs *********************************/
 		Set<Obs> imagingStudyObsGroupMembersSet = new HashSet<Obs>();
 		// Iterate through 'ImagingStudy', convert to the OpenMRS Obs group
-		for (ResourceReferenceDt referenceDt : diagnosticReport.getImagingStudy()) {
+		for (Reference referenceDt : diagnosticReport.getImagingStudy()) {
 			Obs obs;
-			if (referenceDt.getReference().isLocal()) {
+			if (!referenceDt.getReference().isEmpty()) {
 				List<String> errors = new ArrayList<String>();
 				ImagingStudy imagingStudy = (ImagingStudy) referenceDt.getResource();
 				obs = FHIRImagingStudyUtil.generateOpenMRSImagingStudy(imagingStudy, errors);
@@ -362,7 +399,7 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 				}
 			} else {
 				// Get Id of the ImagingStudy
-				String imagingStudyId = referenceDt.getReference().getIdPart();
+				String imagingStudyId = referenceDt.getId();
 				// Get `ImagingStudy` Obs from external server
 				obs = this.getOpenMRSImagingStudyObs(imagingStudyId);
 			}
@@ -385,24 +422,23 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 		} //-- Set `ImagingStudy` as a set of Obs
 
 		// Set Binary Obs Handler which used to store `PresentedForm`
-		for (AttachmentDt attachment : diagnosticReport.getPresentedForm()) {
+		for (Attachment attachment : diagnosticReport.getPresentedForm()) {
 			int conceptId = FHIRUtils.getDiagnosticReportPresentedFormConcept().getConceptId();
 			if (attachment.getCreation() == null) {
 				if(diagnosticReport.getIssued() != null) {
-					DateTimeDt dateDt = new DateTimeDt(diagnosticReport.getIssued());
-					attachment.setCreation(dateDt);
+					attachment.setCreation(diagnosticReport.getIssued());
 				}
 			}
 			saveComplexData(omrsDiagnosticReport, conceptId, omrsPatient, attachment);
 		}
 		// TODO: Not working properly. Need to test it. omrsDiagnosticReport.setObs(obsList);
 
-		diagnosticReport.setId(new IdDt("DiagnosticReport", omrsEncounter.getUuid()));
+		diagnosticReport.setId(new IdType(FHIRConstants.DIAGNOSTIC_REPORT, omrsEncounter.getUuid()));
 		return diagnosticReport;
 	}
 
 	public Obs saveComplexData(Encounter encounter, int complexConceptId, org.openmrs.Patient patient,
-	                           AttachmentDt attachment) {
+	                           Attachment attachment) {
 		Person person = Context.getPersonService().getPersonByUuid(patient.getUuid());
 		ConceptComplex conceptComplex = Context.getConceptService().getConceptComplex(complexConceptId);
 
@@ -430,7 +466,7 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 	 */
 	private Observation prepareForGenerateOpenMRSObs(Observation observation, DiagnosticReport diagnosticReport) {
 		observation.setSubject(diagnosticReport.getSubject());
-		observation.setIssued(diagnosticReport.getIssuedElement());
+		observation.setIssued(diagnosticReport.getIssued());
 		return observation;
 	}
 
@@ -549,34 +585,34 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 		String practitionerName = "";
 		// extracts openmrs person from the practitioner representation
 		Person personFromRequest = FHIRPractitionerUtil.extractOpenMRSPerson(practitioner);
-		List<IdentifierDt> identifiers = practitioner.getIdentifier();
+		List<Identifier> identifiers = practitioner.getIdentifier();
 		// identifiers can be empty
 		if (identifiers != null && !identifiers.isEmpty()) {
-			IdentifierDt identifierDt = identifiers.get(0);
+			Identifier identifierDt = identifiers.get(0);
 			provider.setIdentifier(identifierDt.getValue());
 		}
 		// if this is true, that means the request doesn't have enough attributes to create a person
 		if (personFromRequest == null) {
 			// from it, or attach a person from existing ones
-			HumanNameDt humanNameDt = practitioner.getName();
+			List<HumanName> humanNames = practitioner.getName();
 			// check whether at least one name is exist. if so we can create a practitioner without
-			if (humanNameDt != null) {
-				// attaching a person, just with a name.
-				List<StringDt> givenNames = humanNameDt.getGiven();
-				if (givenNames != null && !givenNames.isEmpty()) {
-					StringDt givenName = givenNames.get(0);
-					practitionerName = valueOf(givenName);
-				}
-				List<StringDt> familyNames = humanNameDt.getFamily();
-				if (familyNames != null && !familyNames.isEmpty()) {
-					StringDt familyName = familyNames.get(0);
+			//TODO new API change
+			for(HumanName humanNameDt : humanNames) {
+				if (humanNameDt != null) {
+					// attaching a person, just with a name.
+					List<StringType> givenNames = humanNameDt.getGiven();
+					if (givenNames != null && !givenNames.isEmpty()) {
+						StringType givenName = givenNames.get(0);
+						practitionerName = valueOf(givenName);
+					}
+					String familyName = humanNameDt.getFamily();
 					practitionerName = practitionerName + " " + valueOf(familyName); // will create a name like "John David"
-				}
-				if ("".equals(practitionerName)) { // there is no given name or family name. cannot proceed with the request
+					if ("".equals(practitionerName)) { // there is no given name or family name. cannot proceed with the request
+						errors.add("Practitioner should contain at least given name or family name");
+					}
+				} else {
 					errors.add("Practitioner should contain at least given name or family name");
 				}
-			} else {
-				errors.add("Practitioner should contain at least given name or family name");
 			}
 		}
 		if (!errors.isEmpty()) {

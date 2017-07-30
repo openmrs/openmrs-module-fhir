@@ -13,9 +13,8 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.model.dstu2.composite.AddressDt;
-import ca.uhn.fhir.model.dstu2.resource.Location;
-import ca.uhn.fhir.model.dstu2.valueset.LocationStatusEnum;
+import org.hl7.fhir.dstu3.model.Address;
+import org.hl7.fhir.dstu3.model.Location;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
@@ -63,7 +62,7 @@ public class LocationServiceTest extends BaseModuleContextSensitiveTest {
 		List<Location> locations = getService().searchLocationsById(locationUuid);
 		assertNotNull(locations);
 		assertEquals(1, locations.size());
-		assertEquals(locations.get(0).getId().getIdPart(), locationUuid);
+		assertEquals(locations.get(0).getId(), locationUuid);
 	}
 
 	@Test
@@ -73,7 +72,7 @@ public class LocationServiceTest extends BaseModuleContextSensitiveTest {
 		List<Location> locations = getService().searchLocationsByName(name);
 		assertNotNull(locations);
 		assertEquals(1, locations.size());
-		assertEquals(locations.get(0).getId().getIdPart(), locationUuid);
+		assertEquals(locations.get(0).getId(), locationUuid);
 	}
 
 	@Test
@@ -83,7 +82,7 @@ public class LocationServiceTest extends BaseModuleContextSensitiveTest {
 		List<Location> locations = getService().searchLocationsByName(name);
 		assertNotNull(locations);
 		assertEquals(1, locations.size());
-		assertEquals(locations.get(0).getId().getIdPart(), locationUuid);
+		assertEquals(locations.get(0).getId(), locationUuid);
 	}
 
 	@Test
@@ -113,7 +112,7 @@ public class LocationServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals(fhirLocation.getId().toString(), omrsLocation.getUuid().toString());
 		assertEquals(fhirLocation.getName(), omrsLocation.getName());
 		assertEquals(fhirLocation.getDescription(), omrsLocation.getDescription());
-		AddressDt fhirAddress = fhirLocation.getAddress();
+		Address fhirAddress = fhirLocation.getAddress();
 		assertEquals(fhirAddress.getCity(), omrsLocation.getCityVillage());
 		assertEquals(fhirAddress.getCountry(), omrsLocation.getCountry());
 		assertEquals(fhirAddress.getState(), omrsLocation.getStateProvince());
@@ -138,15 +137,15 @@ public class LocationServiceTest extends BaseModuleContextSensitiveTest {
 			}
 
 		}
-		Location.Position position = fhirLocation.getPosition();
+		Location.LocationPositionComponent position = fhirLocation.getPosition();
 		if (position.getLongitude() != null && position.getLatitude() != null) {
 			assertEquals(position.getLatitude().toString(), omrsLocation.getLatitude());
 			assertEquals(position.getLongitude().toString(), omrsLocation.getLongitude());
 		}
-		String status = fhirLocation.getStatus();
-		if (status.equalsIgnoreCase(LocationStatusEnum.ACTIVE.toString())) {
+		Location.LocationStatus status = fhirLocation.getStatus();
+		if (status.toCode().equalsIgnoreCase(Location.LocationStatus.ACTIVE.toCode())) {
 			assertFalse(omrsLocation.getRetired());
-		} else if (status.equals((LocationStatusEnum.INACTIVE.toString()))) {
+		} else if (status.toCode().equals((Location.LocationStatus.INACTIVE.toCode()))) {
 			// throw error and return error message in response.? OR call locationServcice.retireLocation() instead of
 			// locationService.saveLocation()
 			assertFalse(omrsLocation.getRetired());

@@ -13,10 +13,6 @@
  */
 package org.openmrs.module.fhir.providers;
 
-import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
@@ -24,6 +20,10 @@ import ca.uhn.fhir.rest.annotation.Search;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+import org.hl7.fhir.dstu3.model.AllergyIntolerance;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.Resource;
 import org.openmrs.module.fhir.resources.FHIRAllergyIntoleranceResource;
 
 import java.util.List;
@@ -37,7 +37,7 @@ public class RestfulAllergyIntoleranceResourceProvider implements IResourceProvi
 	}
 
 	@Override
-	public Class<? extends IResource> getResourceType() {
+	public Class<? extends Resource> getResourceType() {
 		return AllergyIntolerance.class;
 	}
 
@@ -47,11 +47,11 @@ public class RestfulAllergyIntoleranceResourceProvider implements IResourceProvi
 	 * instance.
 	 *
 	 * @param theId The read operation takes one parameter, which must be of type
-	 *              IdDt and must be annotated with the "@Read.IdParam" annotation.
+	 *              IdType and must be annotated with the "@Read.IdParam" annotation.
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read()
-	public AllergyIntolerance getResourceById(@IdParam IdDt theId) {
+	public AllergyIntolerance getResourceById(@IdParam IdType theId) {
 		return allergyIntoleranceResource.getByUniqueId(theId);
 	}
 

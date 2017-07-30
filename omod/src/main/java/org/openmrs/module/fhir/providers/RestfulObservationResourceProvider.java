@@ -13,16 +13,6 @@
  */
 package org.openmrs.module.fhir.providers;
 
-import java.util.List;
-
-import org.openmrs.module.fhir.api.util.FHIRConstants;
-import org.openmrs.module.fhir.resources.FHIRObservationResource;
-
-import ca.uhn.fhir.model.api.IResource;
-import ca.uhn.fhir.model.dstu2.resource.Observation;
-import ca.uhn.fhir.model.dstu2.resource.OperationOutcome;
-import ca.uhn.fhir.model.dstu2.resource.Patient;
-import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
@@ -37,6 +27,17 @@ import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenOrListParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Observation;
+import org.hl7.fhir.dstu3.model.OperationOutcome;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.Resource;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.module.fhir.resources.FHIRObservationResource;
+
+import java.util.List;
 
 public class RestfulObservationResourceProvider implements IResourceProvider {
 
@@ -47,7 +48,7 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	}
 
 	@Override
-	public Class<? extends IResource> getResourceType() {
+	public Class<? extends Resource> getResourceType() {
 		return Observation.class;
 	}
 
@@ -61,7 +62,7 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read()
-	public Observation getResourceById(@IdParam IdDt theId) {
+	public Observation getResourceById(@IdParam IdType theId) {
 		Observation result = null;
 		result = provider.getByUniqueId(theId);
 		return result;
@@ -150,7 +151,7 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 * @param theId object containing the id
 	 */
 	@Delete()
-	public void deleteObservation(@IdParam IdDt theId) {
+	public void deleteObservation(@IdParam IdType theId) {
 		provider.deleteObservation(theId);
 	}
 	
@@ -163,28 +164,36 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	public MethodOutcome createFHIRObservation(@ResourceParam Observation observation) {
 		observation = provider.createFHIRObservation(observation);
 		MethodOutcome retVal = new MethodOutcome();
-		retVal.setId(new IdDt(FHIRConstants.OBSERVATION, observation.getId().getIdPart()));
+		retVal.setId(new IdType(FHIRConstants.OBSERVATION, observation.getId()));
 		OperationOutcome outcome = new OperationOutcome();
-		outcome.addIssue().setDetails("Observation is successfully created" + observation.getId().getIdPart());
+		CodeableConcept concept = new CodeableConcept();
+		Coding coding = concept.addCoding();
+		coding.setDisplay("Observation is successfully created" + observation.getId());
+		outcome.addIssue().setDetails(concept);
 		retVal.setOperationOutcome(outcome);
 		return retVal;
 	}
 	
 	@Update
-	public MethodOutcome updateFHIRObservation(@ResourceParam Observation observation, @IdParam IdDt theId) {
+	public MethodOutcome updateFHIRObservation(@ResourceParam Observation observation, @IdParam IdType theId) {
 		MethodOutcome retVal = new MethodOutcome();
 		OperationOutcome outcome = new OperationOutcome();
 		try {
 			observation = provider.updateFHIRObservation(observation, theId.getIdPart());
 		}
 		catch (Exception e) {
+			CodeableConcept concept = new CodeableConcept();
+			Coding coding = concept.addCoding();
+			coding.setDisplay("Following exception occured " + e.getMessage());
 			outcome.addIssue()
-.setDetails("Following exception occured " + e.getMessage());
+			.setDetails(concept);
 			retVal.setOperationOutcome(outcome);
 			return retVal;
 		}
-		outcome.addIssue().setDetails(
-		    "Observation is successfully updated. New Observation UUID is " + observation.getId().getIdPart());
+		CodeableConcept concept = new CodeableConcept();
+		Coding coding = concept.addCoding();
+		coding.setDisplay("Observation is successfully updated. New Observation UUID is " + observation.getId());
+		outcome.addIssue().setDetails(concept);
 		retVal.setOperationOutcome(outcome);
 		return retVal;
 	}

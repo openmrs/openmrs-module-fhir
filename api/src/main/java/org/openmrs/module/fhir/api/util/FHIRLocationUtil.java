@@ -13,14 +13,11 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import ca.uhn.fhir.model.dstu2.composite.AddressDt;
-import ca.uhn.fhir.model.dstu2.composite.ResourceReferenceDt;
-import ca.uhn.fhir.model.dstu2.resource.Location;
-import ca.uhn.fhir.model.dstu2.resource.Location.Position;
-import ca.uhn.fhir.model.dstu2.valueset.AddressUseEnum;
-import ca.uhn.fhir.model.dstu2.valueset.LocationStatusEnum;
-import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.model.primitive.StringDt;
+import org.hl7.fhir.dstu3.model.Address;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Location;
+import org.hl7.fhir.dstu3.model.Reference;
+import org.hl7.fhir.dstu3.model.StringType;
 import org.openmrs.api.context.Context;
 
 import java.math.BigDecimal;
@@ -33,7 +30,7 @@ public class FHIRLocationUtil {
 		Location location = new Location();
 
 		//Set resource id
-		IdDt uuid = new IdDt();
+		IdType uuid = new IdType();
 		uuid.setValue(omrsLocation.getUuid());
 		location.setId(uuid);
 
@@ -42,22 +39,22 @@ public class FHIRLocationUtil {
 		location.setDescription(omrsLocation.getDescription());
 
 		//Set address
-		AddressDt address = new AddressDt();
+		Address address = new Address();
 		address.setCity(omrsLocation.getCityVillage());
 		address.setCountry(omrsLocation.getCountry());
 		address.setState(omrsLocation.getStateProvince());
 		address.setPostalCode(omrsLocation.getPostalCode());
-		List<StringDt> addressStrings = new ArrayList<StringDt>();
-		addressStrings.add(new StringDt(omrsLocation.getAddress1()));
-		addressStrings.add(new StringDt(omrsLocation.getAddress2()));
-		addressStrings.add(new StringDt(omrsLocation.getAddress3()));
-		addressStrings.add(new StringDt(omrsLocation.getAddress4()));
-		addressStrings.add(new StringDt(omrsLocation.getAddress5()));
+		List<StringType> addressStrings = new ArrayList<StringType>();
+		addressStrings.add(new StringType(omrsLocation.getAddress1()));
+		addressStrings.add(new StringType(omrsLocation.getAddress2()));
+		addressStrings.add(new StringType(omrsLocation.getAddress3()));
+		addressStrings.add(new StringType(omrsLocation.getAddress4()));
+		addressStrings.add(new StringType(omrsLocation.getAddress5()));
 		address.setLine(addressStrings);
-		address.setUse(AddressUseEnum.WORK);
+		address.setUse(Address.AddressUse.WORK);
 		location.setAddress(address);
 
-		Position position = location.getPosition();
+		Location.LocationPositionComponent position = location.getPosition();
 		if (omrsLocation.getLongitude() != null && !omrsLocation.getLongitude().isEmpty()) {
 			BigDecimal longitude = new BigDecimal(omrsLocation.getLongitude());
 			position.setLongitude(longitude);
@@ -69,13 +66,13 @@ public class FHIRLocationUtil {
 		}
 
 		if (!omrsLocation.isRetired()) {
-			location.setStatus(LocationStatusEnum.ACTIVE);
+			location.setStatus(Location.LocationStatus.ACTIVE);
 		} else {
-			location.setStatus(LocationStatusEnum.INACTIVE);
+			location.setStatus(Location.LocationStatus.INACTIVE);
 		}
 
 		if (omrsLocation.getParentLocation() != null) {
-			ResourceReferenceDt parent = new ResourceReferenceDt();
+			Reference parent = new Reference();
 			parent.setDisplay(omrsLocation.getParentLocation().getName());
 			parent.setReference(FHIRConstants.LOCATION + "/" + omrsLocation.getParentLocation().getUuid());
 			location.setPartOf(parent);
@@ -91,8 +88,8 @@ public class FHIRLocationUtil {
 	public static org.openmrs.Location generateOpenMRSLocation(Location location, List<String> errors) {
 		org.openmrs.Location omrsLocation;
 		//Set resource id (uuid)
-		IdDt id = location.getId();
-		omrsLocation = Context.getLocationService().getLocationByUuid(id.getIdPart());
+		String id = location.getId();
+		omrsLocation = Context.getLocationService().getLocationByUuid(id);
 		if (omrsLocation == null) {
 			// No location found to be updated, creating new location. Should respond with 201 Http Code acc to
 			// specification
@@ -103,12 +100,12 @@ public class FHIRLocationUtil {
 		omrsLocation.setDescription(location.getDescription());
 
 		//Set address
-		AddressDt address = location.getAddress();
+		Address address = location.getAddress();
 		omrsLocation.setCityVillage(address.getCity());
 		omrsLocation.setCountry(address.getCountry());
 		omrsLocation.setStateProvince(address.getState());
 		omrsLocation.setPostalCode(address.getPostalCode());
-		List<StringDt> addressStrings = address.getLine();
+		List<StringType> addressStrings = address.getLine();
 		for (int i = 0; i < addressStrings.size(); i++) {
 			switch (i + 1) {
 				case 1:
@@ -129,7 +126,7 @@ public class FHIRLocationUtil {
 			}
 		}
 
-		Position position = location.getPosition();
+		Location.LocationPositionComponent position = location.getPosition();
 		BigDecimal latitude = position.getLatitude();
 		BigDecimal longitude = position.getLongitude();
 		if (latitude != null && longitude != null) {
@@ -137,9 +134,9 @@ public class FHIRLocationUtil {
 			omrsLocation.setLongitude(longitude.toString());
 		}
 		String status = location.getStatus().toString();
-		if (status.equalsIgnoreCase(LocationStatusEnum.ACTIVE.toString())) {
+		if (status.equalsIgnoreCase(Location.LocationStatus.ACTIVE.toString())) {
 			omrsLocation.setRetired(false);
-		} else if (status.equalsIgnoreCase((LocationStatusEnum.INACTIVE.toString()))) {
+		} else if (status.equalsIgnoreCase((Location.LocationStatus.INACTIVE.toString()))) {
 			// throw error and return error message in response.? OR call locationServcice.retireLocation() instead of
 			// locationService.saveLocation()
 			errors.add(
@@ -148,9 +145,9 @@ public class FHIRLocationUtil {
 			omrsLocation.setRetired(true);
 		}
 
-		ResourceReferenceDt parent = location.getPartOf();
+		Reference parent = location.getPartOf();
 		if (parent != null) {
-			String parentUuid = parent.getReference().getIdPart();
+			String parentUuid = parent.getId();
 			org.openmrs.Location omrsLocationParent = Context.getLocationService().getLocationByUuid(parentUuid);
 			if (omrsLocationParent != null) {
 				omrsLocation.setParentLocation(omrsLocationParent);
