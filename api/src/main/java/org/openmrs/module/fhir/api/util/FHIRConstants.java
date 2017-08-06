@@ -264,4 +264,7 @@ public final class FHIRConstants {
 	public static final String POST  = "POST";
 	public static final String PUT  = "PUT";
 	public static final String DELETE  = "DELETE";
+
+	public static final String ORDER_DELETE_MESSAGE = "DELETED by FHIR Request";
+
 }

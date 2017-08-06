@@ -22,6 +22,7 @@ import org.hl7.fhir.dstu3.model.HumanName;
 import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.Identifier;
 import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.Reference;
 import org.hl7.fhir.dstu3.model.StringType;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
@@ -358,4 +359,29 @@ public class FHIRPatientUtil {
 		return retrievedPatient;
 	}
 
+	/**
+	 * Build FhIRe reference from Patient
+	 * @param patient patient resource
+	 * @return FHIR Reference
+	 */
+	public static Reference buildPatientReference(org.openmrs.Patient patient) {
+		//Build and set patient reference
+		Reference patientReference = new Reference();
+		PersonName name = patient.getPersonName();
+		StringBuilder nameDisplay = new StringBuilder();
+		nameDisplay.append(name.getGivenName());
+		nameDisplay.append(" ");
+		nameDisplay.append(name.getFamilyName());
+		String patientUri;
+		nameDisplay.append("(");
+		nameDisplay.append(FHIRConstants.IDENTIFIER);
+		nameDisplay.append(":");
+		nameDisplay.append(patient.getPatientIdentifier().getIdentifier());
+		nameDisplay.append(")");
+		patientUri = FHIRConstants.PATIENT + "/" + patient.getUuid();
+		patientReference.setReference(patientUri);
+		patientReference.setDisplay(nameDisplay.toString());
+		patientReference.setId(patient.getUuid());
+		return patientReference;
+	}
 }

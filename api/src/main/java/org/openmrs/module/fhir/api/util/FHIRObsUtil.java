@@ -422,5 +422,16 @@ public class FHIRObsUtil {
 		retrievedObs.setComment(requestObs.getComment());
 		return retrievedObs;
 	}
-	
+
+	/**
+	 * Build FhIRe reference from Encounter
+	 * @param encounter encounter resource
+	 * @return FHIR Reference
+     */
+	public static Reference getFHIREncounterReference(Encounter encounter) {
+		Reference encounterRef = new Reference();
+		String encounterUri = FHIRConstants.ENCOUNTER + "/" + encounter.getUuid();
+		encounterRef.setReference(encounterUri);
+		return encounterRef;
+	}
 }
