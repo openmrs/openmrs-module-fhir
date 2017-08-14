@@ -244,12 +244,14 @@ public class FHIRMedicationRequestUtil {
         }
 
         CodeableConcept drugConcept = (CodeableConcept) fhirMedicationRequest.getMedication();
+        String drugId = fhirMedicationRequest.getMedication().getId();
         Concept drugOmrsConcept;
         if (drugConcept == null) {
             errors.add("Medication cannot be empty");
         } else {
             drugOmrsConcept = getConceptFromCode(drugConcept, errors);
             drug.setConcept(drugOmrsConcept);
+            drug.setUuid(drugId);
             order.setDrug(drug);
         }
 

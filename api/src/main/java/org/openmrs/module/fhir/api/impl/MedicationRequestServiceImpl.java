@@ -14,11 +14,13 @@
 package org.openmrs.module.fhir.api.impl;
 
 import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.MedicationRequest;
 import org.openmrs.CareSetting;
+import org.openmrs.Drug;
 import org.openmrs.DrugOrder;
 import org.openmrs.Order;
 import org.openmrs.api.context.Context;
@@ -98,6 +100,14 @@ public class MedicationRequestServiceImpl extends BaseOpenmrsService implements 
         }
         CareSetting careSetting = Context.getOrderService().getCareSetting(2);
         drugOrder.setCareSetting(careSetting);
+
+        if (!StringUtils.isEmpty(drugOrder.getDrug().getUuid())) {
+            Drug drug = Context.getConceptService().getDrugByUuid(drugOrder.getDrug().getUuid());
+            if(drug == null) {
+                Context.getConceptService().saveDrug(drugOrder.getDrug());
+            }
+        }
+
         drugOrder = (DrugOrder) Context.getOrderService().saveOrder(drugOrder, null);
         return FHIRMedicationRequestUtil.generateMedicationRequest(drugOrder);
     }
@@ -119,6 +129,7 @@ public class MedicationRequestServiceImpl extends BaseOpenmrsService implements 
                 }
                 throw new UnprocessableEntityException(errorMessage.toString());
             }
+
             incomingDrugOrder = (DrugOrder) Context.getOrderService().saveOrder(generatedDrugOrder, null);
             return FHIRMedicationRequestUtil.generateMedicationRequest(incomingDrugOrder);
         } else {
