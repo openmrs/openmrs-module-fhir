@@ -243,7 +243,10 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 		obs = Context.getObsService().saveObs(obs, FHIRConstants.OBS_CREATE_MESSAGE);
 		return FHIRObsUtil.generateObs(obs);
 	}
-	
+
+	/**
+	 * @see org.openmrs.module.fhir.api.ObsService#updateFHIRObservation(Observation, String)
+	 */
 	@Override
 	public Observation updateFHIRObservation(Observation observation, String theId) {
 		List<String> errors = new ArrayList<String>();

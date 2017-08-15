@@ -13,7 +13,6 @@
  */
 package org.openmrs.module.fhir.api;
 
-import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.Practitioner;
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
