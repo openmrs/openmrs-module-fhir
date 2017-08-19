@@ -51,7 +51,7 @@ public class MedicationRequestTest extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void getMedicationRequesr_shouldReturnResourceIfExists() {
+	public void getMedicationRequest_shouldReturnResourceIfExists() {
 		String medicationRequestUuid = "56b9196c-bcac-4c2f-b3a2-123464a96439";
 		MedicationRequest medicationRequest = getService().getMedicationRequestById(medicationRequestUuid);
 		assertNotNull(medicationRequest);

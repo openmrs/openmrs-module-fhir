@@ -144,23 +144,9 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	public MethodOutcome updatePractitioner(@ResourceParam Practitioner practitioner, @IdParam IdType theId) {
 		MethodOutcome retVal = new MethodOutcome();
 		OperationOutcome outcome = new OperationOutcome();
-		try {
-			practitioner = practitionerResource.updatePractitioner(practitioner, practitioner.getId());
-		} catch (Exception e) {
-			retVal.setOperationOutcome(outcome);
-			CodeableConcept concept = new CodeableConcept();
-			Coding coding = concept.addCoding();
-			coding.setDisplay(
-					"No Person is associated with the given UUID to update. Please"
-							+ " make sure you have set at lease one non-delete name, Gender and birthday to create a new "
-							+ "Person with the given Id" + practitioner.getId());
-			outcome.addIssue().setDetails(concept);
-			retVal.setOperationOutcome(outcome);
-			return retVal;
-		}
 		CodeableConcept concept = new CodeableConcept();
 		Coding coding = concept.addCoding();
-		coding.setDisplay("Person is successfully updated " + practitioner.getId());
+		coding.setDisplay("Medication request update not supported " + practitioner.getId());
 		outcome.addIssue().setDetails(concept);
 		retVal.setOperationOutcome(outcome);
 		return retVal;
