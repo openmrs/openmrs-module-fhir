@@ -369,8 +369,74 @@ public class FHIRMedicationRequestUtil {
         return order;
     }
 
+    /**
+     * Update drug order
+     * @param requestOrder drug order coming in request
+     * @param retrievedOrder drug order saved in database
+     * @param errors if errors occur
+     * @return updated DrugOrder
+     */
     public static DrugOrder copyObsAttributes(DrugOrder requestOrder, DrugOrder retrievedOrder, List<String> errors) {
-        //TODO
+        //set dose
+        if(requestOrder.getDose() != null) {
+            retrievedOrder.setDose(requestOrder.getDose());
+        }
+
+        //set dose units
+        if(requestOrder.getDoseUnits() != null) {
+            retrievedOrder.setDoseUnits(requestOrder.getDoseUnits());
+        }
+
+        //set quantity units
+        if(requestOrder.getQuantityUnits() != null) {
+            retrievedOrder.setQuantityUnits(requestOrder.getQuantityUnits());
+        }
+
+        //set quantity
+        if(requestOrder.getQuantity() != null) {
+            retrievedOrder.setQuantity(requestOrder.getQuantity());
+        }
+
+        //set drug
+        if(requestOrder.getDrug() != null) {
+            retrievedOrder.setDrug(requestOrder.getDrug());
+        }
+
+        //set dosing instructions
+        if(requestOrder.getDosingInstructions() != null) {
+            retrievedOrder.setDosingInstructions(requestOrder.getDosingInstructions());
+        }
+
+        //set duration units
+        if(requestOrder.getDurationUnits() != null) {
+            retrievedOrder.setDurationUnits(requestOrder.getDurationUnits());
+        }
+
+        //set duration
+        if(requestOrder.getDuration() != null) {
+            retrievedOrder.setDuration(requestOrder.getDuration());
+        }
+
+        //set route
+        if(requestOrder.getRoute() != null) {
+            retrievedOrder.setRoute(requestOrder.getRoute());
+        }
+
+        //set patient
+        if(requestOrder.getPatient() != null) {
+            retrievedOrder.setPatient(requestOrder.getPatient());
+        }
+
+        //set encounter
+        if(requestOrder.getEncounter() != null) {
+            retrievedOrder.setEncounter(requestOrder.getEncounter());
+        }
+
+        //set orderer
+        if(requestOrder.getOrderer() != null) {
+            retrievedOrder.setOrderer(requestOrder.getOrderer());
+        }
+
         return retrievedOrder;
     }
 

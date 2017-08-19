@@ -113,6 +113,7 @@ public class MedicationRequestServiceImpl extends BaseOpenmrsService implements 
     }
 
     /**
+     * NOTE: OpenMRS not allow to edit existing drug order
      * @see MedicationRequestService#updateFHIRMedicationRequest(MedicationRequest, String)
      */
     public MedicationRequest updateFHIRMedicationRequest(MedicationRequest medicationRequest, String uuid) {
