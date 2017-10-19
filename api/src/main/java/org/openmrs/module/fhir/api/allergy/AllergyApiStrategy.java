@@ -46,15 +46,13 @@ public class AllergyApiStrategy implements GenericAllergyStrategy {
 	public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(String identifier) {
 		org.openmrs.api.PatientService patientService = Context.getPatientService();
 		PatientService allergyService = Context.getService(PatientService.class);
-		List<AllergyIntolerance> allergies = new ArrayList<AllergyIntolerance>();
+		List<AllergyIntolerance> allergies = new ArrayList();
 		List<PatientIdentifierType> allPatientIdentifierTypes = patientService.getAllPatientIdentifierTypes();
 		List<org.openmrs.Patient> patientList = patientService.getPatients(identifier, null, allPatientIdentifierTypes,
 				true);
 		if (patientList != null && !patientList.isEmpty()) {
-			List<org.openmrs.Allergy> omrsAllergies;
 			for (Patient patient : patientList) {
-				omrsAllergies = allergyService.getAllergies(patient);
-				for (org.openmrs.Allergy allergy : omrsAllergies) {
+				for (org.openmrs.Allergy allergy : allergyService.getAllergies(patient)) {
 					allergies.add(FHIRAllergyIntoleranceAllergyAPIUtil.generateAllergyTolerance(allergy));
 				}
 			}
@@ -67,10 +65,9 @@ public class AllergyApiStrategy implements GenericAllergyStrategy {
 		org.openmrs.api.PatientService patientService = Context.getPatientService();
 		PatientService allergyService = Context.getService(PatientService.class);
 		List<org.openmrs.Patient> patientList = patientService.getPatients(name, null, null, true);
-		List<AllergyIntolerance> allergies = new ArrayList<AllergyIntolerance>();
+		List<AllergyIntolerance> allergies = new ArrayList();
 		for (Patient patient : patientList) {
-			List<org.openmrs.Allergy> omrsAllergies = allergyService.getAllergies(patient);
-			for (Allergy allergy : omrsAllergies) {
+			for (Allergy allergy : allergyService.getAllergies(patient)) {
 				allergies.add(FHIRAllergyIntoleranceAllergyAPIUtil.generateAllergyTolerance(allergy));
 			}
 		}
@@ -82,10 +79,9 @@ public class AllergyApiStrategy implements GenericAllergyStrategy {
 		org.openmrs.api.PatientService patientService = Context.getPatientService();
 		PatientService allergyService = Context.getService(PatientService.class);
 		Patient patient = patientService.getPatientByUuid(uuid);
-		List<AllergyIntolerance> allergies = new ArrayList<AllergyIntolerance>();
+		List<AllergyIntolerance> allergies = new ArrayList();
 		if (patient != null) {
-			List<org.openmrs.Allergy> omrsAllergies = allergyService.getAllergies(patient);
-			for (Allergy allergy : omrsAllergies) {
+			for (Allergy allergy : allergyService.getAllergies(patient)) {
 				allergies.add(FHIRAllergyIntoleranceAllergyAPIUtil.generateAllergyTolerance(allergy));
 			}
 		}
