@@ -11,17 +11,19 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.fhir.appointment;
+package org.openmrs.module.fhir.api.strategies.allergy;
 
-import org.hl7.fhir.dstu3.model.Appointment;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.module.fhir.api.util.FHIRUtils;
 
-import java.util.List;
+public class AllergyStrategyUtil {
 
-public interface GenericAppointmentStrategy {
-
-	Appointment getAppointmentById(String uuid);
-
-	List<Appointment> searchAppointmentsById(String uuid);
-
-	List<Appointment> searchAppointmentsByPatient(String patientId);
+	public static GenericAllergyStrategy getAllergyStrategy() {
+		String strategy = FHIRUtils.getAllergyStrategy();
+		if (FHIRConstants.OBS_ALLERGY_STRATEGY.equals(strategy)) {
+			return new ObsAllergyStrategy();
+		} else {
+			return new AllergyApiStrategy();
+		}
+	}
 }

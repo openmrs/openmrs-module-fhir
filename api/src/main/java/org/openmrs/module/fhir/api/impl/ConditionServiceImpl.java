@@ -20,7 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.Condition;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.ConditionService;
-import org.openmrs.module.fhir.api.condition.ConditionStrategyUtil;
+import org.openmrs.module.fhir.api.strategies.condition.ConditionStrategyUtil;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRConditionUtil;
 

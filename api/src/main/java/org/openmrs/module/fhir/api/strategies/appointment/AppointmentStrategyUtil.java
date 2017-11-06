@@ -11,19 +11,19 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.fhir.api.condition;
+package org.openmrs.module.fhir.api.strategies.appointment;
 
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 
-public class ConditionStrategyUtil {
+public class AppointmentStrategyUtil {
 
-	public static GenericConditionStrategy getConditionStrategy() {
-		String strategy = FHIRUtils.getAllergyStrategy();
-		if (FHIRConstants.OBS_CONDITION_STRATEGY.equals(strategy)) {
-			return new ObsConditionStrategy();
+	public static GenericAppointmentStrategy getAppointmentStrategy() {
+		String strategy = FHIRUtils.getAppointmentStrategy();
+		if (FHIRConstants.APPOINTMENT_MODULE_STRATEGY.equals(strategy)) {
+			return new AppointmentModuleStrategy();
 		} else {
-			return new ObsConditionStrategy();
+			return null;
 		}
 	}
 }

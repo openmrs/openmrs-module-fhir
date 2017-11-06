@@ -71,7 +71,7 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void searchPatientsById_shouldReturnBundleIfExists() throws FHIRValidationException {
 		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
-		List<Person> persons = getService().searchPersonById(personUuid);
+		List<Person> persons = getService().searchPersonByUuid(personUuid);
 		assertNotNull(persons);
 		assertEquals(1, persons.size());
 		Person fhirPerson = persons.get(0);

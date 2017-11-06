@@ -18,7 +18,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.Appointment;
 import org.openmrs.module.fhir.api.AppointmentService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
-import org.openmrs.module.fhir.appointment.AppointmentStrategyUtil;
+import org.openmrs.module.fhir.api.strategies.appointment.AppointmentStrategyUtil;
 
 import java.util.List;
 
