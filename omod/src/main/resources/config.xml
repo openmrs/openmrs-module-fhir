@@ -145,6 +145,12 @@
     </globalProperty>
 
     <globalProperty>
+        <property>${project.parent.artifactId}.person.personStrategy</property>
+        <defaultValue>PersonStrategy</defaultValue>
+        <description>Set person strategy</description>
+    </globalProperty>
+
+    <globalProperty>
         <property>${project.parent.artifactId}.allergy.ObsAllergyStrategy.concept.uuid</property>
         <defaultValue>1234</defaultValue>
         <description>Concept id for allergy obs</description>
