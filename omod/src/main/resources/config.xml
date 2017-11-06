@@ -146,8 +146,8 @@
 
     <globalProperty>
         <property>${project.parent.artifactId}.person.personStrategy</property>
-        <defaultValue>PersonStrategy</defaultValue>
-        <description>Set person strategy</description>
+        <defaultValue>DefaultPersonStrategy</defaultValue>
+        <description>Set person strategy.</description>
     </globalProperty>
 
     <globalProperty>

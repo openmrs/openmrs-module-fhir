@@ -24,7 +24,7 @@ public interface PersonService {
 	/**
 	 * Get fhir person resource by uuid
 	 *
-	 * @param uuid uuid of the patient
+	 * @param uuid 	The uuid of the patient.
 	 * @return fhir patient resource and will return null if patient not found for the given uuid
 	 */
 	Person getPerson(String uuid);
