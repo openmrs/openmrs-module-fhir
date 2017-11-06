@@ -11,19 +11,17 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.fhir.appointment;
+package org.openmrs.module.fhir.api.strategies.appointment;
 
-import org.openmrs.module.fhir.api.util.FHIRConstants;
-import org.openmrs.module.fhir.api.util.FHIRUtils;
+import org.hl7.fhir.dstu3.model.Appointment;
 
-public class AppointmentStrategyUtil {
+import java.util.List;
 
-	public static GenericAppointmentStrategy getAppointmentStrategy() {
-		String strategy = FHIRUtils.getAppointmentStrategy();
-		if (FHIRConstants.APPOINTMENT_MODULE_STRATEGY.equals(strategy)) {
-			return new AppointmentModuleStrategy();
-		} else {
-			return null;
-		}
-	}
+public interface GenericAppointmentStrategy {
+
+	Appointment getAppointmentById(String uuid);
+
+	List<Appointment> searchAppointmentsById(String uuid);
+
+	List<Appointment> searchAppointmentsByPatient(String patientId);
 }

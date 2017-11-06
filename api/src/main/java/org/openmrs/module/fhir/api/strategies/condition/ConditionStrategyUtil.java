@@ -11,19 +11,19 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.fhir.api.allergy;
+package org.openmrs.module.fhir.api.strategies.condition;
 
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 
-public class AllergyStrategyUtil {
+public class ConditionStrategyUtil {
 
-	public static GenericAllergyStrategy getAllergyStrategy() {
+	public static GenericConditionStrategy getConditionStrategy() {
 		String strategy = FHIRUtils.getAllergyStrategy();
-		if (FHIRConstants.OBS_ALLERGY_STRATEGY.equals(strategy)) {
-			return new ObsAllergyStrategy();
+		if (FHIRConstants.OBS_CONDITION_STRATEGY.equals(strategy)) {
+			return new ObsConditionStrategy();
 		} else {
-			return new AllergyApiStrategy();
+			return new ObsConditionStrategy();
 		}
 	}
 }

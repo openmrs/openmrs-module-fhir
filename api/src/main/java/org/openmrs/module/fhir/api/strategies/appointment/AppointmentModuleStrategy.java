@@ -11,7 +11,7 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.fhir.appointment;
+package org.openmrs.module.fhir.api.strategies.appointment;
 
 import org.hl7.fhir.dstu3.model.Appointment;
 import org.openmrs.api.context.Context;

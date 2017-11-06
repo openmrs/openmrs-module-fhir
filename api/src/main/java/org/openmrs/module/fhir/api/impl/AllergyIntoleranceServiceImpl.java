@@ -18,7 +18,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.AllergyIntolerance;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.AllergyIntoleranceService;
-import org.openmrs.module.fhir.api.allergy.AllergyStrategyUtil;
+import org.openmrs.module.fhir.api.strategies.allergy.AllergyStrategyUtil;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 
 import java.util.List;

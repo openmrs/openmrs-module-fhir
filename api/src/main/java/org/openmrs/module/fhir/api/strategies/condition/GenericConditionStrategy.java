@@ -11,23 +11,22 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.fhir.api.allergy;
+package org.openmrs.module.fhir.api.strategies.condition;
 
-import org.hl7.fhir.dstu3.model.AllergyIntolerance;
+import org.hl7.fhir.dstu3.model.Condition;
 
 import java.util.List;
 
-public interface GenericAllergyStrategy {
+public interface GenericConditionStrategy {
 
-	AllergyIntolerance getAllergyById(String uuid);
+	/**
+	 * Get condition by id
+	 * @param uuid the uuid of the condition that need to retrieve
+	 * @return Condition Return fhir condition resource and will return null if condition is not found for the given id
+	 */
+	Condition getConditionById(String uuid);
 
-	List<AllergyIntolerance> searchAllergyById(String uuid);
+	List<Condition> searchConditionById(String uuid);
 
-	List<AllergyIntolerance> searchAllergyByName(String name);
-
-	List<AllergyIntolerance> searchAllergiesByPatientIdentifier(String identifier);
-
-	List<AllergyIntolerance> searchAllergiesByPatientName(String name);
-
-	List<AllergyIntolerance> searchAllergiesByPersonId(String uuid);
+	List<Condition> searchConditionByName(String name);
 }
