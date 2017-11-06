@@ -22,20 +22,20 @@ import java.util.List;
 public interface PersonService {
 
 	/**
-	 * Get fhir perso resource by uuid
+	 * Get fhir person resource by uuid
 	 *
-	 * @param id uuid of the patient
-	 * @return fhir patient resource and will return null if patient not found for the given id
+	 * @param uuid uuid of the patient
+	 * @return fhir patient resource and will return null if patient not found for the given uuid
 	 */
-	Person getPerson(String id);
+	Person getPerson(String uuid);
 
 	/**
 	 * Search persons by uuid
 	 *
-	 * @param id the uuid to be search
+	 * @param uuid the uuid to be search
 	 * @return fhir patient resource list
 	 */
-	List<Person> searchPersonById(String id);
+	List<Person> searchPersonByUuid(String uuid);
 
 	/**
 	 * Search all persons for given attributes
@@ -67,19 +67,19 @@ public interface PersonService {
 	 * update a OpenMRS Person from FHIR Person
 	 *
 	 * @param person the FHIR representation of the {@link}Person to be updated
-	 * @param theId  the uuid of the Person to be updated
+	 * @param uuid  the uuid of the Person to be updated
 	 * @return the updated FHIR {@link}Person Resource
 	 */
-	Person updateFHIRPerson(Person person, String theId);
+	Person updateFHIRPerson(Person person, String uuid);
 
 	/**
 	 * makes a Person retired
 	 *
-	 * @param theId the uuid of the Person to retire
+	 * @param uuid the uuid of the Person to retire
 	 * @should make person void
 	 * @should throw ResourceNotFoundException if person with given id not found
 	 * @should do nothing if person already void
 	 * @should throw MethodNotAllowedException if API has refused the operation
 	 */
-	void retirePerson(String theId) throws ResourceNotFoundException, NotModifiedException;
+	void retirePerson(String uuid) throws ResourceNotFoundException, NotModifiedException;
 }

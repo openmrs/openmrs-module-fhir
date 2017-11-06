@@ -81,6 +81,10 @@ public class FHIRUtils {
 		return Context.getAdministrationService().getGlobalProperty("fhir.allergy.allergyStrategy");
 	}
 
+	public static String getPersonStrategy() {
+		return Context.getAdministrationService().getGlobalProperty("fhir.person.personStrategy");
+	}
+
 	public static String getAppointmentStrategy() {
 		return Context.getAdministrationService().getGlobalProperty("fhir.appointment.strategy");
 	}

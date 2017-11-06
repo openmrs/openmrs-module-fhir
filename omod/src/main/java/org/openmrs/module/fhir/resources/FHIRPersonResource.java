@@ -36,7 +36,7 @@ public class FHIRPersonResource extends Resource {
 
 	public List<Person> searchByUniqueId(TokenParam id) {
 		PersonService personService = Context.getService(PersonService.class);
-		return personService.searchPersonById(id.getValue());
+		return personService.searchPersonByUuid(id.getValue());
 	}
 
 	public List<Person> searchPersons(String name, Integer birthYear, StringParam gender) {

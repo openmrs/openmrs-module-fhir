@@ -62,9 +62,7 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	 */
 	@Read()
 	public Person getResourceById(@IdParam IdType theId) {
-		Person result = null;
-		result = personResource.getByUniqueId(theId);
-		return result;
+		return personResource.getByUniqueId(theId);
 	}
 
 	/**
