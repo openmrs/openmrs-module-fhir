@@ -151,6 +151,12 @@
     </globalProperty>
 
     <globalProperty>
+        <property>${project.parent.artifactId}.location.locationStrategy</property>
+        <defaultValue>DefaultLocationStrategy</defaultValue>
+        <description>Set location strategy</description>
+    </globalProperty>
+
+    <globalProperty>
         <property>${project.parent.artifactId}.allergy.ObsAllergyStrategy.concept.uuid</property>
         <defaultValue>1234</defaultValue>
         <description>Concept id for allergy obs</description>

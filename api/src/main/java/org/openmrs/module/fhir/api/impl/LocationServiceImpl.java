@@ -13,18 +13,14 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.Location;
-import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.LocationService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
-import org.openmrs.module.fhir.api.util.FHIRLocationUtil;
+import org.openmrs.module.fhir.api.strategies.location.LocationStrategyUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,108 +49,57 @@ public class LocationServiceImpl extends BaseOpenmrsService implements LocationS
 	/**
 	 * @see org.openmrs.module.fhir.api.LocationService#getLocation(String)
 	 */
-	public Location getLocation(String id) {
-
-		org.openmrs.Location omrsLocation = Context.getLocationService().getLocationByUuid(id);
-		if (omrsLocation == null || omrsLocation.isRetired()) {
-			return null;
-		}
-		return FHIRLocationUtil.generateLocation(omrsLocation);
-
+	@Override
+	public Location getLocation(String uuid) {
+		return LocationStrategyUtil.getLocationStrategy().getLocation(uuid);
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.LocationService#searchLocationsById(String)
+	 * @see org.openmrs.module.fhir.api.LocationService#searchLocationsByUuid(String)
 	 */
-	public List<Location> searchLocationsById(String id) {
-
-		org.openmrs.Location omrsLocation = Context.getLocationService().getLocationByUuid(id);
-		List<Location> locationList = new ArrayList<Location>();
-		if (omrsLocation != null && !omrsLocation.isRetired()) {
-			locationList.add(FHIRLocationUtil.generateLocation(omrsLocation));
-		}
-		return locationList;
+	@Override
+	public List<Location> searchLocationsByUuid(String uuid) {
+		return LocationStrategyUtil.getLocationStrategy().searchLocationsByUuid(uuid);
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.LocationService#searchLocationsById(String)
+	 * @see org.openmrs.module.fhir.api.LocationService#searchLocationsByName(String)
 	 */
+	@Override
 	public List<Location> searchLocationsByName(String name) {
-		List<org.openmrs.Location> omrsLocations = Context.getLocationService().getLocations(name);
-		List<Location> locationList = new ArrayList<Location>();
-		for (org.openmrs.Location location : omrsLocations) {
-			if (StringUtils.startsWithIgnoreCase(location.getName(), name)){
-				locationList.add(FHIRLocationUtil.generateLocation(location));
-			}
-		}
-		return locationList;
+		return LocationStrategyUtil.getLocationStrategy().searchLocationsByName(name);
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.LocationService#searchLocationsById(String)
+	 * @see org.openmrs.module.fhir.api.LocationService#searchLocationsByStatus(boolean)
 	 */
+	@Override
 	public List<Location> searchLocationsByStatus(boolean status) {
-		//TODO this method looks for all the locations which is inefficient. Reimplement after API revamp
-		List<org.openmrs.Location> omrsLocations = Context.getLocationService().getAllLocations(true);
-		List<Location> locationList = new ArrayList<Location>();
-		for (org.openmrs.Location location : omrsLocations) {
-			if (status) {
-				if (!location.isRetired()) {
-					locationList.add(FHIRLocationUtil.generateLocation(location));
-				}
-			} else {
-				if (location.isRetired()) {
-					locationList.add(FHIRLocationUtil.generateLocation(location));
-				}
-			}
-		}
-		return locationList;
+		return LocationStrategyUtil.getLocationStrategy().searchLocationsByStatus(status);
 	}
 
 	/**
 	 * @see org.openmrs.module.fhir.api.LocationService#deleteLocation(String)
 	 */
-	public void deleteLocation(String id) {
-		org.openmrs.Location location = Context.getLocationService().getLocationByUuid(id);
-		Context.getLocationService().purgeLocation(location);
+	@Override
+	public void deleteLocation(String uuid) {
+		LocationStrategyUtil.getLocationStrategy().deleteLocation(uuid);
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.LocationService#updateLocationById(String, ca.uhn.fhir.model.dstu2.resource
-	 * .Location)
+	 * @see org.openmrs.module.fhir.api.LocationService#updateLocation(String, Location)
 	 */
-	public Location updateLocation(String id, Location location) {
-		org.openmrs.Location omrsLocation;
-		List<String> errors = new ArrayList<String>();
-		omrsLocation = FHIRLocationUtil.generateOpenMRSLocation(location, errors);
-		if (!errors.isEmpty()) {
-			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to following issues \n");
-			for (int i = 0; i < errors.size(); i++) {
-				errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
-			}
-			throw new UnprocessableEntityException(errorMessage.toString());
-		}
-		omrsLocation = Context.getLocationService().saveLocation(omrsLocation);
-		return FHIRLocationUtil.generateLocation(omrsLocation);
+	@Override
+	public Location updateLocation(String uuid, Location location) {
+		return LocationStrategyUtil.getLocationStrategy().updateLocation(uuid, location);
 	}
 	
 	/**
-	 * @see org.openmrs.module.fhir.api.LocationService#createLocation(ca.uhn.fhir.model.dstu2.resource
-	 * .Location)
+	 * @see org.openmrs.module.fhir.api.LocationService#createLocation(Location)
 	 */
+	@Override
 	public Location createLocation(Location location) {
-		org.openmrs.Location omrsLocation=null;
-		List<String> errors = new ArrayList<String>();
-		omrsLocation = FHIRLocationUtil.generateOpenMRSLocation(location, errors);
-		if (!errors.isEmpty()) {
-			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
-			for (int i = 0; i < errors.size(); i++) {
-				errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
-			}
-			throw new UnprocessableEntityException(errorMessage.toString());
-		}
-		omrsLocation=Context.getLocationService().saveLocation(omrsLocation);
-		return FHIRLocationUtil.generateLocation(omrsLocation);
+		return LocationStrategyUtil.getLocationStrategy().createLocation(location);
 	}
 
 }

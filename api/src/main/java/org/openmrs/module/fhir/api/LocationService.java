@@ -25,18 +25,18 @@ public interface LocationService extends OpenmrsService {
 	/**
 	 * Get location by id
 	 *
-	 * @param id location uuid
+	 * @param uuid The uuid of location
 	 * @return location fhir resource
 	 */
-	Location getLocation(String id);
+	Location getLocation(String uuid);
 
 	/**
 	 * Search locations by id
 	 *
-	 * @param id location uuid
+	 * @param uuid The uuid of location
 	 * @return fhir locations list
 	 */
-	List<Location> searchLocationsById(String id);
+	List<Location> searchLocationsByUuid(String uuid);
 
 	/**
 	 * Search all active or inactive locations
@@ -57,17 +57,17 @@ public interface LocationService extends OpenmrsService {
 	/**
 	 * Delete location by id
 	 *
-	 * @param id uuid of Location
+	 * @param uuid The uuid of location
 	 */
-	void deleteLocation(String id);
+	void deleteLocation(String uuid);
 
 	/**
 	 * Update location
 	 *
-	 * @param id location uuid
+	 * @param uuid The uuid of location
 	 * @param location representation of location fhir resource
 	 */
-	Location updateLocation(String id, Location location);
+	Location updateLocation(String uuid, Location location);
 	
 	/**
 	 * Create location 

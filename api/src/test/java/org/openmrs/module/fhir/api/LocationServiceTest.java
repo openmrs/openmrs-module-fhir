@@ -59,7 +59,7 @@ public class LocationServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void searchLocationsById_shouldReturnBundle() {
 		String locationUuid = "f08ba64b-ea57-4a41-b33c-9dfc59b0c60a";
-		List<Location> locations = getService().searchLocationsById(locationUuid);
+		List<Location> locations = getService().searchLocationsByUuid(locationUuid);
 		assertNotNull(locations);
 		assertEquals(1, locations.size());
 		assertEquals(locations.get(0).getId(), locationUuid);
