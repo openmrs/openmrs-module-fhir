@@ -35,7 +35,7 @@ public class FHIRLocationResource extends Resource {
 	}
 	
 	public List<Location> searchLocationsById(TokenParam id) {
-		return Context.getService(LocationService.class).searchLocationsById(id.getValue());
+		return Context.getService(LocationService.class).searchLocationsByUuid(id.getValue());
 	}
 	
 	public List<Location> searchLocationsByStatus(TokenParam active) {
