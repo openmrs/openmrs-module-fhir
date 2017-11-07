@@ -39,7 +39,7 @@ public class FHIRPatientResource extends Resource {
 	public List<Patient> searchByUniqueId(TokenParam id) {
 		org.openmrs.module.fhir.api.PatientService patientService = Context.getService(
 				org.openmrs.module.fhir.api.PatientService.class);
-		return patientService.searchPatientsById(id.getValue());
+		return patientService.searchPatientsByUuid(id.getValue());
 	}
 
 	//search by patient identifier. ex: GET_DESCRIPTION [base-url]/Patient?identifier=http://acme.org/patient|2345

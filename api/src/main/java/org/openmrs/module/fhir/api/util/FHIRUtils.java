@@ -32,6 +32,8 @@ import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.manager.FHIRContextFactory;
 
+import java.util.List;
+
 public class FHIRUtils {
 
 	public static final String CONTENT_TYPE_APPLICATION_XML_FHIR = "application/xml+fhir";
@@ -83,6 +85,10 @@ public class FHIRUtils {
 
 	public static String getPersonStrategy() {
 		return Context.getAdministrationService().getGlobalProperty("fhir.person.personStrategy");
+	}
+
+	public static String getPatientStrategy() {
+		return Context.getAdministrationService().getGlobalProperty("fhir.patient.patientStrategy");
 	}
 
 	public static String getAppointmentStrategy() {
@@ -342,6 +348,16 @@ public class FHIRUtils {
 
 	public static String getDiagnosticReportRadiologyBaseServerURL() {
 		return Context.getAdministrationService().getGlobalProperty("fhir.diagnosticreport.radiology.server");
+	}
+
+	public static void checkGeneratorErrorList(List<String> errors) {
+		if (!errors.isEmpty()) {
+			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
+			for (int i = 0; i < errors.size(); i++) {
+				errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
+			}
+			throw new UnprocessableEntityException(errorMessage.toString());
+		}
 	}
 
 	private static Concept getConceptByConceptId(String globalPropertyName) {
