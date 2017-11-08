@@ -264,13 +264,7 @@ public class FHIREncounterUtil {
 				participantUuid = participantsref.getId();
 			}
 
-			if(StringUtils.isEmpty(participantUuid)) {
-				String participantRefStr = participantsref.getReference();
-				String[] participantRefStrSplit = participantRefStr.split("/");
-				if(participantRefStrSplit.length > 1) {
-					participantUuid = participantRefStrSplit[1];
-				}
-			}
+			participantUuid = FHIRUtils.getObjectUuidByReference(participantUuid, participantsref);
 
 			org.openmrs.Provider provider = Context.getProviderService().getProviderByUuid(participantUuid);
 			EncounterRole role = Context.getEncounterService().getEncounterRole(1); // hard coded
@@ -286,13 +280,7 @@ public class FHIREncounterUtil {
 				locationUuid = locationref.getId();
 			}
 
-			if(StringUtils.isEmpty(locationUuid)) {
-				String locationRefStr = locationref.getReference();
-				String[] locationRefStrSplit = locationRefStr.split("/");
-				if(locationRefStrSplit.length > 1) {
-					locationUuid =locationRefStrSplit[1];
-				}
-			}
+			locationUuid = FHIRUtils.getObjectUuidByReference(locationUuid, locationref);
 
 			org.openmrs.Location omrsLocation = Context.getLocationService().getLocationByUuid(locationUuid);
 			if (omrsLocation != null) {

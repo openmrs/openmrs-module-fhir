@@ -93,6 +93,11 @@ public class FHIRUtils {
 		return Context.getAdministrationService().getGlobalProperty("fhir.location.locationStrategy");
 	}
 
+	public static String getEncounterStrategy() {
+		return Context.getAdministrationService().getGlobalProperty("fhir.encounter.encounterStrategy");
+	}
+
+
 	public static int[] getConceptIdsOfConditions() {
 		String conceptsAsConditions = Context.getAdministrationService().getGlobalProperty(FHIRConstants
 				.CONCEPTS_CONVERTABLE_TO_CONDITIONS_STORED_AS_OBS);
@@ -306,6 +311,21 @@ public class FHIRUtils {
 			throw new IllegalStateException("Configuration required for " + globalProperty);
 		}
 		return encounterType;
+	}
+
+	public static String getObjectUuidByReference(String objectUuid, Reference objectRef) {
+		String result = objectUuid;
+
+		if (StringUtils.isEmpty(result)) {
+			String objectRefStr = objectRef.getReference();
+			String[] objectRefStrSplit = objectRefStr.split("/");
+
+			if (objectRefStrSplit.length > 1) {
+				result = objectRefStrSplit[1];
+			}
+		}
+
+		return result;
 	}
 
 	public static Concept getDiagnosticReportNameConcept() {

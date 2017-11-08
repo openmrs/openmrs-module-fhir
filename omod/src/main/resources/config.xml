@@ -151,6 +151,12 @@
     </globalProperty>
 
     <globalProperty>
+        <property>${project.parent.artifactId}.encounter.encounterStrategy</property>
+        <defaultValue>DefaultEncounterStrategy</defaultValue>
+        <description>Set encounter strategy.</description>
+    </globalProperty>
+
+    <globalProperty>
         <property>${project.parent.artifactId}.location.locationStrategy</property>
         <defaultValue>DefaultLocationStrategy</defaultValue>
         <description>Set location strategy</description>
