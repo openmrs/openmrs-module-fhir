@@ -89,6 +89,12 @@ public class FHIRLocationUtil {
 		org.openmrs.Location omrsLocation;
 		//Set resource id (uuid)
 		String id = location.getId();
+		if (id != null && id.contains("/")) {
+			String[] parts = id.split("/");
+			if (parts.length > 1) {
+				id = parts[1];
+			}
+		}
 		omrsLocation = Context.getLocationService().getLocationByUuid(id);
 		if (omrsLocation == null) {
 			// No location found to be updated, creating new location. Should respond with 201 Http Code acc to
