@@ -37,7 +37,7 @@ public interface PatientService extends OpenmrsService {
 	 * @param uuid the uuid to be search
 	 * @return fhir patient resource list
 	 */
-	List<Patient> searchPatientsByUuid(String uuid);
+	List<Patient> searchPatientsById(String id);
 
 	/**
 	 * Search patient by identifier and identifier type id

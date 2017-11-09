@@ -55,9 +55,9 @@ public class PatientServiceImpl extends BaseOpenmrsService implements PatientSer
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.PatientService#searchPatientsByUuid(String)
+	 * @see org.openmrs.module.fhir.api.PatientService#searchPatientsById(String)
 	 */
-	public List<Patient> searchPatientsByUuid(String uuid) {
+	public List<Patient> searchPatientsById(String uuid) {
 		return PatientStrategyUtil.getPatientStrategy().searchPatientsById(uuid);
 	}
 
