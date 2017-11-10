@@ -239,8 +239,9 @@ public class FHIRPatientUtil {
 				personName.setGivenName(valueOf(givenName));
 			}
 			String familyName = humanNameDt.getFamily();
-			if (StringUtils.isEmpty(familyName)) {
-				personName.setFamilyName(valueOf(familyName));
+			if (!StringUtils.isEmpty(familyName)) {
+				familynamePresent = true;
+				personName.setFamilyName(familyName);
 			}
 			names.add(personName);
 			if (preferedPresent && givennamePresent && familynamePresent) { //if all are present in one name, further checkings are not needed

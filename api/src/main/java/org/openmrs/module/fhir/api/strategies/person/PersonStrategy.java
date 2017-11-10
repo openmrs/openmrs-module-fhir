@@ -10,6 +10,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
+import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -65,13 +66,7 @@ public class PersonStrategy implements GenericPersonStrategy {
         List<String> errors = new ArrayList();
         org.openmrs.Person omrsPerson = FHIRPersonUtil.generateOpenMRSPerson(person, errors);
 
-        if (!errors.isEmpty()) {
-            StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to following issues \n");
-            for (int i = 0; i < errors.size(); i++) {
-                errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
-            }
-            throw new UnprocessableEntityException(errorMessage.toString());
-        }
+        FHIRUtils.checkGeneratorErrorList(errors);
 
         org.openmrs.api.PersonService personService = Context.getPersonService();
         omrsPerson = personService.savePerson(omrsPerson);

@@ -157,6 +157,12 @@
     </globalProperty>
 
     <globalProperty>
+        <property>${project.parent.artifactId}.patient.patientStrategy</property>
+        <defaultValue>DefaultPatientStrategy</defaultValue>
+        <description>Set patient strategy.</description>
+    </globalProperty>
+
+    <globalProperty>
         <property>${project.parent.artifactId}.allergy.ObsAllergyStrategy.concept.uuid</property>
         <defaultValue>1234</defaultValue>
         <description>Concept id for allergy obs</description>
