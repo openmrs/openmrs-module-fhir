@@ -61,13 +61,13 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	 */
 	@Read()
 	public Encounter getResourceById(@IdParam IdType theId) {
-		Encounter result = null;
+		Encounter result;
 		result = encounterResource.getByUniqueId(theId);
 		return result;
 	}
 
 	/**
-	 * Search locations by unique id
+	 * Search Encounters by the unique id
 	 *
 	 * @param id object containing the requested id
 	 */
