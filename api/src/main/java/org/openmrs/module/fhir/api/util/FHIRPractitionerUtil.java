@@ -14,6 +14,8 @@
 package org.openmrs.module.fhir.api.util;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
 import org.hl7.fhir.dstu3.model.Address;
 import org.hl7.fhir.dstu3.model.Enumerations;
 import org.hl7.fhir.dstu3.model.HumanName;
@@ -238,12 +240,27 @@ public class FHIRPractitionerUtil {
 		omrsPerson.setBirthdate(practitioner.getBirthDate());
 		return omrsPerson;
 	}
+
+	public static <T> T initializeAndUnproxy(T entity) {
+		if (entity == null) {
+			throw new
+					NullPointerException("Entity passed for initialization is null");
+		}
+
+		Hibernate.initialize(entity);
+		if (entity instanceof HibernateProxy) {
+			entity = (T) ((HibernateProxy) entity).getHibernateLazyInitializer()
+					.getImplementation();
+		}
+		return entity;
+	}
 	
 	public static org.openmrs.Provider updatePractitionerAttributes(Practitioner practitioner,
 	                                                                org.openmrs.Provider retrievedProvider) {
 		String gender = practitioner.getGender().toCode();
-		
+
 		Person providerPerson = retrievedProvider.getPerson(); // get the person associates with the practitioner resource
+		providerPerson = initializeAndUnproxy(providerPerson);
 		List<HumanName> humanNameDts = practitioner.getName();
 		if (providerPerson == null) { // if the person is null, create a new person first. 
 			if (gender != null) {
@@ -392,6 +409,9 @@ public class FHIRPractitionerUtil {
 			providerPerson.setBirthdate(practitioner.getBirthDate());
 		}
 		retrievedProvider.setPerson(providerPerson);
+
+		retrievedProvider.setIdentifier(practitioner.getIdentifier().get(0).getValue());
+
 		return retrievedProvider;
 	}
 

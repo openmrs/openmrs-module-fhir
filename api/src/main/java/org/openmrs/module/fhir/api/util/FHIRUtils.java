@@ -117,6 +117,10 @@ public class FHIRUtils {
 		return Context.getAdministrationService().getGlobalProperty("fhir.encounter.strategy");
 	}
 
+	public static String getPractitionerStrategy() {
+		return Context.getAdministrationService().getGlobalProperty("fhir.practitioner.practitionerStrategy");
+	}
+
 	public static int[] getConceptIdsOfConditions() {
 		String conceptsAsConditions = Context.getAdministrationService().getGlobalProperty(FHIRConstants
 				.CONCEPTS_CONVERTABLE_TO_CONDITIONS_STORED_AS_OBS);

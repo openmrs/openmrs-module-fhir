@@ -146,7 +146,12 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 		OperationOutcome outcome = new OperationOutcome();
 		CodeableConcept concept = new CodeableConcept();
 		Coding coding = concept.addCoding();
-		coding.setDisplay("Medication request update not supported " + practitioner.getId());
+		coding.setDisplay("Practitioner successfully updated" +  theId.getIdPart());
+		try {
+			practitioner = practitionerResource.updatePractitioner(practitioner, theId.getIdPart());
+		} catch (Exception e) {
+			coding.setDisplay("Following exception occured " + e.getMessage());
+		}
 		outcome.addIssue().setDetails(concept);
 		retVal.setOperationOutcome(outcome);
 		return retVal;

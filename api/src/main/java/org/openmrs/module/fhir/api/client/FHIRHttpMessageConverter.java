@@ -7,6 +7,7 @@ import org.hl7.fhir.dstu3.model.Encounter;
 import org.hl7.fhir.dstu3.model.Location;
 import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.Practitioner;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
@@ -41,6 +42,7 @@ public class FHIRHttpMessageConverter extends AbstractHttpMessageConverter<IBase
         SUPPORTED_CLASSES.add(Encounter.class);
         SUPPORTED_CLASSES.add(Observation.class);
         SUPPORTED_CLASSES.add(Location.class);
+        SUPPORTED_CLASSES.add(Practitioner.class);
     }
 
     public FHIRHttpMessageConverter() {
