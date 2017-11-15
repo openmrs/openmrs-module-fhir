@@ -15,7 +15,7 @@ package org.openmrs.module.fhir.api;
 
 import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.Coding;
-import org.hl7.fhir.dstu3.model.DateType;
+import org.hl7.fhir.dstu3.model.DateTimeType;
 import org.hl7.fhir.dstu3.model.InstantType;
 import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Reference;
@@ -173,7 +173,7 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		Reference subjectref = newObs.getSubject();
 		String fhirPatientUuid = subjectref.getId();
 
-		Date fhirEffectiveDate = ((DateType) newObs.getEffective()).getValue();
+		Date fhirEffectiveDate = ((DateTimeType) newObs.getEffective()).getValue();
 
 		InstantType dateIssued = newObs.getIssuedElement();
 		Date fhirIssuedDate = dateIssued.getValue();
