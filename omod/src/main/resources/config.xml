@@ -157,6 +157,12 @@
     </globalProperty>
 
     <globalProperty>
+        <property>${project.parent.artifactId}.familyMemberHistory.strategy</property>
+        <defaultValue>DefaultFamilyMemberHistoryStrategy</defaultValue>
+        <description>Set family member history strategy</description>
+    </globalProperty>
+
+    <globalProperty>
         <property>${project.parent.artifactId}.patient.patientStrategy</property>
         <defaultValue>DefaultPatientStrategy</defaultValue>
         <description>Set patient strategy.</description>
