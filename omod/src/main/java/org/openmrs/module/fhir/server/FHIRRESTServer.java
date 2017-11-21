@@ -23,17 +23,7 @@ import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
 import org.hl7.fhir.dstu3.hapi.rest.server.ServerCapabilityStatementProvider;
 import org.openmrs.module.fhir.addressstrategy.OpenMRSFHIRRequestAddressStrategy;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
-import org.openmrs.module.fhir.providers.RestfulAllergyIntoleranceResourceProvider;
-import org.openmrs.module.fhir.providers.RestfulConditionResourceProvider;
-import org.openmrs.module.fhir.providers.RestfulDiagnosticReportResourceProvider;
-import org.openmrs.module.fhir.providers.RestfulEncounterResourceProvider;
-import org.openmrs.module.fhir.providers.RestfulFamilyMemberHistoryResourceProvider;
-import org.openmrs.module.fhir.providers.RestfulLocationResourceProvider;
-import org.openmrs.module.fhir.providers.RestfulMedicationRequestProvider;
-import org.openmrs.module.fhir.providers.RestfulObservationResourceProvider;
-import org.openmrs.module.fhir.providers.RestfulPatientResourceProvider;
-import org.openmrs.module.fhir.providers.RestfulPersonResourceProvider;
-import org.openmrs.module.fhir.providers.RestfulPractitionerResourceProvider;
+import org.openmrs.module.fhir.providers.*;
 import org.openmrs.module.fhir.util.FHIROmodConstants;
 
 import javax.servlet.ServletException;
@@ -67,6 +57,7 @@ public class FHIRRESTServer extends RestfulServer {
 		//Removing composition since we now not support for it
 		//resourceProviders.add(new RestfulCompositionResourceProvider());
 		resourceProviders.add(new RestfulPersonResourceProvider());
+		resourceProviders.add(new RestfulRelatedPersonProvider());
 		this.setFhirContext(FhirContext.forDstu3());
 		setResourceProviders(resourceProviders);
 		setServerName(FHIROmodConstants.OPENMRS_FHIR_SERVER_NAME);
