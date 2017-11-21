@@ -16,15 +16,11 @@ package org.openmrs.module.fhir.api.impl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.FamilyMemberHistory;
-import org.openmrs.Person;
-import org.openmrs.Relationship;
-import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.FamilyMemberHistoryService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
-import org.openmrs.module.fhir.api.util.FHIRFamilyMemberHistoryUtil;
+import org.openmrs.module.fhir.api.strategies.familymemberhistory.FamilyMemberHistoryStrategyUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -49,44 +45,23 @@ public class FamilyMemberHistoryServiceImpl extends BaseOpenmrsService implement
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.FamilyHistoryService#searchFamilyHistoryByPersonId(String)
+	 * @see org.openmrs.module.fhir.api.FamilyMemberHistoryService#searchFamilyHistoryByPersonId(String)
 	 */
 	public List<FamilyMemberHistory> searchFamilyHistoryByPersonId(String personId) {
-		Person person = Context.getPersonService().getPersonByUuid(personId);
-		List<FamilyMemberHistory> fhirFamilyHistory = new ArrayList<FamilyMemberHistory>();
-		List<Relationship> relationships = null;
-		if (person != null && !person.isVoided()) {
-			relationships = Context.getPersonService().getRelationshipsByPerson(person);
-		}
-		if (relationships != null && relationships.size() > 0) {
-			for (Relationship relationship : relationships) {
-				fhirFamilyHistory.add(FHIRFamilyMemberHistoryUtil.generateFamilyHistory(relationship, person));
-			}
-		}
-		return fhirFamilyHistory;
+		return FamilyMemberHistoryStrategyUtil.getFamilyMemberStrategy().searchFamilyHistoryByPersonId(personId);
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.FamilyHistoryService#getRelationshipById(String)
+	 * @see org.openmrs.module.fhir.api.FamilyMemberHistoryService#getRelationshipById(String)
 	 */
 	public FamilyMemberHistory getRelationshipById(String id) {
-		Person person = Context.getPersonService().getPersonByUuid(id);
-		List<Relationship> relationships = Context.getPersonService().getRelationshipsByPerson(person);
-		return FHIRFamilyMemberHistoryUtil.generateFamilyHistory(relationships.get(0), person);
+		return FamilyMemberHistoryStrategyUtil.getFamilyMemberStrategy().getRelationshipById(id);
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.FamilyHistoryService#searchRelationshipsById(String)
+	 * @see org.openmrs.module.fhir.api.FamilyMemberHistoryService#searchRelationshipsById(String)
 	 */
 	public List<FamilyMemberHistory> searchRelationshipsById(String id) {
-		Person person = Context.getPersonService().getPersonByUuid(id);
-		List<FamilyMemberHistory> familyHistories = new ArrayList<FamilyMemberHistory>();
-		List<Relationship> relationships = Context.getPersonService().getRelationshipsByPerson(person);
-		if (relationships != null) {
-			for (Relationship relationship : relationships) {
-				familyHistories.add(FHIRFamilyMemberHistoryUtil.generateFamilyHistory(relationship, person));
-			}
-		}
-		return familyHistories;
+		return FamilyMemberHistoryStrategyUtil.getFamilyMemberStrategy().searchRelationshipsById(id);
 	}
 }

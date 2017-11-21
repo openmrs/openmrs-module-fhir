@@ -99,6 +99,10 @@ public class FHIRUtils {
 		return Context.getAdministrationService().getGlobalProperty("fhir.location.locationStrategy");
 	}
 
+	public static String getFamilyMemberHistoryStrategy() {
+		return Context.getAdministrationService().getGlobalProperty("fhir.familyMemberHistory.strategy");
+	}
+
 	public static int[] getConceptIdsOfConditions() {
 		String conceptsAsConditions = Context.getAdministrationService().getGlobalProperty(FHIRConstants
 				.CONCEPTS_CONVERTABLE_TO_CONDITIONS_STORED_AS_OBS);
