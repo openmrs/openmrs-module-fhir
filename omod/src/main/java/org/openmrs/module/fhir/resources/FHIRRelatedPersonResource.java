@@ -11,4 +11,9 @@ public class FHIRRelatedPersonResource extends Resource {
         RelatedPersonService relatedPersonService = Context.getService(RelatedPersonService.class);
         return relatedPersonService.getRelatedPerson(id.getIdPart());
     }
+
+    public void deleteRelatedPerson(IdType id) {
+        RelatedPersonService relatedPersonService = Context.getService(RelatedPersonService.class);
+        relatedPersonService.deleteRelatedPerson(id.getIdPart());
+    }
 }

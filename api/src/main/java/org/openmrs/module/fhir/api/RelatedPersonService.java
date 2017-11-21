@@ -28,5 +28,11 @@ public interface RelatedPersonService extends OpenmrsService {
 	 */
 	RelatedPerson getRelatedPerson(String uuid);
 
+	/**
+	 * Delete related person by id
+	 *
+	 * @param uuid The uuid of related person
+	 */
+	void deleteRelatedPerson(String uuid);
 
 }

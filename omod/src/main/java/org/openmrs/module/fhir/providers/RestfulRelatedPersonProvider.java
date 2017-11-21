@@ -1,5 +1,6 @@
 package org.openmrs.module.fhir.providers;
 
+import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.server.IResourceProvider;
@@ -24,5 +25,15 @@ public class RestfulRelatedPersonProvider implements IResourceProvider {
     @Read()
     public RelatedPerson getResourceById(@IdParam IdType theId) {
         return relatedPersonResource.getByUniqueId(theId);
+    }
+
+    /**
+     * Delete related person by unique id
+     *
+     * @param theId object containing the id
+     */
+    @Delete()
+    public void deletePerson(@IdParam IdType theId) {
+        relatedPersonResource.deleteRelatedPerson(theId);
     }
 }
