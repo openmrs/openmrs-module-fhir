@@ -2,6 +2,7 @@ package org.openmrs.module.fhir.api.impl;
 
 import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.IdType;
@@ -14,6 +15,9 @@ import org.openmrs.module.fhir.api.RelatedPersonService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRRelationshipUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RelatedPersonServiceImpl extends BaseOpenmrsService implements RelatedPersonService {
 
@@ -59,5 +63,22 @@ public class RelatedPersonServiceImpl extends BaseOpenmrsService implements Rela
             // refused to retire resource.  return with 405
             throw new MethodNotAllowedException("The OpenMRS API refused to retire the Related Person via the FHIR request.");
         }
+    }
+
+    @Override
+    public RelatedPerson updateRelatedPerson(String uuid, RelatedPerson relatedPerson) {
+        List<String> errors = new ArrayList<String>();
+        org.openmrs.Relationship omrsRelationship = FHIRRelationshipUtil.generateOmrsRelationshipObject(relatedPerson, errors);
+        if (!errors.isEmpty()) {
+            StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to following issues \n");
+            for (int i = 0; i < errors.size(); i++) {
+                errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
+            }
+            throw new UnprocessableEntityException(errorMessage.toString());
+        }
+        org.openmrs.Relationship omrsRetrievedRelationship = Context.getPersonService().getRelationshipByUuid(omrsRelationship.getUuid());
+        omrsRelationship = FHIRRelationshipUtil.updateRelationshipAttributes(omrsRelationship, omrsRetrievedRelationship);
+        omrsRelationship = Context.getPersonService().saveRelationship(omrsRelationship);
+        return FHIRRelationshipUtil.GenerateRelationshipObject(omrsRelationship);
     }
 }

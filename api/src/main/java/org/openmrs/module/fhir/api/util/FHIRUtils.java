@@ -18,21 +18,29 @@ import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.ValidationResult;
 import org.apache.commons.lang.StringUtils;
+import org.hl7.fhir.dstu3.model.Address;
 import org.hl7.fhir.dstu3.model.AllergyIntolerance;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.HumanName;
 import org.hl7.fhir.dstu3.model.Identifier;
 import org.hl7.fhir.dstu3.model.Reference;
 import org.hl7.fhir.dstu3.model.Resource;
+import org.hl7.fhir.dstu3.model.StringType;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
 import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
+import org.openmrs.PersonAddress;
 import org.openmrs.PersonName;
+import org.openmrs.RelationshipType;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.manager.FHIRContextFactory;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static java.lang.String.valueOf;
 
 public class FHIRUtils {
 
@@ -157,6 +165,143 @@ public class FHIRUtils {
 		identifier.setId(person.getUuid());
 		reference.setIdentifier(identifier);
 		return reference;
+	}
+
+	public static RelationshipType getRelationshipTypeByCoding(Coding coding) {
+		if (coding.getCode() != null) {
+			List<RelationshipType> relationshipList = Context.getPersonService().getAllRelationshipTypes();
+			for (RelationshipType relationshipType : relationshipList) {
+				if (coding.getCode().equals(relationshipType.getaIsToB())) {
+					return relationshipType;
+				}
+			}
+		}
+		return null;
+	}
+
+	public static HumanName buildHumanName(org.openmrs.PersonName personName) {
+		HumanName fhirName = new HumanName();
+		fhirName.setFamily(personName.getFamilyName());
+		StringType givenName = new StringType();
+		givenName.setValue(personName.getGivenName());
+		List<StringType> givenNames = new ArrayList<StringType>();
+		givenNames.add(givenName);
+		fhirName.setGiven(givenNames);
+
+		if (personName.getFamilyNameSuffix() != null) {
+			StringType suffix = new StringType();
+			suffix.setValue(personName.getFamilyNameSuffix());
+			List<StringType> suffixes = new ArrayList<StringType>();
+			suffixes.add(suffix);
+			fhirName.setSuffix(suffixes);
+		}
+
+		if (personName.getPrefix() != null) {
+			StringType prefix = new StringType();
+			prefix.setValue(personName.getPrefix());
+			List<StringType> prefixes = new ArrayList<StringType>();
+			prefixes.add(prefix);
+			fhirName.setSuffix(prefixes);
+		}
+
+		//TODO needs to set catagory appropriately
+		if (personName.isPreferred()) {
+			fhirName.setUse(HumanName.NameUse.USUAL);
+		} else {
+			fhirName.setUse(HumanName.NameUse.OLD);
+		}
+
+		return fhirName;
+	}
+
+	public static org.openmrs.PersonName buildPersonName(HumanName humanName) {
+		PersonName personName = new PersonName();
+		if (humanName.getUse() != null) {
+			String getUse = humanName.getUse().toCode();
+			if (String.valueOf(HumanName.NameUse.USUAL).equalsIgnoreCase(getUse)
+					|| String.valueOf(HumanName.NameUse.OFFICIAL).equalsIgnoreCase(getUse)) {
+				personName.setPreferred(true);
+			}
+			if (String.valueOf(HumanName.NameUse.OLD).equalsIgnoreCase(getUse)) {
+				personName.setPreferred(false);
+			}
+		}
+		if (humanName.getSuffix() != null) {
+			List<StringType> prefixes = humanName.getSuffix();
+			if (prefixes.size() > 0) {
+				StringType prefix = prefixes.get(0);
+				personName.setPrefix(valueOf(prefix));
+			}
+		}
+		if (humanName.getSuffix() != null) {
+			List<StringType> suffixes = humanName.getSuffix();
+			if (suffixes.size() > 0) {
+				StringType suffix = suffixes.get(0);
+				personName.setFamilyNameSuffix(valueOf(suffix));
+			}
+		}
+
+		List<StringType> givenNames = humanName.getGiven();
+		if (givenNames != null) {
+			StringType givenName = givenNames.get(0);
+			personName.setGivenName(valueOf(givenName));
+		}
+		String familyName = humanName.getFamily();
+		if (!StringUtils.isEmpty(familyName)) {
+			personName.setFamilyName(familyName);
+		}
+		return personName;
+	}
+
+	public static Address buildAddress(org.openmrs.PersonAddress personAddress) {
+		Address fhirAddress = new Address();
+		fhirAddress.setCity(personAddress.getCityVillage());
+		fhirAddress.setCountry(personAddress.getCountry());
+		fhirAddress.setState(personAddress.getStateProvince());
+		fhirAddress.setPostalCode(personAddress.getPostalCode());
+		List<StringType> addressStrings = new ArrayList<StringType>();
+		addressStrings.add(new StringType(personAddress.getAddress1()));
+		addressStrings.add(new StringType(personAddress.getAddress2()));
+		addressStrings.add(new StringType(personAddress.getAddress3()));
+		addressStrings.add(new StringType(personAddress.getAddress4()));
+		addressStrings.add(new StringType(personAddress.getAddress5()));
+		fhirAddress.setLine(addressStrings);
+		if (personAddress.isPreferred()) {
+			fhirAddress.setUse(Address.AddressUse.HOME);
+		} else {
+			fhirAddress.setUse(Address.AddressUse.OLD);
+		}
+		return fhirAddress;
+	}
+
+	public static org.openmrs.PersonAddress buildPersonAddress(Address fhirAddress) {
+		org.openmrs.PersonAddress omrsPersonAddress = new PersonAddress();
+		omrsPersonAddress.setCityVillage(fhirAddress.getCity());
+		omrsPersonAddress.setCountry(fhirAddress.getCountry());
+		omrsPersonAddress.setStateProvince(fhirAddress.getState());
+		omrsPersonAddress.setPostalCode(fhirAddress.getPostalCode());
+		// address lines
+		List<StringType> lineList = fhirAddress.getLine();
+		if (lineList.size() > 0) {
+			omrsPersonAddress.setAddress1(lineList.get(0).toString());
+		}
+		if (lineList.size() > 1) {
+			omrsPersonAddress.setAddress2(lineList.get(1).toString());
+		}
+		if (lineList.size() > 2) {
+			omrsPersonAddress.setAddress3(lineList.get(2).toString());
+		}
+		if (lineList.size() > 3) {
+			omrsPersonAddress.setAddress4(lineList.get(3).toString());
+		}
+		// TODO.. address lines 5-15
+
+		if (Address.AddressUse.HOME.equals(fhirAddress.getUse())) {
+			omrsPersonAddress.setPreferred(true);
+		} else {
+			omrsPersonAddress.setPreferred(false);
+		}
+		return omrsPersonAddress;
 	}
 
 	/**
