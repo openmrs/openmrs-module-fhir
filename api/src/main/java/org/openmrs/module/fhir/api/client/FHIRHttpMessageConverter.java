@@ -1,8 +1,10 @@
 package org.openmrs.module.fhir.api.client;
 
 
-import com.google.gson.Gson;
-import org.openmrs.module.fhir.api.client.dto.FHIRPatientDTO;
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.parser.IParser;
+import com.google.gson.GsonBuilder;
+import org.hl7.fhir.dstu3.model.Patient;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -29,10 +31,10 @@ public class FHIRHttpMessageConverter extends AbstractHttpMessageConverter<Objec
     private static final String SUBTYPE_1 = "fhir+json";
     private static final String SUBTYPE_2 = "json+fhir";
 
-    private Gson gson = new Gson();
+    IParser parser = FhirContext.forDstu3().newJsonParser();
 
     static {
-        SUPPORTED_CLASSES.add(FHIRPatientDTO.class);
+        SUPPORTED_CLASSES.add(Patient.class);
     }
 
     public FHIRHttpMessageConverter() {
@@ -48,7 +50,7 @@ public class FHIRHttpMessageConverter extends AbstractHttpMessageConverter<Objec
     @Override
     protected Object readInternal(Class<?> clazz, HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
         try {
-            return gson.fromJson(convertStreamToString(inputMessage.getBody()), clazz);
+            return convertStreamToString(inputMessage.getBody());
         } catch (IOException e) {
             throw new HttpMessageNotReadableException("Could not read JSON: " + e.getMessage(), e);
         }
@@ -69,6 +71,8 @@ public class FHIRHttpMessageConverter extends AbstractHttpMessageConverter<Objec
                 while ((n = reader.read(buffer)) != -1) {
                     writer.write(buffer, 0, n);
                 }
+
+                reader.close();
             } finally {
                 is.close();
             }
@@ -77,4 +81,5 @@ public class FHIRHttpMessageConverter extends AbstractHttpMessageConverter<Objec
             return "";
         }
     }
+
 }
