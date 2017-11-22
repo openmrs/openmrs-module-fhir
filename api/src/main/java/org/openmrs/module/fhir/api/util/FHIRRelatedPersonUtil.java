@@ -1,5 +1,6 @@
 package org.openmrs.module.fhir.api.util;
 
+import org.apache.commons.lang.mutable.MutableBoolean;
 import org.hl7.fhir.dstu3.model.*;
 import org.hl7.fhir.dstu3.model.Address;
 import org.openmrs.*;
@@ -104,33 +105,43 @@ public class FHIRRelatedPersonUtil {
         }
         omrsRelationship.setPersonB(omrsRelatedPerson);
 
-        // if omrsRelatedPerson == null add error and return null;
+        // TODO: if omrsRelatedPerson == null add error and return null;
 
         // active
 
         // personA
         org.openmrs.Person personA = Context.getPersonService().getPersonByUuid(relatedPerson.getPatient().getId());
-        // if persoNA == null add erorr and return null
+        // TODO: if persoNA == null add erorr and return null
         omrsRelationship.setPersonA(personA);
 
         // relationship
-        // TODO: Improve algorithm!
+        // This variable describes the direction of the relationship.
+        MutableBoolean isAToB = new MutableBoolean(false); //
         CodeableConcept relationshipCode = relatedPerson.getRelationship();
         RelationshipType relationshipType = null;
         List<Coding> codingList = relationshipCode.getCoding();
         for (Coding coding : codingList) {
             if (FHIRConstants.OPENMRS_URI.equals(coding.getSystem())) {
-                relationshipType = FHIRUtils.getRelationshipTypeByCoding(coding);
+                relationshipType = FHIRUtils.getRelationshipTypeByCoding(coding, isAToB);
                 break;
             }
         }
+        if (relationshipType == null) {
+            errors.add("Could not determine relationship type.");
+            return null;
+        }
         omrsRelationship.setRelationshipType(relationshipType);
+        // If the direction is not A to B then we have to swap PersonA with PersonB
+        if (!isAToB.booleanValue()) {
+            org.openmrs.Person tmpPerson = omrsRelationship.getPersonA();
+            omrsRelationship.setPersonA(omrsRelationship.getPersonB());
+            omrsRelationship.setPersonB(tmpPerson);
+        }
 
-        // start date
-        omrsRelationship.setStartDate(relatedPerson.getPeriod().getStart());
-
-        // end date
-        omrsRelationship.setEndDate(relatedPerson.getPeriod().getEnd());
+        if (relatedPerson.getPeriod() != null) {
+            omrsRelationship.setStartDate(relatedPerson.getPeriod().getStart());
+            omrsRelationship.setEndDate(relatedPerson.getPeriod().getEnd());
+        }
 
         return omrsRelationship;
     }

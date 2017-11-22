@@ -18,6 +18,7 @@ import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.ValidationResult;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.mutable.MutableBoolean;
 import org.hl7.fhir.dstu3.model.Address;
 import org.hl7.fhir.dstu3.model.AllergyIntolerance;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
@@ -167,11 +168,15 @@ public class FHIRUtils {
 		return reference;
 	}
 
-	public static RelationshipType getRelationshipTypeByCoding(Coding coding) {
+	public static RelationshipType getRelationshipTypeByCoding(Coding coding, MutableBoolean isAToB) {
 		if (coding.getCode() != null) {
 			List<RelationshipType> relationshipList = Context.getPersonService().getAllRelationshipTypes();
 			for (RelationshipType relationshipType : relationshipList) {
 				if (coding.getCode().equals(relationshipType.getaIsToB())) {
+					isAToB.setValue(true);
+					return relationshipType;
+				} else if (coding.getCode().equals(relationshipType.getbIsToA())) {
+					isAToB.setValue(false);
 					return relationshipType;
 				}
 			}
