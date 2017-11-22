@@ -7,9 +7,9 @@ import org.openmrs.api.context.Context;
 
 import java.util.*;
 
-public class FHIRRelationshipUtil {
+public class FHIRRelatedPersonUtil {
 
-    public static RelatedPerson GenerateRelationshipObject(org.openmrs.Relationship omrsRelationship) {
+    public static RelatedPerson generateRelationshipObject(org.openmrs.Relationship omrsRelationship) {
         RelatedPerson relatedPerson = new RelatedPerson();
         org.openmrs.Person omrsRelatedPerson = omrsRelationship.getPersonB();
 
