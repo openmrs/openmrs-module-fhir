@@ -12,7 +12,7 @@ public class FHIRRelatedPersonUtil {
 
     public static RelatedPerson generateRelationshipObject(org.openmrs.Relationship omrsRelationship) {
         RelatedPerson relatedPerson = new RelatedPerson();
-        org.openmrs.Person omrsRelatedPerson = omrsRelationship.getPersonB();
+        org.openmrs.Person omrsRelatedPerson = omrsRelationship.getPersonA();
 
         // id
         relatedPerson.setId(omrsRelationship.getUuid());
@@ -23,18 +23,24 @@ public class FHIRRelatedPersonUtil {
         relatedPerson.setIdentifier(Collections.singletonList(identifier));
 
         // active
+        if (omrsRelationship.getStartDate() == null || omrsRelationship.getStartDate().before(new Date())
+                && omrsRelationship.getEndDate() == null || omrsRelationship.getEndDate().after(new Date())) {
+            relatedPerson.setActive(true);
+        } else {
+            relatedPerson.setActive(false);
+        }
 
         // patient
-        org.openmrs.Person personA = omrsRelationship.getPersonA();
-        relatedPerson.setPatient(FHIRUtils.buildPatientOrPersonResourceReference(personA));
+        relatedPerson.setPatient(FHIRUtils.buildPatientOrPersonResourceReference(
+                omrsRelationship.getPersonB()));
 
 
         // relationship
         String relationshipType = omrsRelationship.getRelationshipType().getaIsToB();
-        Coding openmrsRelation = new Coding();
-        openmrsRelation.setSystem(FHIRConstants.OPENMRS_URI).setCode(relationshipType);
+        Coding omrsRelation = new Coding();
+        omrsRelation.setSystem(FHIRConstants.OPENMRS_URI).setCode(relationshipType);
         CodeableConcept relationshipCode = new CodeableConcept();
-        relationshipCode.setCoding(Collections.singletonList(openmrsRelation));
+        relationshipCode.setCoding(Collections.singletonList(omrsRelation));
         relatedPerson.setRelationship(relationshipCode);
 
         // name
@@ -93,8 +99,8 @@ public class FHIRRelatedPersonUtil {
         // UUID
         omrsRelationship.setUuid(relatedPerson.getIdElement().getIdPart());
 
-        // personB
-        // Take id of an identifier as an personB UUID.
+        // personA
+        // Take id of an identifier as a personA UUID.
         org.openmrs.Person omrsRelatedPerson = null;
         List<Identifier> identifierList = relatedPerson.getIdentifier();
         for (Identifier identifier : identifierList) {
@@ -103,16 +109,20 @@ public class FHIRRelatedPersonUtil {
                 break;
             }
         }
-        omrsRelationship.setPersonB(omrsRelatedPerson);
+        if (omrsRelatedPerson == null) {
+            errors.add("Could not find related person");
+            return null;
+        }
+        omrsRelationship.setPersonA(omrsRelatedPerson);
 
-        // TODO: if omrsRelatedPerson == null add error and return null;
-
-        // active
-
-        // personA
-        org.openmrs.Person personA = Context.getPersonService().getPersonByUuid(relatedPerson.getPatient().getId());
-        // TODO: if persoNA == null add erorr and return null
-        omrsRelationship.setPersonA(personA);
+        // personB
+        // Patient is the person B
+        org.openmrs.Person personB = Context.getPersonService().getPersonByUuid(relatedPerson.getPatient().getId());
+        if (personB == null) {
+            errors.add("Could not find patient");
+            return null;
+        }
+        omrsRelationship.setPersonB(personB);
 
         // relationship
         // This variable describes the direction of the relationship.
