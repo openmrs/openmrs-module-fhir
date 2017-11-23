@@ -32,7 +32,6 @@ import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
 import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
-import org.openmrs.PersonAddress;
 import org.openmrs.PersonName;
 import org.openmrs.RelationshipType;
 import org.openmrs.api.context.Context;
@@ -40,8 +39,6 @@ import org.openmrs.module.fhir.api.manager.FHIRContextFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.lang.String.valueOf;
 
 public class FHIRUtils {
 
@@ -219,45 +216,6 @@ public class FHIRUtils {
 		return fhirName;
 	}
 
-	public static org.openmrs.PersonName buildPersonName(HumanName humanName) {
-		PersonName personName = new PersonName();
-		if (humanName.getUse() != null) {
-			String getUse = humanName.getUse().toCode();
-			if (String.valueOf(HumanName.NameUse.USUAL).equalsIgnoreCase(getUse)
-					|| String.valueOf(HumanName.NameUse.OFFICIAL).equalsIgnoreCase(getUse)) {
-				personName.setPreferred(true);
-			}
-			if (String.valueOf(HumanName.NameUse.OLD).equalsIgnoreCase(getUse)) {
-				personName.setPreferred(false);
-			}
-		}
-		if (humanName.getSuffix() != null) {
-			List<StringType> prefixes = humanName.getSuffix();
-			if (prefixes.size() > 0) {
-				StringType prefix = prefixes.get(0);
-				personName.setPrefix(valueOf(prefix));
-			}
-		}
-		if (humanName.getSuffix() != null) {
-			List<StringType> suffixes = humanName.getSuffix();
-			if (suffixes.size() > 0) {
-				StringType suffix = suffixes.get(0);
-				personName.setFamilyNameSuffix(valueOf(suffix));
-			}
-		}
-
-		List<StringType> givenNames = humanName.getGiven();
-		if (givenNames != null) {
-			StringType givenName = givenNames.get(0);
-			personName.setGivenName(valueOf(givenName));
-		}
-		String familyName = humanName.getFamily();
-		if (!StringUtils.isEmpty(familyName)) {
-			personName.setFamilyName(familyName);
-		}
-		return personName;
-	}
-
 	public static Address buildAddress(org.openmrs.PersonAddress personAddress) {
 		Address fhirAddress = new Address();
 		fhirAddress.setCity(personAddress.getCityVillage());
@@ -277,36 +235,6 @@ public class FHIRUtils {
 			fhirAddress.setUse(Address.AddressUse.OLD);
 		}
 		return fhirAddress;
-	}
-
-	public static org.openmrs.PersonAddress buildPersonAddress(Address fhirAddress) {
-		org.openmrs.PersonAddress omrsPersonAddress = new PersonAddress();
-		omrsPersonAddress.setCityVillage(fhirAddress.getCity());
-		omrsPersonAddress.setCountry(fhirAddress.getCountry());
-		omrsPersonAddress.setStateProvince(fhirAddress.getState());
-		omrsPersonAddress.setPostalCode(fhirAddress.getPostalCode());
-		// address lines
-		List<StringType> lineList = fhirAddress.getLine();
-		if (lineList.size() > 0) {
-			omrsPersonAddress.setAddress1(lineList.get(0).toString());
-		}
-		if (lineList.size() > 1) {
-			omrsPersonAddress.setAddress2(lineList.get(1).toString());
-		}
-		if (lineList.size() > 2) {
-			omrsPersonAddress.setAddress3(lineList.get(2).toString());
-		}
-		if (lineList.size() > 3) {
-			omrsPersonAddress.setAddress4(lineList.get(3).toString());
-		}
-		// TODO.. address lines 5-15
-
-		if (Address.AddressUse.HOME.equals(fhirAddress.getUse())) {
-			omrsPersonAddress.setPreferred(true);
-		} else {
-			omrsPersonAddress.setPreferred(false);
-		}
-		return omrsPersonAddress;
 	}
 
 	/**

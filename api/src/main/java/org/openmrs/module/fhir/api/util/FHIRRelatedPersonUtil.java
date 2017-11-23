@@ -1,12 +1,25 @@
 package org.openmrs.module.fhir.api.util;
 
 import org.apache.commons.lang.mutable.MutableBoolean;
-import org.hl7.fhir.dstu3.model.*;
 import org.hl7.fhir.dstu3.model.Address;
-import org.openmrs.*;
+import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.ContactPoint;
+import org.hl7.fhir.dstu3.model.Enumerations;
+import org.hl7.fhir.dstu3.model.HumanName;
+import org.hl7.fhir.dstu3.model.Identifier;
+import org.hl7.fhir.dstu3.model.Period;
+import org.hl7.fhir.dstu3.model.RelatedPerson;
+import org.openmrs.PersonAddress;
+import org.openmrs.Relationship;
+import org.openmrs.RelationshipType;
 import org.openmrs.api.context.Context;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 public class FHIRRelatedPersonUtil {
 

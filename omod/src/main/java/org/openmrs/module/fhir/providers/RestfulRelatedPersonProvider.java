@@ -1,9 +1,18 @@
 package org.openmrs.module.fhir.providers;
 
-import ca.uhn.fhir.rest.annotation.*;
+import ca.uhn.fhir.rest.annotation.Create;
+import ca.uhn.fhir.rest.annotation.Delete;
+import ca.uhn.fhir.rest.annotation.IdParam;
+import ca.uhn.fhir.rest.annotation.Read;
+import ca.uhn.fhir.rest.annotation.ResourceParam;
+import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.hl7.fhir.dstu3.model.*;
+import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.OperationOutcome;
+import org.hl7.fhir.dstu3.model.RelatedPerson;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.resources.FHIRRelatedPersonResource;
@@ -21,6 +30,11 @@ public class RestfulRelatedPersonProvider implements IResourceProvider {
         return RelatedPerson.class;
     }
 
+    /**
+     * Get related person by unique id
+     *
+     * @param theId object containing the id
+     */
     @Read()
     public RelatedPerson getResourceById(@IdParam IdType theId) {
         return relatedPersonResource.getByUniqueId(theId);
@@ -36,6 +50,11 @@ public class RestfulRelatedPersonProvider implements IResourceProvider {
         relatedPersonResource.deleteRelatedPerson(theId);
     }
 
+    /**
+     * Update related person by unique id
+     *
+     * @param theId object containing the id
+     */
     @Update
     public MethodOutcome updateRelatedPerson(@ResourceParam RelatedPerson relatedPerson, @IdParam IdType theId) {
         MethodOutcome retVal = new MethodOutcome();
