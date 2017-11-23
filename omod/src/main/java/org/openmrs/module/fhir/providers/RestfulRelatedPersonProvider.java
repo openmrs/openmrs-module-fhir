@@ -5,6 +5,7 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.hl7.fhir.dstu3.model.*;
 import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.resources.FHIRRelatedPersonResource;
 
 public class RestfulRelatedPersonProvider implements IResourceProvider {
@@ -43,6 +44,25 @@ public class RestfulRelatedPersonProvider implements IResourceProvider {
         CodeableConcept concept = new CodeableConcept();
         Coding coding = concept.addCoding();
         coding.setDisplay("Related person is successfully updated with id " + relatedPerson.getId());
+        outcome.addIssue().setDetails(concept);
+        retVal.setOperationOutcome(outcome);
+        return retVal;
+    }
+
+    /**
+     * Create related person
+     *
+     * @param relatedPerson fhir related person object
+     */
+    @Create
+    public MethodOutcome createRelatedPerson(@ResourceParam RelatedPerson relatedPerson) {
+        relatedPerson = relatedPersonResource.createRelatedPerson(relatedPerson);
+        MethodOutcome retVal = new MethodOutcome();
+        retVal.setId(new IdType(FHIRConstants.RELATED_PERSON, relatedPerson.getId()));
+        OperationOutcome outcome = new OperationOutcome();
+        CodeableConcept concept = new CodeableConcept();
+        Coding coding = concept.addCoding();
+        coding.setDisplay("Related person is successfully created with id " + relatedPerson.getId());
         outcome.addIssue().setDetails(concept);
         retVal.setOperationOutcome(outcome);
         return retVal;

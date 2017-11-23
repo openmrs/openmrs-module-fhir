@@ -69,6 +69,24 @@ public class RelatedPersonServiceImpl extends BaseOpenmrsService implements Rela
     public RelatedPerson updateRelatedPerson(String uuid, RelatedPerson relatedPerson) {
         List<String> errors = new ArrayList<String>();
         org.openmrs.Relationship omrsRelationship = FHIRRelatedPersonUtil.generateOmrsRelationshipObject(relatedPerson, errors);
+        handleErrorsIfAny(errors);
+        org.openmrs.Relationship omrsRetrievedRelationship = Context.getPersonService().getRelationshipByUuid(omrsRelationship.getUuid());
+        omrsRelationship = FHIRRelatedPersonUtil.updateRelationshipAttributes(omrsRelationship, omrsRetrievedRelationship);
+        omrsRelationship = Context.getPersonService().saveRelationship(omrsRelationship);
+        return FHIRRelatedPersonUtil.generateRelationshipObject(omrsRelationship);
+    }
+
+    @Override
+    public RelatedPerson createRelatedPerson(RelatedPerson relatedPerson) {
+        List<String> errors = new ArrayList<String>();
+        org.openmrs.Relationship omrsRelationship = FHIRRelatedPersonUtil.generateOmrsRelationshipObject(relatedPerson, errors);
+        handleErrorsIfAny(errors);
+        omrsRelationship = Context.getPersonService().saveRelationship(omrsRelationship);
+        return FHIRRelatedPersonUtil.generateRelationshipObject(omrsRelationship);
+
+    }
+
+    private void handleErrorsIfAny(List<String> errors) throws UnprocessableEntityException {
         if (!errors.isEmpty()) {
             StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to following issues \n");
             for (int i = 0; i < errors.size(); i++) {
@@ -76,9 +94,5 @@ public class RelatedPersonServiceImpl extends BaseOpenmrsService implements Rela
             }
             throw new UnprocessableEntityException(errorMessage.toString());
         }
-        org.openmrs.Relationship omrsRetrievedRelationship = Context.getPersonService().getRelationshipByUuid(omrsRelationship.getUuid());
-        omrsRelationship = FHIRRelatedPersonUtil.updateRelationshipAttributes(omrsRelationship, omrsRetrievedRelationship);
-        omrsRelationship = Context.getPersonService().saveRelationship(omrsRelationship);
-        return FHIRRelatedPersonUtil.generateRelationshipObject(omrsRelationship);
     }
 }

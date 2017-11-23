@@ -20,4 +20,8 @@ public class FHIRRelatedPersonResource extends Resource {
     public RelatedPerson updateRelatedPerson(String id, RelatedPerson relatedPerson) {
         return Context.getService(RelatedPersonService.class).updateRelatedPerson(id, relatedPerson);
     }
+
+    public RelatedPerson createRelatedPerson(RelatedPerson relatedPerson) {
+        return Context.getService(RelatedPersonService.class).createRelatedPerson(relatedPerson);
+    }
 }

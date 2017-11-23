@@ -124,6 +124,8 @@ public final class FHIRConstants {
 
 	public static final String PRACTITIONER = "Practitioner";
 
+	public static final String RELATED_PERSON = "RelatedPerson";
+
 	public static final String OBSERVATION = "Observation";
 
 	public static final String NUMERIC_CONCEPT_MEASURE_URI = "http://unitsofmeasure.org";

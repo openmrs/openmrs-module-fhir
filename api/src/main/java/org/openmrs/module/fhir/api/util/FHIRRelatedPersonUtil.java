@@ -96,10 +96,6 @@ public class FHIRRelatedPersonUtil {
         org.openmrs.Relationship omrsRelationship = new Relationship();
 
         // UUID
-        if (relatedPerson.getIdElement() == null) {
-            errors.add("Id element is missing.");
-            return null;
-        }
         omrsRelationship.setUuid(relatedPerson.getIdElement().getIdPart());
 
         // personA
