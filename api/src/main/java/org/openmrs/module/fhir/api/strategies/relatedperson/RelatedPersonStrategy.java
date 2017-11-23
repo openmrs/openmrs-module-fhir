@@ -48,8 +48,12 @@ public class RelatedPersonStrategy implements GenericRelatedPersonStrategy {
         List<String> errors = new ArrayList<String>();
         org.openmrs.Relationship omrsRelationship = FHIRRelatedPersonUtil.generateOmrsRelationshipObject(relatedPerson, errors);
         handleErrorsIfAny(errors);
-        org.openmrs.Relationship omrsRetrievedRelationship = Context.getPersonService().getRelationshipByUuid(omrsRelationship.getUuid());
-        omrsRelationship = FHIRRelatedPersonUtil.updateRelationshipAttributes(omrsRelationship, omrsRetrievedRelationship);
+
+        org.openmrs.Relationship omrsRetrievedRelationship = Context.getPersonService().getRelationshipByUuid(uuid);
+        if (omrsRetrievedRelationship != null) {
+            omrsRelationship = FHIRRelatedPersonUtil.updateRelationshipAttributes(omrsRelationship, omrsRetrievedRelationship);
+        }
+
         omrsRelationship = Context.getPersonService().saveRelationship(omrsRelationship);
         return FHIRRelatedPersonUtil.generateRelationshipObject(omrsRelationship);
     }
