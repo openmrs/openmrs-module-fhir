@@ -151,6 +151,12 @@
     </globalProperty>
 
     <globalProperty>
+        <property>${project.parent.artifactId}.relatedPerson.relatedPersonStrategy</property>
+        <defaultValue>DefaultRelatedPersonStrategy</defaultValue>
+        <description>Set related person strategy.</description>
+    </globalProperty>
+
+    <globalProperty>
         <property>${project.parent.artifactId}.location.locationStrategy</property>
         <defaultValue>DefaultLocationStrategy</defaultValue>
         <description>Set location strategy</description>
