@@ -91,18 +91,25 @@ public class FHIRRelatedPersonUtil {
         return relatedPerson;
     }
 
-    // TODO: error handling
     public static org.openmrs.Relationship generateOmrsRelationshipObject(RelatedPerson relatedPerson,
                                                                           List<String> errors) {
         org.openmrs.Relationship omrsRelationship = new Relationship();
 
         // UUID
+        if (relatedPerson.getIdElement() == null) {
+            errors.add("Id element is missing.");
+            return null;
+        }
         omrsRelationship.setUuid(relatedPerson.getIdElement().getIdPart());
 
         // personA
         // Take id of an identifier as a personA UUID.
         org.openmrs.Person omrsRelatedPerson = null;
         List<Identifier> identifierList = relatedPerson.getIdentifier();
+        if (identifierList == null) {
+            errors.add("Identifier is missing.");
+            return null;
+        }
         for (Identifier identifier : identifierList) {
             if (identifier.hasId()) {
                 omrsRelatedPerson = Context.getPersonService().getPersonByUuid(identifier.getId());
@@ -110,16 +117,20 @@ public class FHIRRelatedPersonUtil {
             }
         }
         if (omrsRelatedPerson == null) {
-            errors.add("Could not find related person");
+            errors.add("Could not find related person.");
             return null;
         }
         omrsRelationship.setPersonA(omrsRelatedPerson);
 
         // personB
         // Patient is the person B
+        if (relatedPerson.getPatient() == null) {
+            errors.add("Patient is missing.");
+            return null;
+        }
         org.openmrs.Person personB = Context.getPersonService().getPersonByUuid(relatedPerson.getPatient().getId());
         if (personB == null) {
-            errors.add("Could not find patient");
+            errors.add("Could not find patient.");
             return null;
         }
         omrsRelationship.setPersonB(personB);
@@ -128,8 +139,16 @@ public class FHIRRelatedPersonUtil {
         // This variable describes the direction of the relationship.
         MutableBoolean isAToB = new MutableBoolean(false); //
         CodeableConcept relationshipCode = relatedPerson.getRelationship();
+        if (relationshipCode == null) {
+            errors.add("Relationship is missing.");
+            return null;
+        }
         RelationshipType relationshipType = null;
         List<Coding> codingList = relationshipCode.getCoding();
+        if (codingList == null) {
+            errors.add("Coding is missing.");
+            return null;
+        }
         for (Coding coding : codingList) {
             if (FHIRConstants.OPENMRS_URI.equals(coding.getSystem())) {
                 relationshipType = FHIRUtils.getRelationshipTypeByCoding(coding, isAToB);
