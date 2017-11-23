@@ -18,11 +18,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.Attachment;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
-import org.hl7.fhir.dstu3.model.Coding;
-import org.hl7.fhir.dstu3.model.DateType;
+import org.hl7.fhir.dstu3.model.DateTimeType;
 import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Period;
+import org.hl7.fhir.dstu3.model.Quantity;
 import org.hl7.fhir.dstu3.model.Reference;
+import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.SimpleQuantity;
 import org.hl7.fhir.dstu3.model.StringType;
 import org.openmrs.Concept;
@@ -56,7 +57,7 @@ public class FHIRObsUtil {
 		observation.setIssued(obs.getDateCreated());
 
 		//Set effective date
-		DateType type = new DateType();
+		DateTimeType type = new DateTimeType();
 		type.setValue(obs.getObsDatetime());
 		observation.setEffective(type);
 
@@ -276,8 +277,8 @@ public class FHIRObsUtil {
 		}
 
 		Date dateEffective = null;
-		if(observation.getEffective() instanceof DateType) {
-			dateEffective = ((DateType) observation.getEffective()).getValue();
+		if(observation.getEffective() instanceof DateTimeType) {
+			dateEffective = ((DateTimeType) observation.getEffective()).getValue();
 			if (dateEffective == null) {
 				errors.add("Observation DateTime cannot be empty");
 			} else {
@@ -333,7 +334,7 @@ public class FHIRObsUtil {
 				errors.add("Obs set value cannot be empty");
 			} else {
 				if (concept.isNumeric()) {
-					SimpleQuantity quantity = (SimpleQuantity) observation.getValue();
+					Quantity quantity = (Quantity) observation.getValue();
 					BigDecimal bd = quantity.getValue();
 					double doubleValue = bd.doubleValue();
 					obs.setValueNumeric(doubleValue);

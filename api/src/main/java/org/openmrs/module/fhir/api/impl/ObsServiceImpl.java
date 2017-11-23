@@ -13,24 +13,14 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.Observation;
-import org.openmrs.Concept;
-import org.openmrs.Obs;
-import org.openmrs.Patient;
-import org.openmrs.Person;
-import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.ObsService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
-import org.openmrs.module.fhir.api.util.FHIRConstants;
-import org.openmrs.module.fhir.api.util.FHIRObsUtil;
-import org.openmrs.module.fhir.api.util.FHIRUtils;
+import org.openmrs.module.fhir.api.strategies.observation.ObservationStrategyUtil;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -62,159 +52,56 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	 * @see org.openmrs.module.fhir.api.ObsService#getObs(String)
 	 */
 	public Observation getObs(String id) {
-		Obs omrsObs = Context.getObsService().getObsByUuid(id);
-		if (omrsObs == null || omrsObs.isVoided()) {
-			return null;
-		}
-		return FHIRObsUtil.generateObs(omrsObs);
+		return ObservationStrategyUtil.getObservationStrategy().getObservation(id);
 	}
 
 	/**
 	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByPatientAndConcept(String, java.util.Map)
 	 */
 	public List<Observation> searchObsByPatientAndConcept(String patientUUid, Map<String, String> conceptNamesAndURIs) {
-		Patient patient = Context.getPatientService().getPatientByUuid(patientUUid);
-		Concept concept;
-		List<Observation> obsList = new ArrayList<Observation>();
-		String codingSystem = FHIRUtils.getConceptCodingSystem();
-		String systemName;
-		for (Map.Entry<String, String> entry : conceptNamesAndURIs.entrySet()) {
-			if (entry.getValue() == null || entry.getValue().isEmpty()) {
-				if (codingSystem == null || FHIRConstants.OPENMRS_CONCEPT_CODING_SYSTEM.equals(codingSystem)) {
-					concept = Context.getConceptService().getConceptByUuid(entry.getKey());
-				} else {
-					systemName = FHIRConstants.conceptSourceURINameMap.get(entry.getValue());
-					if (systemName == null || systemName.isEmpty()) {
-						return obsList;
-					}
-					concept = Context.getConceptService().getConceptByMapping(entry.getKey(), systemName);
-				}
-			} else {
-				systemName = FHIRConstants.conceptSourceURINameMap.get(entry.getValue());
-				if (systemName == null || systemName.isEmpty()) {
-					return obsList;
-				}
-				concept = Context.getConceptService().getConceptByMapping(entry.getKey(), systemName);
-			}
-			List<Obs> obs = Context.getObsService().getObservationsByPersonAndConcept(patient, concept);
-			for (Obs ob : obs) {
-				obsList.add(FHIRObsUtil.generateObs(ob));
-			}
-		}
-		return obsList;
+		return ObservationStrategyUtil.getObservationStrategy().searchObservationByPatientAndConcept(patientUUid, conceptNamesAndURIs);
 	}
 
 	/**
 	 * @see org.openmrs.module.fhir.api.ObsService#searchObsById(String)
 	 */
 	public List<Observation> searchObsById(String id) {
-		Obs omrsObs = Context.getObsService().getObsByUuid(id);
-		List<Observation> obsList = new ArrayList<Observation>();
-		if (omrsObs != null && !omrsObs.isVoided()) {
-			obsList.add(FHIRObsUtil.generateObs(omrsObs));
-		}
-		return obsList;
+		return ObservationStrategyUtil.getObservationStrategy().searchObservationByUuid(id);
 	}
 
 	/**
 	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByCode(java.util.Map)
 	 */
 	public List<Observation> searchObsByCode(Map<String, String> conceptNamesAndURIs) {
-		String codingSystem = FHIRUtils.getConceptCodingSystem();
-		List<Observation> obsList = new ArrayList<Observation>();
-		List<Obs> omrsObs = new ArrayList<Obs>();
-		Concept concept = null;
-		String systemName;
-		//Check system uri specified and if so find system name and query appropriate concept
-		for (Map.Entry<String, String> entry : conceptNamesAndURIs.entrySet()) {
-			if (entry.getValue() == null || entry.getValue().isEmpty()) {
-				if (codingSystem == null || FHIRConstants.OPENMRS_CONCEPT_CODING_SYSTEM.equals(codingSystem)) {
-					concept = Context.getConceptService().getConceptByUuid(entry.getKey());
-				} else {
-					systemName = FHIRConstants.conceptSourceURINameMap.get(entry.getValue());
-					if (systemName == null || systemName.isEmpty()) {
-						return obsList;
-					}
-					concept = Context.getConceptService().getConceptByMapping(entry.getKey(), systemName);
-				}
-			} else {
-				systemName = FHIRConstants.conceptSourceURINameMap.get(entry.getValue());
-				if (systemName == null || systemName.isEmpty()) {
-					return obsList;
-				}
-				concept = Context.getConceptService().getConceptByMapping(entry.getKey(), systemName);
-			}
-
-			if (concept == null) {
-				return obsList;
-			}
-
-			List<Concept> concepts = new ArrayList<Concept>();
-			concepts.add(concept);
-			omrsObs = Context.getObsService().getObservations(null, null, concepts, null, null, null, null, null,
-					null, null, null, false);
-
-			for (Obs obs : omrsObs) {
-				obsList.add(FHIRObsUtil.generateObs(obs));
-			}
-		}
-		return obsList;
+		return ObservationStrategyUtil.getObservationStrategy().searchObservationsByCode(conceptNamesAndURIs);
 	}
 
 	/**
 	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByDate(java.util.Date)
 	 */
 	public List<Observation> searchObsByDate(Date date) {
-		List<Obs> omrsObs = Context.getObsService().getObservations(null, null, null, null, null, null, null, null,
-				null, date, date, false);
-		List<Observation> obsList = new ArrayList<Observation>();
-		for (Obs obs : omrsObs) {
-			obsList.add(FHIRObsUtil.generateObs(obs));
-		}
-		return obsList;
+		return ObservationStrategyUtil.getObservationStrategy().searchObservationByDate(date);
 	}
 
 	/**
 	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByPerson(String)
 	 */
 	public List<Observation> searchObsByPerson(String personUuid) {
-		Person person = Context.getPersonService().getPersonByUuid(personUuid);
-		List<Obs> omrsObs = Context.getObsService().getObservationsByPerson(person);
-		List<Observation> obsList = new ArrayList<Observation>();
-		for (Obs obs : omrsObs) {
-			obsList.add(FHIRObsUtil.generateObs(obs));
-		}
-		return obsList;
+		return ObservationStrategyUtil.getObservationStrategy().searchObservationByPerson(personUuid);
 	}
 
 	/**
 	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByValueConcept(String)
 	 */
 	public List<Observation> searchObsByValueConcept(String conceptName) {
-		Concept concept = Context.getConceptService().getConcept(conceptName);
-		List<Concept> conceptsAnswers = new ArrayList<Concept>();
-		conceptsAnswers.add(concept);
-		List<Obs> omrsObs = Context.getObsService().getObservations(null, null, null, conceptsAnswers, null, null, null,
-				null,
-				null, null, null, false);
-		List<Observation> obsList = new ArrayList<Observation>();
-		for (Obs obs : omrsObs) {
-			obsList.add(FHIRObsUtil.generateObs(obs));
-		}
-		return obsList;
+		return ObservationStrategyUtil.getObservationStrategy().searchObservationByValueConcept(conceptName);
 	}
 
 	/**
 	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByPatientIdentifier(String)
 	 */
 	public List<Observation> searchObsByPatientIdentifier(String identifier) {
-		List<Observation> fhirObsList = new ArrayList<Observation>();
-
-		List<Obs> ormsObs = Context.getObsService().getObservations(identifier);
-		for (Obs obs : ormsObs) {
-			fhirObsList.add(FHIRObsUtil.generateObs(obs));
-		}
-		return fhirObsList;
+		return ObservationStrategyUtil.getObservationStrategy().searchObservationByPatientIdentifier(identifier);
 	}
 
 	/**
@@ -222,8 +109,7 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	 */
 	@Override
 	public void deleteObs(String id) {
-		Obs obs = Context.getObsService().getObsByUuid(id);
-		Context.getObsService().voidObs(obs, FHIRConstants.OBS_DELETE_MESSAGE);
+		ObservationStrategyUtil.getObservationStrategy().deleteObservation(id);
 	}
 	
 	/**
@@ -231,17 +117,7 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	 */
 	@Override
 	public Observation createFHIRObservation(Observation observation) {
-		List<String> errors = new ArrayList<String>();
-		Obs obs = FHIRObsUtil.generateOpenMRSObs(observation, errors);
-		if (!errors.isEmpty()) {
-			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
-			for (int i = 0; i < errors.size(); i++) {
-				errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
-			}
-			throw new UnprocessableEntityException(errorMessage.toString());
-		}
-		obs = Context.getObsService().saveObs(obs, FHIRConstants.OBS_CREATE_MESSAGE);
-		return FHIRObsUtil.generateObs(obs);
+		return ObservationStrategyUtil.getObservationStrategy().createFHIRObservation(observation);
 	}
 
 	/**
@@ -249,31 +125,6 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	 */
 	@Override
 	public Observation updateFHIRObservation(Observation observation, String theId) {
-		List<String> errors = new ArrayList<String>();
-		org.openmrs.api.ObsService observationService = Context.getObsService();
-		org.openmrs.Obs retrievedObs = observationService.getObsByUuid(theId);
-		org.openmrs.Obs omrsObs = FHIRObsUtil.generateOpenMRSObs(observation, errors);
-		FHIRObsUtil.copyObsAttributes(omrsObs, retrievedObs, errors);
-		if (retrievedObs != null) { // update observation			
-			if (!errors.isEmpty()) {
-				StringBuilder errorMessage = new StringBuilder(
-				        "The request cannot be processed due to the following issues \n");
-				for (int i = 0; i < errors.size(); i++) {
-					errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
-				}
-				throw new UnprocessableEntityException(errorMessage.toString());
-			}
-			omrsObs = Context.getObsService().saveObs(retrievedObs, FHIRConstants.OBS_UPDATE_MESSAGE);
-			return FHIRObsUtil.generateObs(omrsObs);
-		} else { // no observation is associated with the given uuid. so create a new observation with the given uuid
-			if (observation.getId() == null) { // since we need to PUT the observation to a specific URI, we need to set the uuid
-				// here, if it is not
-				// already set.
-				IdType uuid = new IdType();
-				uuid.setValue(theId);
-				observation.setId(uuid);
-			}
-			return createFHIRObservation(observation);
-		}
+		return ObservationStrategyUtil.getObservationStrategy().updateFHITObservation(observation, theId);
 	}
 }

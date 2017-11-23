@@ -63,9 +63,7 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 */
 	@Read()
 	public Observation getResourceById(@IdParam IdType theId) {
-		Observation result = null;
-		result = provider.getByUniqueId(theId);
-		return result;
+		return provider.getByUniqueId(theId);
 	}
 
 	/**
