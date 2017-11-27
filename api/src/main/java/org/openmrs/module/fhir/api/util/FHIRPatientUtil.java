@@ -163,7 +163,7 @@ public class FHIRPatientUtil {
 		org.openmrs.Patient omrsPatient = new org.openmrs.Patient(); // add eror handli
 		
 		if (patient.getId() != null) {
-			omrsPatient.setUuid(patient.getId());
+			omrsPatient.setUuid(extractUuid(patient.getId()));
 		}
 
 		List<Identifier> fhirIdList = patient.getIdentifier();
@@ -384,5 +384,9 @@ public class FHIRPatientUtil {
 		patientReference.setDisplay(nameDisplay.toString());
 		patientReference.setId(patient.getUuid());
 		return patientReference;
+	}
+
+	private static String extractUuid(String uuid) {
+		return uuid.contains("/") ? uuid.substring(uuid.indexOf("/") + 1) : uuid;
 	}
 }
