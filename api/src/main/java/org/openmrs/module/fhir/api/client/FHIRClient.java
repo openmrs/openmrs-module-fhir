@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 
-public class FHIRClient {
+public class FHIRClient implements Client {
     protected final Log log = LogFactory.getLog(this.getClass());
 
     private static final String PATIENT_CATEGORY = "patient";
