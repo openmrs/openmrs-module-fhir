@@ -18,20 +18,26 @@ import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.ValidationResult;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.mutable.MutableBoolean;
+import org.hl7.fhir.dstu3.model.Address;
 import org.hl7.fhir.dstu3.model.AllergyIntolerance;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.HumanName;
 import org.hl7.fhir.dstu3.model.Identifier;
 import org.hl7.fhir.dstu3.model.Reference;
 import org.hl7.fhir.dstu3.model.Resource;
+import org.hl7.fhir.dstu3.model.StringType;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
 import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
 import org.openmrs.PersonName;
+import org.openmrs.RelationshipType;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.manager.FHIRContextFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FHIRUtils {
@@ -89,6 +95,10 @@ public class FHIRUtils {
 
 	public static String getPatientStrategy() {
 		return Context.getAdministrationService().getGlobalProperty("fhir.patient.patientStrategy");
+	}
+
+	public static String getRelatedPersonStrategy() {
+		return Context.getAdministrationService().getGlobalProperty("fhir.relatedPerson.relatedPersonStrategy");
 	}
 
 	public static String getAppointmentStrategy() {
@@ -161,6 +171,78 @@ public class FHIRUtils {
 		identifier.setId(person.getUuid());
 		reference.setIdentifier(identifier);
 		return reference;
+	}
+
+	public static RelationshipType getRelationshipTypeByCoding(Coding coding, MutableBoolean isAToB) {
+		if (coding.getCode() != null) {
+			List<RelationshipType> relationshipList = Context.getPersonService().getAllRelationshipTypes();
+			for (RelationshipType relationshipType : relationshipList) {
+				if (coding.getCode().equals(relationshipType.getaIsToB())) {
+					isAToB.setValue(true);
+					return relationshipType;
+				} else if (coding.getCode().equals(relationshipType.getbIsToA())) {
+					isAToB.setValue(false);
+					return relationshipType;
+				}
+			}
+		}
+		return null;
+	}
+
+	public static HumanName buildHumanName(org.openmrs.PersonName personName) {
+		HumanName fhirName = new HumanName();
+		fhirName.setFamily(personName.getFamilyName());
+		StringType givenName = new StringType();
+		givenName.setValue(personName.getGivenName());
+		List<StringType> givenNames = new ArrayList<StringType>();
+		givenNames.add(givenName);
+		fhirName.setGiven(givenNames);
+
+		if (personName.getFamilyNameSuffix() != null) {
+			StringType suffix = new StringType();
+			suffix.setValue(personName.getFamilyNameSuffix());
+			List<StringType> suffixes = new ArrayList<StringType>();
+			suffixes.add(suffix);
+			fhirName.setSuffix(suffixes);
+		}
+
+		if (personName.getPrefix() != null) {
+			StringType prefix = new StringType();
+			prefix.setValue(personName.getPrefix());
+			List<StringType> prefixes = new ArrayList<StringType>();
+			prefixes.add(prefix);
+			fhirName.setSuffix(prefixes);
+		}
+
+		//TODO needs to set catagory appropriately
+		if (personName.isPreferred()) {
+			fhirName.setUse(HumanName.NameUse.USUAL);
+		} else {
+			fhirName.setUse(HumanName.NameUse.OLD);
+		}
+
+		return fhirName;
+	}
+
+	public static Address buildAddress(org.openmrs.PersonAddress personAddress) {
+		Address fhirAddress = new Address();
+		fhirAddress.setCity(personAddress.getCityVillage());
+		fhirAddress.setCountry(personAddress.getCountry());
+		fhirAddress.setState(personAddress.getStateProvince());
+		fhirAddress.setPostalCode(personAddress.getPostalCode());
+		List<StringType> addressStrings = new ArrayList<StringType>();
+		addressStrings.add(new StringType(personAddress.getAddress1()));
+		addressStrings.add(new StringType(personAddress.getAddress2()));
+		addressStrings.add(new StringType(personAddress.getAddress3()));
+		addressStrings.add(new StringType(personAddress.getAddress4()));
+		addressStrings.add(new StringType(personAddress.getAddress5()));
+		fhirAddress.setLine(addressStrings);
+		if (personAddress.isPreferred()) {
+			fhirAddress.setUse(Address.AddressUse.HOME);
+		} else {
+			fhirAddress.setUse(Address.AddressUse.OLD);
+		}
+		return fhirAddress;
 	}
 
 	/**

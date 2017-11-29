@@ -86,24 +86,7 @@ public class FHIRPractitionerUtil {
 			List<Address> addressList = new ArrayList<Address>();
 			Address fhirAddress;
 			for (PersonAddress address : provider.getPerson().getAddresses()) {
-				fhirAddress = new Address();
-				fhirAddress.setCity(address.getCityVillage());
-				fhirAddress.setCountry(address.getCountry());
-				fhirAddress.setState(address.getStateProvince());
-				fhirAddress.setPostalCode(address.getPostalCode());
-				List<StringType> addressStrings = new ArrayList<StringType>();
-				addressStrings.add(new StringType(address.getAddress1()));
-				addressStrings.add(new StringType(address.getAddress2()));
-				addressStrings.add(new StringType(address.getAddress3()));
-				addressStrings.add(new StringType(address.getAddress4()));
-				addressStrings.add(new StringType(address.getAddress5()));
-				fhirAddress.setLine(addressStrings);
-				if (address.isPreferred()) {
-					fhirAddress.setUse(Address.AddressUse.HOME);
-				} else {
-					fhirAddress.setUse(Address.AddressUse.OLD);
-				}
-				addressList.add(fhirAddress);
+				addressList.add(FHIRUtils.buildAddress(address));
 			}
 			practitioner.setAddress(addressList);
 			//Set gender in fhir practitioner object

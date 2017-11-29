@@ -63,37 +63,7 @@ public class FHIRPatientUtil {
 		//Set patient name to fhir patient
 		List<HumanName> humanNameDts = new ArrayList<HumanName>();
 		for (PersonName name : omrsPatient.getNames()) {
-			HumanName fhirName = new HumanName();
-			fhirName.setFamily(name.getFamilyName());
-			StringType givenName = new StringType();
-			givenName.setValue(name.getGivenName());
-			List<StringType> givenNames = new ArrayList<StringType>();
-			givenNames.add(givenName);
-			fhirName.setGiven(givenNames);
-
-			if (name.getFamilyNameSuffix() != null) {
-				StringType suffix = new StringType();
-				suffix.setValue(name.getFamilyNameSuffix());
-				List<StringType> suffixes = new ArrayList<StringType>();
-				suffixes.add(suffix);
-				fhirName.setSuffix(suffixes);
-			}
-
-			if (name.getPrefix() != null) {
-				StringType prefix = new StringType();
-				prefix.setValue(name.getPrefix());
-				List<StringType> prefixes = new ArrayList<StringType>();
-				prefixes.add(prefix);
-				fhirName.setSuffix(prefixes);
-			}
-
-			//TODO needs to set catagory appropriately
-			if (name.isPreferred()) {
-				fhirName.setUse(HumanName.NameUse.USUAL);
-			} else {
-				fhirName.setUse(HumanName.NameUse.OLD);
-			}
-			humanNameDts.add(fhirName);
+			humanNameDts.add(FHIRUtils.buildHumanName(name));
 		}
 		patient.setName(humanNameDts);
 
@@ -108,24 +78,7 @@ public class FHIRPatientUtil {
 
 		List<Address> fhirAddresses = patient.getAddress();
 		for (PersonAddress address : omrsPatient.getAddresses()) {
-			Address fhirAddress = new Address();
-			fhirAddress.setCity(address.getCityVillage());
-			fhirAddress.setCountry(address.getCountry());
-			fhirAddress.setState(address.getStateProvince());
-			fhirAddress.setPostalCode(address.getPostalCode());
-			List<StringType> addressStrings = new ArrayList<StringType>();
-			addressStrings.add(new StringType(address.getAddress1()));
-			addressStrings.add(new StringType(address.getAddress2()));
-			addressStrings.add(new StringType(address.getAddress3()));
-			addressStrings.add(new StringType(address.getAddress4()));
-			addressStrings.add(new StringType(address.getAddress5()));
-			fhirAddress.setLine(addressStrings);
-			if (address.isPreferred()) {
-				fhirAddress.setUse(Address.AddressUse.HOME);
-			} else {
-				fhirAddress.setUse(Address.AddressUse.OLD);
-			}
-			fhirAddresses.add(fhirAddress);
+			fhirAddresses.add(FHIRUtils.buildAddress(address));
 		}
 		patient.setAddress(fhirAddresses);
 
