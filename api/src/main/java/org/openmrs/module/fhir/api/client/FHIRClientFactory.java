@@ -9,7 +9,6 @@ public class FHIRClientFactory {
     private final static int CONNECT_TIMEOUT = 15 * SECOND;
     private final static int READ_TIMEOUT = 30 * SECOND;
 
-
     private FHIRClientFactory() { }
 
     public static Client createClient() {

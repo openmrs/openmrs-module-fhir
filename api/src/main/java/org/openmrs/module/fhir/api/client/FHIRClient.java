@@ -25,7 +25,6 @@ public class FHIRClient implements Client {
     private RestTemplate restTemplate = new RestTemplate();
     IParser parser = FhirContext.forDstu3().newJsonParser();
 
-
     public FHIRClient(ClientHttpRequestFactory clientHttpRequestFactory) {
         restTemplate.setRequestFactory(clientHttpRequestFactory);
     }
