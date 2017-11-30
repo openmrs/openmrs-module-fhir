@@ -6,6 +6,7 @@ import ca.uhn.fhir.parser.IParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.Patient;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -14,7 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 
-public class FHIRClient {
+public class FHIRClient implements Client {
     protected final Log log = LogFactory.getLog(this.getClass());
 
     private static final String PATIENT_CATEGORY = "patient";
@@ -24,6 +25,11 @@ public class FHIRClient {
     private RestTemplate restTemplate = new RestTemplate();
     IParser parser = FhirContext.forDstu3().newJsonParser();
 
+    public FHIRClient(ClientHttpRequestFactory clientHttpRequestFactory) {
+        restTemplate.setRequestFactory(clientHttpRequestFactory);
+    }
+
+    @Override
     public Object getObject(String category, String url, String username, String password) throws HttpClientErrorException {
         prepareRestTemplate(username, password);
         String stringObject = "";
