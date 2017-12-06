@@ -23,7 +23,7 @@ import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 
-public class FHIRHttpMessageConverter extends AbstractHttpMessageConverter<Object> {
+public class FHIRHttpMessageConverter extends AbstractHttpMessageConverter<IBaseResource> {
 
     private static final Set<Class<?>> SUPPORTED_CLASSES = new HashSet<Class<?>>(2);
     private static final String CHARSET = "UTF-8";
@@ -48,18 +48,19 @@ public class FHIRHttpMessageConverter extends AbstractHttpMessageConverter<Objec
     }
 
     @Override
-    protected Object readInternal(Class<?> clazz, HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
+    protected IBaseResource readInternal(Class<? extends IBaseResource> clazz, HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
         try {
-            return convertStreamToString(inputMessage.getBody());
+            String json = convertStreamToString(inputMessage.getBody());
+            return parser.parseResource(json);
         } catch (IOException e) {
             throw new HttpMessageNotReadableException("Could not read JSON: " + e.getMessage(), e);
         }
     }
 
     @Override
-    protected void writeInternal(Object o, HttpOutputMessage outputMessage) throws HttpMessageNotWritableException {
+    protected void writeInternal(IBaseResource o, HttpOutputMessage outputMessage) throws HttpMessageNotWritableException {
         try {
-            String json = parser.encodeResourceToString((IBaseResource) o);
+            String json = parser.encodeResourceToString(o);
             outputMessage.getBody().write(json.getBytes());
         }
         catch (IOException e) {

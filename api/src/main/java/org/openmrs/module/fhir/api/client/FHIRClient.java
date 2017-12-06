@@ -1,8 +1,5 @@
 package org.openmrs.module.fhir.api.client;
 
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.parser.DataFormatException;
-import ca.uhn.fhir.parser.IParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.Patient;
@@ -24,7 +21,6 @@ public class FHIRClient implements Client {
     private static final String ACCEPT_MIME_TYPE = "application/json";
 
     private RestTemplate restTemplate = new RestTemplate();
-    private IParser parser = FhirContext.forDstu3().newJsonParser();
 
     public FHIRClient(ClientHttpRequestFactory clientHttpRequestFactory) {
         restTemplate.setRequestFactory(clientHttpRequestFactory);
@@ -33,13 +29,12 @@ public class FHIRClient implements Client {
     @Override
     public Object getObject(String category, String url, String username, String password) {
         prepareRestTemplate(username, password);
-        String stringObject = "";
         try {
-            stringObject = restTemplate.getForObject(url, resolveCategory(category)).toString();
+            return restTemplate.getForObject(url, resolveCategory(category));
         } catch(HttpClientErrorException e) {
             log.error(String.format("Resource %s not found", category));
         }
-        return convertStringToFHIRObject(resolveCategory(category), stringObject);
+        return null;
     }
 
     @Override
@@ -49,16 +44,6 @@ public class FHIRClient implements Client {
         IBaseResource baseResource = (IBaseResource) object;
 
         restTemplate.postForObject(category, baseResource, Void.class);
-    }
-
-    private Object convertStringToFHIRObject(Class classType, String stringObject) {
-        Object result = "";
-        try {
-            result = parser.parseResource(classType, stringObject);
-        } catch(DataFormatException e) {
-            log.error(String.format("Could not parse String to Object: %s", stringObject));
-        }
-        return result;
     }
 
     private void prepareRestTemplate(String username, String password) {
