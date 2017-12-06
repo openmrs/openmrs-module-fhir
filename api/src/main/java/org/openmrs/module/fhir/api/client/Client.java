@@ -15,4 +15,6 @@ public interface Client {
      * @return Object representing pulled object.
      */
     Object getObject(String category, String url, String username, String password);
+
+    void postObject(String category, String url, String username, String password, Object object);
 }

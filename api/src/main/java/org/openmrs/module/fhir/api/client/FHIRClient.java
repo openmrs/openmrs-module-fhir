@@ -6,6 +6,7 @@ import ca.uhn.fhir.parser.IParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.client.HttpClientErrorException;
@@ -39,6 +40,15 @@ public class FHIRClient implements Client {
             log.error(String.format("Resource %s not found", category));
         }
         return convertStringToFHIRObject(resolveCategory(category), stringObject);
+    }
+
+    @Override
+    public void postObject(String category, String url, String username, String password, Object object) {
+        prepareRestTemplate(username, password);
+
+        IBaseResource baseResource = (IBaseResource) object;
+
+        restTemplate.postForObject(category, baseResource, Void.class);
     }
 
     private Object convertStringToFHIRObject(Class classType, String stringObject) {

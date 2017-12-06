@@ -3,8 +3,8 @@ package org.openmrs.module.fhir.api.client;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
-import com.google.gson.GsonBuilder;
 import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -31,7 +31,7 @@ public class FHIRHttpMessageConverter extends AbstractHttpMessageConverter<Objec
     private static final String SUBTYPE_1 = "fhir+json";
     private static final String SUBTYPE_2 = "json+fhir";
 
-    IParser parser = FhirContext.forDstu3().newJsonParser();
+    private IParser parser = FhirContext.forDstu3().newJsonParser();
 
     static {
         SUPPORTED_CLASSES.add(Patient.class);
@@ -57,7 +57,14 @@ public class FHIRHttpMessageConverter extends AbstractHttpMessageConverter<Objec
     }
 
     @Override
-    protected void writeInternal(Object o, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
+    protected void writeInternal(Object o, HttpOutputMessage outputMessage) throws HttpMessageNotWritableException {
+        try {
+            String json = parser.encodeResourceToString((IBaseResource) o);
+            outputMessage.getBody().write(json.getBytes());
+        }
+        catch (IOException e) {
+            throw new HttpMessageNotWritableException("Could not serialize object. Msg: " + e.getMessage(), e);
+        }
     }
 
     public String convertStreamToString(InputStream is) throws IOException {
