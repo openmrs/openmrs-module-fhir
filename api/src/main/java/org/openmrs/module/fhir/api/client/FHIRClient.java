@@ -23,14 +23,14 @@ public class FHIRClient implements Client {
     private static final String ACCEPT_MIME_TYPE = "application/json";
 
     private RestTemplate restTemplate = new RestTemplate();
-    IParser parser = FhirContext.forDstu3().newJsonParser();
+    private IParser parser = FhirContext.forDstu3().newJsonParser();
 
     public FHIRClient(ClientHttpRequestFactory clientHttpRequestFactory) {
         restTemplate.setRequestFactory(clientHttpRequestFactory);
     }
 
     @Override
-    public Object getObject(String category, String url, String username, String password) throws HttpClientErrorException {
+    public Object getObject(String category, String url, String username, String password) {
         prepareRestTemplate(username, password);
         String stringObject = "";
         try {
