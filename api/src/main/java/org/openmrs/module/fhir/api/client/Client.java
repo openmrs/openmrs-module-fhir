@@ -1,5 +1,7 @@
 package org.openmrs.module.fhir.api.client;
 
+import org.springframework.http.ResponseEntity;
+
 /**
  * This interface describes a client which is able to pull and push an object to OpenMRS instance based on a category.
  */
@@ -16,5 +18,14 @@ public interface Client {
      */
     Object getObject(String category, String url, String username, String password);
 
-    void postObject(String category, String url, String username, String password, Object object);
+    /**
+     *
+     * @param category
+     * @param url
+     * @param username
+     * @param password
+     * @param object
+     * @return
+     */
+    ResponseEntity<String> postObject(String category, String url, String username, String password, Object object);
 }

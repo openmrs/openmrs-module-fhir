@@ -5,13 +5,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 
 public class FHIRClient implements Client {
@@ -41,13 +42,12 @@ public class FHIRClient implements Client {
     }
 
     @Override
-    public void postObject(String category, String url, String username, String password, Object object)
+    public ResponseEntity<String> postObject(String category, String url, String username, String password, Object object)
             throws RestClientException {
         prepareRestTemplate(username, password);
-
         IBaseResource baseResource = (IBaseResource) object;
         try {
-            restTemplate.postForObject(category, baseResource, Void.class);
+            return restTemplate.postForEntity(category, baseResource, String.class);
         } catch(RestClientException e) {
             log.error(String.format("Exception occurred when posting object. Category: %s, url: %s", category, url),
                     e);
@@ -66,7 +66,8 @@ public class FHIRClient implements Client {
     }
 
     private void setCustomFHIRMessageConverter() {
-        this.restTemplate.setMessageConverters(Collections.<HttpMessageConverter<?>>singletonList(new FHIRHttpMessageConverter()));
+        this.restTemplate.setMessageConverters(Arrays.asList(new HttpMessageConverter<?>[]
+                { new FHIRHttpMessageConverter(), new StringHttpMessageConverter() }));
     }
 
     private Class resolveCategory(String category) {
