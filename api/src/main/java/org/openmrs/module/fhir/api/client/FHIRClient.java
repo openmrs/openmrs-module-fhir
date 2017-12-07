@@ -1,12 +1,13 @@
 package org.openmrs.module.fhir.api.client;
 
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
@@ -27,23 +28,31 @@ public class FHIRClient implements Client {
     }
 
     @Override
-    public Object getObject(String category, String url, String username, String password) {
+    public Object getObject(String category, String url, String username, String password)
+            throws RestClientException {
         prepareRestTemplate(username, password);
         try {
             return restTemplate.getForObject(url, resolveCategory(category));
-        } catch(HttpClientErrorException e) {
-            log.error(String.format("Resource %s not found", category));
+        } catch(RestClientException e) {
+            log.error(String.format("Exception occurred when getting object. Category: %s, url: %s", category, url),
+                    e);
+            throw e;
         }
-        return null;
     }
 
     @Override
-    public void postObject(String category, String url, String username, String password, Object object) {
+    public void postObject(String category, String url, String username, String password, Object object)
+            throws RestClientException {
         prepareRestTemplate(username, password);
 
         IBaseResource baseResource = (IBaseResource) object;
-
-        restTemplate.postForObject(category, baseResource, Void.class);
+        try {
+            restTemplate.postForObject(category, baseResource, Void.class);
+        } catch(RestClientException e) {
+            log.error(String.format("Exception occurred when posting object. Category: %s, url: %s", category, url),
+                    e);
+            throw e;
+        }
     }
 
     private void prepareRestTemplate(String username, String password) {
