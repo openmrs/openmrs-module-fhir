@@ -32,13 +32,7 @@ public class FHIRClient implements Client {
     public Object getObject(String category, String url, String username, String password)
             throws RestClientException {
         prepareRestTemplate(username, password);
-        try {
-            return restTemplate.getForObject(url, resolveCategory(category));
-        } catch(RestClientException e) {
-            log.error(String.format("Exception occurred when getting object. Category: %s, url: %s", category, url),
-                    e);
-            throw e;
-        }
+        return restTemplate.getForObject(url, resolveCategory(category));
     }
 
     @Override
@@ -46,13 +40,7 @@ public class FHIRClient implements Client {
             throws RestClientException {
         prepareRestTemplate(username, password);
         IBaseResource baseResource = (IBaseResource) object;
-        try {
-            return restTemplate.postForEntity(category, baseResource, String.class);
-        } catch(RestClientException e) {
-            log.error(String.format("Exception occurred when posting object. Category: %s, url: %s", category, url),
-                    e);
-            throw e;
-        }
+        return restTemplate.postForEntity(category, baseResource, String.class);
     }
 
     private void prepareRestTemplate(String username, String password) {
