@@ -21,12 +21,11 @@ public interface Client {
     /**
      * Perform POST request.
      *
-     * @param category Category of the resource.
      * @param url The url of the resource.
      * @param username Username for Basic Auth.
      * @param password Password for Baisc Auth.
      * @param object Object to be send.
      * @return Response entity representing request result.
      */
-    ResponseEntity<String> postObject(String category, String url, String username, String password, Object object);
+    ResponseEntity<String> postObject(String url, String username, String password, Object object);
 }

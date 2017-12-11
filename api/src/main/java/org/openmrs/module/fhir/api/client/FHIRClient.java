@@ -36,11 +36,11 @@ public class FHIRClient implements Client {
     }
 
     @Override
-    public ResponseEntity<String> postObject(String category, String url, String username, String password, Object object)
+    public ResponseEntity<String> postObject(String url, String username, String password, Object object)
             throws RestClientException {
         prepareRestTemplate(username, password);
         IBaseResource baseResource = (IBaseResource) object;
-        return restTemplate.postForEntity(category, baseResource, String.class);
+        return restTemplate.postForEntity(url, baseResource, String.class);
     }
 
     private void prepareRestTemplate(String username, String password) {
