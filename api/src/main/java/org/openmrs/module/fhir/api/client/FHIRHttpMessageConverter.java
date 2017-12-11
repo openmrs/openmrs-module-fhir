@@ -3,8 +3,8 @@ package org.openmrs.module.fhir.api.client;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
-import com.google.gson.GsonBuilder;
 import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -23,7 +23,7 @@ import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 
-public class FHIRHttpMessageConverter extends AbstractHttpMessageConverter<Object> {
+public class FHIRHttpMessageConverter extends AbstractHttpMessageConverter<IBaseResource> {
 
     private static final Set<Class<?>> SUPPORTED_CLASSES = new HashSet<Class<?>>(2);
     private static final String CHARSET = "UTF-8";
@@ -31,7 +31,7 @@ public class FHIRHttpMessageConverter extends AbstractHttpMessageConverter<Objec
     private static final String SUBTYPE_1 = "fhir+json";
     private static final String SUBTYPE_2 = "json+fhir";
 
-    IParser parser = FhirContext.forDstu3().newJsonParser();
+    private IParser parser = FhirContext.forDstu3().newJsonParser();
 
     static {
         SUPPORTED_CLASSES.add(Patient.class);
@@ -48,16 +48,24 @@ public class FHIRHttpMessageConverter extends AbstractHttpMessageConverter<Objec
     }
 
     @Override
-    protected Object readInternal(Class<?> clazz, HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
+    protected IBaseResource readInternal(Class<? extends IBaseResource> clazz, HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
         try {
-            return convertStreamToString(inputMessage.getBody());
+            String json = convertStreamToString(inputMessage.getBody());
+            return parser.parseResource(json);
         } catch (IOException e) {
             throw new HttpMessageNotReadableException("Could not read JSON: " + e.getMessage(), e);
         }
     }
 
     @Override
-    protected void writeInternal(Object o, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
+    protected void writeInternal(IBaseResource o, HttpOutputMessage outputMessage) throws HttpMessageNotWritableException {
+        try {
+            String json = parser.encodeResourceToString(o);
+            outputMessage.getBody().write(json.getBytes());
+        }
+        catch (IOException e) {
+            throw new HttpMessageNotWritableException("Could not serialize object. Msg: " + e.getMessage(), e);
+        }
     }
 
     public String convertStreamToString(InputStream is) throws IOException {

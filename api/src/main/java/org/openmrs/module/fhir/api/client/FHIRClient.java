@@ -1,18 +1,18 @@
 package org.openmrs.module.fhir.api.client;
 
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.parser.DataFormatException;
-import ca.uhn.fhir.parser.IParser;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 
 public class FHIRClient implements Client {
@@ -23,32 +23,24 @@ public class FHIRClient implements Client {
     private static final String ACCEPT_MIME_TYPE = "application/json";
 
     private RestTemplate restTemplate = new RestTemplate();
-    IParser parser = FhirContext.forDstu3().newJsonParser();
 
     public FHIRClient(ClientHttpRequestFactory clientHttpRequestFactory) {
         restTemplate.setRequestFactory(clientHttpRequestFactory);
     }
 
     @Override
-    public Object getObject(String category, String url, String username, String password) throws HttpClientErrorException {
+    public Object getObject(String category, String url, String username, String password)
+            throws RestClientException {
         prepareRestTemplate(username, password);
-        String stringObject = "";
-        try {
-            stringObject = restTemplate.getForObject(url, resolveCategory(category)).toString();
-        } catch(HttpClientErrorException e) {
-            log.error(String.format("Resource %s not found", category));
-        }
-        return convertStringToFHIRObject(resolveCategory(category), stringObject);
+        return restTemplate.getForObject(url, resolveCategory(category));
     }
 
-    private Object convertStringToFHIRObject(Class classType, String stringObject) {
-        Object result = "";
-        try {
-            result = parser.parseResource(classType, stringObject);
-        } catch(DataFormatException e) {
-            log.error(String.format("Could not parse String to Object: %s", stringObject));
-        }
-        return result;
+    @Override
+    public ResponseEntity<String> postObject(String url, String username, String password, Object object)
+            throws RestClientException {
+        prepareRestTemplate(username, password);
+        IBaseResource baseResource = (IBaseResource) object;
+        return restTemplate.postForEntity(url, baseResource, String.class);
     }
 
     private void prepareRestTemplate(String username, String password) {
@@ -62,7 +54,8 @@ public class FHIRClient implements Client {
     }
 
     private void setCustomFHIRMessageConverter() {
-        this.restTemplate.setMessageConverters(Collections.<HttpMessageConverter<?>>singletonList(new FHIRHttpMessageConverter()));
+        this.restTemplate.setMessageConverters(Arrays.asList(new HttpMessageConverter<?>[]
+                { new FHIRHttpMessageConverter(), new StringHttpMessageConverter() }));
     }
 
     private Class resolveCategory(String category) {
