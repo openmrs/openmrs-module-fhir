@@ -3,6 +3,7 @@ package org.openmrs.module.fhir.api.client;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hl7.fhir.dstu3.model.Location;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.springframework.http.ResponseEntity;
@@ -13,14 +14,22 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class FHIRClient implements Client {
     protected final Log log = LogFactory.getLog(this.getClass());
 
-    private static final String PATIENT_CATEGORY = "patient";
+    private static final Map<String, Class> CATEGORY_MAP;
     private static final String ACCEPT_HEADER = "Accept";
     private static final String ACCEPT_MIME_TYPE = "application/json";
+
+    static {
+        CATEGORY_MAP = new HashMap<String, Class>();
+        CATEGORY_MAP.put("patient", Patient.class);
+        CATEGORY_MAP.put("location", Location.class);
+    }
 
     private RestTemplate restTemplate = new RestTemplate();
 
@@ -59,10 +68,10 @@ public class FHIRClient implements Client {
     }
 
     private Class resolveCategory(String category) {
-        if (PATIENT_CATEGORY.equals(category)) {
-            return Patient.class;
-        } else {
-            return null;
+        if (CATEGORY_MAP.containsKey(category)) {
+            return CATEGORY_MAP.get(category);
         }
+        log.warn(String.format("Category %s not recognized", category));
+        return null;
     }
 }
