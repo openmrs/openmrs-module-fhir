@@ -40,17 +40,18 @@ public class FHIRClient implements Client {
     }
 
     @Override
-    public Object getObject(String category, String url, String username, String password)
+    public Object retrieveObject(String category, String url, String username, String password)
             throws RestClientException {
         prepareRestTemplate(username, password);
         return restTemplate.getForObject(url, resolveCategory(category));
     }
 
     @Override
-    public ResponseEntity<String> postObject(String url, String username, String password, Object object)
+    public ResponseEntity<String> createObject(String url, String username, String password, Object object)
             throws RestClientException {
         prepareRestTemplate(username, password);
         IBaseResource baseResource = (IBaseResource) object;
+        url = url + "/" + baseResource.getIdElement().getIdPart();
         return restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<Object>(baseResource), String.class);
     }
 

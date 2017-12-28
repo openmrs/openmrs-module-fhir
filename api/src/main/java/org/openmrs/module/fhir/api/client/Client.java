@@ -8,24 +8,24 @@ import org.springframework.http.ResponseEntity;
 public interface Client {
 
     /**
-     * Perform GET request.
+     * Retrieve object from remote server.
      *
      * @param category Category of the resource.
      * @param url The url of the resource.
      * @param username Username for Basic Auth.
      * @param password Password for Basic Auth.
-     * @return Object representing pulled object.
+     * @return Object representing retrieved object.
      */
-    Object getObject(String category, String url, String username, String password);
+    Object retrieveObject(String category, String url, String username, String password);
 
     /**
-     * Perform POST request.
+     * Create object on remote server.
      *
      * @param url The url of the resource.
      * @param username Username for Basic Auth.
      * @param password Password for Baisc Auth.
-     * @param object Object to be send.
+     * @param object Object to be sent.
      * @return Response entity representing request result.
      */
-    ResponseEntity<String> postObject(String url, String username, String password, Object object);
+    ResponseEntity<String> createObject(String url, String username, String password, Object object);
 }
