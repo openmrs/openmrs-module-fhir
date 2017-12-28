@@ -6,6 +6,8 @@ import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.Location;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -49,7 +51,7 @@ public class FHIRClient implements Client {
             throws RestClientException {
         prepareRestTemplate(username, password);
         IBaseResource baseResource = (IBaseResource) object;
-        return restTemplate.postForEntity(url, baseResource, String.class);
+        return restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<Object>(baseResource), String.class);
     }
 
     private void prepareRestTemplate(String username, String password) {
