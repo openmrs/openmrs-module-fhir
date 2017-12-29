@@ -6,6 +6,8 @@ import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.Location;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -38,18 +40,19 @@ public class FHIRClient implements Client {
     }
 
     @Override
-    public Object getObject(String category, String url, String username, String password)
+    public Object retrieveObject(String category, String url, String username, String password)
             throws RestClientException {
         prepareRestTemplate(username, password);
         return restTemplate.getForObject(url, resolveCategory(category));
     }
 
     @Override
-    public ResponseEntity<String> postObject(String url, String username, String password, Object object)
+    public ResponseEntity<String> createObject(String url, String username, String password, Object object)
             throws RestClientException {
         prepareRestTemplate(username, password);
         IBaseResource baseResource = (IBaseResource) object;
-        return restTemplate.postForEntity(url, baseResource, String.class);
+        url = url + "/" + baseResource.getIdElement().getIdPart();
+        return restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<Object>(baseResource), String.class);
     }
 
     private void prepareRestTemplate(String username, String password) {
