@@ -25,6 +25,8 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.openmrs.module.fhir.api.util.FHIRUtils.extractUuid;
+
 @Component("DefaultPatientStrategy")
 public class PatientStrategy implements GenericPatientStrategy {
 
@@ -40,6 +42,7 @@ public class PatientStrategy implements GenericPatientStrategy {
 
     @Override
     public List<Patient> searchPatientsById(String uuid) {
+        uuid = extractUuid(uuid);
         org.openmrs.Patient omrsPatient = Context.getPatientService().getPatientByUuid(uuid);
 
         List<Patient> patientList = new ArrayList();
@@ -218,6 +221,7 @@ public class PatientStrategy implements GenericPatientStrategy {
 
     @Override
     public void deletePatient(String uuid) {
+        uuid = extractUuid(uuid);
         org.openmrs.Patient patient = Context.getPatientService().getPatientByUuid(uuid);
 
         // patient not found. return with 404
@@ -253,6 +257,7 @@ public class PatientStrategy implements GenericPatientStrategy {
 
     @Override
     public Patient updatePatient(Patient patient, String uuid) {
+        uuid = extractUuid(uuid);
         org.openmrs.api.PatientService patientService = Context.getPatientService();
         org.openmrs.Patient retrievedPatient = patientService.getPatientByUuid(uuid);
 
@@ -277,6 +282,7 @@ public class PatientStrategy implements GenericPatientStrategy {
     }
 
     private Patient createPatient(Patient patient, String uuid) {
+        uuid = extractUuid(uuid);
         if (patient.getId() == null) { // since we need to PUT the patient to a specific URI, we need to set the uuid
             IdType uuidType = new IdType();
             uuidType.setValue(uuid);
