@@ -454,4 +454,8 @@ public class FHIRUtils {
 		}
 		return concept;
 	}
+
+	public static String extractUuid(String uuid) {
+		return uuid.contains("/") ? uuid.substring(uuid.indexOf("/") + 1) : uuid;
+	}
 }

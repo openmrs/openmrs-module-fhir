@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import static java.lang.String.valueOf;
+import static org.openmrs.module.fhir.api.util.FHIRUtils.extractUuid;
 
 public class FHIRPatientUtil {
 
@@ -337,9 +338,5 @@ public class FHIRPatientUtil {
 		patientReference.setDisplay(nameDisplay.toString());
 		patientReference.setId(patient.getUuid());
 		return patientReference;
-	}
-
-	private static String extractUuid(String uuid) {
-		return uuid.contains("/") ? uuid.substring(uuid.indexOf("/") + 1) : uuid;
 	}
 }

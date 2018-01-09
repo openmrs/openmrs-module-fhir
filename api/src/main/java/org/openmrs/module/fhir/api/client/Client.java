@@ -28,4 +28,8 @@ public interface Client {
      * @return Response entity representing request result.
      */
     ResponseEntity<String> createObject(String url, String username, String password, Object object);
+
+    ResponseEntity<String> deleteObject(String url, String username, String password, String uuid);
+
+    ResponseEntity<String> updateObject(String url, String username, String password, Object object);
 }
