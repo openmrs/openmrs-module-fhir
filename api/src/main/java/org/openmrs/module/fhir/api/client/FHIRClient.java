@@ -55,6 +55,23 @@ public class FHIRClient implements Client {
         return restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<Object>(baseResource), String.class);
     }
 
+    @Override
+    public ResponseEntity<String> deleteObject(String url, String username, String password, String uuid)
+            throws RestClientException {
+        prepareRestTemplate(username, password);
+        url = url + "/" + uuid;
+        return restTemplate.exchange(url, HttpMethod.DELETE, new HttpEntity<Object>(uuid), String.class);
+    }
+
+    @Override
+    public ResponseEntity<String> updateObject(String url, String username, String password, Object object)
+            throws RestClientException {
+        prepareRestTemplate(username, password);
+        IBaseResource baseResource = (IBaseResource) object;
+        url = url + "/" + baseResource.getIdElement().getIdPart();
+        return restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<Object>(baseResource), String.class);
+    }
+
     private void prepareRestTemplate(String username, String password) {
         setCustomInterceptors(username, password);
         setCustomFHIRMessageConverter();
