@@ -356,8 +356,13 @@ public class FHIRPatientUtil {
 					return false;
 				}
 			}
+		} else {
+			return false;
 		}
 
+		//It's work around. Compare only the first name (it's preferred) cause after the patient update,
+		// the name is set to old and creates the same again. During synchronization between the OpenMRS instances,
+		// it would compare the same object with the different size of the name list without that.
 		if (p1.getName().size() > 0 && p2.getName().size() > 0) {
 			if (!p1.getName().get(0).equalsDeep(p2.getName().get(0))) {
 				return false;
@@ -382,6 +387,7 @@ public class FHIRPatientUtil {
 			}
 		}
 
+		//The same as the issue with the name list.
 		if (p1.getAddress().size() > 0 && p2.getAddress().size() > 0) {
 			if (!p1.getAddress().get(0).equalsDeep(p2.getAddress().get(0))) {
 				return false;
