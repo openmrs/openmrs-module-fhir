@@ -339,4 +339,79 @@ public class FHIRPatientUtil {
 		patientReference.setId(patient.getUuid());
 		return patientReference;
 	}
+
+	/**
+	 * Compares patient objects with only current name and current address.
+	 * @param patient1
+	 * @param patient2
+	 * @return true if the patient are equalse, otherwise it returns false.
+	 */
+	public static boolean compareCurrentPatients(Object patient1, Object patient2) {
+		Patient p1 = (Patient) patient1;
+		Patient p2 = (Patient) patient2;
+
+		if (p1.getIdentifier().size() == p2.getIdentifier().size()) {
+			for (int i = 0; i < p1.getIdentifier().size(); i++) {
+				if (!p1.getIdentifier().get(i).equalsDeep(p2.getIdentifier().get(i))) {
+					return false;
+				}
+			}
+		} else {
+			return false;
+		}
+
+		//It's work around. Compare only the first name (it's preferred) cause after the patient update,
+		// the name is set to old and creates the same again. During synchronization between the OpenMRS instances,
+		// it would compare the same object with the different size of the name list without that.
+		if (p1.getName().size() > 0 && p2.getName().size() > 0) {
+			if (!p1.getName().get(0).equalsDeep(p2.getName().get(0))) {
+				return false;
+			}
+		}
+
+		if (p1.getTelecom().size() > 0 && p2.getTelecom().size() > 0) {
+			if (!p1.getTelecom().get(0).equalsDeep(p2.getTelecom().get(0))) {
+				return false;
+			}
+		}
+
+		if (null != p1.getGender()) {
+			if (!p1.getGender().equals(p2.getGender())) {
+				return false;
+			}
+		}
+
+		if (null != p1.getDeceased()) {
+			if (!p1.getDeceased().equalsDeep(p2.getDeceased())) {
+				return false;
+			}
+		}
+
+		//The same as the issue with the name list.
+		if (p1.getAddress().size() > 0 && p2.getAddress().size() > 0) {
+			if (!p1.getAddress().get(0).equalsDeep(p2.getAddress().get(0))) {
+				return false;
+			}
+		}
+
+		if (null != p1.getMaritalStatus()) {
+			if (!p1.getMaritalStatus().equalsDeep(p2.getMaritalStatus())) {
+				return false;
+			}
+		}
+
+		if (null != p1.getMultipleBirth()) {
+			if (!p1.getMultipleBirth().equalsDeep(p2.getMultipleBirth())) {
+				return false;
+			}
+		}
+
+		if (null != p1.getGeneralPractitioner()) {
+			if (!p1.getGeneralPractitioner().equals(p2.getGeneralPractitioner())) {
+				return false;
+			}
+		}
+
+		return p1.getActive() == p2.getActive();
+	}
 }
