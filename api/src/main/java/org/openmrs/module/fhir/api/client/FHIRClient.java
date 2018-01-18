@@ -9,7 +9,6 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestClientException;
@@ -35,8 +34,7 @@ public class FHIRClient implements Client {
 
     private RestTemplate restTemplate = new RestTemplate();
 
-    public FHIRClient(ClientHttpRequestFactory clientHttpRequestFactory) {
-        restTemplate.setRequestFactory(clientHttpRequestFactory);
+    public FHIRClient() {
     }
 
     @Override
