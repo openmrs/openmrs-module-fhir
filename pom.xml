@@ -52,8 +52,7 @@
         <connection>scm:git:git@github.com:openmrs/openmrs-module-fhir.git</connection>
         <developerConnection>scm:git:git@github.com:openmrs/openmrs-module-fhir.git</developerConnection>
         <url>https://github.com/openmrs/openmrs-module-fhir</url>
-      <tag>HEAD</tag>
-  </scm>
+    </scm>
 
     <modules>
         <module>api</module>
