@@ -36,6 +36,14 @@ public interface MedicationRequestService {
     List<MedicationRequest> searchMedicationRequestById(String uuid);
 
     /**
+     * Search drug orders list by uuid
+     *
+     * @param uuid of the drug order
+     * @return drug order obj
+     */
+    List<MedicationRequest> searchMedicationRequestByPatientId(String patientId);
+
+    /**
      * Delete drug order by uuid
      *
      * @param uuid of the drug order to be deleted
