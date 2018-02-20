@@ -77,9 +77,9 @@ public class RestfulMedicationRequestProvider implements IResourceProvider {
 	}
 
 	/**
-	 * Search Medication by unique id
+	 * Search Medication by unique patient uuod
 	 *
-	 * @param id object
+	 * @param patient patient reference with uuid
 	 */
 	@Search()
 	public List<MedicationRequest> searchMedicatoonRequestByPatientId(

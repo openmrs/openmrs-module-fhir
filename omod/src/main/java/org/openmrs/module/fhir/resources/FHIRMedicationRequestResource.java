@@ -41,10 +41,10 @@ public class FHIRMedicationRequestResource extends Resource {
 		return medicationRequestService.searchMedicationRequestById(id.getValue());
 	}
 
-	public List<MedicationRequest> searchByPatientId(ReferenceParam patientId) {
+	public List<MedicationRequest> searchByPatientId(ReferenceParam patient) {
 		MedicationRequestService medicationRequestService = Context
 				.getService(MedicationRequestService.class);
-		return medicationRequestService.searchMedicationRequestByPatientId(patientId.getIdPart());
+		return medicationRequestService.searchMedicationRequestByPatientId(patient.getIdPart());
 	}
 
 	public MedicationRequest createFHIRMedicationRequest(MedicationRequest medicationRequest) {
