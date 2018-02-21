@@ -21,6 +21,7 @@ import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Search;
 import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
@@ -74,7 +75,18 @@ public class RestfulMedicationRequestProvider implements IResourceProvider {
 															@RequiredParam(name = MedicationRequest.SP_RES_ID) TokenParam id) {
 		return fhirMedicationRequestResource.searchByUniqueId(id);
 	}
-	
+
+	/**
+	 * Search Medication by unique patient uuod
+	 *
+	 * @param patient patient reference with uuid
+	 */
+	@Search()
+	public List<MedicationRequest> searchMedicatoonRequestByPatientId(
+			@RequiredParam(name = MedicationRequest.SP_PATIENT) ReferenceParam patient) {
+		return fhirMedicationRequestResource.searchByPatientId(patient);
+	}
+
 	/**
 	 * Create Medication Request
 	 *

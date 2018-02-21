@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.fhir.resources;
 
+import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.hl7.fhir.dstu3.model.IdType;
@@ -38,6 +39,12 @@ public class FHIRMedicationRequestResource extends Resource {
 		MedicationRequestService medicationRequestService = Context
 				.getService(MedicationRequestService.class);
 		return medicationRequestService.searchMedicationRequestById(id.getValue());
+	}
+
+	public List<MedicationRequest> searchByPatientId(ReferenceParam patient) {
+		MedicationRequestService medicationRequestService = Context
+				.getService(MedicationRequestService.class);
+		return medicationRequestService.searchMedicationRequestByPatientId(patient.getIdPart());
 	}
 
 	public MedicationRequest createFHIRMedicationRequest(MedicationRequest medicationRequest) {

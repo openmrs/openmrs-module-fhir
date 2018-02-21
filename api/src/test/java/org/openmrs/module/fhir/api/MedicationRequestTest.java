@@ -21,6 +21,7 @@ import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.MedicationRequest;
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.exception.FHIRValidationException;
@@ -65,6 +66,15 @@ public class MedicationRequestTest extends BaseModuleContextSensitiveTest {
 		assertNotNull(medicationRequests);
 		assertEquals(medicationRequests.size(), 1);
 		assertEquals(medicationRequestUuid, medicationRequests.get(0).getId().toString());
+	}
+
+	@Test
+	public void searchMedicationRequestByPatientId_shouldReturnBundle() throws FHIRValidationException {
+		Patient patient = Context.getPatientService().getPatient(2);
+		String patientUuid = patient.getUuid();
+		List<MedicationRequest> medicationRequests = getService().searchMedicationRequestByPatientId(patientUuid);
+		assertNotNull(medicationRequests);
+		assertEquals(medicationRequests.size(), 10);
 	}
 
 	@Test

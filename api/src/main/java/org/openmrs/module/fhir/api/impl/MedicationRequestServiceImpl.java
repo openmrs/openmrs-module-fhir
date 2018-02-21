@@ -23,6 +23,7 @@ import org.openmrs.CareSetting;
 import org.openmrs.Drug;
 import org.openmrs.DrugOrder;
 import org.openmrs.Order;
+import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.MedicationRequestService;
@@ -76,6 +77,23 @@ public class MedicationRequestServiceImpl extends BaseOpenmrsService implements 
         return medicationRequests;
     }
 
+    /**
+     * @see MedicationRequestService#searchMedicationRequestById(String)
+     */
+    public List<MedicationRequest> searchMedicationRequestByPatientId(String patientUuid) {
+        Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
+        List<MedicationRequest> medicationRequests = new ArrayList<MedicationRequest>();
+        if (patient != null) {
+            List<Order> orders = Context.getOrderService().getAllOrdersByPatient(patient);
+            for(Order order : orders) {
+                if (order instanceof DrugOrder) {
+                    DrugOrder drugOrder = (DrugOrder) order;
+                    medicationRequests.add(FHIRMedicationRequestUtil.generateMedicationRequest(drugOrder));
+                }
+            }
+        }
+        return medicationRequests;
+    }
 
     /**
      * @see MedicationRequestService#deleteMedicationRequest(String)

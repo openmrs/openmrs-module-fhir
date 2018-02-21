@@ -147,8 +147,11 @@ public class FHIRMedicationRequestUtil {
         if (doseUnit != null) {
             dose.setUnit(doseUnit.getName().getName());
         }
-        dose.setValue(omrsDrugOrder.getDose());
-        dosage.setDose(dose);
+
+        if (omrsDrugOrder.getDose() != null) {
+            dose.setValue(omrsDrugOrder.getDose());
+            dosage.setDose(dose);
+        }
 
         Drug drug = omrsDrugOrder.getDrug();
         if (drug != null) {
