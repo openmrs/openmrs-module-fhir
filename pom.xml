@@ -67,9 +67,9 @@
         <slf4jLog4j12Version>1.6.0</slf4jLog4j12Version>
         <xmlStreamVersion>1.0-2</xmlStreamVersion>
         <SaxonHEVersion>9.4</SaxonHEVersion>
-        <hapiFhirBaseVersion>2.5</hapiFhirBaseVersion>
-        <hapiFhirStructuresDstuVersion>2.5</hapiFhirStructuresDstuVersion>
-        <hapiValidationResources>2.5</hapiValidationResources>
+        <hapiFhirBaseVersion>3.3.0</hapiFhirBaseVersion>
+        <hapiFhirStructuresDstuVersion>3.3.0</hapiFhirStructuresDstuVersion>
+        <hapiValidationResources>3.3.0</hapiValidationResources>
         <thymeleafVersion>2.1.4.RELEASE</thymeleafVersion>
         <phlocSchematronVersion>2.7.1</phlocSchematronVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -78,6 +78,7 @@
         <calculationModuleApiVersion>1.0</calculationModuleApiVersion>
         <serializationModuleApiVersion>0.2.11</serializationModuleApiVersion>
         <emrApiConditionModuleApiVersion>1.16</emrApiConditionModuleApiVersion>
+        <jacksonDataBindVersion>2.5.4</jacksonDataBindVersion>
     </properties>
 
     <dependencyManagement>
@@ -186,6 +187,22 @@
             </dependency>
 
             <dependency>
+                <groupId>ca.uhn.hapi.fhir</groupId>
+                <artifactId>hapi-fhir-server</artifactId>
+                <version>${hapiFhirStructuresDstuVersion}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
                 <groupId>org.thymeleaf</groupId>
                 <artifactId>thymeleaf</artifactId>
                 <version>${thymeleafVersion}</version>
@@ -222,7 +239,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.5.4</version>
+                <version>${jacksonDataBindVersion}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -233,10 +250,6 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <target>1.6</target>
-                        <source>1.6</source>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.openmrs.maven.plugins</groupId>
