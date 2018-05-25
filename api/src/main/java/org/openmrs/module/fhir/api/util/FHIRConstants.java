@@ -122,6 +122,8 @@ public final class FHIRConstants {
 
 	public static final String PATIENT = "Patient";
 
+	public static final String VISIT = "Visit";
+
 	public static final String PRACTITIONER = "Practitioner";
 
 	public static final String RELATED_PERSON = "RelatedPerson";

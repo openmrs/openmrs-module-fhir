@@ -14,22 +14,12 @@
 package org.openmrs.module.fhir.api.util;
 
 import org.apache.commons.lang.StringUtils;
-import org.hl7.fhir.dstu3.model.Bundle;
-import org.hl7.fhir.dstu3.model.CodeableConcept;
-import org.hl7.fhir.dstu3.model.Coding;
-import org.hl7.fhir.dstu3.model.Composition;
+import org.hl7.fhir.dstu3.model.*;
 import org.hl7.fhir.dstu3.model.Encounter;
-import org.hl7.fhir.dstu3.model.IdType;
-import org.hl7.fhir.dstu3.model.Period;
-import org.hl7.fhir.dstu3.model.Reference;
 import org.hl7.fhir.exceptions.FHIRException;
-import org.openmrs.Concept;
-import org.openmrs.EncounterProvider;
-import org.openmrs.EncounterRole;
-import org.openmrs.EncounterType;
-import org.openmrs.Obs;
-import org.openmrs.PersonName;
-import org.openmrs.VisitType;
+import org.openmrs.*;
+import org.openmrs.Location;
+import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 
 import java.util.ArrayList;
@@ -344,5 +334,68 @@ public class FHIREncounterUtil {
 		visit.setStartDatetime(start);
 		visit.setStopDatetime(period.getEnd());
 		return visit;
+	}
+
+	public static org.openmrs.Encounter updateEncounterAttributes(org.openmrs.Encounter omrsEncounter, org.openmrs.Encounter retrievedEncounter) {
+		retrievedEncounter.setEncounterDatetime(omrsEncounter.getEncounterDatetime());
+		retrievedEncounter.setEncounterType(omrsEncounter.getEncounterType());
+		retrievedEncounter.setLocation(omrsEncounter.getLocation());
+		retrievedEncounter.setPatient(omrsEncounter.getPatient());
+		retrievedEncounter.setDateCreated(omrsEncounter.getDateCreated());
+		retrievedEncounter.setEncounterProviders(omrsEncounter.getEncounterProviders());
+		retrievedEncounter.setForm(omrsEncounter.getForm());
+		retrievedEncounter.setObs(omrsEncounter.getObs());
+		retrievedEncounter.setOrders(omrsEncounter.getOrders());
+		retrievedEncounter.setPatient(omrsEncounter.getPatient());
+		retrievedEncounter.setVisit(omrsEncounter.getVisit());
+		return retrievedEncounter;
+	}
+
+	public static boolean compareCurrentEncounters(Object encounter1, Object encounter2) {
+		org.openmrs.Encounter p1 = (org.openmrs.Encounter)encounter1;
+		org.openmrs.Encounter p2 = (org.openmrs.Encounter)encounter2;
+		if(p1.getObs().size() == p2.getObs().size()) {
+			for(int i = 0; i < p1.getObs().size(); ++i) {
+				if(!(p1.getObs().toArray()[i]).equals(p2.getObs().toArray()[i])) {
+					return false;
+				}
+			}
+
+
+		} else if (p1.getOrders().size() == p2.getOrders().size()) {
+			for (int i = 0; i < p1.getOrders().size(); ++i) {
+				if (!(p1.getOrders().toArray()[i]).equals(p2.getOrders().toArray()[i])) {
+					return false;
+				}
+			}
+		} else if (p1.getEncounterProviders().size() == p2.getEncounterProviders().size()) {
+			for (int i = 0; i < p1.getEncounterProviders().size(); ++i) {
+				if (!(p1.getEncounterProviders().toArray()[i]).equals(p2.getEncounterProviders().toArray()[i])) {
+					return false;
+				}
+			}
+		} else {
+			if(p1.getDateChanged() != null && p2.getDateChanged() != null && !(p1.getDateChanged().equals(p2.getDateChanged()))) {
+				return false;
+			} else if(p1.getDateCreated() != null && !(p1.getDateCreated().equals(p2.getDateCreated()))) {
+				return false;
+			} else if(null != p1.getEncounterType() && !p1.getEncounterType().equals(p2.getEncounterType())) {
+				return false;
+			} else if(null != p1.getLocation() && !p1.getLocation().equals(p2.getLocation())) {
+				return false;
+			} else if(p1.getPatient() != null && !(p1.getPatient().equals(p2.getPatient()))) {
+				return false;
+			} else if(null != p1.getForm() && !p1.getForm().equals(p2.getForm())) {
+				return false;
+			} else if(null != p1.getVisit() && !p1.getVisit().equals(p2.getVisit())) {
+				return false;
+			} else if(null != p1.getEncounterDatetime() && p1.getEncounterDatetime().equals(p2.getEncounterDatetime())) {
+				return false;
+			}
+			else {
+				return p1.getVoided() == p2.getVoided();
+			}
+		}
+		return false;
 	}
 }

@@ -435,4 +435,36 @@ public class FHIRObsUtil {
 		encounterRef.setReference(encounterUri);
 		return encounterRef;
 	}
+
+
+	public static boolean compareCurrentObs(Object observation1, Object observation2) {
+		Obs p1 = (Obs) observation1;
+		Obs p2 = (Obs) observation2;
+
+
+		if (p1.getAccessionNumber() != null && p2.getAccessionNumber() != null && !(p1.getAccessionNumber().equals(p2.getAccessionNumber()))) {
+			return false;
+		} else if (p1.getComment() != null && !(p1.getComment().equals(p2.getComment()))) {
+			return false;
+		} else if (null != p1.getConcept() && !p1.getConcept().equals(p2.getConcept())) {
+			return false;
+		} else if (null != p1.getLocation() && !p1.getLocation().equals(p2.getLocation())) {
+			return false;
+		} else if (p1.getEncounter() != null && !(p1.getEncounter().equals(p2.getEncounter()))) {
+			return false;
+		} else if (null != p1.getValueNumeric() && !p1.getValueNumeric().equals(p2.getValueNumeric())) {
+			return false;
+		} else if (null != p1.getObsDatetime() && !p1.getObsDatetime().equals(p2.getObsDatetime())) {
+			return false;
+		} else if (null != p1.getOrder() && !p1.getOrder().equals(p2.getOrder())) {
+			return false;
+		} else if (null != p1.getPerson() && !p1.getPerson().equals(p2.getPerson())) {
+			return false;
+		} else if (null != p1.getStatus() && !p1.getStatus().equals(p2.getStatus())) {
+			return false;
+		} else {
+			return p1.getVoided() == p2.getVoided();
+		}
+
+	}
 }

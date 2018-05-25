@@ -3,7 +3,9 @@ package org.openmrs.module.fhir.api.client;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
+import org.hl7.fhir.dstu3.model.Encounter;
 import org.hl7.fhir.dstu3.model.Location;
+import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.springframework.http.HttpInputMessage;
@@ -36,6 +38,8 @@ public class FHIRHttpMessageConverter extends AbstractHttpMessageConverter<IBase
 
     static {
         SUPPORTED_CLASSES.add(Patient.class);
+        SUPPORTED_CLASSES.add(Encounter.class);
+        SUPPORTED_CLASSES.add(Observation.class);
         SUPPORTED_CLASSES.add(Location.class);
     }
 

@@ -458,4 +458,12 @@ public class FHIRUtils {
 	public static String extractUuid(String uuid) {
 		return uuid.contains("/") ? uuid.substring(uuid.indexOf("/") + 1) : uuid;
 	}
+
+    public static String getVisitStrategy() {
+		return Context.getAdministrationService().getGlobalProperty("fhir.visit.strategy");
+    }
+
+    public static String getEncounterStrategy() {
+		return Context.getAdministrationService().getGlobalProperty("fhir.encounter.strategy");
+    }
 }

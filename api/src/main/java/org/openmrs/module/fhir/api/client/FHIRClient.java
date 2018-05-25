@@ -3,7 +3,10 @@ package org.openmrs.module.fhir.api.client;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.util.EntityUtils;
+import org.hl7.fhir.dstu3.model.Encounter;
 import org.hl7.fhir.dstu3.model.Location;
+import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.springframework.http.HttpEntity;
@@ -29,6 +32,9 @@ public class FHIRClient implements Client {
     static {
         CATEGORY_MAP = new HashMap<String, Class>();
         CATEGORY_MAP.put("patient", Patient.class);
+        CATEGORY_MAP.put("visit", Encounter.class);
+        CATEGORY_MAP.put("encounter", Encounter.class);
+        CATEGORY_MAP.put("obs", Observation.class);
         CATEGORY_MAP.put("location", Location.class);
     }
 
