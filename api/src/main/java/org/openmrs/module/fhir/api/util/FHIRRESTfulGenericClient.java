@@ -14,11 +14,11 @@
 package org.openmrs.module.fhir.api.util;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.model.api.Bundle;
-import ca.uhn.fhir.rest.client.IGenericClient;
+import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.ICriterion;
 import ca.uhn.fhir.rest.gclient.ReferenceClientParam;
 import ca.uhn.fhir.rest.gclient.TokenClientParam;
+import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.DiagnosticReport;
 import org.hl7.fhir.dstu3.model.ImagingStudy;
 import org.hl7.fhir.dstu3.model.Patient;
@@ -60,7 +60,7 @@ public class FHIRRESTfulGenericClient {
 	                                                  ICriterion<ReferenceClientParam> where,
 	                                                  ICriterion<TokenClientParam> and) {
 		IGenericClient client = ctx.newRestfulGenericClient(serverBase);
-		return client.search()
+		return (Bundle)client.search()
 				.forResource(fhirResource)
 				.where(where)
 				.and(and)
@@ -71,7 +71,7 @@ public class FHIRRESTfulGenericClient {
 	                                          Class<DiagnosticReport> fhirResource,
 	                                          ICriterion<ReferenceClientParam> where) {
 		IGenericClient client = ctx.newRestfulGenericClient(serverBase);
-		return client.search()
+		return (Bundle)client.search()
 				.forResource(fhirResource)
 				.where(where)
 				.execute();
