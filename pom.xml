@@ -79,6 +79,7 @@
         <serializationModuleApiVersion>0.2.11</serializationModuleApiVersion>
         <emrApiConditionModuleApiVersion>1.16</emrApiConditionModuleApiVersion>
         <jacksonDataBindVersion>2.5.4</jacksonDataBindVersion>
+        <swaggerCondeGenVersion>2.3.1</swaggerCondeGenVersion>
     </properties>
 
     <dependencyManagement>
@@ -241,6 +242,12 @@
                 <artifactId>jackson-databind</artifactId>
                 <version>${jacksonDataBindVersion}</version>
             </dependency>
+
+            <dependency>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-codegen</artifactId>
+                <version>${swaggerCondeGenVersion}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -250,6 +257,10 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <target>1.7</target>
+                        <source>1.7</source>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.openmrs.maven.plugins</groupId>

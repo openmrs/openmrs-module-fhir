@@ -42,6 +42,10 @@ public class SwaggerForwardingFilter implements Filter {
 			String swaggerLongPath = openmrsPath + "/module/fhir/rest/swagger.json";
 			String newURI = requestURI.replace(swaggerLongPath, FHIROmodConstants.OPENMRS_FHIR_SWAGGER_ORG_PATH);
 			req.getRequestDispatcher(newURI).forward(req, res);
+		} else if (requestURI.startsWith(openmrsPath + FHIROmodConstants.OPENMRS_FHIR_SWAGGER_CODEGEN_SHORT_PATH)) {
+			String swaggerLongPath = openmrsPath + "/module/fhir/rest/swaggercodegen";
+			String newURI = requestURI.replace(swaggerLongPath, FHIROmodConstants.OPENMRS_FHIR_SWAGGER_SDK_PATH);
+			req.getRequestDispatcher(newURI).forward(req, res);
 		} else {
 			chain.doFilter(req, res);
 		}
