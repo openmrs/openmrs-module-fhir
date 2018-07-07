@@ -71,6 +71,81 @@ public class SwaggerCodeGenerator {
         sdkLanguages.put("spring", "io.swagger.codegen.languages.SpringCodegen");
         sdkLanguages.put("csharpDotNet2", "io.swagger.codegen.languages.CsharpDotNet2ClientCodegen");
         sdkLanguages.put("haskell", "io.swagger.codegen.languages.HaskellServantCodegen");
+
+        sdkLanguages.put("ada", "io.swagger.codegen.languages.AdaCodegen");
+        sdkLanguages.put("ada-server", "io.swagger.codegen.languages.AdaServerCodegen");
+        sdkLanguages.put("akka-scala", "io.swagger.codegen.languages.AkkaScalaClientCodegen");
+        sdkLanguages.put("apache2-config", "io.swagger.codegen.languages.Apache2ConfigCodegen");
+        sdkLanguages.put("apex", "io.swagger.codegen.languages.ApexClientCodegen");
+        sdkLanguages.put("aspnet-server", "io.swagger.codegen.languages.AspNetCoreServerCodegen");
+        sdkLanguages.put("bash", "io.swagger.codegen.languages.BashClientCodegen");
+        sdkLanguages.put("confluence-wiki", "io.swagger.codegen.languages.ConfluenceWikiGenerator");
+        sdkLanguages.put("cpp-rest-client", "io.swagger.codegen.languages.CppRestClientCodegen");
+        sdkLanguages.put("charp-dot-net2", "io.swagger.codegen.languages.CsharpDotNet2ClientCodegen");
+        sdkLanguages.put("eiffel", "io.swagger.codegen.languages.EiffelClientCodegen");
+        sdkLanguages.put("elm", "io.swagger.codegen.languages.ElmClientCodegen");
+        sdkLanguages.put("erlang", "io.swagger.codegen.languages.ErlangClientCodegen");
+        sdkLanguages.put("erlang-server", "io.swagger.codegen.languages.ErlangServerCodegen");
+        sdkLanguages.put("finch-server", "io.swagger.codegen.languages.FinchServerCodegen");
+        sdkLanguages.put("flask-connexion", "io.swagger.codegen.languages.FlaskConnexionCodegen");
+        sdkLanguages.put("go-server", "io.swagger.codegen.languages.GoServerCodegen");
+        sdkLanguages.put("haskel-http", "io.swagger.codegen.languages.HaskellHttpClientCodegen");
+        sdkLanguages.put("haskel-servant", "io.swagger.codegen.languages.HaskellServantCodegen");
+        sdkLanguages.put("java-cxf", "io.swagger.codegen.languages.JavaCXFClientCodegen");
+        sdkLanguages.put("java-cxf-server", "io.swagger.codegen.languages.JavaCXFServerCodegen");
+        sdkLanguages.put("java-inflector-server", "io.swagger.codegen.languages.JavaInflectorServerCodegen");
+        sdkLanguages.put("java-jaxrs-cxfcdi-server", "io.swagger.codegen.languages.JavaJAXRSCXFCDIServerCodegen");
+        sdkLanguages.put("java-jaxrs-spec-server", "io.swagger.codegen.languages.JavaJAXRSSpecServerCodegen");
+        sdkLanguages.put("java-jersey-server", "io.swagger.codegen.languages.JavaJerseyServerCodegen");
+        sdkLanguages.put("java-msf4j-server", "io.swagger.codegen.languages.JavaMSF4JServerCodegen");
+        sdkLanguages.put("java-pkmst-server", "io.swagger.codegen.languages.JavaPKMSTServerCodegen");
+        sdkLanguages.put("java-play-framework", "io.swagger.codegen.languages.JavaPlayFrameworkCodegen");
+        sdkLanguages.put("java-resteasy-eap-server", "io.swagger.codegen.languages.JavaResteasyEapServerCodegen");
+        sdkLanguages.put("java-resteasy-server", "io.swagger.codegen.languages.JavaResteasyServerCodegen");
+        sdkLanguages.put("java-vertx-server", "io.swagger.codegen.languages.JavaVertXServerCodegen");
+        sdkLanguages.put("javascript-closure-angular", "io.swagger.codegen.languages.JavascriptClosureAngularClientCodegen");
+        sdkLanguages.put("kotlin", "io.swagger.codegen.languages.KotlinClientCodegen");
+        sdkLanguages.put("kotlin-server", "io.swagger.codegen.languages.KotlinServerCodegen");
+        sdkLanguages.put("lua", "io.swagger.codegen.languages.LuaClientCodegen");
+        sdkLanguages.put("lumen-server", "io.swagger.codegen.languages.LumenServerCodegen");
+        sdkLanguages.put("nancy-fx-server", "io.swagger.codegen.languages.NancyFXServerCodegen");
+        sdkLanguages.put("nodejs-server", "io.swagger.codegen.languages.NodeJSServerCodegen");
+        sdkLanguages.put("objc", "io.swagger.codegen.languages.ObjcClientCodegen");
+        sdkLanguages.put("pistache-server", "io.swagger.codegen.languages.PistacheServerCodegen");
+        sdkLanguages.put("powershell", "io.swagger.codegen.languages.PowerShellClientCodegen");
+        sdkLanguages.put("qt5cpp", "io.swagger.codegen.languages.Qt5CPPGenerator");
+        sdkLanguages.put("rclient", "io.swagger.codegen.languages.RClientCodegen");
+        sdkLanguages.put("rails5-server", "io.swagger.codegen.languages.Rails5ServerCodegen");
+        sdkLanguages.put("restbed", "io.swagger.codegen.languages.RestbedCodegen");
+        sdkLanguages.put("rust", "io.swagger.codegen.languages.RustClientCodegen");
+        sdkLanguages.put("rust-server", "io.swagger.codegen.languages.RustServerCodegen");
+        sdkLanguages.put("scala-gatling", "io.swagger.codegen.languages.ScalaGatlingCodegen");
+        sdkLanguages.put("scala-lagom-server", "io.swagger.codegen.languages.ScalaLagomServerCodegen");
+        sdkLanguages.put("scala-tra-server", "io.swagger.codegen.languages.ScalatraServerCodegen");
+        sdkLanguages.put("scalaz", "io.swagger.codegen.languages.ScalazClientCodegen");
+        sdkLanguages.put("silex-server", "io.swagger.codegen.languages.SilexServerCodegen");
+        sdkLanguages.put("sinatra-server", "io.swagger.codegen.languages.SinatraServerCodegen");
+        sdkLanguages.put("slim-framework-server", "io.swagger.codegen.languages.SlimFrameworkServerCodegen");
+        sdkLanguages.put("staticdoc", "io.swagger.codegen.languages.StaticDocCodegen");
+        sdkLanguages.put("static-html2", "io.swagger.codegen.languages.StaticHtml2Generator");
+        sdkLanguages.put("static-html", "io.swagger.codegen.languages.StaticHtmlGenerator");
+        sdkLanguages.put("swagger", "io.swagger.codegen.languages.SwaggerGenerator");
+        sdkLanguages.put("swagger-yaml", "io.swagger.codegen.languages.SwaggerYamlGenerator");
+        sdkLanguages.put("swift3", "io.swagger.codegen.languages.Swift3Codegen");
+        sdkLanguages.put("swift4", "io.swagger.codegen.languages.Swift4Codegen");
+        sdkLanguages.put("swift", "io.swagger.codegen.languages.SwiftCodegen");
+        sdkLanguages.put("symfony-server", "io.swagger.codegen.languages.SymfonyServerCodegen");
+        sdkLanguages.put("tizen", "io.swagger.codegen.languages.TizenClientCodegen");
+        sdkLanguages.put("typescript-angular", "io.swagger.codegen.languages.TypeScriptAngularClientCodegen");
+        sdkLanguages.put("typescript-angular-js", "io.swagger.codegen.languages.TypeScriptAngularJsClientCodegen");
+        sdkLanguages.put("typescript-aureliac", "io.swagger.codegen.languages.TypeScriptAureliaClientCodegen");
+        sdkLanguages.put("typescript-fetch", "io.swagger.codegen.languages.TypeScriptFetchClientCodegen");
+        sdkLanguages.put("typescript-inversify", "io.swagger.codegen.languages.TypeScriptInversifyClientCodegen");
+        sdkLanguages.put("typescript-jquery", "io.swagger.codegen.languages.TypeScriptJqueryClientCodegen");
+        sdkLanguages.put("typescript-node", "io.swagger.codegen.languages.TypeScriptNodeClientCodegen");
+        sdkLanguages.put("undertow", "io.swagger.codegen.languages.UndertowCodegen");
+        sdkLanguages.put("zend-expressive-path-handler", "io.swagger.codegen.languages.ZendExpressivePathHandlerServerCodegen");
+
     }
 
 
@@ -88,6 +163,9 @@ public class SwaggerCodeGenerator {
             log.error("Error while parsing retrieved swagger definition");
         }
 
+        if (sdkLanguages.get(language) == null) {
+            throw new FHIRModuleOmodException("Specified language isn't supported " + language);
+        }
         //Format the swagger definition as a string before writing to the file.
         String formattedSwaggerDef = Json.pretty(swaggerDoc);
         Path tempSdkGenDir = null;
@@ -122,14 +200,14 @@ public class SwaggerCodeGenerator {
 
             //Generate the SDK for the specified language
             generateSdkForSwaggerDef(language, swaggerDefFile.getAbsolutePath(), tempSdkGenDir.toString());
-            log.debug("Generating SDK for the swagger definition"
-                                    + swaggerDefFile.getAbsolutePath() + "was successful.");
+            log.debug("Generating SDK for the swagger definition "
+                                    + swaggerDefFile.getAbsolutePath() + " was successful.");
             String archiveName = ZIP_ARCHIVE_NAME_PREFIX + "_" + language;
             tempZipFilePath = tempSdkGenDir + File.separator + archiveName + ".zip";
             Utils.archiveDirectory(tempSdkGenDir.toString(),
                     tempSdkGenDir.toString(),
                     archiveName);
-            log.debug("Generating the archive was successful for directory" +  tempSdkGenDir.toString());
+            log.debug("Generating the archive was successful for directory " +  tempSdkGenDir.toString());
         } else {
             log.info("Swagger definition file not found!");
         }
