@@ -206,4 +206,53 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals(Status.AMENDED, obs.getStatus());
 		assertEquals(Interpretation.CRITICALLY_LOW, obs.getInterpretation());
 	}
+
+
+	@Test
+	public void createObsWithEncounterContext_shouldCreatedObsWithEncounterContext() {
+		
+		String openmrsPersonUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
+		String openmrsConceptUuid = "4a5048b1-cf85-4c64-9339-7cab41e5e364";
+		Date openmrsDateApplies = new Date();
+		Person person = Context.getPersonService().getPersonByUuid(openmrsPersonUuid);
+		Concept concept = Context.getConceptService().getConceptByUuid(openmrsConceptUuid);
+		Obs obsn = new Obs(person, concept, openmrsDateApplies, null);
+		obsn.setValueNumeric(8d);
+		obsn.setStatus(Status.PRELIMINARY);
+		obsn.setInterpretation(Interpretation.HIGH);
+		
+		Reference encRef = new Reference();
+		String encRefUri = "encounter/6519d653-393b-4118-9c83-a3715b82d4ac";
+		encRef.setReference(encRefUri);
+		
+		Observation newObs = FHIRObsUtil.generateObs(obsn);
+		newObs.setContext(encRef);
+		newObs = Context.getService(ObsService.class).createFHIRObservation(newObs);
+		obsn = Context.getObsService().getObsByUuid(newObs.getId());
+
+		CodeableConcept dt = newObs.getCode();
+		List<Coding> dts = dt.getCoding();
+		Coding coding = dts.get(0);
+		String fhirConceptUuid = coding.getCode();
+		
+		Reference subjectref = newObs.getSubject();
+		String fhirPatientUuid = subjectref.getId();
+
+		Date fhirEffectiveDate = ((DateTimeType) newObs.getEffective()).getValue();
+
+		InstantType dateIssued = newObs.getIssuedElement();
+		Date fhirIssuedDate = dateIssued.getValue();
+
+		assertNotNull(newObs);
+		assertNotNull(obsn.getEncounter());
+		assertEquals(openmrsPersonUuid, fhirPatientUuid);
+		assertEquals(openmrsConceptUuid, fhirConceptUuid);
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		assertEquals(dateFormat.format(openmrsDateApplies), dateFormat.format(fhirEffectiveDate));
+		assertEquals(dateFormat.format(obsn.getDateCreated()), dateFormat.format(fhirIssuedDate));
+		assertEquals(Status.PRELIMINARY.name().toLowerCase(), newObs.getStatus().toCode());
+		assertEquals(Interpretation.HIGH.name(), newObs.getInterpretation().getText());
+	}
+
+
 }
