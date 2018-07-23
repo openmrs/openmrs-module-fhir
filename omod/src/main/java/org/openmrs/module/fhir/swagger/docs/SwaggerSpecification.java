@@ -52,6 +52,12 @@ public class SwaggerSpecification {
     //An object to hold external documentation
     private ExternalDocs externalDocs;
 
+    //An object to hold security definitions
+    private SecurityDefinitions securityDefinitions;
+
+    //An object to hold security scheme
+    private Security security;
+
     //Object to hold common params
     private Map<String, Parameter> parameters;
 
@@ -206,6 +212,22 @@ public class SwaggerSpecification {
 
     public void setParameters(Map<String, Parameter> parameters) {
         this.parameters = parameters;
+    }
+
+    public SecurityDefinitions getSecurityDefinitions() {
+        return securityDefinitions;
+    }
+
+    public void setSecurityDefinitions(SecurityDefinitions securityDefinitions) {
+        this.securityDefinitions = securityDefinitions;
+    }
+
+    public Security getSecurity() {
+        return security;
+    }
+
+    public void setSecurity(Security security) {
+        this.security = security;
     }
 }
 
