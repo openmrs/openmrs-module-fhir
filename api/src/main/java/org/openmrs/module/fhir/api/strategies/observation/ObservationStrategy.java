@@ -6,6 +6,7 @@ import org.hl7.fhir.dstu3.model.Observation;
 import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.Encounter;
 import org.openmrs.Person;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
@@ -172,8 +173,19 @@ public class ObservationStrategy implements GenericObservationStrategy {
 
     @Override
     public Observation createFHIRObservation(Observation observation) {
+        Obs obs = null;
+        Encounter enc = null;
         List<String> errors = new ArrayList<String>();
-        Obs obs = FHIRObsUtil.generateOpenMRSObs(observation, errors);
+        String encRef = observation.getContext().getReference();
+        if(encRef != null) {
+                String enc_uuid = FHIRUtils.extractUuid(encRef);
+                enc = Context.getEncounterService().getEncounterByUuid(enc_uuid);
+        }
+        if(enc != null) {
+            obs = FHIRObsUtil.generateOpenMRSObsWithEncounter(observation, enc, errors);
+        } else {
+            obs = FHIRObsUtil.generateOpenMRSObs(observation, errors);
+        }
         if (!errors.isEmpty()) {
             StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
             for (int i = 0; i < errors.size(); i++) {
