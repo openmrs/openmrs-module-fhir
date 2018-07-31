@@ -107,5 +107,7 @@ public class SwaggerDocumentGenerationTestCase extends RestfulServer {
 		String swaggerSpecificationJSON = creator.buildJSON();
 		assertNotNull(swaggerSpecificationJSON);
 		assertTrue(swaggerSpecificationJSON.contains("Auto-generated documentation for OpenMRS FHIR Rest services"));
+		assertTrue(swaggerSpecificationJSON.contains("securityDefinitions"));
+		assertTrue(swaggerSpecificationJSON.contains("basicAuth"));
 	}
 }

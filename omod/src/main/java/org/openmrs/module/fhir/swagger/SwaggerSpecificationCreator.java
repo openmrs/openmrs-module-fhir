@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.CapabilityStatement;
 import org.hl7.fhir.dstu3.model.CodeType;
 import org.openmrs.module.fhir.server.ConformanceProvider;
+import org.openmrs.module.fhir.swagger.docs.BasicAuth;
 import org.openmrs.module.fhir.swagger.docs.Contact;
 import org.openmrs.module.fhir.swagger.docs.Definition;
 import org.openmrs.module.fhir.swagger.docs.Definitions;
@@ -34,6 +35,8 @@ import org.openmrs.module.fhir.swagger.docs.Path;
 import org.openmrs.module.fhir.swagger.docs.Paths;
 import org.openmrs.module.fhir.swagger.docs.Response;
 import org.openmrs.module.fhir.swagger.docs.Schema;
+import org.openmrs.module.fhir.swagger.docs.Security;
+import org.openmrs.module.fhir.swagger.docs.SecurityDefinitions;
 import org.openmrs.module.fhir.swagger.docs.SwaggerSpecification;
 
 import javax.servlet.http.HttpServletRequest;
@@ -110,6 +113,12 @@ public class SwaggerSpecificationCreator {
         externalDocs.setDescription(SwaggerDocConstants.MORE_INFO);
         externalDocs.setUrl(SwaggerDocConstants.DOCS_URL);
         swaggerSpecification.setExternalDocs(externalDocs);
+        BasicAuth basicAuth = new BasicAuth();
+        SecurityDefinitions securityDefinitions = new SecurityDefinitions();
+        securityDefinitions.setBasicAuth(basicAuth);
+        swaggerSpecification.setSecurityDefinitions(securityDefinitions);
+        Security security = new Security();
+        swaggerSpecification.setSecurity(security);
     }
 
     /**
