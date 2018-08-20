@@ -247,6 +247,12 @@
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-codegen</artifactId>
                 <version>${swaggerCondeGenVersion}</version>
+                <exclusions>
+					<exclusion>
+						<groupId>javax.validation</groupId>
+						<artifactId>validation-api</artifactId>
+					</exclusion>
+				</exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>
