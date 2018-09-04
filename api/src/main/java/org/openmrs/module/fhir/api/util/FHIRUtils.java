@@ -113,6 +113,10 @@ public class FHIRUtils {
 		return Context.getAdministrationService().getGlobalProperty("fhir.observation.observationStrategy");
 	}
 
+	public static String getEncounterStrategy() {
+		return Context.getAdministrationService().getGlobalProperty("fhir.encounter.strategy");
+	}
+
 	public static int[] getConceptIdsOfConditions() {
 		String conceptsAsConditions = Context.getAdministrationService().getGlobalProperty(FHIRConstants
 				.CONCEPTS_CONVERTABLE_TO_CONDITIONS_STORED_AS_OBS);
@@ -400,6 +404,26 @@ public class FHIRUtils {
 		return encounterType;
 	}
 
+	public static String getObjectUuidByReference(Reference objectRef) {
+		Identifier identifier = objectRef.getIdentifier();
+		String uuid = objectRef.getId();
+
+		if(StringUtils.isEmpty(uuid) && identifier != null) {
+			uuid = identifier.getId();
+		}
+
+		if (StringUtils.isEmpty(uuid)) {
+			String objectRefStr = objectRef.getReference();
+			String[] objectRefStrSplit = objectRefStr.split("/");
+
+			if (objectRefStrSplit.length > 1) {
+				uuid = objectRefStrSplit[1];
+			}
+		}
+
+		return uuid;
+	}
+
 	public static Concept getDiagnosticReportNameConcept() {
 		return getConceptByConceptId("fhir.diagnosticreport.name");
 	}
@@ -458,12 +482,4 @@ public class FHIRUtils {
 	public static String extractUuid(String uuid) {
 		return uuid.contains("/") ? uuid.substring(uuid.indexOf("/") + 1) : uuid;
 	}
-
-    public static String getVisitStrategy() {
-		return Context.getAdministrationService().getGlobalProperty("fhir.visit.strategy");
-    }
-
-    public static String getEncounterStrategy() {
-		return Context.getAdministrationService().getGlobalProperty("fhir.encounter.strategy");
-    }
 }

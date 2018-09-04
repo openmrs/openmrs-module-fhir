@@ -12,6 +12,7 @@ import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonName;
 import org.openmrs.Visit;
 import org.openmrs.api.APIException;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.EncounterService;
 import org.openmrs.module.fhir.api.FamilyMemberHistoryService;
@@ -19,7 +20,7 @@ import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRLocationUtil;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
-import org.openmrs.module.fhir.api.util.OMRSFHIRVisitUtil;
+import org.openmrs.module.fhir.api.util.FHIRVisitUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class PatientStrategy implements GenericPatientStrategy {
         uuid = extractUuid(uuid);
         org.openmrs.Patient omrsPatient = Context.getPatientService().getPatientByUuid(uuid);
 
-        List<Patient> patientList = new ArrayList();
+        List<Patient> patientList = new ArrayList<>();
         if (omrsPatient != null && !omrsPatient.isVoided()) {
             patientList.add(FHIRPatientUtil.generatePatient(omrsPatient));
         }
@@ -55,12 +56,12 @@ public class PatientStrategy implements GenericPatientStrategy {
     @Override
     public List<Patient> searchPatientsByIdentifier(String identifierValue, String identifierTypeName) {
         org.openmrs.api.PatientService patientService = Context.getPatientService();
-        List<PatientIdentifierType> patientIdentifierTypes = new ArrayList();
+        List<PatientIdentifierType> patientIdentifierTypes = new ArrayList<>();
         patientIdentifierTypes.add(patientService.getPatientIdentifierTypeByName(identifierTypeName));
         List<org.openmrs.Patient> patientList = patientService.getPatients(identifierValue, null,
                 patientIdentifierTypes, true);
 
-        List<Patient> fhirPatientList = new ArrayList();
+        List<Patient> fhirPatientList = new ArrayList<>();
         for (org.openmrs.Patient patient : patientList) {
             fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
         }
@@ -74,7 +75,7 @@ public class PatientStrategy implements GenericPatientStrategy {
         List<org.openmrs.Patient> patientList = patientService
                 .getPatients(identifier, null, allPatientIdentifierTypes, true);
 
-        List<Patient> fhirPatientList = new ArrayList();
+        List<Patient> fhirPatientList = new ArrayList<>();
         for (org.openmrs.Patient patient : patientList) {
             fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
         }
@@ -86,7 +87,7 @@ public class PatientStrategy implements GenericPatientStrategy {
         //TODO this method looks for all the patients which is inefficient. Reimplement after API revamp
         List<org.openmrs.Patient> patients = Context.getPatientService().getAllPatients(true);
 
-        List<Patient> fhirPatientList = new ArrayList();
+        List<Patient> fhirPatientList = new ArrayList<>();
         for (org.openmrs.Patient patient : patients) {
             if (active) {
                 if (!patient.isVoided()) {
@@ -105,7 +106,7 @@ public class PatientStrategy implements GenericPatientStrategy {
     public Bundle searchPatientsByGivenName(String givenName) {
         List<org.openmrs.Patient> patients = searchPatientByQuery(givenName);
 
-        List<Patient> fhirPatientList = new ArrayList();
+        List<Patient> fhirPatientList = new ArrayList<>();
         //Go through the patients given by the openmrs core api and find them patient who has the givenName matching
         for (org.openmrs.Patient patient : patients) {
             if (givenName.toLowerCase().contains(patient.getGivenName().toLowerCase())) {
@@ -120,7 +121,7 @@ public class PatientStrategy implements GenericPatientStrategy {
         }
 
         Bundle bundle = new Bundle();
-        List<Bundle.BundleEntryComponent> filteredList = new ArrayList();
+        List<Bundle.BundleEntryComponent> filteredList = new ArrayList<>();
         for (Patient fhirPatient : fhirPatientList) {
             Bundle.BundleEntryComponent entry = new Bundle.BundleEntryComponent();
             entry.setResource(fhirPatient);
@@ -135,7 +136,7 @@ public class PatientStrategy implements GenericPatientStrategy {
     public Bundle searchPatientsByFamilyName(String familyName) {
         List<org.openmrs.Patient> patients = searchPatientByQuery(familyName);
 
-        List<Patient> fhirPatientList = new ArrayList();
+        List<Patient> fhirPatientList = new ArrayList<>();
         //Go through the patients given by the openmrs core api and find them patient who has the familyName matching
         for (org.openmrs.Patient patient : patients) {
             if (familyName.toLowerCase().contains(patient.getFamilyName().toLowerCase())) {
@@ -150,7 +151,7 @@ public class PatientStrategy implements GenericPatientStrategy {
         }
 
         Bundle bundle = new Bundle();
-        List<Bundle.BundleEntryComponent> filteredList = new ArrayList();
+        List<Bundle.BundleEntryComponent> filteredList = new ArrayList<>();
         for (Patient fhirPatient : fhirPatientList) {
             Bundle.BundleEntryComponent entry = new Bundle.BundleEntryComponent();
             entry.setResource(fhirPatient);
@@ -165,13 +166,13 @@ public class PatientStrategy implements GenericPatientStrategy {
     public Bundle searchPatientsByName(String name) {
         List<org.openmrs.Patient> patients = searchPatientByQuery(name);
 
-        List<Patient> fhirPatientList = new ArrayList();
+        List<Patient> fhirPatientList = new ArrayList<>();
         for (org.openmrs.Patient patient : patients) {
             fhirPatientList.add(FHIRPatientUtil.generatePatient(patient));
         }
 
         Bundle bundle = new Bundle();
-        List<Bundle.BundleEntryComponent> filteredList = new ArrayList();
+        List<Bundle.BundleEntryComponent> filteredList = new ArrayList<>();
         for (Patient fhirPatient : fhirPatientList) {
             Bundle.BundleEntryComponent entry = new Bundle.BundleEntryComponent();
             entry.setResource(fhirPatient);
@@ -206,7 +207,7 @@ public class PatientStrategy implements GenericPatientStrategy {
 
             //Set visits
             for (Visit visit : Context.getVisitService().getVisitsByPatient(omsrPatient)) {
-                bundle.addEntry().setResource(OMRSFHIRVisitUtil.generateEncounter(visit));
+                bundle.addEntry().setResource(FHIRVisitUtil.generateEncounter(visit));
                 if (visit.getLocation() != null) {
                     bundle.addEntry().setResource(FHIRLocationUtil.generateLocation(visit.getLocation()));
                 }
@@ -239,7 +240,7 @@ public class PatientStrategy implements GenericPatientStrategy {
 
     @Override
     public Patient createFHIRPatient(Patient patient) {
-        List<String> errors = new ArrayList();
+        List<String> errors = new ArrayList<>();
         org.openmrs.Patient omrsPatient = FHIRPatientUtil.generateOmrsPatient(patient, errors);
 
         FHIRUtils.checkGeneratorErrorList(errors);
@@ -248,9 +249,8 @@ public class PatientStrategy implements GenericPatientStrategy {
         try {
             omrsPatient = patientService.savePatient(omrsPatient);
         } catch (Exception e) {
-            StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
-            errorMessage.append(e.getMessage());
-            throw new UnprocessableEntityException(errorMessage.toString());
+            throw new UnprocessableEntityException(
+                    "The request cannot be processed due to the following issues \n" + e.getMessage());
         }
         return FHIRPatientUtil.generatePatient(omrsPatient);
     }
@@ -258,14 +258,14 @@ public class PatientStrategy implements GenericPatientStrategy {
     @Override
     public Patient updatePatient(Patient patient, String uuid) {
         uuid = extractUuid(uuid);
-        org.openmrs.api.PatientService patientService = Context.getPatientService();
+        PatientService patientService = Context.getPatientService();
         org.openmrs.Patient retrievedPatient = patientService.getPatientByUuid(uuid);
 
         return retrievedPatient != null ? updateRetrievedPatient(patient, retrievedPatient) : createPatient(patient, uuid);
     }
 
     private Patient updateRetrievedPatient(Patient patient, org.openmrs.Patient retrievedPatient) {
-        List<String> errors = new ArrayList();
+        List<String> errors = new ArrayList<>();
         org.openmrs.Patient omrsPatient = FHIRPatientUtil.generateOmrsPatient(patient, errors);
         FHIRUtils.checkGeneratorErrorList(errors);
 
@@ -273,10 +273,8 @@ public class PatientStrategy implements GenericPatientStrategy {
         try {
             Context.getPatientService().savePatient(retrievedPatient);
         } catch (Exception e) {
-            StringBuilder errorMessage = new StringBuilder(
-                    "The request cannot be processed due to the following issues \n");
-            errorMessage.append(e.getMessage());
-            throw new UnprocessableEntityException(errorMessage.toString());
+            throw new UnprocessableEntityException(
+                    "The request cannot be processed due to the following issues \n" + e.getMessage());
         }
         return FHIRPatientUtil.generatePatient(retrievedPatient);
     }
@@ -296,7 +294,7 @@ public class PatientStrategy implements GenericPatientStrategy {
     }
 
     private List<Bundle.BundleEntryComponent> rejectResourceDuplicates(Bundle bundle) {
-        List<Bundle.BundleEntryComponent> result = new ArrayList();
+        List<Bundle.BundleEntryComponent> result = new ArrayList<>();
 
         for (Bundle.BundleEntryComponent temp : bundle.getEntry()) {
             boolean contains = false;

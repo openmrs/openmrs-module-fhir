@@ -21,6 +21,7 @@ import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
@@ -61,13 +62,11 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	 */
 	@Read()
 	public Encounter getResourceById(@IdParam IdType theId) {
-		Encounter result = null;
-		result = encounterResource.getByUniqueId(theId);
-		return result;
+		return encounterResource.getByUniqueId(theId);
 	}
 
 	/**
-	 * Search locations by unique id
+	 * Search encounters by unique id
 	 *
 	 * @param id object containing the requested id
 	 */
@@ -134,12 +133,12 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	/**
 	 * Create Encounter
 	 *
-	 * @param encounter fhir encounter oobject
+	 * @param encounter fhir encounter object
 	 * @return This method returns Meth codOutcome object, which contains information about the
 	 *         create operation
 	 */
 	@Create
-	public MethodOutcome createFHIRPatient(@ResourceParam Encounter encounter) {
+	public MethodOutcome createFHIREncounter(@ResourceParam Encounter encounter) {
 		encounter = encounterResource.createFHIREncounter(encounter);
 		MethodOutcome retVal = new MethodOutcome();
 		retVal.setId(new IdType(FHIRConstants.ENCOUNTER, encounter.getId()));
@@ -147,6 +146,26 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 		CodeableConcept concept = new CodeableConcept();
 		Coding coding = concept.addCoding();
 		coding.setDisplay("Encounter is successfully created");
+		outcome.addIssue().setDetails(concept);
+		retVal.setOperationOutcome(outcome);
+		return retVal;
+	}
+
+	/**
+	 * Update encounter
+	 *
+	 * @param encounter fhir encounter object
+	 * @param theId id of the encounter
+	 * @return MethodOutcome which contains the status of the update operation
+	 */
+	@Update
+	public MethodOutcome updateEncounter(@ResourceParam Encounter encounter, @IdParam IdType theId) {
+		MethodOutcome retVal = new MethodOutcome();
+		OperationOutcome outcome = new OperationOutcome();
+		encounterResource.updateEncounter(encounter, theId.getIdPart());
+		CodeableConcept concept = new CodeableConcept();
+		Coding coding = concept.addCoding();
+		coding.setDisplay("Encounter is successfully updated with id " + encounter.getId());
 		outcome.addIssue().setDetails(concept);
 		retVal.setOperationOutcome(outcome);
 		return retVal;

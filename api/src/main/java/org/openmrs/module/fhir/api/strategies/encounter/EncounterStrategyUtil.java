@@ -5,10 +5,11 @@ import org.openmrs.module.fhir.api.util.FHIRUtils;
 
 public class EncounterStrategyUtil {
 
-    public static GenericEncounterStrategy getEncounterStrategy() {
-        String strategy = FHIRUtils.getEncounterStrategy();
+	public static GenericEncounterStrategy getEncounterStrategy() {
+		String strategy = FHIRUtils.getEncounterStrategy();
 
-        return strategy == null ? new EncounterStrategy() : Context.getRegisteredComponent(strategy, GenericEncounterStrategy.class);
-    }
+		return strategy == null ? new EncounterStrategy() :
+				Context.getRegisteredComponent(strategy, GenericEncounterStrategy.class);
+	}
 
 }

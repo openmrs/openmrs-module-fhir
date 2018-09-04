@@ -130,7 +130,7 @@ public interface EncounterService extends OpenmrsService {
 	 * @return fhir encounter list
 	 */
 	List<Encounter> searchEncountersByEncounterIdAndPartOf(String encounterId, String partOf);
-	
+
 	/**
 	 * Create encounter
 	 *
@@ -139,4 +139,12 @@ public interface EncounterService extends OpenmrsService {
 	 */
 	Encounter createFHIREncounter(Encounter encounter);
 
+	/**
+	 * Update encounter
+	 *
+	 * @param encounter the encounter to update
+	 * @param uuid the uuid of the patient to update
+	 * @return fhir encounter
+	 */
+	Encounter updateEncounter(Encounter encounter, String uuid);
 }
