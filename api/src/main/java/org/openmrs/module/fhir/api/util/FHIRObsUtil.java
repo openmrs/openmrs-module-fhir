@@ -65,7 +65,7 @@ public class FHIRObsUtil {
 		observation.setComment(obs.getComment());
 		observation.setSubject(FHIRUtils.buildPatientOrPersonResourceReference(obs.getPerson()));
 		//Set fhir performers from openmrs providers
-		List<Reference> performers = new ArrayList<Reference>();
+		List<Reference> performers = new ArrayList<>();
 		if (obs.getEncounter() != null) {
 			for (EncounterProvider provider : obs.getEncounter().getEncounterProviders()) {
 				Reference providerReference = new Reference();
@@ -87,7 +87,7 @@ public class FHIRObsUtil {
 		//Set concepts
 		Collection<ConceptMap> mappings = obs.getConcept().getConceptMappings();
 		CodeableConcept dt = observation.getCode();
-		List<Coding> dts = new ArrayList<Coding>();
+		List<Coding> dts = new ArrayList<>();
 
 		//Set codings from openmrs concept mappings
 		for (ConceptMap map : mappings) {
@@ -108,7 +108,7 @@ public class FHIRObsUtil {
 				observation.setValue(quantity);
 			}
 			//Set high and low ranges
-			List<Observation.ObservationReferenceRangeComponent> referenceRanges = new ArrayList<Observation.ObservationReferenceRangeComponent>();
+			List<Observation.ObservationReferenceRangeComponent> referenceRanges = new ArrayList<>();
 			Observation.ObservationReferenceRangeComponent referenceRange = new Observation.ObservationReferenceRangeComponent();
 			if (cn.getHiAbsolute() != null) {
 				SimpleQuantity high = new SimpleQuantity();
@@ -136,7 +136,7 @@ public class FHIRObsUtil {
 			
 		} else if (FHIRConstants.BIT_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
 			CodeableConcept codeableConceptDt = new CodeableConcept();
-			List<Coding> codingDts = new ArrayList<Coding>();
+			List<Coding> codingDts = new ArrayList<>();
 			Coding codingDt = new Coding();
 			codingDt.setCode(obs.getValueAsBoolean().toString()); // fixed by sashrika
 			codingDts.add(codingDt);
@@ -157,7 +157,7 @@ public class FHIRObsUtil {
 		} else if (FHIRConstants.CWE_HL7_ABBREVATION.equalsIgnoreCase(obs.getConcept().getDatatype().getHl7Abbreviation())) {
 			if (obs.getValueCoded() != null) {
 				Collection<ConceptMap> valueMappings = obs.getValueCoded().getConceptMappings();
-				List<Coding> values = new ArrayList<Coding>();
+				List<Coding> values = new ArrayList<>();
 				//Set codings from openmrs concept mappings
 				for (ConceptMap map : valueMappings) {
 					if (map.getConceptReferenceTerm() != null) {
@@ -207,7 +207,7 @@ public class FHIRObsUtil {
 		//Set reference observations
 		List<Observation.ObservationRelatedComponent> relatedObs = null;
 		if (obs.getGroupMembers() != null && !obs.getGroupMembers().isEmpty()) {
-			relatedObs = new ArrayList<Observation.ObservationRelatedComponent>();
+			relatedObs = new ArrayList<>();
 			Reference resourceReferenceDt;
 			Observation.ObservationRelatedComponent related;
 			for (Obs ob : obs.getGroupMembers()) {
@@ -224,7 +224,7 @@ public class FHIRObsUtil {
 		//Set old Obs
 		if (obs.getPreviousVersion() != null) {
 			if (relatedObs == null) {
-				relatedObs = new ArrayList<Observation.ObservationRelatedComponent>();
+				relatedObs = new ArrayList<>();
 			}
 
 			Reference resourceReferenceDt = new Reference();
@@ -438,33 +438,49 @@ public class FHIRObsUtil {
 
 
 	public static boolean compareCurrentObs(Object observation1, Object observation2) {
-		Obs p1 = (Obs) observation1;
-		Obs p2 = (Obs) observation2;
+		Observation o1 = (Observation) observation1;
+		Observation o2 = (Observation) observation2;
 
-
-		if (p1.getAccessionNumber() != null && p2.getAccessionNumber() != null && !(p1.getAccessionNumber().equals(p2.getAccessionNumber()))) {
+		if (o1.getIssued() != null ? !o1.getIssued().equals(o2.getIssued()) : o2.getIssued() != null) {
 			return false;
-		} else if (p1.getComment() != null && !(p1.getComment().equals(p2.getComment()))) {
-			return false;
-		} else if (null != p1.getConcept() && !p1.getConcept().equals(p2.getConcept())) {
-			return false;
-		} else if (null != p1.getLocation() && !p1.getLocation().equals(p2.getLocation())) {
-			return false;
-		} else if (p1.getEncounter() != null && !(p1.getEncounter().equals(p2.getEncounter()))) {
-			return false;
-		} else if (null != p1.getValueNumeric() && !p1.getValueNumeric().equals(p2.getValueNumeric())) {
-			return false;
-		} else if (null != p1.getObsDatetime() && !p1.getObsDatetime().equals(p2.getObsDatetime())) {
-			return false;
-		} else if (null != p1.getOrder() && !p1.getOrder().equals(p2.getOrder())) {
-			return false;
-		} else if (null != p1.getPerson() && !p1.getPerson().equals(p2.getPerson())) {
-			return false;
-		} else if (null != p1.getStatus() && !p1.getStatus().equals(p2.getStatus())) {
-			return false;
-		} else {
-			return p1.getVoided() == p2.getVoided();
 		}
 
+		if (o1.getEffective() != null ? !o1.getEffective().equalsDeep(o2.getEffective()) : o2.getEffective() != null) {
+			return false;
+		}
+
+		if (o1.getComment() != null ? !o1.getComment().equals(o2.getComment()) : o2.getComment() != null) {
+			return false;
+		}
+
+		if (o1.getSubject() != null ? !o1.getSubject().equalsDeep(o2.getSubject()) : o2.getSubject() != null) {
+			return false;
+		}
+
+		if (o1.getValue() != null ? !o1.getValue().equalsDeep(o2.getValue()) : o2.getValue() != null) {
+			return false;
+		}
+
+		if (o1.getStatus() != null ? !o1.getStatus().equals(o2.getStatus()) : o2.getStatus() != null) {
+			return false;
+		}
+
+		if (o1.getInterpretation() != null ? !o1.getInterpretation().equalsDeep(o2.getInterpretation()) : o2.getInterpretation() != null) {
+			return false;
+		}
+
+		if (o1.getIssued() != null ? !o1.getIssued().equals(o2.getIssued()) : o2.getIssued() != null) {
+			return false;
+		}
+
+		if (o1.getPerformer() != null ? !o1.getPerformer().equals(o2.getPerformer()) : o2.getPerformer() != null) {
+			return false;
+		}
+
+		if (o1.getReferenceRange() != null ? !o1.getReferenceRange().equals(o2.getReferenceRange()) : o2.getReferenceRange() != null) {
+			return false;
+		}
+
+		return o1.getRelated() != null ? o1.getRelated().equals(o2.getRelated()) : o2.getRelated() == null;
 	}
 }

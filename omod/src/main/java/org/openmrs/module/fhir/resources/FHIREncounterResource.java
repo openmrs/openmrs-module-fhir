@@ -22,7 +22,6 @@ import org.hl7.fhir.dstu3.model.IdType;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.EncounterService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FHIREncounterResource extends Resource {
@@ -45,35 +44,32 @@ public class FHIREncounterResource extends Resource {
 	}
 
 	public List<Encounter> searchEncountersByPatientIdentifier(ReferenceParam identifier) {
-		List<Encounter> fhirEncounters = new ArrayList<Encounter>();
-
-		fhirEncounters = Context.getService(EncounterService.class).searchEncountersByPatientIdentifier(
+		return Context.getService(EncounterService.class).searchEncountersByPatientIdentifier(
 					identifier.getIdPart());
-		return fhirEncounters;
 	}
 
 	public List<Encounter> searchEncountersByPatientIdentifierAndPartOf(ReferenceParam identifier, ReferenceParam partOf) {
-		List<Encounter> fhirEncounters;
-		fhirEncounters = Context.getService(EncounterService.class).searchEncountersByPatientIdentifierAndPartOf
+		return Context.getService(EncounterService.class).searchEncountersByPatientIdentifierAndPartOf
 					(identifier.getIdPart(), partOf.getIdPart());
-
-		return fhirEncounters;
 	}
 
 	public List<Encounter> searchEncountersByIdAndPartOf(TokenParam identifier, ReferenceParam partOf) {
-		List<Encounter> fhirEncounters = new ArrayList<Encounter>();
-		fhirEncounters = Context.getService(EncounterService.class).searchEncountersByEncounterIdAndPartOf(identifier
+		return Context.getService(EncounterService.class).searchEncountersByEncounterIdAndPartOf(identifier
 				.getValue(), partOf.getIdPart());
-		return fhirEncounters;
 	}
 
 	public void deleteEncounter(IdType theId) {
 		EncounterService encounterService = Context.getService(EncounterService.class);
 		encounterService.deleteEncounter(theId.getIdPart());
 	}
-	
+
 	public Encounter createFHIREncounter(Encounter encounter) {
 		EncounterService encounterService = Context.getService(EncounterService.class);
 		return encounterService.createFHIREncounter(encounter);
+	}
+
+	public Encounter updateEncounter(Encounter encounter, String theId) {
+		EncounterService encounterService = Context.getService(EncounterService.class);
+		return encounterService.updateEncounter(encounter, theId);
 	}
 }

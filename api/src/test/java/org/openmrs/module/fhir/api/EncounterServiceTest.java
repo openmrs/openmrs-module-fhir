@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.openmrs.Visit;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.module.fhir.api.util.FHIREncounterUtil;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import java.util.ArrayList;
@@ -63,8 +64,10 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void FHIREncounter_shouldCreateEncounter() {
 		String encounterUuid = "430bbb70-6a9c-4e1e-badb-9d1034b1b5e9";
-		Encounter fhirEncounter = getService().getEncounter(encounterUuid);
-		
+		org.openmrs.Encounter encounter = Context.getEncounterService().getEncounterByUuid(encounterUuid);
+		encounter.setUuid("");
+		Encounter fhirEncounter = FHIREncounterUtil.generateEncounter(encounter);
+
 		Reference visitRef = new Reference();
 		visitRef.setDisplay("test");
 		String visitRefUri = FHIRConstants.ENCOUNTER + "/" + "7fffd6b9-0970-4967-88c7-0b7b50f12ab9";
