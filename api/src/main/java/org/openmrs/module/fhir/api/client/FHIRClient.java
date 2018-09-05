@@ -7,6 +7,7 @@ import org.hl7.fhir.dstu3.model.Encounter;
 import org.hl7.fhir.dstu3.model.Location;
 import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.Practitioner;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -35,6 +36,8 @@ public class FHIRClient implements Client {
         CATEGORY_MAP.put("encounter", Encounter.class);
         CATEGORY_MAP.put("obs", Observation.class);
         CATEGORY_MAP.put("location", Location.class);
+        CATEGORY_MAP.put("practitioner", Practitioner.class);
+        CATEGORY_MAP.put("provider", Practitioner.class);
     }
 
     private RestTemplate restTemplate = new RestTemplate();

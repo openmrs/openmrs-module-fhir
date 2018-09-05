@@ -28,6 +28,8 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.PractitionerService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
+import org.openmrs.module.fhir.api.strategies.practitioner.PractitionerStrategy;
+import org.openmrs.module.fhir.api.strategies.practitioner.PractitionerStrategyUtil;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRPractitionerUtil;
 
@@ -63,174 +65,56 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 	 * @see org.openmrs.module.fhir.api.PractitionerService#getPractitioner(String)
 	 */
 	public Practitioner getPractitioner(String id) {
-		Provider omrsProvider = Context.getProviderService().getProviderByUuid(id);
-		if (omrsProvider == null || omrsProvider.isRetired()) {
-			return null;
-		}
-		return FHIRPractitionerUtil.generatePractitioner(omrsProvider);
+		return PractitionerStrategyUtil.getPractitionerStrategy().getPractitioner(id);
 	}
 
 	/**
 	 * @see org.openmrs.module.fhir.api.PractitionerService#searchPractitionersById(String)
 	 */
 	public List<Practitioner> searchPractitionersById(String id) {
-		Provider omrsProvider = Context.getProviderService().getProviderByUuid(id);
-		List<Practitioner> practitioners = new ArrayList<Practitioner>();
-		if (omrsProvider != null && !omrsProvider.isRetired()) {
-			practitioners.add(FHIRPractitionerUtil.generatePractitioner(omrsProvider));
-		}
-		return practitioners;
+		return PractitionerStrategyUtil.getPractitionerStrategy().searchPractitionersByUuid(id);
 	}
 
 	/**
 	 * @see org.openmrs.module.fhir.api.PractitionerService#searchPractitionersByName(String)
 	 */
 	public List<Practitioner> searchPractitionersByName(String name) {
-		List<Provider> omrsProviders = searchProvidersByQuery(name);
-		List<Practitioner> practitioners = new ArrayList<Practitioner>();
-		for (Provider provider : omrsProviders) {
-			practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
-		}
-		return practitioners;
+		return PractitionerStrategyUtil.getPractitionerStrategy().searchPractitionersByName(name);
 	}
 
 	/**
 	 * @see org.openmrs.module.fhir.api.PractitionerService#searchPractitionersByGivenName(String)
 	 */
 	public List<Practitioner> searchPractitionersByGivenName(String givenName) {
-		List<Provider> omrsProviders = searchProvidersByQuery(givenName);
-		List<Practitioner> practitioners = new ArrayList<Practitioner>();
-		for (Provider provider : omrsProviders) {
-			if (provider.getPerson() != null) {
-				//Search through the provider given name for check whether given name exist in the returned provider
-				// resource
-
-				if (givenName.equalsIgnoreCase(provider.getPerson().getGivenName())) {
-					practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
-				} else {
-					for (PersonName personName : provider.getPerson().getNames()) {
-						if (givenName.equalsIgnoreCase(personName.getGivenName())) {
-							practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
-						}
-					}
-				}
-			}
-		}
-		return practitioners;
+		return PractitionerStrategyUtil.getPractitionerStrategy().searchPractitionersByGivenName(givenName);
 	}
 
 	/**
 	 * @see org.openmrs.module.fhir.api.PractitionerService#searchPractitionersByFamilyName(String)
 	 */
 	public List<Practitioner> searchPractitionersByFamilyName(String familyName) {
-		List<Provider> omrsProviders = searchProvidersByQuery(familyName);
-		List<Practitioner> practitioners = new ArrayList<Practitioner>();
-		for (Provider provider : omrsProviders) {
-			//Search through the provider family name for check whether family name exist in the returned provider resource
-			if (provider.getPerson() != null) {
-				if (familyName.equalsIgnoreCase(provider.getPerson().getFamilyName())) {
-					practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
-				} else {
-					for (PersonName personName : provider.getPerson().getNames()) {
-						if (familyName.equalsIgnoreCase(personName.getFamilyName())) {
-							practitioners.add(FHIRPractitionerUtil.generatePractitioner(provider));
-						}
-					}
-					}
-			}
-		}
-		return practitioners;
+		return PractitionerStrategyUtil.getPractitionerStrategy().searchPractitionersByFamilyName(familyName);
 	}
 
 	/**
 	 * @see org.openmrs.module.fhir.api.PractitionerService#searchPractitionersByIdentifier(String)
 	 */
 	public List<Practitioner> searchPractitionersByIdentifier(String identifier) {
-		Provider omrsProvider = Context.getProviderService().getProviderByIdentifier(identifier);
-		List<Practitioner> practitioners = new ArrayList<Practitioner>();
-		if (omrsProvider != null) {
-			practitioners.add(FHIRPractitionerUtil.generatePractitioner(omrsProvider));
-		}
-		return practitioners;
-	}
-
-	private List<Provider> searchProvidersByQuery(String query) {
-		return Context.getProviderService().getProviders(query, null, null, null, false);
+		return PractitionerStrategyUtil.getPractitionerStrategy().searchPractitionersByIdentifier(identifier);
 	}
 	
 	/**
-	 * @see org.openmrs.module.fhir.api.PractitionerService#createFHIRPractitioner(String)
+	 * @see org.openmrs.module.fhir.api.PractitionerService#createFHIRPractitioner(Practitioner)
 	 */
 	public Practitioner createFHIRPractitioner(Practitioner practitioner) {
-		Provider provider = new Provider();
-		List<String> errors = new ArrayList<String>();
-		String practionerName = "";
-		Person personFromRequest = FHIRPractitionerUtil.extractOpenMRSPerson(practitioner); // extracts openmrs person from the practitioner representation
-		List<Identifier> identifiers = practitioner.getIdentifier();
-		if (identifiers != null && !identifiers.isEmpty()) {
-			Identifier idnt = identifiers.get(0);
-			provider.setIdentifier(idnt.getValue());
-		}// identifiers can be empty
-		if (personFromRequest == null) { // if this is true, that means the request doesn't have enough attributes to create a person from it, or attach a person from existing ones
-			List<HumanName> humanNames = practitioner.getName();
-			if (humanNames != null) { // check whether atleast one name is exist. if so we can create a practitioner without attaching a person, just with a name.
-				for(HumanName humanName : humanNames) {
-					practionerName = humanName.getFamily();
-
-					List<StringType> givenNames = humanName.getGiven();
-					for(StringType givenName : humanName.getGiven()) {
-							practionerName = practionerName + " " + valueOf(givenName.getValue()); // will create a name like "John David"
-					}
-					if ("".equals(practionerName)) { // there is no given name or family name. cannot proceed with the request
-						errors.add("Practioner should contain atleast given name or family name");
-					}
-					//Take only the first name as no person can attached
-					break;
-				}
-			} else {
-				errors.add("Practitioner should contain atleast given name or family name");
-			}
-		}
-		if (!errors.isEmpty()) {
-			StringBuilder errorMessage = new StringBuilder(FHIRConstants.REQUEST_ISSUE_LIST);
-			for (int i = 0; i < errors.size(); i++) {
-				errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
-			}
-			throw new UnprocessableEntityException(errorMessage.toString());
-		}
-		if (personFromRequest != null) { // if this is not null, we can have a person resource along the practitioner resource
-			Person personToProvider = FHIRPractitionerUtil.generateOpenMRSPerson(personFromRequest); // either map to an existing person, or create a new person for the given representation
-			provider.setPerson(personToProvider);
-		} else {
-			provider.setName(practionerName); // else create the practitioner just with the name
-		}
-		Provider omrsProvider = Context.getProviderService().saveProvider(provider);
-		if (personFromRequest == null) {
-			omrsProvider.setPerson(null);
-		}
-		return FHIRPractitionerUtil.generatePractitioner(omrsProvider);
+		return PractitionerStrategyUtil.getPractitionerStrategy().createFHIRPractitioner(practitioner);
 	}
 	
 	/**
 	 * @see org.openmrs.module.fhir.api.PractitionerService#updatePractitioner(Practitioner
-	 *      practitioner, IdType theId)
+	 *      practitioner, String theId)
 	 */
 	public Practitioner updatePractitioner(Practitioner practitioner, String theId) {
-		org.openmrs.api.ProviderService providerService = Context.getProviderService();
-		org.openmrs.Provider retrievedProvider = providerService.getProviderByUuid(theId);
-		if (retrievedProvider != null) { // update existing practitioner
-			retrievedProvider = FHIRPractitionerUtil.updatePractitionerAttributes(practitioner, retrievedProvider);
-			Provider p=Context.getProviderService().saveProvider(retrievedProvider);
-			return FHIRPractitionerUtil.generatePractitioner(p);
-		} else { // no practitioner is associated with the given uuid. so create a new practitioner with the given uuid
-			if (practitioner.getId() == null) { // since we need to PUT the Person to a specific URI, we need to set the uuid
-				// here, if it is not
-				// already set.
-				IdType uuid = new IdType();
-				uuid.setValue(theId);
-				practitioner.setId(uuid);
-			}
-			return createFHIRPractitioner(practitioner);
-		}
+		return PractitionerStrategyUtil.getPractitionerStrategy().updatePractitioner(practitioner, theId);
 	}
 }
