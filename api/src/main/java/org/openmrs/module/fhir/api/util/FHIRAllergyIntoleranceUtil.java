@@ -14,6 +14,7 @@
 package org.openmrs.module.fhir.api.util;
 
 import org.hl7.fhir.dstu3.model.AllergyIntolerance;
+import org.hl7.fhir.dstu3.model.Annotation;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.Enumeration;
@@ -123,6 +124,14 @@ public class FHIRAllergyIntoleranceUtil {
 				}
 			}
 		}
+
+		List<Annotation> note = new ArrayList<>();
+		if (allergy.getComment() != null) {
+		    Annotation annotation = new Annotation();
+		    annotation.setText(allergy.getComment());
+        }
+		allergyIntolerance.setNote(note);
+
 		return allergyIntolerance;
 	}
 }
