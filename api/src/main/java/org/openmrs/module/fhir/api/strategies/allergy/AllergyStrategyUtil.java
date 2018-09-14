@@ -23,7 +23,7 @@ public class AllergyStrategyUtil {
 		if (FHIRConstants.OBS_ALLERGY_STRATEGY.equals(strategy)) {
 			return new ObsAllergyStrategy();
 		} else {
-			return new AllergyApiStrategy();
+			return new AllergyStrategy();
 		}
 	}
 }

@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class FHIRAllergyIntoleranceAllergyAPIUtil {
+public class FHIRAllergyIntoleranceUtil {
 
-	public static AllergyIntolerance generateAllergyTolerance(Allergy allergy) {
+	public static AllergyIntolerance generateAllergyIntolerance(Allergy allergy) {
 		AllergyIntolerance allergyIntolerance = new AllergyIntolerance();
 		allergyIntolerance.setId(allergy.getUuid());
 
@@ -124,9 +124,5 @@ public class FHIRAllergyIntoleranceAllergyAPIUtil {
 			}
 		}
 		return allergyIntolerance;
-	}
-
-	public static Allergy generateAllergyModuleAllergy(AllergyIntolerance allergy) {
-		return null;
 	}
 }
