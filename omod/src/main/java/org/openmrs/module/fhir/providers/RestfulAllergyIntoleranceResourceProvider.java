@@ -25,6 +25,7 @@ import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.Resource;
 import org.openmrs.module.fhir.resources.FHIRAllergyIntoleranceResource;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -88,5 +89,12 @@ public class RestfulAllergyIntoleranceResourceProvider implements IResourceProvi
 			@RequiredParam(name = AllergyIntolerance.SP_PATIENT, chainWhitelist = { Patient.SP_NAME }) ReferenceParam
 					name) {
 		return allergyIntoleranceResource.searchAllergiesByPatientName(name);
+	}
+
+	@Search()
+	public List<AllergyIntolerance> searchAllergiesByPatientUuid(
+			@RequiredParam(name = AllergyIntolerance.SP_PATIENT, chainWhitelist = { Patient.SP_RES_ID})
+			ReferenceParam uuid) {
+		return allergyIntoleranceResource.searchAllergiesByPatientUuid(uuid);
 	}
 }

@@ -74,7 +74,7 @@ public class AllergyIntoleranceServiceImpl extends BaseOpenmrsService implements
 		return AllergyStrategyUtil.getAllergyStrategy().searchAllergiesByPatientName(name);
 	}
 
-	public List<AllergyIntolerance> getAllergiesByPersonId(String personId) {
-		return AllergyStrategyUtil.getAllergyStrategy().searchAllergiesByPatientName(personId);
+	public List<AllergyIntolerance> searchAllergiesByPatientUuid(String personId) {
+		return AllergyStrategyUtil.getAllergyStrategy().searchAllergiesByPersonId(personId);
 	}
 }

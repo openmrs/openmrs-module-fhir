@@ -58,6 +58,6 @@ public interface AllergyIntoleranceService {
 	 * @param personId uuid
 	 * @return
 	 */
-	List<AllergyIntolerance> getAllergiesByPersonId(String personId);
+	List<AllergyIntolerance> searchAllergiesByPatientUuid(String personId);
 
 }
