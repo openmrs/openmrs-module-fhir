@@ -28,12 +28,27 @@ public class AllergyStrategy implements GenericAllergyStrategy {
 
 	@Override
 	public AllergyIntolerance getAllergyById(String uuid) {
-		//todo implement
+		PatientService allergyService = Context.getService(PatientService.class);
+
+		org.openmrs.Allergy openMRSAllergy = allergyService.getAllergyByUuid(uuid);
+
+		return openMRSAllergy != null ?
+				FHIRAllergyIntoleranceUtil.generateAllergyIntolerance(openMRSAllergy)
+				: null;
 	}
 
 	@Override
 	public List<AllergyIntolerance> searchAllergyById(String uuid) {
-		//todo implement
+		List<AllergyIntolerance> list = new ArrayList<>();
+		PatientService allergyService = Context.getService(PatientService.class);
+
+		org.openmrs.Allergy openMRSAllergy = allergyService.getAllergyByUuid(uuid);
+
+		AllergyIntolerance allergyIntolerance = FHIRAllergyIntoleranceUtil.generateAllergyIntolerance(openMRSAllergy);
+		if (allergyIntolerance != null) {
+			list.add(allergyIntolerance);
+		}
+		return list;
 	}
 
 	@Override
