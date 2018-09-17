@@ -52,11 +52,6 @@ public class AllergyStrategy implements GenericAllergyStrategy {
 	}
 
 	@Override
-	public List<AllergyIntolerance> searchAllergyByName(String name) {
-		return null;
-	}
-
-	@Override
 	public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(String identifier) {
 		org.openmrs.api.PatientService patientService = Context.getPatientService();
 		PatientService allergyService = Context.getService(PatientService.class);
