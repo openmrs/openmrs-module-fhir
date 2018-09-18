@@ -13,33 +13,42 @@
  */
 package org.openmrs.module.fhir.api.strategies.allergy;
 
-import ca.uhn.fhir.rest.server.exceptions.NotImplementedOperationException;
 import org.hl7.fhir.dstu3.model.AllergyIntolerance;
 import org.openmrs.Allergy;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.util.FHIRAllergyIntoleranceAllergyAPIUtil;
+import org.openmrs.module.fhir.api.util.FHIRAllergyIntoleranceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllergyApiStrategy implements GenericAllergyStrategy {
-	
+public class AllergyStrategy implements GenericAllergyStrategy {
+
 	@Override
 	public AllergyIntolerance getAllergyById(String uuid) {
-		throw new NotImplementedOperationException("Allergy API module doesn't supported for get allergies by Id");
+		PatientService patientService = Context.getPatientService();
+
+		org.openmrs.Allergy openMRSAllergy = patientService.getAllergyByUuid(uuid);
+
+		return openMRSAllergy != null ?
+				FHIRAllergyIntoleranceUtil.generateAllergyIntolerance(openMRSAllergy)
+				: null;
 	}
 
 	@Override
 	public List<AllergyIntolerance> searchAllergyById(String uuid) {
-		throw new NotImplementedOperationException("Allergy API module doesn't supported for search allergies by Id");
-	}
+		List<AllergyIntolerance> list = new ArrayList<>();
+		PatientService patientService = Context.getPatientService();
 
-	@Override
-	public List<AllergyIntolerance> searchAllergyByName(String name) {
-		return null;
+		org.openmrs.Allergy openMRSAllergy = patientService.getAllergyByUuid(uuid);
+
+		AllergyIntolerance allergyIntolerance = FHIRAllergyIntoleranceUtil.generateAllergyIntolerance(openMRSAllergy);
+		if (allergyIntolerance != null) {
+			list.add(allergyIntolerance);
+		}
+		return list;
 	}
 
 	@Override
@@ -53,7 +62,7 @@ public class AllergyApiStrategy implements GenericAllergyStrategy {
 		if (patientList != null && !patientList.isEmpty()) {
 			for (Patient patient : patientList) {
 				for (org.openmrs.Allergy allergy : allergyService.getAllergies(patient)) {
-					allergies.add(FHIRAllergyIntoleranceAllergyAPIUtil.generateAllergyTolerance(allergy));
+					allergies.add(FHIRAllergyIntoleranceUtil.generateAllergyIntolerance(allergy));
 				}
 			}
 		}
@@ -65,10 +74,10 @@ public class AllergyApiStrategy implements GenericAllergyStrategy {
 		org.openmrs.api.PatientService patientService = Context.getPatientService();
 		PatientService allergyService = Context.getService(PatientService.class);
 		List<org.openmrs.Patient> patientList = patientService.getPatients(name, null, null, true);
-		List<AllergyIntolerance> allergies = new ArrayList();
+		List<AllergyIntolerance> allergies = new ArrayList<>();
 		for (Patient patient : patientList) {
 			for (Allergy allergy : allergyService.getAllergies(patient)) {
-				allergies.add(FHIRAllergyIntoleranceAllergyAPIUtil.generateAllergyTolerance(allergy));
+				allergies.add(FHIRAllergyIntoleranceUtil.generateAllergyIntolerance(allergy));
 			}
 		}
 		return allergies;
@@ -76,13 +85,12 @@ public class AllergyApiStrategy implements GenericAllergyStrategy {
 
 	@Override
 	public List<AllergyIntolerance> searchAllergiesByPersonId(String uuid) {
-		org.openmrs.api.PatientService patientService = Context.getPatientService();
-		PatientService allergyService = Context.getService(PatientService.class);
+		PatientService patientService = Context.getPatientService();
 		Patient patient = patientService.getPatientByUuid(uuid);
-		List<AllergyIntolerance> allergies = new ArrayList();
+		List<AllergyIntolerance> allergies = new ArrayList<>();
 		if (patient != null) {
-			for (Allergy allergy : allergyService.getAllergies(patient)) {
-				allergies.add(FHIRAllergyIntoleranceAllergyAPIUtil.generateAllergyTolerance(allergy));
+			for (Allergy allergy : patientService.getAllergies(patient)) {
+				allergies.add(FHIRAllergyIntoleranceUtil.generateAllergyIntolerance(allergy));
 			}
 		}
 		return allergies;

@@ -14,6 +14,7 @@
 package org.openmrs.module.fhir.api.util;
 
 import org.hl7.fhir.dstu3.model.AllergyIntolerance;
+import org.hl7.fhir.dstu3.model.Annotation;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.Enumeration;
@@ -25,9 +26,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class FHIRAllergyIntoleranceAllergyAPIUtil {
+public class FHIRAllergyIntoleranceUtil {
 
-	public static AllergyIntolerance generateAllergyTolerance(Allergy allergy) {
+	public static AllergyIntolerance generateAllergyIntolerance(Allergy allergy) {
 		AllergyIntolerance allergyIntolerance = new AllergyIntolerance();
 		allergyIntolerance.setId(allergy.getUuid());
 
@@ -123,10 +124,14 @@ public class FHIRAllergyIntoleranceAllergyAPIUtil {
 				}
 			}
 		}
-		return allergyIntolerance;
-	}
 
-	public static Allergy generateAllergyModuleAllergy(AllergyIntolerance allergy) {
-		return null;
+		List<Annotation> note = new ArrayList<>();
+		if (allergy.getComment() != null) {
+		    Annotation annotation = new Annotation();
+		    annotation.setText(allergy.getComment());
+        }
+		allergyIntolerance.setNote(note);
+
+		return allergyIntolerance;
 	}
 }
