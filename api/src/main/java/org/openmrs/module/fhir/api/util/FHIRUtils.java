@@ -113,6 +113,10 @@ public class FHIRUtils {
 		return Context.getAdministrationService().getGlobalProperty("fhir.observation.observationStrategy");
 	}
 
+	public static String getGroupStrategy() {
+		return Context.getAdministrationService().getGlobalProperty("fhir.group.groupStrategy");
+	}
+
 	public static String getEncounterStrategy() {
 		return Context.getAdministrationService().getGlobalProperty("fhir.encounter.strategy");
 	}
