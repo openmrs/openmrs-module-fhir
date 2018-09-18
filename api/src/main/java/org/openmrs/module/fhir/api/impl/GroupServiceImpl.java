@@ -1,12 +1,25 @@
 package org.openmrs.module.fhir.api.impl;
 
 import org.hl7.fhir.dstu3.model.Group;
+import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.GroupService;
+import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.strategies.group.GroupStrategyUtil;
 
 import java.util.List;
 
-public class GroupServiceImpl implements GroupService {
+public class GroupServiceImpl extends BaseOpenmrsService implements GroupService {
+
+    private FHIRDAO dao;
+
+    public FHIRDAO getDao() {
+        return dao;
+    }
+
+    public void setDao(FHIRDAO dao) {
+        this.dao = dao;
+    }
+
     @Override
     public Group getGroup(String id) {
         return GroupStrategyUtil.getGroupStrategy().getGroupById(id);
