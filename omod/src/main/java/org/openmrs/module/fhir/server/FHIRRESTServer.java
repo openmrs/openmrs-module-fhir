@@ -28,6 +28,7 @@ import org.openmrs.module.fhir.providers.RestfulConditionResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulDiagnosticReportResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulEncounterResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulFamilyMemberHistoryResourceProvider;
+import org.openmrs.module.fhir.providers.RestfulGroupResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulLocationResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulMedicationRequestProvider;
 import org.openmrs.module.fhir.providers.RestfulObservationResourceProvider;
@@ -69,6 +70,7 @@ public class FHIRRESTServer extends RestfulServer {
 		//resourceProviders.add(new RestfulCompositionResourceProvider());
 		resourceProviders.add(new RestfulPersonResourceProvider());
 		resourceProviders.add(new RestfulRelatedPersonProvider());
+		resourceProviders.add(new RestfulGroupResourceProvider());
 		this.setFhirContext(FhirContext.forDstu3());
 		setResourceProviders(resourceProviders);
 		setServerName(FHIROmodConstants.OPENMRS_FHIR_SERVER_NAME);
