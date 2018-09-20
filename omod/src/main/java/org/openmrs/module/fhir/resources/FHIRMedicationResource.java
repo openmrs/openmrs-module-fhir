@@ -1,17 +1,28 @@
 package org.openmrs.module.fhir.resources;
 
 import ca.uhn.fhir.rest.param.TokenParam;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.Medication;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.MedicationService;
 
 import java.util.List;
 
 public class FHIRMedicationResource {
     public Medication getByUniqueId(IdType id) {
-        return null;
+        Medication medication = getMedicationService().getMedicationById(id.getIdPart());
+        if (medication == null) {
+            throw new ResourceNotFoundException("Medication is not found for the given id " + id.getIdPart());
+        }
+        return medication;
     }
 
     public List<Medication> searchMedicationById(TokenParam id) {
-        return null;
+        return getMedicationService().searchMedicationById(id.getValue());
+    }
+
+    private MedicationService getMedicationService() {
+        return Context.getService(MedicationService.class);
     }
 }
