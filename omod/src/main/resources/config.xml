@@ -201,6 +201,12 @@
         <description>Set observation strategy.</description>
     </globalProperty>
 
+	<globalProperty>
+        <property>${project.parent.artifactId}.planDefinition.strategy</property>
+        <defaultValue>DefaultPlanDefinitionStrategy</defaultValue>
+        <description>Set plan definition strategy.</description>
+    </globalProperty>
+
     <globalProperty>
         <property>${project.parent.artifactId}.concept.codingSystem</property>
         <defaultValue>OPENMRS</defaultValue>
