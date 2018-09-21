@@ -85,6 +85,10 @@ public class FHIRUtils {
 		return urnBuilder.toString();
 	}
 
+	public static String getMedicationStrategy() {
+		return Context.getAdministrationService().getGlobalProperty("fhir.medication.medicationStrategy");
+	}
+
 	public static String getAllergyStrategy() {
 		return Context.getAdministrationService().getGlobalProperty("fhir.allergy.allergyStrategy");
 	}
