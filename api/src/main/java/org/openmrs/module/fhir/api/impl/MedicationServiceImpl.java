@@ -29,4 +29,9 @@ public class MedicationServiceImpl extends BaseOpenmrsService implements Medicat
     public List<Medication> searchMedicationById(String uuid) {
         return MedicationStrategyUtil.getMedicationStrategy().searchMedicationById(uuid);
     }
+
+    @Override
+    public Medication createMedication(Medication medication) {
+        return MedicationStrategyUtil.getMedicationStrategy().createMedication(medication);
+    }
 }

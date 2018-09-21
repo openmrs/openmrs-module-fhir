@@ -9,4 +9,6 @@ public interface GenericMedicationStrategy {
     Medication getMedicationById(String uuid);
 
     List<Medication> searchMedicationById(String uuid);
+
+    Medication createMedication(Medication medication);
 }

@@ -22,6 +22,10 @@ public class FHIRMedicationResource {
         return getMedicationService().searchMedicationById(id.getValue());
     }
 
+    public Medication createMedication(Medication medication) {
+        return getMedicationService().createMedication(medication);
+    }
+
     private MedicationService getMedicationService() {
         return Context.getService(MedicationService.class);
     }
