@@ -311,13 +311,7 @@ public class EncounterStrategy implements GenericEncounterStrategy {
 			visit = FHIRVisitUtil.generateOMRSVisit(encounter, errors);
 
 		}
-		if (!errors.isEmpty()) {
-			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
-			for (int i = 0; i < errors.size(); i++) {
-				errorMessage.append(i + 1).append(" : ").append(errors.get(i)).append("\n");
-			}
-			throw new UnprocessableEntityException(errorMessage.toString());
-		}
+		FHIRUtils.checkGeneratorErrorList(errors);
 
 		if (encounterRef != null && !encounterRef.isEmpty()) {
 			encounterToCreate = Context.getEncounterService().saveEncounter(encounterToCreate);

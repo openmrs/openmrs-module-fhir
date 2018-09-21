@@ -1,12 +1,11 @@
 package org.openmrs.module.fhir.api.strategies.observation;
 
-import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.Observation;
 import org.openmrs.Concept;
+import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
-import org.openmrs.Encounter;
 import org.openmrs.Person;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
@@ -185,13 +184,7 @@ public class ObservationStrategy implements GenericObservationStrategy {
         } else {
             obs = FHIRObsUtil.generateOpenMRSObs(observation, errors);
         }
-        if (!errors.isEmpty()) {
-            StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
-            for (int i = 0; i < errors.size(); i++) {
-                errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
-            }
-            throw new UnprocessableEntityException(errorMessage.toString());
-        }
+        FHIRUtils.checkGeneratorErrorList(errors);
         obs = Context.getObsService().saveObs(obs, FHIRConstants.FHIR_CREATE_MESSAGE);
         return FHIRObsUtil.generateObs(obs);
     }
@@ -204,14 +197,7 @@ public class ObservationStrategy implements GenericObservationStrategy {
         org.openmrs.Obs omrsObs = FHIRObsUtil.generateOpenMRSObs(observation, errors);
         FHIRObsUtil.copyObsAttributes(omrsObs, retrievedObs, errors);
         if (retrievedObs != null) { // update observation
-            if (!errors.isEmpty()) {
-                StringBuilder errorMessage = new StringBuilder(
-                        "The request cannot be processed due to the following issues \n");
-                for (int i = 0; i < errors.size(); i++) {
-                    errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
-                }
-                throw new UnprocessableEntityException(errorMessage.toString());
-            }
+            FHIRUtils.checkGeneratorErrorList(errors);
             omrsObs = Context.getObsService().saveObs(retrievedObs, FHIRConstants.FHIR_UPDATE_MESSAGE);
             return FHIRObsUtil.generateObs(omrsObs);
         } else { // no observation is associated with the given uuid. so create a new observation with the given uuid

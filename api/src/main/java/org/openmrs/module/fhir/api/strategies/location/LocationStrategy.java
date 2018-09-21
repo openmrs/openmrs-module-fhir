@@ -5,6 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hl7.fhir.dstu3.model.Location;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRLocationUtil;
+import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -90,13 +91,7 @@ public class LocationStrategy implements GenericLocationStrategy {
         org.openmrs.Location omrsLocation=null;
         List<String> errors = new ArrayList<String>();
         omrsLocation = FHIRLocationUtil.generateOpenMRSLocation(location, errors);
-        if (!errors.isEmpty()) {
-            StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
-            for (int i = 0; i < errors.size(); i++) {
-                errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
-            }
-            throw new UnprocessableEntityException(errorMessage.toString());
-        }
+        FHIRUtils.checkGeneratorErrorList(errors);
         omrsLocation=Context.getLocationService().saveLocation(omrsLocation);
         return FHIRLocationUtil.generateLocation(omrsLocation);
     }

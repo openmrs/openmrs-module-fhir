@@ -30,6 +30,7 @@ import org.openmrs.module.fhir.api.MedicationRequestService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRMedicationRequestUtil;
+import org.openmrs.module.fhir.api.util.FHIRUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,13 +110,7 @@ public class MedicationRequestServiceImpl extends BaseOpenmrsService implements 
     public MedicationRequest createFHIRMedicationRequest(MedicationRequest medicationRequest) {
         List<String> errors = new ArrayList<String>();
         DrugOrder drugOrder = FHIRMedicationRequestUtil.generateDrugOrder(medicationRequest, errors);
-        if (!errors.isEmpty()) {
-            StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
-            for (int i = 0; i < errors.size(); i++) {
-                errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
-            }
-            throw new UnprocessableEntityException(errorMessage.toString());
-        }
+        FHIRUtils.checkGeneratorErrorList(errors);
         CareSetting careSetting = Context.getOrderService().getCareSetting(2);
         drugOrder.setCareSetting(careSetting);
 
