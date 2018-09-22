@@ -11,4 +11,6 @@ public interface MedicationService {
     List<Medication> searchMedicationById(String uuid);
 
     Medication createMedication(Medication medication);
+
+    Medication updateMedication(Medication medication, String id);
 }

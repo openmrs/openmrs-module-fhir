@@ -34,4 +34,9 @@ public class MedicationServiceImpl extends BaseOpenmrsService implements Medicat
     public Medication createMedication(Medication medication) {
         return MedicationStrategyUtil.getMedicationStrategy().createMedication(medication);
     }
+
+    @Override
+    public Medication updateMedication(Medication medication, String id) {
+        return MedicationStrategyUtil.getMedicationStrategy().updateMedication(medication, id);
+    }
 }

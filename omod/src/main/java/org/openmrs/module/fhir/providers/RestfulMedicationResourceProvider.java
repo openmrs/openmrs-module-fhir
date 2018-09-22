@@ -6,6 +6,7 @@ import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
@@ -21,6 +22,9 @@ import java.util.List;
 
 public class RestfulMedicationResourceProvider implements IResourceProvider {
 
+    private static final String SUCCESFULL_CREATE_MESSAGE = "Medication successfully created with id %s";
+    private static final String SUCCESFULL_UPDATE_MESSAGE = "Medication successfully updated with id %s";
+
     private FHIRMedicationResource medicationResource;
 
     public RestfulMedicationResourceProvider() {
@@ -35,7 +39,13 @@ public class RestfulMedicationResourceProvider implements IResourceProvider {
     @Create()
     public MethodOutcome createFHIRMedication(@ResourceParam Medication medication) {
         Medication createdMedication = medicationResource.createMedication(medication);
-        return createMethodOutcome(createdMedication.getId());
+        return createMethodOutcome(createdMedication.getId(), SUCCESFULL_CREATE_MESSAGE);
+    }
+
+    @Update()
+    public MethodOutcome updateFHIRMedication(@ResourceParam Medication medication, @IdParam IdType id) {
+        Medication updatedMedication = medicationResource.updateMedication(medication, id.getIdPart());
+        return createMethodOutcome(updatedMedication.getId(), SUCCESFULL_UPDATE_MESSAGE);
     }
 
     @Read()
@@ -49,25 +59,16 @@ public class RestfulMedicationResourceProvider implements IResourceProvider {
         return medicationResource.searchMedicationById(id);
     }
 
-    private MethodOutcome createMethodOutcome(String resourceId) {
+    private MethodOutcome createMethodOutcome(String resourceId, String messagePattern) {
         MethodOutcome retVal = new MethodOutcome();
-        if (resourceId != null) {
-            retVal.setId(new IdType(Medication.class.getSimpleName(), resourceId));
+        retVal.setId(new IdType(Medication.class.getSimpleName(), resourceId));
 
-            OperationOutcome outcome = new OperationOutcome();
-            CodeableConcept concept = new CodeableConcept();
-            Coding coding = concept.addCoding();
-            coding.setDisplay("Medication successfully created with id " + resourceId);
-            outcome.addIssue().setDetails(concept);
-            retVal.setOperationOutcome(outcome);
-        } else {
-            OperationOutcome outcome = new OperationOutcome();
-            CodeableConcept concept = new CodeableConcept();
-            Coding coding = concept.addCoding();
-            coding.setDisplay("Failed to create Medication");
-            outcome.addIssue().setDetails(concept);
-            retVal.setOperationOutcome(outcome);
-        }
+        OperationOutcome outcome = new OperationOutcome();
+        CodeableConcept concept = new CodeableConcept();
+        Coding coding = concept.addCoding();
+        coding.setDisplay(String.format(messagePattern, resourceId));
+        outcome.addIssue().setDetails(concept);
+        retVal.setOperationOutcome(outcome);
         return retVal;
     }
 }

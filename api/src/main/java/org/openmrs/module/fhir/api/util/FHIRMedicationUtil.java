@@ -8,6 +8,7 @@ import org.openmrs.Concept;
 import org.openmrs.ConceptName;
 import org.openmrs.Drug;
 import org.openmrs.DrugIngredient;
+import org.openmrs.DrugReferenceMap;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,6 +49,21 @@ public final class FHIRMedicationUtil {
 
         return drug;
 
+    }
+
+    public static Drug updateDrug(Drug newDrug, Drug drugToUpdate) {
+        for (DrugReferenceMap drugReferenceMap : newDrug.getDrugReferenceMaps()) {
+            drugToUpdate.addDrugReferenceMap(drugReferenceMap);
+        }
+        drugToUpdate.setIngredients(newDrug.getIngredients());
+        drugToUpdate.setConcept(newDrug.getConcept());
+        drugToUpdate.setDosageForm(newDrug.getDosageForm());
+        drugToUpdate.setMaximumDailyDose(newDrug.getMaximumDailyDose());
+        drugToUpdate.setMinimumDailyDose(newDrug.getMinimumDailyDose());
+        drugToUpdate.setCombination(newDrug.getCombination());
+        drugToUpdate.setStrength(newDrug.getStrength());
+
+        return drugToUpdate;
     }
 
 //region OpenMRS methods
