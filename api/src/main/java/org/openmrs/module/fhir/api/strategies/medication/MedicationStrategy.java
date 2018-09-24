@@ -53,7 +53,7 @@ public class MedicationStrategy implements GenericMedicationStrategy {
 
     @Override
     public Medication updateMedication(Medication medication, String uuid) {
-        Drug drug = getConceptService().getDrug(FHIRUtils.extractUuid(uuid));
+        Drug drug = getConceptService().getDrugByUuid(uuid);
 
         return drug != null ? updateDrug(medication, drug) : createMedication(medication, uuid);
     }
