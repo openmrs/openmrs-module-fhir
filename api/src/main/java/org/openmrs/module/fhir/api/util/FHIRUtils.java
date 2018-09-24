@@ -538,6 +538,41 @@ public class FHIRUtils {
 		}
 	}
 
+	/**
+	 * Get concept from code
+	 * @param codeableConcept codeable concept
+	 * @param errors error list
+	 * @return OpenMRS concept
+	 */
+	public static Concept getConceptFromCode(CodeableConcept codeableConcept, List<String> errors) {
+		String conceptCode;
+		String system;
+		Concept concept = null;
+		List<Coding> dts = codeableConcept.getCoding();
+
+		for (Coding coding : dts) {
+			conceptCode = coding.getCode();
+			system = coding.getSystem();
+			if (FHIRConstants.OPENMRS_URI.equals(system)) {
+				concept = Context.getConceptService().getConceptByUuid(conceptCode);
+			} else {
+				String systemName = FHIRConstants.conceptSourceURINameMap.get(system);
+				if (systemName != null && !systemName.isEmpty()) {
+					concept = Context.getConceptService().getConceptByMapping(conceptCode, systemName);
+				}
+			}
+			if (concept != null) {
+				break;
+			}
+		}
+		if (concept == null) {
+			errors.add("No matching concept found for the given codings");
+			return null;
+		} else {
+			return concept;
+		}
+	}
+
 	private static Concept getConceptByConceptId(String globalPropertyName) {
 		String globalProperty = Context.getAdministrationService().getGlobalProperty(globalPropertyName);
 		Concept concept = Context.getConceptService().getConcept(Integer.parseInt(globalProperty));

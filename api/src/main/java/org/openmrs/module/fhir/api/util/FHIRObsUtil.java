@@ -35,6 +35,7 @@ import org.openmrs.Obs;
 import org.openmrs.Obs.Interpretation;
 import org.openmrs.Obs.Status;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.FHIR;
 import org.openmrs.obs.ComplexData;
 
 import java.math.BigDecimal;
@@ -294,35 +295,17 @@ public class FHIRObsUtil {
 		} else {
 			errors.add("Observation DateTime cannot be empty");
 		}
-		
-		String conceptCode = null;
-		String system = null;
+
 		Concept concept = null;
-		List<Coding> dts = null;
 		try {
 			CodeableConcept dt = observation.getCode();
-			dts = dt.getCoding();
+			concept = FHIRUtils.getConceptFromCode(dt, errors);
 		}
 		catch (NullPointerException e) {
 			errors.add("Code cannot be empty");
 			log.error("Code cannot be empty " + e.getMessage());
 		}
-		
-		for (Coding cding : dts) {
-			conceptCode = cding.getCode();
-			system = cding.getSystem();
-			if (FHIRConstants.OPENMRS_URI.equals(system)) {
-				concept = Context.getConceptService().getConceptByUuid(conceptCode);
-			} else {
-				String systemName = FHIRConstants.conceptSourceURINameMap.get(system);
-				if (systemName != null && !systemName.isEmpty()) {
-					concept = Context.getConceptService().getConceptByMapping(conceptCode, systemName);
-				}
-			}
-			if (concept != null) {
-				break;
-			}
-		}
+
 		if (concept == null) {
 			errors.add("No matching concept found for the given codings");
 		} else {
