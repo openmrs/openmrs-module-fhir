@@ -1,6 +1,7 @@
 package org.openmrs.module.fhir.providers;
 
 import ca.uhn.fhir.rest.annotation.Create;
+import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
@@ -46,6 +47,11 @@ public class RestfulMedicationResourceProvider implements IResourceProvider {
     public MethodOutcome updateFHIRMedication(@ResourceParam Medication medication, @IdParam IdType id) {
         Medication updatedMedication = medicationResource.updateMedication(medication, id.getIdPart());
         return createMethodOutcome(updatedMedication.getId(), SUCCESFULL_UPDATE_MESSAGE);
+    }
+
+    @Delete()
+    public void deleteMedication(@IdParam IdType id) {
+        medicationResource.deleteMedication(id);
     }
 
     @Read()

@@ -1,5 +1,6 @@
 package org.openmrs.module.fhir.api.strategies.medication;
 
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.Medication;
@@ -56,6 +57,23 @@ public class MedicationStrategy implements GenericMedicationStrategy {
         Drug drug = getConceptService().getDrugByUuid(uuid);
 
         return drug != null ? updateDrug(medication, drug) : createMedication(medication, uuid);
+    }
+
+
+
+    @Override
+    public void purgeMedication(String uuid) {
+        Drug drug = getConceptService().getDrugByUuid(uuid);
+
+        if (drug == null) {
+            throw new ResourceNotFoundException(new IdType(Medication.class.getSimpleName(), uuid));
+        }
+        try {
+            getConceptService().purgeDrug(drug);
+        } catch (APIException e) {
+            throw new UnprocessableEntityException(
+                    "The request cannot be processed due to the following issues \n" + e.getMessage());
+        }
     }
 
     private Medication createMedication(Medication medication, String uuid) {

@@ -13,4 +13,6 @@ public interface MedicationService {
     Medication createMedication(Medication medication);
 
     Medication updateMedication(Medication medication, String id);
+
+    void deleteMedication(String id);
 }

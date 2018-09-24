@@ -30,6 +30,10 @@ public class FHIRMedicationResource {
         return getMedicationService().updateMedication(medication, id);
     }
 
+    public void deleteMedication(IdType id) {
+        getMedicationService().deleteMedication(id.getIdPart());
+    }
+
     private MedicationService getMedicationService() {
         return Context.getService(MedicationService.class);
     }

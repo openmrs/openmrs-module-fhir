@@ -13,4 +13,6 @@ public interface GenericMedicationStrategy {
     Medication createMedication(Medication medication);
 
     Medication updateMedication(Medication medication, String uuid);
+
+    void purgeMedication(String uuid);
 }
