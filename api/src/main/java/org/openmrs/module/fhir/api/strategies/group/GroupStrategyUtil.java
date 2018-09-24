@@ -8,7 +8,7 @@ public class GroupStrategyUtil {
     public static GenericGroupStrategy getGroupStrategy() {
         String strategy = FHIRUtils.getGroupStrategy();
 
-        return strategy == null ? new GroupApiStrategy()
+        return strategy == null ? new GroupStrategy()
                 : Context.getRegisteredComponent(strategy, GenericGroupStrategy.class);
     }
 }

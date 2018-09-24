@@ -1,14 +1,16 @@
 package org.openmrs.module.fhir.api.strategies.group;
 
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import org.hl7.fhir.dstu3.model.Group;
 import org.openmrs.Cohort;
+import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRGroupCohortUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GroupApiStrategy implements GenericGroupStrategy {
+public class GroupStrategy implements GenericGroupStrategy {
     @Override
     public Group getGroupById(String uuid) {
         Cohort cohort = Context.getCohortService().getCohortByUuid(uuid);
@@ -38,5 +40,19 @@ public class GroupApiStrategy implements GenericGroupStrategy {
         }
 
         return groups;
+    }
+
+    @Override
+    public Group createGroup(Group group) {
+        Cohort cohort = FHIRGroupCohortUtil.generateCohort(group);
+
+        try {
+            cohort = Context.getCohortService().saveCohort(cohort);
+        } catch (APIException e) {
+            throw new UnprocessableEntityException(
+                    "The request cannot be processed due to the following issues \n" + e.getMessage());
+        }
+
+        return FHIRGroupCohortUtil.generateGroup(cohort);
     }
 }

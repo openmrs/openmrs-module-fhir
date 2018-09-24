@@ -34,4 +34,9 @@ public class GroupServiceImpl extends BaseOpenmrsService implements GroupService
     public List<Group> searchGroupByName(String name) {
         return GroupStrategyUtil.getGroupStrategy().searchGroupByName(name);
     }
+
+    @Override
+    public Group createGroup(Group group) {
+        return GroupStrategyUtil.getGroupStrategy().createGroup(group);
+    }
 }

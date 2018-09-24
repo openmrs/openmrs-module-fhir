@@ -11,4 +11,6 @@ public interface GenericGroupStrategy {
     List<Group> searchGroupById(String uuid);
 
     List<Group> searchGroupByName(String name);
+
+    Group createGroup(Group group);
 }

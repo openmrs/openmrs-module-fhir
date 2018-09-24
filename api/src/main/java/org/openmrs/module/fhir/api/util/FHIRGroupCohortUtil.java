@@ -3,11 +3,13 @@ package org.openmrs.module.fhir.api.util;
 import org.hl7.fhir.dstu3.model.Group;
 import org.hl7.fhir.dstu3.model.Reference;
 import org.openmrs.Cohort;
+import org.openmrs.CohortMembership;
 import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -38,6 +40,27 @@ public class FHIRGroupCohortUtil {
         group.setMember(groupMemberComponents);
 
         return group;
+    }
+
+    public static Cohort generateCohort(Group group) {
+        if (group == null) {
+            return null;
+        }
+
+        List<Group.GroupMemberComponent> memberComponents = group.getMember();
+        Integer[] ids = new Integer[memberComponents.size()];
+        for (int i = 0; i < memberComponents.size(); i++) {
+            Reference patientReference = memberComponents.get(i).getEntity();
+            Patient patient = Context.getPatientService().getPatientByUuid(patientReference.getId());
+
+            ids[i] = patient.getPatientId();
+        }
+
+        Cohort cohort = new Cohort(group.getName(), group.getName(), ids);
+
+        cohort.setUuid(group.getId());
+
+        return cohort;
     }
 
     private static Group.GroupMemberComponent generateGroupMemberComponent(Patient patient) {
