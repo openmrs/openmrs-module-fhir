@@ -6,9 +6,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.PlanDefinitionService;
 import org.openmrs.module.fhir.api.strategies.plandefinition.PlanDefinitionStrategyUtil;
-import org.springframework.stereotype.Service;
 
-@Service
 public class PlanDefinitionServiceImpl extends BaseOpenmrsService implements PlanDefinitionService {
 
 	@Override
@@ -17,7 +15,7 @@ public class PlanDefinitionServiceImpl extends BaseOpenmrsService implements Pla
 	}
 
 	@Override
-	public PlanDefinition getPlanDefinitionByUuid(String uuid) throws APIException {
+	public PlanDefinition getPlanDefinitionByUuid(String uuid) throws APIException,ResourceNotFoundException {
 		return PlanDefinitionStrategyUtil.getPersonStrategy().getPlanDefinitionByUuid(uuid);
 	}
 

@@ -15,6 +15,7 @@ public class FHIRPlanDefinitionUtil {
 
 	public static PlanDefinition generatePlanDefinition(Program program) {
 		PlanDefinition planDefinition = new PlanDefinition();
+		planDefinition.setId(program.getUuid());
 		planDefinition.addIdentifier(FHIRUtils.createIdentifier(program.getUuid()));
 
 		PlanDefinition.PlanDefinitionGoalComponent goalComponent = new PlanDefinition.PlanDefinitionGoalComponent();

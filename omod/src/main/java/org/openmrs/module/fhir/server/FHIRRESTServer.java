@@ -33,6 +33,7 @@ import org.openmrs.module.fhir.providers.RestfulMedicationRequestProvider;
 import org.openmrs.module.fhir.providers.RestfulObservationResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulPatientResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulPersonResourceProvider;
+import org.openmrs.module.fhir.providers.RestfulPlanDefinitionResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulPractitionerResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulRelatedPersonProvider;
 import org.openmrs.module.fhir.util.FHIROmodConstants;
@@ -65,6 +66,7 @@ public class FHIRRESTServer extends RestfulServer {
 		resourceProviders.add(new RestfulConditionResourceProvider());
 		resourceProviders.add(new RestfulDiagnosticReportResourceProvider());
 		resourceProviders.add(new RestfulMedicationRequestProvider());
+		resourceProviders.add(new RestfulPlanDefinitionResourceProvider());
 		//Removing composition since we now not support for it
 		//resourceProviders.add(new RestfulCompositionResourceProvider());
 		resourceProviders.add(new RestfulPersonResourceProvider());

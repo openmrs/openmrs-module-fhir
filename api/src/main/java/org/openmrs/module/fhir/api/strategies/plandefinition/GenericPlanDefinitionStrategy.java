@@ -8,7 +8,7 @@ public interface GenericPlanDefinitionStrategy {
 
 	PlanDefinition createPlanDefinition(PlanDefinition planDefinition) throws APIException;
 
-	PlanDefinition getPlanDefinitionByUuid(String uuid) throws APIException;
+	PlanDefinition getPlanDefinitionByUuid(String uuid) throws APIException, ResourceNotFoundException;
 
 	PlanDefinition updatePlanDefinition(String uuid, PlanDefinition planDefinition) throws APIException;
 
