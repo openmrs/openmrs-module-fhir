@@ -53,6 +53,14 @@ public class FHIRPlanDefinitionUtil {
 		}
 	}
 
+	public static Program updateProgramAttributes(Program program, Program newProgram) {
+		program.setName(newProgram.getName());
+		program.setDescription(newProgram.getDescription());
+		program.setConcept(newProgram.getConcept());
+		program.setOutcomesConcept(newProgram.getOutcomesConcept());
+		return program;
+	}
+
 	private static void validateProgramDefinitionGoalComponent(PlanDefinition.PlanDefinitionGoalComponent goalComponent,
 			List<String> errors) {
 

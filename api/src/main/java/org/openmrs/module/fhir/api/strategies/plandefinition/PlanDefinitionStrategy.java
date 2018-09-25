@@ -47,7 +47,7 @@ public class PlanDefinitionStrategy implements GenericPlanDefinitionStrategy {
 
 		Program program = getProgramWorkflowService().getProgramByUuid(uuid);
 		if (program != null) {
-			program = PlanDefinitionStrategyUtil.updateProgramAttributes(program, newProgram);
+			program = FHIRPlanDefinitionUtil.updateProgramAttributes(program, newProgram);
 			program = getProgramWorkflowService().saveProgram(program);
 		} else {
 			newProgram.setUuid(uuid);

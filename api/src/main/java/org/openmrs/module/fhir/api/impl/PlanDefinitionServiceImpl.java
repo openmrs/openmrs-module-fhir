@@ -11,21 +11,21 @@ public class PlanDefinitionServiceImpl extends BaseOpenmrsService implements Pla
 
 	@Override
 	public PlanDefinition createPlanDefinition(PlanDefinition planDefinition) throws APIException {
-		return PlanDefinitionStrategyUtil.getPersonStrategy().createPlanDefinition(planDefinition);
+		return PlanDefinitionStrategyUtil.getPlanDefinitionStrategy().createPlanDefinition(planDefinition);
 	}
 
 	@Override
 	public PlanDefinition getPlanDefinitionByUuid(String uuid) throws APIException,ResourceNotFoundException {
-		return PlanDefinitionStrategyUtil.getPersonStrategy().getPlanDefinitionByUuid(uuid);
+		return PlanDefinitionStrategyUtil.getPlanDefinitionStrategy().getPlanDefinitionByUuid(uuid);
 	}
 
 	@Override
 	public PlanDefinition updatePlanDefinition(String uuid, PlanDefinition planDefinition) throws APIException {
-		return PlanDefinitionStrategyUtil.getPersonStrategy().updatePlanDefinition(uuid, planDefinition);
+		return PlanDefinitionStrategyUtil.getPlanDefinitionStrategy().updatePlanDefinition(uuid, planDefinition);
 	}
 
 	@Override
 	public void deletePlanDefinition(String uuid) throws APIException, ResourceNotFoundException {
-		PlanDefinitionStrategyUtil.getPersonStrategy().deletePlanDefinition(uuid);
+		PlanDefinitionStrategyUtil.getPlanDefinitionStrategy().deletePlanDefinition(uuid);
 	}
 }
