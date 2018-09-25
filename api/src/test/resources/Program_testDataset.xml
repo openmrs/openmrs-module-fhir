@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <concept concept_id="138405" retired="0" date_created="2018-09-25" is_set="false" />
+    <concept concept_id="5340" retired="0" date_created="2018-09-25" is_set="false" />
+    <concept_reference_source concept_source_id="1" name="loinc" description="A made up source" hl7_code="SSTRM" creator="1" date_created="2005-02-24 00:00:00.0" uuid="00001827-639f-4cb4-961f-1e025bf80000" retired="false"/>
+    <concept_reference_term concept_reference_term_id="1" concept_source_id="1" code="Test_code" name="Test term" description="Test" retired="0" creator="1" date_created="2004-08-12 00:00:00.0" uuid="062b9761-a511-4250-9b6f-7f24a30b536c"/>
+    <concept_reference_term concept_reference_term_id="2" concept_source_id="1" code="Test_code2" name="Test term2" description="Test2" retired="0" creator="1" date_created="2004-08-12 00:00:00.0" uuid="a2396053-17a3-4232-a385-997f997d55f0"/>
+    <concept_map_type concept_map_type_id="2" name="same-as" description="Indicates similarity" is_hidden="0" retired="0" creator="1" date_created="2004-08-12 00:00:00.0" uuid="35543629-7d8c-11e1-909d-c80aa9edcf4e"/>
+    <concept_reference_map concept_map_id="1" concept_id="138405" concept_reference_term_id="1" concept_map_type_id="2" creator="1" date_created="2004-08-12 00:00:00.0" uuid="23b6e712-49d8-11e0-8fed-18a905e044dc"/>
+    <concept_reference_map concept_map_id="2" concept_id="5340" concept_reference_term_id="2" concept_map_type_id="2" creator="1" date_created="2004-08-12 00:00:00.0" uuid="2cc480ee-49d8-11e0-8fed-18a905e044dc"/>
+    <program program_id="1" name="test" description="test description" concept_id="138405" outcomes_concept_id="5340" uuid="644eef7d-087a-48ac-80b5-9f5a9db1a0a6" />
+</dataset>

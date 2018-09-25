@@ -2,7 +2,6 @@ package org.openmrs.module.fhir.api.util;
 
 import org.apache.commons.lang.StringUtils;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
-import org.hl7.fhir.dstu3.model.Identifier;
 import org.hl7.fhir.dstu3.model.PlanDefinition;
 import org.openmrs.Program;
 
@@ -45,20 +44,12 @@ public class FHIRPlanDefinitionUtil {
 	}
 
 	public static void validatePlanDefinition(PlanDefinition planDefinition, List<String> errors) {
-		Identifier identifier = planDefinition.getIdentifierFirstRep();
-		if (identifier == null || StringUtils.isBlank(FHIRUtils.getObjectUuidByIdentifier(identifier))) {
-			errors.add("Missing plandefinition identifier");
-		}
 
 		PlanDefinition.PlanDefinitionGoalComponent goalComponent = planDefinition.getGoalFirstRep();
 		validateProgramDefinitionGoalComponent(goalComponent, errors);
 
 		if (StringUtils.isBlank(planDefinition.getName())) {
 			errors.add("Missing plandefinition name");
-		}
-
-		if (StringUtils.isBlank(planDefinition.getDescription())) {
-			errors.add("Missing plandefinition description");
 		}
 	}
 
@@ -69,9 +60,6 @@ public class FHIRPlanDefinitionUtil {
 			errors.add("Missing plandefinition goal component");
 		} else if (null == goalComponent.getDescription()) {
 			errors.add("Missing plandefinition goal description");
-		} else if (null == goalComponent.getTargetFirstRep() ||
-				null == goalComponent.getTargetFirstRep().getDetail()) {
-			errors.add("Missing plandefinition concept");
 		}
 
 	}

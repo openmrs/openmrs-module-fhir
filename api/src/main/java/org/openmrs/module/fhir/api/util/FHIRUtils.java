@@ -433,7 +433,7 @@ public class FHIRUtils {
 	}
 
 	public static String getObjectUuidByIdentifier(Identifier identifier) {
-		return identifier.getValue();
+		return (identifier != null) ? identifier.getValue() : null;
 	}
 
 	public static Identifier createIdentifier(String uuid) {
@@ -443,6 +443,10 @@ public class FHIRUtils {
 	}
 
 	public static CodeableConcept createCodeableConcept(Concept concept) {
+		if (concept == null) {
+			return null;
+		}
+
 		CodeableConcept codeableConcept = new CodeableConcept();
 
 		for (ConceptMap conceptMap : concept.getConceptMappings()) {
@@ -462,6 +466,9 @@ public class FHIRUtils {
 	}
 
 	public static Concept getConceptByCodeableConcept(CodeableConcept codeableConcept) {
+		if (codeableConcept == null) {
+			return null;
+		}
 		Concept result = null;
 		for (Coding coding : codeableConcept.getCoding()) {
 			String code = coding.getCode();
