@@ -10,7 +10,7 @@ public class PlanDefinitionStrategyUtil {
 	}
 
 	public static GenericPlanDefinitionStrategy getPersonStrategy() {
-		String strategy = FHIRUtils.getPlanDefinitionSrategy();
+		String strategy = FHIRUtils.getPlanDefinitionStrategy();
 
 		return strategy == null ? new PlanDefinitionStrategy() : Context
 				.getRegisteredComponent(strategy, GenericPlanDefinitionStrategy.class);

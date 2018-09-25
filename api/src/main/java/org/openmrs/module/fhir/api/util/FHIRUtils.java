@@ -121,7 +121,7 @@ public class FHIRUtils {
 		return Context.getAdministrationService().getGlobalProperty("fhir.practitioner.practitionerStrategy");
 	}
 
-	public static String getPlanDefinitionSrategy() {
+	public static String getPlanDefinitionStrategy() {
 		return Context.getAdministrationService().getGlobalProperty("fhir.planDefinition.strategy");
 	}
 
