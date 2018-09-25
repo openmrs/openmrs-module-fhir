@@ -441,4 +441,13 @@
             </list>
         </property>
     </bean>
+
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>${project.parent.groupId}.${project.parent.artifactId}.api.PlanDefinitionService</value>
+                <bean class="${project.parent.groupId}.${project.parent.artifactId}.api.impl.PlanDefinitionServiceImpl" />
+            </list>
+        </property>
+    </bean>
 </beans>

@@ -638,22 +638,24 @@ public class SwaggerSpecificationCreator {
 
     private void setExamples(String resourceName, Response responseSuccess) {
         Map<String, String> examples = new HashMap<String, String>();
-        if(SwaggerDocConstants.PERSON_RESOURCE.equalsIgnoreCase(resourceName)) {
+        if (SwaggerDocConstants.PERSON_RESOURCE.equalsIgnoreCase(resourceName)) {
             examples.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.PERSON_PAYLOAD);
-        } else if(SwaggerDocConstants.PATIENT_RESOURCE.equalsIgnoreCase(resourceName)) {
+        } else if (SwaggerDocConstants.PATIENT_RESOURCE.equalsIgnoreCase(resourceName)) {
             examples.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.PATIENT_PAYLOAD);
-        } else if(SwaggerDocConstants.PRACTITIONER_RESOURCE.equalsIgnoreCase(resourceName)) {
+        } else if (SwaggerDocConstants.PRACTITIONER_RESOURCE.equalsIgnoreCase(resourceName)) {
             examples.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.PRACTITIONER_PAYLOAD);
-        } else if(SwaggerDocConstants.ENCOUNTER_RESOURCE.equalsIgnoreCase(resourceName)) {
+        } else if (SwaggerDocConstants.ENCOUNTER_RESOURCE.equalsIgnoreCase(resourceName)) {
             examples.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.ENCOUNTER_PAYLOAD);
-        } else if(SwaggerDocConstants.FAMILY_HISTORY_RESOURCE.equalsIgnoreCase(resourceName)) {
+        } else if (SwaggerDocConstants.FAMILY_HISTORY_RESOURCE.equalsIgnoreCase(resourceName)) {
             examples.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.FAMILY_HISTORY_PAYLOAD);
-        } else if(SwaggerDocConstants.ALLERGY_RESOURCE.equalsIgnoreCase(resourceName)) {
+        } else if (SwaggerDocConstants.ALLERGY_RESOURCE.equalsIgnoreCase(resourceName)) {
             examples.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.ALLERGY_PAYLOAD);
-        } else if(SwaggerDocConstants.OBSERVATION_RESOURCE.equalsIgnoreCase(resourceName)) {
+        } else if (SwaggerDocConstants.OBSERVATION_RESOURCE.equalsIgnoreCase(resourceName)) {
             examples.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.OBSERVATION_PAYLOAD);
-        } else if(SwaggerDocConstants.LOCATION_RESOURCE.equalsIgnoreCase(resourceName)) {
+        } else if (SwaggerDocConstants.LOCATION_RESOURCE.equalsIgnoreCase(resourceName)) {
             examples.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.LOCATION_PAYLOAD);
+        } else if (SwaggerDocConstants.PLAN_DEFINITION_RESOURCE.equalsIgnoreCase(resourceName)) {
+            examples.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.PLAN_DEFINITION_PAYLOAD);
         } else {
             examples.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.EMPTY);
         }

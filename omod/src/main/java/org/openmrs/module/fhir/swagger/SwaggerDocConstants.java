@@ -108,6 +108,7 @@ public class SwaggerDocConstants {
     public static final String ALLERGY_RESOURCE = "AllergyIntolerance";
     public static final String OBSERVATION_RESOURCE = "Observation";
     public static final String LOCATION_RESOURCE = "Location";
+    public static final String PLAN_DEFINITION_RESOURCE = "PlanDefinition";
     public static final String FAMILY_HISTORY_RESOURCE = "FamilyMemberHistory";
     public static final String PRACTITIONER_RESOURCE = "Practitioner";
     public static final String EMPTY = "{\n" +
@@ -407,4 +408,42 @@ public class SwaggerDocConstants {
             "  },\n" +
             "  \"criticality\": \"unassessible\"\n" +
             "}";
+
+    public static final String PLAN_DEFINITION_PAYLOAD = "{\n"
+            + "  \"resourceType\": \"PlanDefinition\",\n"
+            + "  \"id\": \"644eef7d-087a-48ac-80b5-9f5a9db1a0a6\",\n"
+            + "  \"identifier\": [{\n"
+            + "    \"value\": \"644eef7d-087a-48ac-80b5-9f5a9db1a0a6\"\n"
+            + "  }],\n"
+            + "  \"name\": \"Program name\",\n"
+            + "  \"description\": \"Test program description\",\n"
+            + "  \"goal\": [{\n"
+            + "    \"description\": {\n"
+            + "      \"coding\": [{\n"
+            + "          \"system\": \"http://ciel.org\",\n"
+            + "          \"code\": \"138405\"\n"
+            + "        },\n"
+            + "        {\n"
+            + "          \"system\": \"http://hl7.org/fhir/sid/icd-10\",\n"
+            + "          \"code\": \"B24\"\n"
+            + "        }\n"
+            + "      ],\n"
+            + "      \"text\": \"HUMAN IMMUNODEFICIENCY VIRUS (HIV) DISEASE\"\n"
+            + "    },\n"
+            + "    \"target\": [{\n"
+            + "      \"detailCodeableConcept\": {\n"
+            + "        \"coding\": [{\n"
+            + "            \"system\": \"http://ciel.org\",\n"
+            + "            \"code\": \"5340\"\n"
+            + "          },\n"
+            + "          {\n"
+            + "            \"system\": \"http://www.pih.org/\",\n"
+            + "            \"code\": \"5340\"\n"
+            + "          }\n"
+            + "        ],\n"
+            + "        \"text\": \"HIV STAGING  - CANDIDIASIS, ORORESPIRATORY TRACT\"\n"
+            + "      }\n"
+            + "    }]\n"
+            + "  }]\n"
+            + "}";
 }

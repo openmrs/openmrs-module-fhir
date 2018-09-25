@@ -121,6 +121,10 @@ public class FHIRUtils {
 		return Context.getAdministrationService().getGlobalProperty("fhir.practitioner.practitionerStrategy");
 	}
 
+	public static String getPlanDefinitionStrategy() {
+		return Context.getAdministrationService().getGlobalProperty("fhir.planDefinition.strategy");
+	}
+
 	public static int[] getConceptIdsOfConditions() {
 		String conceptsAsConditions = Context.getAdministrationService().getGlobalProperty(FHIRConstants
 				.CONCEPTS_CONVERTABLE_TO_CONDITIONS_STORED_AS_OBS);
@@ -426,6 +430,55 @@ public class FHIRUtils {
 		}
 
 		return uuid;
+	}
+
+	public static String getObjectUuidByIdentifier(Identifier identifier) {
+		return (identifier != null) ? identifier.getValue() : null;
+	}
+
+	public static Identifier createIdentifier(String uuid) {
+		Identifier identifier = new Identifier();
+		identifier.setValue(uuid);
+		return identifier;
+	}
+
+	public static CodeableConcept createCodeableConcept(Concept concept) {
+		if (concept == null) {
+			return null;
+		}
+
+		CodeableConcept codeableConcept = new CodeableConcept();
+
+		for (ConceptMap conceptMap : concept.getConceptMappings()) {
+			Coding code = new Coding();
+			String display = conceptMap.getConceptReferenceTerm().getName();
+			ConceptSourceNameURIPair sourceNameURIPair = FHIRConstants.conceptSourceMap.get(conceptMap
+					.getConceptReferenceTerm().getConceptSource().getName().toLowerCase());
+
+			code.setSystem(sourceNameURIPair.getConceptSourceURI());
+			code.setCode(conceptMap.getConceptReferenceTerm().getCode());
+			code.setDisplay(display);
+			codeableConcept.addCoding(code);
+		}
+
+		codeableConcept.setText(concept.getDisplayString());
+		return codeableConcept;
+	}
+
+	public static Concept getConceptByCodeableConcept(CodeableConcept codeableConcept) {
+		if (codeableConcept == null) {
+			return null;
+		}
+		Concept result = null;
+		for (Coding coding : codeableConcept.getCoding()) {
+			String code = coding.getCode();
+			String sourceName = FHIRConstants.conceptSourceURINameMap.get(coding.getSystem());
+			result = Context.getConceptService().getConceptByMapping(code, sourceName);
+			if (result != null) {
+				break;
+			}
+		}
+		return result;
 	}
 
 	public static Concept getDiagnosticReportNameConcept() {

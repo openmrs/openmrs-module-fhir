@@ -266,6 +266,7 @@ public final class FHIRConstants {
 	public static final String PATIENT_DELETE_MESSAGE  = "DELETED by FHIR request";
 	public static final String PERSON_VOIDED_MESSAGE  = "Voided by FHIR Request";
 	public static final String PATIENT_VOIDED_MESSAGE  = "Deleted from FHIR module";
+	public static final String FHIR_RETIRED_MESSAGE  = "Retired by FHIR module";
 
 	public static final String POST  = "POST";
 	public static final String PUT  = "PUT";
