@@ -10,16 +10,6 @@ import java.util.List;
 
 public class GroupServiceImpl extends BaseOpenmrsService implements GroupService {
 
-    private FHIRDAO dao;
-
-    public FHIRDAO getDao() {
-        return dao;
-    }
-
-    public void setDao(FHIRDAO dao) {
-        this.dao = dao;
-    }
-
     @Override
     public Group getGroup(String id) {
         return GroupStrategyUtil.getGroupStrategy().getGroupById(id);
