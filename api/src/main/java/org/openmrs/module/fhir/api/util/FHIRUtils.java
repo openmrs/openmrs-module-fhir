@@ -122,7 +122,7 @@ public class FHIRUtils {
 	}
 
 	public static String getEncounterStrategy() {
-		return Context.getAdministrationService().getGlobalProperty("fhir.encounter.strategy");
+		return Context.getAdministrationService().getGlobalProperty("fhir.encounter.encounterStrategy");
 	}
 
 	public static String getPractitionerStrategy() {
