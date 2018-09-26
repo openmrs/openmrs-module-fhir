@@ -106,7 +106,7 @@ public class FHIRUtils {
 	}
 
 	public static String getAppointmentStrategy() {
-		return Context.getAdministrationService().getGlobalProperty("fhir.appointment.strategy");
+		return Context.getAdministrationService().getGlobalProperty("fhir.appointment.appointmentStrategy");
 	}
 
 	public static String getLocationStrategy() {

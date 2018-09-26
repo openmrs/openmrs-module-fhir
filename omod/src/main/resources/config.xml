@@ -190,6 +190,12 @@
     </globalProperty>
 
     <globalProperty>
+        <property>${project.parent.artifactId}.appointment.appointmentStrategy</property>
+        <defaultValue>DefaultAppointmentStrategy</defaultValue>
+        <description>Set appointment strategy.</description>
+    </globalProperty>
+
+    <globalProperty>
         <property>${project.parent.artifactId}.practitioner.practitionerStrategy</property>
         <defaultValue>DefaultPractitionerStrategy</defaultValue>
         <description>Set practitioner strategy.</description>
