@@ -100,7 +100,7 @@ public class MedicationRequestServiceImpl extends BaseOpenmrsService implements 
      */
     public void deleteMedicationRequest(String uuid) {
         Order drugOrder = Context.getOrderService().getOrderByUuid(uuid);
-        Context.getOrderService().voidOrder(drugOrder, FHIRConstants.ORDER_DELETE_MESSAGE);
+        Context.getOrderService().voidOrder(drugOrder, FHIRConstants.FHIR_VOIDED_MESSAGE);
     }
 
     /**

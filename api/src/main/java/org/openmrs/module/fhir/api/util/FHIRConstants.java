@@ -259,19 +259,14 @@ public final class FHIRConstants {
 
 	public static final String DEFAULT = "DEFAULT";
 	public static final String CODING_0074 = "http://hl7.org/fhir/v2/0074";
-	public static final String ENCOUNTER_DELETE_MESSAGE = "DELETED by FHIR request";
-	public static final String OBS_DELETE_MESSAGE = "DELETED by FHIR Request";
-	public static final String OBS_CREATE_MESSAGE = "CREATED by FHIR Request";
-	public static final String OBS_UPDATE_MESSAGE = "Updated via FHIR";
-	public static final String PATIENT_DELETE_MESSAGE  = "DELETED by FHIR request";
-	public static final String PERSON_VOIDED_MESSAGE  = "Voided by FHIR Request";
-	public static final String PATIENT_VOIDED_MESSAGE  = "Deleted from FHIR module";
+
 	public static final String FHIR_RETIRED_MESSAGE  = "Retired by FHIR module";
+	public static final String FHIR_CREATE_MESSAGE = "Created by FHIR request";
+	public static final String FHIR_UPDATE_MESSAGE = "Updated by FHIR request";
+	public static final String FHIR_VOIDED_MESSAGE = "Voided by FHIR request";
 
 	public static final String POST  = "POST";
 	public static final String PUT  = "PUT";
 	public static final String DELETE  = "DELETE";
-
-	public static final String ORDER_DELETE_MESSAGE = "DELETED by FHIR Request";
 
 }

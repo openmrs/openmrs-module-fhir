@@ -231,7 +231,7 @@ public class PatientStrategy implements GenericPatientStrategy {
             throw new ResourceNotFoundException(new IdType(FHIRConstants.PATIENT, uuid));
         }
         try {
-            Context.getPatientService().voidPatient(patient, FHIRConstants.PATIENT_DELETE_MESSAGE);
+            Context.getPatientService().voidPatient(patient, FHIRConstants.FHIR_VOIDED_MESSAGE);
         } catch (APIException ex) {
             // refused to retire resource.  return with 405
             throw new MethodNotAllowedException("The OpenMRS API refused to retire the Patient via the FHIR request.");

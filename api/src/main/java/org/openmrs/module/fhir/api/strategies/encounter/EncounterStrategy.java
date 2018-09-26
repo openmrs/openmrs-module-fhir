@@ -213,10 +213,10 @@ public class EncounterStrategy implements GenericEncounterStrategy {
 				idType.setValue(id);
 				throw new ResourceNotFoundException(idType);
 			} else {
-				Context.getVisitService().voidVisit(visit, FHIRConstants.ENCOUNTER_DELETE_MESSAGE);
+				Context.getVisitService().voidVisit(visit, FHIRConstants.FHIR_VOIDED_MESSAGE);
 			}
 		} else {
-			Context.getEncounterService().voidEncounter(encounter, FHIRConstants.ENCOUNTER_DELETE_MESSAGE);
+			Context.getEncounterService().voidEncounter(encounter, FHIRConstants.FHIR_VOIDED_MESSAGE);
 		}
 	}
 

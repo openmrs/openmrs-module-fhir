@@ -9,6 +9,7 @@ import org.openmrs.Cohort;
 import org.openmrs.api.APIException;
 import org.openmrs.api.CohortService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRGroupUtil;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.springframework.stereotype.Component;
@@ -78,7 +79,7 @@ public class GroupStrategy implements GenericGroupStrategy {
             throw new ResourceNotFoundException(new IdType(Group.class.getSimpleName(), uuid));
         } else {
             try {
-                getCohortService().purgeCohort(cohort);
+                getCohortService().voidCohort(cohort, FHIRConstants.FHIR_VOIDED_MESSAGE);
             } catch (APIException e) {
                 throw new MethodNotAllowedException(String.format("The OpenMRS API refused to remove Group via FHIR request. Group id: %s", uuid));
             }

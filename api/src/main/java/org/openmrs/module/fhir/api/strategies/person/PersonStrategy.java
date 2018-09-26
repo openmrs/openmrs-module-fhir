@@ -3,7 +3,6 @@ package org.openmrs.module.fhir.api.strategies.person;
 import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
 import ca.uhn.fhir.rest.server.exceptions.NotModifiedException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
-import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.Person;
 import org.openmrs.api.APIException;
@@ -105,7 +104,7 @@ public class PersonStrategy implements GenericPersonStrategy {
             return;
         }
         try {
-            Context.getPersonService().voidPerson(person, FHIRConstants.PERSON_VOIDED_MESSAGE);
+            Context.getPersonService().voidPerson(person, FHIRConstants.FHIR_VOIDED_MESSAGE);
         } catch (APIException apie) {
             throw new MethodNotAllowedException(String.format("OpenMRS has failed to retire person '%s': %s", uuid,
                     apie.getMessage()));

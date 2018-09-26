@@ -110,7 +110,7 @@ public class RelatedPersonServiceTest extends BaseModuleContextSensitiveTest {
 
         RelatedPerson relatedPerson = FHIRRelatedPersonUtil.generateRelationshipObject(relationship);
 
-        personService.voidRelationship(relationship, FHIRConstants.PATIENT_DELETE_MESSAGE);
+        personService.voidRelationship(relationship, FHIRConstants.FHIR_VOIDED_MESSAGE);
         relatedPerson = getService().updateRelatedPerson(INCORRECT_UUID, relatedPerson);
 
         List<String> errors = new ArrayList<String>();

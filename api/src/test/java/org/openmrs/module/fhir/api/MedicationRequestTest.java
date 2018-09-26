@@ -13,11 +13,6 @@
  */
 package org.openmrs.module.fhir.api;
 
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.parser.IParser;
-import ca.uhn.fhir.parser.JsonParser;
-import ca.uhn.fhir.parser.StrictErrorHandler;
-import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.MedicationRequest;
 import org.junit.Before;
 import org.junit.Test;
@@ -82,7 +77,7 @@ public class MedicationRequestTest extends BaseModuleContextSensitiveTest {
 		org.openmrs.api.OrderService orderService = Context.getOrderService();
 		org.openmrs.Order order = orderService.getOrder(2000);
 		assertNotNull(order);
-		orderService.voidOrder(order, FHIRConstants.ORDER_DELETE_MESSAGE);
+		orderService.voidOrder(order, FHIRConstants.FHIR_VOIDED_MESSAGE);
 		order = orderService.getOrder(2000);
 		assertTrue(order.isVoided());
 	}
