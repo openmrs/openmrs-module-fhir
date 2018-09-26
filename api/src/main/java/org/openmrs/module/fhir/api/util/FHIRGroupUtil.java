@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class FHIRGroupCohortUtil {
+public class FHIRGroupUtil {
 
     public static Group generateGroup(Cohort cohort) {
         if (cohort == null) {

@@ -9,7 +9,7 @@ import org.openmrs.Cohort;
 import org.openmrs.api.APIException;
 import org.openmrs.api.CohortService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.util.FHIRGroupCohortUtil;
+import org.openmrs.module.fhir.api.util.FHIRGroupUtil;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +22,7 @@ public class GroupStrategy implements GenericGroupStrategy {
     public Group getGroupById(String uuid) {
         Cohort cohort = getCohortService().getCohortByUuid(uuid);
 
-        return FHIRGroupCohortUtil.generateGroup(cohort);
+        return FHIRGroupUtil.generateGroup(cohort);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class GroupStrategy implements GenericGroupStrategy {
         Cohort cohort = getCohortService().getCohortByUuid(uuid);
 
         if (cohort != null) {
-            groups.add(FHIRGroupCohortUtil.generateGroup(cohort));
+            groups.add(FHIRGroupUtil.generateGroup(cohort));
         }
 
         return groups;
@@ -43,7 +43,7 @@ public class GroupStrategy implements GenericGroupStrategy {
         List<Cohort> cohorts = getCohortService().getCohorts(name);
 
         for (Cohort cohort : cohorts) {
-            groups.add(FHIRGroupCohortUtil.generateGroup(cohort));
+            groups.add(FHIRGroupUtil.generateGroup(cohort));
         }
 
         return groups;
@@ -51,7 +51,7 @@ public class GroupStrategy implements GenericGroupStrategy {
 
     @Override
     public Group createGroup(Group group) {
-        Cohort cohort = FHIRGroupCohortUtil.generateCohort(group);
+        Cohort cohort = FHIRGroupUtil.generateCohort(group);
 
         try {
             cohort = getCohortService().saveCohort(cohort);
@@ -60,7 +60,7 @@ public class GroupStrategy implements GenericGroupStrategy {
                     "The request cannot be processed due to the following issues \n" + e.getMessage());
         }
 
-        return FHIRGroupCohortUtil.generateGroup(cohort);
+        return FHIRGroupUtil.generateGroup(cohort);
     }
 
     @Override
@@ -96,9 +96,9 @@ public class GroupStrategy implements GenericGroupStrategy {
     }
 
     private Group updateGroup(Group group, Cohort cohortToUpdate) {
-        Cohort newCohort = FHIRGroupCohortUtil.generateCohort(group);
+        Cohort newCohort = FHIRGroupUtil.generateCohort(group);
 
-        cohortToUpdate = FHIRGroupCohortUtil.updateCohort(cohortToUpdate, newCohort);
+        cohortToUpdate = FHIRGroupUtil.updateCohort(cohortToUpdate, newCohort);
 
         try {
             cohortToUpdate = getCohortService().saveCohort(cohortToUpdate);
@@ -106,7 +106,7 @@ public class GroupStrategy implements GenericGroupStrategy {
             throw new UnprocessableEntityException(
                     "The request cannot be processed due to the following issues \n" + e.getMessage());
         }
-        return FHIRGroupCohortUtil.generateGroup(cohortToUpdate);
+        return FHIRGroupUtil.generateGroup(cohortToUpdate);
     }
 
     private CohortService getCohortService() {
