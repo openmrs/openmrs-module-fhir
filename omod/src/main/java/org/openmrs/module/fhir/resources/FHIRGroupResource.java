@@ -37,6 +37,10 @@ public class FHIRGroupResource extends Resource {
         return getGroupService().updateGroup(group, uuid);
     }
 
+    public void deleteGroup(IdType id) {
+        getGroupService().deleteGroup(id.getIdPart());
+    }
+
     private GroupService getGroupService() {
         return Context.getService(GroupService.class);
     }

@@ -33,4 +33,9 @@ public class GroupServiceImpl extends BaseOpenmrsService implements GroupService
     public Group updateGroup(Group group, String uuid) {
         return GroupStrategyUtil.getGroupStrategy().updateGroup(group, uuid);
     }
+
+    @Override
+    public void deleteGroup(String uuid) {
+        GroupStrategyUtil.getGroupStrategy().deleteGroup(uuid);
+    }
 }

@@ -15,4 +15,6 @@ public interface GroupService {
     Group createGroup(Group group);
 
     Group updateGroup(Group group, String uuid);
+
+    void deleteGroup(String uuid);
 }

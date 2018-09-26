@@ -1,5 +1,7 @@
 package org.openmrs.module.fhir.api.strategies.group;
 
+import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import org.hl7.fhir.dstu3.model.Group;
 import org.hl7.fhir.dstu3.model.IdType;
@@ -8,6 +10,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.CohortService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRGroupCohortUtil;
+import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -65,6 +68,21 @@ public class GroupStrategy implements GenericGroupStrategy {
         Cohort cohort = getCohortService().getCohortByUuid(uuid);
 
         return cohort != null ? updateGroup(group, cohort) : createGroup(group, uuid);
+    }
+
+    @Override
+    public void deleteGroup(String uuid) {
+        Cohort cohort = getCohortService().getCohortByUuid(FHIRUtils.extractUuid(uuid));
+
+        if (cohort == null) {
+            throw new ResourceNotFoundException(new IdType(Group.class.getSimpleName(), uuid));
+        } else {
+            try {
+                getCohortService().purgeCohort(cohort);
+            } catch (APIException e) {
+                throw new MethodNotAllowedException(String.format("The OpenMRS API refused to remove Group via FHIR request. Group id: %s", uuid));
+            }
+        }
     }
 
     private Group createGroup(Group group, String uuid) {

@@ -1,6 +1,7 @@
 package org.openmrs.module.fhir.providers;
 
 import ca.uhn.fhir.rest.annotation.Create;
+import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
@@ -47,6 +48,11 @@ public class RestfulGroupResourceProvider implements IResourceProvider {
     public MethodOutcome updateGroup(@ResourceParam Group group, @IdParam IdType id) {
         Group updatedGroup = groupResource.updateGroup(group, id.getIdPart());
         return createMethodOutcome(updatedGroup.getId(), GROUP_UPDATE_SUCCESS);
+    }
+
+    @Delete()
+    public void deleteGroup(@IdParam IdType id) {
+        groupResource.deleteGroup(id);
     }
 
     @Read()
