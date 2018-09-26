@@ -291,7 +291,7 @@ public class FHIRPersonUtil {
 		retrievedPerson.setAddresses(allAddress);
 		retrievedPerson.setPersonVoided(omrsPerson.getVoided());
 		if (omrsPerson.getVoided()) {
-			retrievedPerson.setPersonVoidReason(FHIRConstants.PERSON_VOIDED_MESSAGE); // deleted reason is compulsory
+			retrievedPerson.setPersonVoidReason(FHIRConstants.FHIR_VOIDED_MESSAGE); // deleted reason is compulsory
 		}
 		retrievedPerson.setBirthdate(omrsPerson.getBirthdate());
 		retrievedPerson.setGender(omrsPerson.getGender());

@@ -36,7 +36,7 @@ public class RelatedPersonStrategy implements GenericRelatedPersonStrategy {
             throw new ResourceNotFoundException(new IdType(FHIRConstants.PATIENT, uuid));
         }
         try {
-            Context.getPersonService().voidRelationship(omrsRelationship, FHIRConstants.PATIENT_DELETE_MESSAGE);
+            Context.getPersonService().voidRelationship(omrsRelationship, FHIRConstants.FHIR_VOIDED_MESSAGE);
         } catch (APIException ex) {
             // refused to retire resource.  return with 405
             throw new MethodNotAllowedException("The OpenMRS API refused to retire the Related Person via the FHIR request.");

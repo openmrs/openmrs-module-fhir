@@ -8,7 +8,6 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Encounter;
 import org.openmrs.Person;
-import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRObsUtil;
@@ -168,7 +167,7 @@ public class ObservationStrategy implements GenericObservationStrategy {
     @Override
     public void deleteObservation(String uuid) {
         Obs obs = Context.getObsService().getObsByUuid(uuid);
-        Context.getObsService().voidObs(obs, FHIRConstants.OBS_DELETE_MESSAGE);
+        Context.getObsService().voidObs(obs, FHIRConstants.FHIR_VOIDED_MESSAGE);
     }
 
     @Override
@@ -193,7 +192,7 @@ public class ObservationStrategy implements GenericObservationStrategy {
             }
             throw new UnprocessableEntityException(errorMessage.toString());
         }
-        obs = Context.getObsService().saveObs(obs, FHIRConstants.OBS_CREATE_MESSAGE);
+        obs = Context.getObsService().saveObs(obs, FHIRConstants.FHIR_CREATE_MESSAGE);
         return FHIRObsUtil.generateObs(obs);
     }
 
@@ -213,7 +212,7 @@ public class ObservationStrategy implements GenericObservationStrategy {
                 }
                 throw new UnprocessableEntityException(errorMessage.toString());
             }
-            omrsObs = Context.getObsService().saveObs(retrievedObs, FHIRConstants.OBS_UPDATE_MESSAGE);
+            omrsObs = Context.getObsService().saveObs(retrievedObs, FHIRConstants.FHIR_UPDATE_MESSAGE);
             return FHIRObsUtil.generateObs(omrsObs);
         } else { // no observation is associated with the given uuid. so create a new observation with the given uuid
             if (observation.getId() == null) { // since we need to PUT the observation to a specific URI, we need to set the uuid

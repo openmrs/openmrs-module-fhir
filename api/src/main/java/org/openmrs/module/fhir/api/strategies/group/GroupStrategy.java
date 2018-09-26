@@ -79,7 +79,7 @@ public class GroupStrategy implements GenericGroupStrategy {
             throw new ResourceNotFoundException(new IdType(Group.class.getSimpleName(), uuid));
         } else {
             try {
-                getCohortService().voidCohort(cohort, FHIRConstants.PERSON_VOIDED_MESSAGE);
+                getCohortService().voidCohort(cohort, FHIRConstants.FHIR_VOIDED_MESSAGE);
             } catch (APIException e) {
                 throw new MethodNotAllowedException(String.format("The OpenMRS API refused to remove Group via FHIR request. Group id: %s", uuid));
             }
