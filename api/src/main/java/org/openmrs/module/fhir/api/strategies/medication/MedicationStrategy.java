@@ -10,10 +10,12 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRMedicationUtil;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component("DefaultMedicationStrategy")
 public class MedicationStrategy implements GenericMedicationStrategy {
     @Override
     public Medication getMedicationById(String uuid) {
