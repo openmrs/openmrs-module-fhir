@@ -3,7 +3,6 @@ package org.openmrs.module.fhir.api.impl;
 import org.hl7.fhir.dstu3.model.Group;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.GroupService;
-import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.strategies.group.GroupStrategyUtil;
 
 import java.util.List;
@@ -28,5 +27,10 @@ public class GroupServiceImpl extends BaseOpenmrsService implements GroupService
     @Override
     public Group createGroup(Group group) {
         return GroupStrategyUtil.getGroupStrategy().createGroup(group);
+    }
+
+    @Override
+    public Group updateGroup(Group group, String uuid) {
+        return GroupStrategyUtil.getGroupStrategy().updateGroup(group, uuid);
     }
 }

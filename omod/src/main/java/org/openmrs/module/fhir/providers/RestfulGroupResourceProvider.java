@@ -6,6 +6,7 @@ import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
@@ -22,6 +23,9 @@ import java.util.List;
 
 public class RestfulGroupResourceProvider implements IResourceProvider {
 
+    private static final String GROUP_CREATE_SUCCESS = "Group successfully created with id %s";
+    private static final String GROUP_UPDATE_SUCCESS = "Group successfully updated with id %s";
+
     private FHIRGroupResource groupResource;
 
     public RestfulGroupResourceProvider() {
@@ -36,7 +40,13 @@ public class RestfulGroupResourceProvider implements IResourceProvider {
     @Create
     public MethodOutcome createGroup(@ResourceParam Group group) {
         Group createdGroup = groupResource.createGroup(group);
-        return createMethodOutcome(createdGroup.getId());
+        return createMethodOutcome(createdGroup.getId(), GROUP_CREATE_SUCCESS);
+    }
+
+    @Update()
+    public MethodOutcome updateGroup(@ResourceParam Group group, @IdParam IdType id) {
+        Group updatedGroup = groupResource.updateGroup(group, id.getIdPart());
+        return createMethodOutcome(updatedGroup.getId(), GROUP_UPDATE_SUCCESS);
     }
 
     @Read()
@@ -56,24 +66,15 @@ public class RestfulGroupResourceProvider implements IResourceProvider {
         return groupResource.searchGroupByName(name);
     }
 
-    private MethodOutcome createMethodOutcome(String resourceId) {
+    private MethodOutcome createMethodOutcome(String resourceId, String messagePattern) {
         MethodOutcome retVal = new MethodOutcome();
-        if (resourceId != null) {
-            retVal.setId(new IdType(Group.class.getSimpleName(), resourceId));
-            OperationOutcome outcome = new OperationOutcome();
-            CodeableConcept concept = new CodeableConcept();
-            Coding coding = concept.addCoding();
-            coding.setDisplay("Group successfully created with id " + resourceId);
-            outcome.addIssue().setDetails(concept);
-            retVal.setOperationOutcome(outcome);
-        } else {
-            OperationOutcome outcome = new OperationOutcome();
-            CodeableConcept concept = new CodeableConcept();
-            Coding coding = concept.addCoding();
-            coding.setDisplay("Failed to create Group");
-            outcome.addIssue().setDetails(concept);
-            retVal.setOperationOutcome(outcome);
-        }
+        retVal.setId(new IdType(Group.class.getSimpleName(), resourceId));
+        OperationOutcome outcome = new OperationOutcome();
+        CodeableConcept concept = new CodeableConcept();
+        Coding coding = concept.addCoding();
+        coding.setDisplay(String.format(messagePattern, resourceId));
+        outcome.addIssue().setDetails(concept);
+        retVal.setOperationOutcome(outcome);
         return retVal;
     }
 }

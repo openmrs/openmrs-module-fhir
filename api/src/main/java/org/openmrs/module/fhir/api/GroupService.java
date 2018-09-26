@@ -13,4 +13,6 @@ public interface GroupService {
     List<Group> searchGroupByName(String name);
 
     Group createGroup(Group group);
+
+    Group updateGroup(Group group, String uuid);
 }

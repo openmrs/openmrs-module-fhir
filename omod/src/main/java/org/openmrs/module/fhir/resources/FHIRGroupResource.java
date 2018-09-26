@@ -32,6 +32,11 @@ public class FHIRGroupResource extends Resource {
         return getGroupService().createGroup(group);
     }
 
+
+    public Group updateGroup(Group group, String uuid) {
+        return getGroupService().updateGroup(group, uuid);
+    }
+
     private GroupService getGroupService() {
         return Context.getService(GroupService.class);
     }

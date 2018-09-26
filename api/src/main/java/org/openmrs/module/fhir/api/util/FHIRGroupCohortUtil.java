@@ -3,13 +3,11 @@ package org.openmrs.module.fhir.api.util;
 import org.hl7.fhir.dstu3.model.Group;
 import org.hl7.fhir.dstu3.model.Reference;
 import org.openmrs.Cohort;
-import org.openmrs.CohortMembership;
 import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -58,9 +56,25 @@ public class FHIRGroupCohortUtil {
 
         Cohort cohort = new Cohort(group.getName(), group.getName(), ids);
 
-        cohort.setUuid(group.getId());
+        cohort.setUuid(FHIRUtils.extractUuid(group.getId()));
 
         return cohort;
+    }
+
+    /**
+     *
+     * This method updates name of cohort.
+     * Description can't be updated because FHIR Group doesn't have such field.
+     * Members aren't updated because REST also doesn't allow it.
+     * @param cohortToUpdate
+     * @param newCohort
+     * @return new updated Cohort
+     */
+    public static Cohort updateCohort(Cohort cohortToUpdate, Cohort newCohort) {
+
+        cohortToUpdate.setName(newCohort.getName());
+
+        return cohortToUpdate;
     }
 
     private static Group.GroupMemberComponent generateGroupMemberComponent(Patient patient) {
