@@ -252,7 +252,7 @@ public class FHIRMedicationRequestUtil {
         if (drugConcept == null) {
             errors.add("Medication cannot be empty");
         } else {
-            drugOmrsConcept = getConceptFromCode(drugConcept, errors);
+            drugOmrsConcept = FHIRUtils.getConceptFromCode(drugConcept, errors);
             drug.setConcept(drugOmrsConcept);
             drug.setUuid(drugId);
             order.setDrug(drug);
@@ -306,7 +306,7 @@ public class FHIRMedicationRequestUtil {
             //Set route
             CodeableConcept routeConcept = (CodeableConcept) dosage.getRoute();
             if (routeConcept != null) {
-                Concept omrsRouteConcept = getConceptFromCode(routeConcept, errors);
+                Concept omrsRouteConcept = FHIRUtils.getConceptFromCode(routeConcept, errors);
                 order.setRoute(omrsRouteConcept);
             }
 
@@ -316,7 +316,7 @@ public class FHIRMedicationRequestUtil {
             //set order frequency
             if (dosage.getTiming() != null) {
                 CodeableConcept orderFrequencyConcept = dosage.getTiming().getCode();
-                Concept omrsTimingConcept = getConceptFromCode(orderFrequencyConcept, errors);
+                Concept omrsTimingConcept = FHIRUtils.getConceptFromCode(orderFrequencyConcept, errors);
                 OrderFrequency orderFrequency = new OrderFrequency();
                 orderFrequency.setConcept(omrsTimingConcept);
             }
@@ -441,44 +441,6 @@ public class FHIRMedicationRequestUtil {
         }
 
         return retrievedOrder;
-    }
-
-    /**
-     * Get concept from code
-     * @param codeableConcept codeable concept
-     * @param errors error list
-     * @return OpenMRS concept
-     */
-    private static Concept getConceptFromCode(CodeableConcept codeableConcept, List<String> errors) {
-        String conceptCode = null;
-        String system = null;
-        Concept concept = null;
-        List<Coding> dts = null;
-
-        CodeableConcept dt = codeableConcept;
-        dts = dt.getCoding();
-
-        for (Coding cding : dts) {
-            conceptCode = cding.getCode();
-            system = cding.getSystem();
-            if (FHIRConstants.OPENMRS_URI.equals(system)) {
-                concept = Context.getConceptService().getConceptByUuid(conceptCode);
-            } else {
-                String systemName = FHIRConstants.conceptSourceURINameMap.get(system);
-                if (systemName != null && !systemName.isEmpty()) {
-                    concept = Context.getConceptService().getConceptByMapping(conceptCode, systemName);
-                }
-            }
-            if (concept != null) {
-                break;
-            }
-        }
-        if (concept == null) {
-            errors.add("No matching concept found for the given codings");
-        } else {
-            return concept;
-        }
-        return null;
     }
 
     /**

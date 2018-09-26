@@ -85,6 +85,10 @@ public class FHIRUtils {
 		return urnBuilder.toString();
 	}
 
+	public static String getMedicationStrategy() {
+		return Context.getAdministrationService().getGlobalProperty("fhir.medication.medicationStrategy");
+	}
+
 	public static String getAllergyStrategy() {
 		return Context.getAdministrationService().getGlobalProperty("fhir.allergy.allergyStrategy");
 	}
@@ -102,7 +106,7 @@ public class FHIRUtils {
 	}
 
 	public static String getAppointmentStrategy() {
-		return Context.getAdministrationService().getGlobalProperty("fhir.appointment.strategy");
+		return Context.getAdministrationService().getGlobalProperty("fhir.appointment.appointmentStrategy");
 	}
 
 	public static String getLocationStrategy() {
@@ -118,7 +122,7 @@ public class FHIRUtils {
 	}
 
 	public static String getEncounterStrategy() {
-		return Context.getAdministrationService().getGlobalProperty("fhir.encounter.strategy");
+		return Context.getAdministrationService().getGlobalProperty("fhir.encounter.encounterStrategy");
 	}
 
 	public static String getPractitionerStrategy() {
@@ -525,9 +529,47 @@ public class FHIRUtils {
 		if (!errors.isEmpty()) {
 			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
 			for (int i = 0; i < errors.size(); i++) {
-				errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
+				errorMessage.append(i + 1)
+						.append(" : ")
+						.append(errors.get(i))
+						.append("\n");
 			}
 			throw new UnprocessableEntityException(errorMessage.toString());
+		}
+	}
+
+	/**
+	 * Get concept from code
+	 * @param codeableConcept codeable concept
+	 * @param errors error list
+	 * @return OpenMRS concept
+	 */
+	public static Concept getConceptFromCode(CodeableConcept codeableConcept, List<String> errors) {
+		String conceptCode;
+		String system;
+		Concept concept = null;
+		List<Coding> dts = codeableConcept.getCoding();
+
+		for (Coding coding : dts) {
+			conceptCode = coding.getCode();
+			system = coding.getSystem();
+			if (FHIRConstants.OPENMRS_URI.equals(system)) {
+				concept = Context.getConceptService().getConceptByUuid(conceptCode);
+			} else {
+				String systemName = FHIRConstants.conceptSourceURINameMap.get(system);
+				if (systemName != null && !systemName.isEmpty()) {
+					concept = Context.getConceptService().getConceptByMapping(conceptCode, systemName);
+				}
+			}
+			if (concept != null) {
+				break;
+			}
+		}
+		if (concept == null) {
+			errors.add("No matching concept found for the given codings");
+			return null;
+		} else {
+			return concept;
 		}
 	}
 
