@@ -306,13 +306,8 @@ public class FHIRObsUtil {
 			log.error("Code cannot be empty " + e.getMessage());
 		}
 
-		if (concept == null) {
-			errors.add("No matching concept found for the given codings");
-		} else {
-			obs.setConcept(concept);
-		}
-
 		if (concept != null) {
+			obs.setConcept(concept);
 			if (observation.getValue() == null) {
 				errors.add("Obs set value cannot be empty");
 			} else {

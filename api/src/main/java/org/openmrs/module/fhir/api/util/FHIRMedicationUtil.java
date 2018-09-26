@@ -1,12 +1,9 @@
 package org.openmrs.module.fhir.api.util;
 
-import org.hl7.fhir.dstu3.model.CodeableConcept;
-import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.Medication;
 import org.hl7.fhir.exceptions.FHIRException;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
-import org.openmrs.ConceptName;
 import org.openmrs.Drug;
 import org.openmrs.DrugIngredient;
 import org.openmrs.DrugReferenceMap;
@@ -27,12 +24,10 @@ public final class FHIRMedicationUtil {
 
         medication.setId(drug.getUuid());
 
-//        medication.setForm(generateForm(drug.getDosageForm()));
         for (ConceptMap map : drug.getDosageForm().getConceptMappings()) {
             medication.setForm(FHIRUtils.getCodeableConceptConceptMappings(map));
         }
 
-//        medication.setCode(generateCode(drug.getConcept()));
         for (ConceptMap map : drug.getConcept().getConceptMappings()) {
             medication.setCode(FHIRUtils.getCodeableConceptConceptMappings(map));
         }
@@ -98,25 +93,10 @@ public final class FHIRMedicationUtil {
 //endregion
 
 //region FHIR methods
-    private static CodeableConcept generateForm(Concept dosageForm) {
-        CodeableConcept form = new CodeableConcept();
-        form.addCoding(new Coding(FHIRConstants.SNOMED_CT_URI,
-                dosageForm.getConceptId().toString(), dosageForm.getDisplayString())); // todo is SNOMED_CT_URI correct
-        return form;
-    }
-
-    private static CodeableConcept generateCode(Concept concept) {
-        CodeableConcept code = new CodeableConcept();
-        code.addCoding(new Coding(FHIRConstants.SNOMED_CT_URI,
-                concept.getConceptId().toString(), concept.getDisplayString())); // todo is SNOMED_CT_URI correct
-        return code;
-    }
-
     private static List<Medication.MedicationIngredientComponent> generateIngredient(Collection<DrugIngredient> drugIngredients) {
         List<Medication.MedicationIngredientComponent> ingredientComponents = new ArrayList<>();
 
         for (DrugIngredient drugIngredient : drugIngredients) {
-//            CodeableConcept item = new CodeableConcept();
 
             for (ConceptMap map : drugIngredient.getIngredient().getConceptMappings()) {
                 Medication.MedicationIngredientComponent ingredientComponent =
@@ -125,13 +105,6 @@ public final class FHIRMedicationUtil {
                         );
                 ingredientComponents.add(ingredientComponent);
             }
-
-//            item.addCoding(new Coding(FHIRConstants.SNOMED_CT_URI, // todo is SNOMED_CT_URI correct
-//                    drugIngredient.getIngredient().getConceptId().toString(),
-//                    drugIngredient.getIngredient().getDisplayString()));
-//            Medication.MedicationIngredientComponent ingredientComponent =
-//                    new Medication.MedicationIngredientComponent(item);
-//            ingredientComponents.add(ingredientComponent);
         }
 
         return ingredientComponents;
