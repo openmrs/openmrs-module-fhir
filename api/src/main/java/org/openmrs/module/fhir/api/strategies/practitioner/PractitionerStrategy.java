@@ -11,8 +11,10 @@ import org.openmrs.PersonName;
 import org.openmrs.Provider;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.util.ErrorUtil;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRPractitionerUtil;
+import org.openmrs.module.fhir.api.util.StrategyUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -144,11 +146,8 @@ public class PractitionerStrategy implements GenericPractitionerStrategy {
             }
         }
         if (!errors.isEmpty()) {
-            StringBuilder errorMessage = new StringBuilder(FHIRConstants.REQUEST_ISSUE_LIST);
-            for (int i = 0; i < errors.size(); i++) {
-                errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
-            }
-            throw new UnprocessableEntityException(errorMessage.toString());
+            String errorMessage = ErrorUtil.generateErrorMessage(errors, FHIRConstants.REQUEST_ISSUE_LIST);
+            throw new UnprocessableEntityException(errorMessage);
         }
         if (personFromRequest != null) { // if this is not null, we can have a person resource along the practitioner resource
             Person personToProvider = FHIRPractitionerUtil.generateOpenMRSPerson(personFromRequest); // either map to an existing person, or create a new person for the given representation
@@ -172,13 +171,7 @@ public class PractitionerStrategy implements GenericPractitionerStrategy {
             Provider p = service.saveProvider(retrievedProvider);
             return FHIRPractitionerUtil.generatePractitioner(p);
         } else { // no practitioner is associated with the given uuid. so create a new practitioner with the given uuid
-            if (practitioner.getId() == null) { // since we need to PUT the Person to a specific URI, we need to set the uuid
-                // here, if it is not
-                // already set.
-                IdType uuid = new IdType();
-                uuid.setValue(theId);
-                practitioner.setId(uuid);
-            }
+            StrategyUtil.setIdIfNeeded(practitioner, theId);
             return createFHIRPractitioner(practitioner);
         }
     }

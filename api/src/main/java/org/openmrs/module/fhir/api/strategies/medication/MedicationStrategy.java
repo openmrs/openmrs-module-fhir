@@ -10,10 +10,13 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRMedicationUtil;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
+import org.openmrs.module.fhir.api.util.StrategyUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.openmrs.module.fhir.api.util.FHIRUtils.extractUuid;
 
 @Component("DefaultMedicationStrategy")
 public class MedicationStrategy implements GenericMedicationStrategy {
@@ -79,11 +82,7 @@ public class MedicationStrategy implements GenericMedicationStrategy {
     }
 
     private Medication createMedication(Medication medication, String uuid) {
-        if (medication.getId() == null) {
-            IdType idType = new IdType();
-            idType.setValue(uuid);
-            medication.setId(idType);
-        }
+        StrategyUtil.setIdIfNeeded(medication, uuid);
         return createMedication(medication);
     }
 

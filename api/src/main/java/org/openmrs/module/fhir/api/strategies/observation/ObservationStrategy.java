@@ -11,6 +11,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRObsUtil;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
+import org.openmrs.module.fhir.api.util.StrategyUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -201,13 +202,7 @@ public class ObservationStrategy implements GenericObservationStrategy {
             omrsObs = Context.getObsService().saveObs(retrievedObs, FHIRConstants.FHIR_UPDATE_MESSAGE);
             return FHIRObsUtil.generateObs(omrsObs);
         } else { // no observation is associated with the given uuid. so create a new observation with the given uuid
-            if (observation.getId() == null) { // since we need to PUT the observation to a specific URI, we need to set the uuid
-                // here, if it is not
-                // already set.
-                IdType id = new IdType();
-                id.setValue(uuid);
-                observation.setId(uuid);
-            }
+            StrategyUtil.setIdIfNeeded(observation, uuid);
             return createFHIRObservation(observation);
         }
     }

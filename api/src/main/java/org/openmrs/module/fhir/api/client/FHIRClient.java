@@ -30,7 +30,7 @@ public class FHIRClient implements Client {
     private static final String ACCEPT_MIME_TYPE = "application/json";
 
     static {
-        CATEGORY_MAP = new HashMap<String, Class>();
+        CATEGORY_MAP = new HashMap<>();
         CATEGORY_MAP.put("patient", Patient.class);
         CATEGORY_MAP.put("visit", Encounter.class);
         CATEGORY_MAP.put("encounter", Encounter.class);
@@ -55,10 +55,7 @@ public class FHIRClient implements Client {
     @Override
     public ResponseEntity<String> createObject(String url, String username, String password, Object object)
             throws RestClientException {
-        prepareRestTemplate(username, password);
-        IBaseResource baseResource = (IBaseResource) object;
-        url = url + "/" + baseResource.getIdElement().getIdPart();
-        return restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<Object>(baseResource), String.class);
+        return createResponse(url, username, password, (IBaseResource) object);
     }
 
     @Override
@@ -72,10 +69,7 @@ public class FHIRClient implements Client {
     @Override
     public ResponseEntity<String> updateObject(String url, String username, String password, Object object)
             throws RestClientException {
-        prepareRestTemplate(username, password);
-        IBaseResource baseResource = (IBaseResource) object;
-        url = url + "/" + baseResource.getIdElement().getIdPart();
-        return restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<Object>(baseResource), String.class);
+        return createResponse(url, username, password, (IBaseResource) object);
     }
 
     private void prepareRestTemplate(String username, String password) {
@@ -99,5 +93,12 @@ public class FHIRClient implements Client {
         }
         log.warn(String.format("Category %s not recognized", category));
         return null;
+    }
+
+    private ResponseEntity<String> createResponse(String url, String username, String password,
+            IBaseResource object) {
+        prepareRestTemplate(username, password);
+        url = url + "/" + object.getIdElement().getIdPart();
+        return restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<Object>(object), String.class);
     }
 }

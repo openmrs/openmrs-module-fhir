@@ -27,13 +27,13 @@ public final class FHIRConstants {
 	//Concept source URIs
 	public static final String LOINC_URI = "http://loinc.org";
 
-	public static final String SNOMED_CT_URI = "http://snomed.info/sct";
-
 	public static final String SNOMED_URI = "http://snomed.info";
 
-	public static final String SNOMED_NP_URI = "http://snomed.info/snp";
+	public static final String SNOMED_CT_URI = SNOMED_URI + "/sct";
 
-	public static final String SNOMED_MVP_URI = "http://snomed.info/smvp";
+	public static final String SNOMED_NP_URI = SNOMED_URI + "/snp";
+
+	public static final String SNOMED_MVP_URI = SNOMED_URI + "/smvp";
 
 	public static final String CIEL_URI = "http://ciel.org";
 
@@ -76,9 +76,11 @@ public final class FHIRConstants {
 
 	public static final String SNOMED = "SNOMED";
 
-	public static final String SNOMED_CT = "SNOMED CT";
+	public static final String SNOMED_CT = SNOMED + " CT";
 
-	public static final String SNOMED_NP = "SNOMED NP";
+	public static final String SNOMED_NP = SNOMED + " NP";
+
+	public static final String SNOMED_MVP = SNOMED + " MVP";
 
 	public static final String ICD_10_WHO = "ICD-10-WHO";
 
@@ -86,11 +88,9 @@ public final class FHIRConstants {
 
 	public static final String PIH = "PIH";
 
-	public static final String PIH_MALAWI = "PIH Malawi";
+	public static final String PIH_MALAWI = PIH + " Malawi";
 
 	public static final String AMPATH = "AMPATH";
-
-	public static final String SNOMED_MVP = "SNOMED MVP";
 
 	public static final String MDRTB = "org.openmrs.module.mdrtb";
 
