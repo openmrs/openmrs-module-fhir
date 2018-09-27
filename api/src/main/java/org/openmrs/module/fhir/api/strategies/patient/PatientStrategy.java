@@ -21,6 +21,7 @@ import org.openmrs.module.fhir.api.util.FHIRLocationUtil;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.openmrs.module.fhir.api.util.FHIRVisitUtil;
+import org.openmrs.module.fhir.api.util.StrategyUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -281,11 +282,7 @@ public class PatientStrategy implements GenericPatientStrategy {
 
     private Patient createPatient(Patient patient, String uuid) {
         uuid = extractUuid(uuid);
-        if (patient.getId() == null) { // since we need to PUT the patient to a specific URI, we need to set the uuid
-            IdType uuidType = new IdType();
-            uuidType.setValue(uuid);
-            patient.setId(uuidType);
-        }
+        StrategyUtil.setIdIfNeeded(patient, uuid);
         return createFHIRPatient(patient);
     }
 

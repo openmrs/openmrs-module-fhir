@@ -175,7 +175,8 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 				obs = obsService.saveObs(obs, null);
 				resultObsGroupMembersSet.add(obs);
 			} else {
-				getDiagnosticReport(errors);
+				String errorMessage = ErrorUtil.generateErrorMessage(errors, FHIRConstants.REQUEST_ISSUE_LIST);
+				throw new UnprocessableEntityException(errorMessage);
 			}
 		}
 		if (!resultObsGroupMembersSet.isEmpty()) {
@@ -196,7 +197,8 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 				ImagingStudy imagingStudy = (ImagingStudy) referenceDt.getResource();
 				obs = FHIRImagingStudyUtil.generateOpenMRSImagingStudy(imagingStudy, errors);
 				if (!errors.isEmpty()) {
-					getDiagnosticReport(errors);
+					String errorMessage = ErrorUtil.generateErrorMessage(errors, FHIRConstants.REQUEST_ISSUE_LIST);
+					throw new UnprocessableEntityException(errorMessage);
 				}
 			} else {
 				// Get Id of the ImagingStudy
@@ -229,14 +231,6 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 		return diagnosticReport;
 	}
 
-	private DiagnosticReport getDiagnosticReport(List<String> errors) {
-		StringBuilder errorMessage = new StringBuilder(FHIRConstants.REQUEST_ISSUE_LIST);
-		for (int i = 0; i < errors.size(); i++) {
-			errorMessage.append(i + 1).append(" : ").append(errors.get(i)).append("\n");
-		}
-		throw new UnprocessableEntityException(errorMessage.toString());
-	}
-
 	/**
 	 * Simple Hack for get generateOpenMRSObs get worked
 	 *
@@ -248,15 +242,6 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 		observation.setSubject(diagnosticReport.getSubject());
 		observation.setIssued(diagnosticReport.getIssued());
 		return observation;
-	}
-
-	private String generateErrorMessage(List<String> errors) {
-		StringBuilder errorMessage = new StringBuilder(
-				"The request cannot be processed due to the following issues \n");
-		for (int i = 0; i < errors.size(); i++) {
-			errorMessage.append(i + 1).append(" : ").append(errors.get(i)).append("\n");
-		}
-		return errorMessage.toString();
 	}
 
 	/**
@@ -280,7 +265,7 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 			if (errors.isEmpty()) {
 				return imagingStudyObs;
 			} else {
-				String errorMessage = generateErrorMessage(errors);
+				String errorMessage = ErrorUtil.generateErrorMessage(errors);
 				if (log.isErrorEnabled()) {
 					log.error("ImagingStudy create error : " + errorMessage);
 				}

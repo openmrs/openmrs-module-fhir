@@ -18,10 +18,6 @@ public abstract class AbstractHandler {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 
-	public AbstractHandler() {
-		//Leave blank for first draft
-	}
-
 	protected Obs getObsGroup(DiagnosticReport diagnosticReport, Patient omrsPatient, Encounter omrsEncounter,
 			Set<Obs> resultObsGroupMembersSet, Concept diagnosticReportResultConcept) {
 		Obs resultObsGroup = new Obs(Context.getPersonService().getPersonByUuid(omrsPatient.getUuid()),

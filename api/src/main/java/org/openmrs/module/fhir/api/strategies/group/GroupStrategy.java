@@ -12,6 +12,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRGroupUtil;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
+import org.openmrs.module.fhir.api.util.StrategyUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -87,12 +88,7 @@ public class GroupStrategy implements GenericGroupStrategy {
     }
 
     private Group createGroup(Group group, String uuid) {
-        if (group.getId() == null) {
-            IdType id = new IdType();
-            id.setValue(uuid);
-            group.setId(id);
-        }
-
+        StrategyUtil.setIdIfNeeded(group, uuid);
         return createGroup(group);
     }
 

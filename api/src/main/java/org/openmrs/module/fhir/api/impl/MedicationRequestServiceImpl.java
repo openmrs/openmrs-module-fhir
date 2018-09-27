@@ -17,6 +17,7 @@ import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hl7.fhir.dstu3.model.DomainResource;
 import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.MedicationRequest;
 import org.openmrs.CareSetting;
@@ -28,9 +29,11 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.MedicationRequestService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
+import org.openmrs.module.fhir.api.util.ErrorUtil;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRMedicationRequestUtil;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
+import org.openmrs.module.fhir.api.util.StrategyUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,25 +139,15 @@ public class MedicationRequestServiceImpl extends BaseOpenmrsService implements 
         FHIRMedicationRequestUtil.copyObsAttributes(incomingDrugOrder, generatedDrugOrder, errors);
         if (generatedDrugOrder != null) { //medication request update
             if (!errors.isEmpty()) {
-                StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the " +
+                String errorMessage = ErrorUtil.generateErrorMessage(errors, "The request cannot be processed due to the " +
                         "following issues \n");
-                for (int i = 0; i < errors.size(); i++) {
-                    errorMessage.append((i + 1) + " : " + errors.get(i) + "\n");
-                }
-                throw new UnprocessableEntityException(errorMessage.toString());
+                throw new UnprocessableEntityException(errorMessage);
             }
 
             incomingDrugOrder = (DrugOrder) Context.getOrderService().saveOrder(generatedDrugOrder, null);
             return FHIRMedicationRequestUtil.generateMedicationRequest(incomingDrugOrder);
         } else {
-            if (medicationRequest.getId() == null) { // since we need to PUT the medication request to a specific URI,
-                // we need to set the uuid
-                // here, if it is not
-                // already set.
-                IdType id = new IdType();
-                id.setValue(uuid);
-                medicationRequest.setId(uuid);
-            }
+            StrategyUtil.setIdIfNeeded(medicationRequest, uuid);
             return createFHIRMedicationRequest(medicationRequest);
         }
     }

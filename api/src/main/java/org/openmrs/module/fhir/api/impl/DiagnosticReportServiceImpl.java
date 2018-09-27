@@ -157,7 +157,7 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 	@Override
 	public Map<String, DiagnosticReportHandler> getHandlers() throws APIException {
 		if (handlers == null) {
-			handlers = new LinkedHashMap<String, DiagnosticReportHandler>();
+			handlers = new LinkedHashMap<>();
 		}
 
 		return handlers;

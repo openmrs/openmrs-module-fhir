@@ -10,6 +10,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
+import org.openmrs.module.fhir.api.util.StrategyUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -83,13 +84,7 @@ public class PersonStrategy implements GenericPersonStrategy {
             Context.getPersonService().savePerson(retrievedPerson);
             return FHIRPersonUtil.generatePerson(retrievedPerson);
         } else { // no person is associated with the given uuid. so create a new person with the given uuid
-            if (person.getId() == null) { // since we need to PUT the Person to a specific URI, we need to set the uuid
-                // here, if it is not
-                // already set.
-                IdType uuidType = new IdType();
-                uuidType.setValue(uuid);
-                person.setId(uuidType);
-            }
+            StrategyUtil.setIdIfNeeded(person, uuid);
             return createFHIRPerson(person);
         }
     }
