@@ -24,12 +24,13 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 
 public class FHIRHttpMessageConverter extends AbstractHttpMessageConverter<IBaseResource> {
 
-    private static final Set<Class<?>> SUPPORTED_CLASSES = new HashSet<Class<?>>(2);
+    private static final Set<Class<?>> SUPPORTED_CLASSES = new HashSet<>(2);
     private static final String CHARSET = "UTF-8";
     private static final String TYPE = "application";
     private static final String SUBTYPE_1 = "fhir+json";
@@ -56,7 +57,8 @@ public class FHIRHttpMessageConverter extends AbstractHttpMessageConverter<IBase
     }
 
     @Override
-    protected IBaseResource readInternal(Class<? extends IBaseResource> clazz, HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
+    protected IBaseResource readInternal(Class<? extends IBaseResource> clazz, HttpInputMessage inputMessage) throws
+            HttpMessageNotReadableException {
         try {
             String json = convertStreamToString(inputMessage.getBody());
             return parser.parseResource(json);
@@ -76,13 +78,13 @@ public class FHIRHttpMessageConverter extends AbstractHttpMessageConverter<IBase
         }
     }
 
-    public String convertStreamToString(InputStream is) throws IOException {
+    private String convertStreamToString(InputStream is) throws IOException {
         if (is != null) {
             Writer writer = new StringWriter();
 
             char[] buffer = new char[1024];
             try {
-                Reader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                Reader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
                 int n;
                 while ((n = reader.read(buffer)) != -1) {
                     writer.write(buffer, 0, n);

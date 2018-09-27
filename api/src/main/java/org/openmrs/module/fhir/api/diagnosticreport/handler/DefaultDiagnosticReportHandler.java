@@ -27,20 +27,8 @@ public class DefaultDiagnosticReportHandler extends AbstractHandler implements D
 
 	@Override
 	public DiagnosticReport getFHIRDiagnosticReportById(String id) {
-		DiagnosticReport diagnosticReport = new DiagnosticReport();
-
-		// Get Obs and set as `Name`
-		// Get Obs and set as `Status`
-		// Get EncounterDateTime and set as `Issued` date
-		// Get Encounter Patient and set as `Subject`
-		// Get Encounter Provider and set as `Performer`
-		// Get EncounterType and Set `ServiceCategory`
-		// Get valueDateTime in Obs and Set `Diagnosis[x]->DateTime`
-		// Get valueDateTime in Obs and Set `Diagnosis[x]->Period`
-
-		// ObsSet set as `Result`
-		// Binary Obs Handler
-		return diagnosticReport;
+		//TODO (Implementation proposal can be found in git history)
+		return new DiagnosticReport();
 	}
 
 	@Override
@@ -60,21 +48,9 @@ public class DefaultDiagnosticReportHandler extends AbstractHandler implements D
 			omrsDiagnosticReport.setUuid(diagnosticReport.getId());
 		}
 
-		// Set `Name` as a Obs
-		// Set `Status` as a Obs
-		// Set `Issued` date as EncounterDateTime
-		// Set `Subject` as Encounter Patient
-		// Set `Performer` as Encounter Provider
-		// Set `ServiceCategory` as EncounterType
-		// Set `Diagnosis[x]->DateTime` as valueDateTime in an Obs
-		// Set `Diagnosis[x]->Period` as valueDateTime in an Obs
+		//TODO (Implementation proposal can be found in git history)
 
-		// Set parsed obsSet (`Result` as Set of Obs)
-		// Set Binary Obs Handler which used to store `PresentedForm`
-
-		// Create resource in OpenMRS Database
-		EncounterService encounterService = Context.getEncounterService();
-		// encounterService.saveEncounter(omrsDiagnosticReport);
+		Context.getEncounterService();
 		return diagnosticReport;
 	}
 
@@ -85,8 +61,6 @@ public class DefaultDiagnosticReportHandler extends AbstractHandler implements D
 
 	@Override
 	public void retireFHIRDiagnosticReport(String id) {
-		// Delete Binary Obs Handler which used to store `PresentedForm`
-		// Delete Encounter
-		return;
+		//TODO (Implementation proposal can be found in git history)
 	}
 }
