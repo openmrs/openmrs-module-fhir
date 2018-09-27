@@ -2,7 +2,10 @@ package org.openmrs.module.fhir.api.util;
 
 import java.util.List;
 
-public class ErrorUtil {
+public final class ErrorUtil {
+
+	private ErrorUtil() {
+	}
 
 	public static String generateErrorMessage(List<String> errors) {
 		return generateErrorMessage(errors, "");

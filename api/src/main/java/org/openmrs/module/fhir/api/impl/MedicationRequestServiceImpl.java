@@ -139,8 +139,7 @@ public class MedicationRequestServiceImpl extends BaseOpenmrsService implements 
         FHIRMedicationRequestUtil.copyObsAttributes(incomingDrugOrder, generatedDrugOrder, errors);
         if (generatedDrugOrder != null) { //medication request update
             if (!errors.isEmpty()) {
-                String errorMessage = ErrorUtil.generateErrorMessage(errors, "The request cannot be processed due to the " +
-                        "following issues \n");
+                String errorMessage = ErrorUtil.generateErrorMessage(errors, FHIRConstants.REQUEST_ISSUE_LIST);
                 throw new UnprocessableEntityException(errorMessage);
             }
 

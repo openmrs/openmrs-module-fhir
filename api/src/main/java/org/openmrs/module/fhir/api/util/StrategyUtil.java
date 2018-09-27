@@ -5,7 +5,11 @@ import org.hl7.fhir.dstu3.model.IdType;
 
 import java.util.List;
 
-public class StrategyUtil {
+public final class StrategyUtil {
+
+	private StrategyUtil() {
+
+	}
 
 	public static void setIdIfNeeded(DomainResource resource, String uuid) {
 		if (resource.getId() == null) {
