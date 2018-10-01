@@ -34,12 +34,17 @@ import org.hl7.fhir.dstu3.model.OperationOutcome;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.Resource;
 import org.openmrs.module.fhir.resources.FHIRDiagnosticReportResource;
+import org.openmrs.module.fhir.util.MethodOutcomeBuilder;
 
 import java.util.List;
 
 public class RestfulDiagnosticReportResourceProvider implements IResourceProvider {
 
 	private FHIRDiagnosticReportResource diagnosticReportResource;
+
+	private static final String EXCEPTION_MESSAGE = "No Diagnostic Report is associated with the given UUID to update. Please" +
+			" make sure you have set at lease one non-delete Issued, Subject, Performer and " +
+			"ServiceCategory to create a new Diagnostic Report with the given UUID.";
 
 	public RestfulDiagnosticReportResourceProvider() {
 		diagnosticReportResource = new FHIRDiagnosticReportResource();
@@ -59,18 +64,7 @@ public class RestfulDiagnosticReportResourceProvider implements IResourceProvide
 	 */
 	@Create
 	public MethodOutcome createFHIRDiagnosticReport(@ResourceParam DiagnosticReport diagnosticReport) {
-		diagnosticReport = diagnosticReportResource.createFHIRDiagnosticReport(diagnosticReport);
-		String id = diagnosticReport.getId();
-		IdType idType = new IdType();
-		MethodOutcome retVal = new MethodOutcome();
-		retVal.setId(idType);
-		OperationOutcome outcome = new OperationOutcome();
-		CodeableConcept concept = new CodeableConcept();
-		Coding coding = concept.addCoding();
-		coding.setDisplay("Diagnostic Report is successfully created at " + id);
-		outcome.addIssue().setDetails(concept);
-		retVal.setOperationOutcome(outcome);
-		return retVal;
+		return MethodOutcomeBuilder.buildCreate(diagnosticReportResource.createFHIRDiagnosticReport(diagnosticReport));
 	}
 
 	/**
@@ -81,35 +75,19 @@ public class RestfulDiagnosticReportResourceProvider implements IResourceProvide
 	 *              annotated with the "@Read.IdParam" annotation.
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
-	@Read()
+	@Read
 	public DiagnosticReport getResourceById(@IdParam IdType theId) {
 		return diagnosticReportResource.getByUniqueId(theId);
 	}
 
-	@Update()
+	@Update
 	public MethodOutcome updateFHIRDiagnosticReport(@ResourceParam DiagnosticReport diagnosticReport, @IdParam IdType theId) {
-		MethodOutcome retVal = new MethodOutcome();
-		OperationOutcome outcome = new OperationOutcome();
 		try {
-			diagnosticReport = diagnosticReportResource.updateFHIRDiagnosticReport(diagnosticReport, theId.getIdPart());
+			return MethodOutcomeBuilder.buildUpdate(diagnosticReportResource.updateFHIRDiagnosticReport(diagnosticReport, theId.getIdPart()));
 		}
 		catch (Exception e) {
-			CodeableConcept concept = new CodeableConcept();
-			Coding coding = concept.addCoding();
-			coding.setDisplay("No Diagnostic Report is associated with the given UUID to update. Please" +
-					" make sure you have set at lease one non-delete Issued, Subject, Performer and " +
-					"ServiceCategory to create a new Diagnostic Report with the given UUID.");
-			outcome.addIssue()
-					.setDetails(concept);
-			retVal.setOperationOutcome(outcome);
-			return retVal;
+			return MethodOutcomeBuilder.buildCustom(EXCEPTION_MESSAGE);
 		}
-		CodeableConcept concept = new CodeableConcept();
-		Coding coding = concept.addCoding();
-		coding.setDisplay("Diagnostic Report is successfully updated.");
-		outcome.addIssue().setDetails(concept);
-		retVal.setOperationOutcome(outcome);
-		return retVal;
 	}
 
 	/**
@@ -117,7 +95,7 @@ public class RestfulDiagnosticReportResourceProvider implements IResourceProvide
 	 *
 	 * @param theId object containing the id
 	 */
-	@Delete()
+	@Delete
 	public void retireDiagnosticReport(@IdParam IdType theId) {
 		diagnosticReportResource.retireDiagnosticReport(theId);
 	}
@@ -130,7 +108,7 @@ public class RestfulDiagnosticReportResourceProvider implements IResourceProvide
 	 * @return Returns a bundle of resources matching this subject's given name, or empty bundle if none exists.
 	 */
 	@Search
-	public List<DiagnosticReport> searchByPatientAndServiceCategory(
+	public List<DiagnosticReport> findByPatientAndServiceCategory(
 			@RequiredParam(name = DiagnosticReport.SP_SUBJECT, chainWhitelist = Patient.SP_GIVEN) ReferenceParam theSubject,
 			@OptionalParam(name = DiagnosticReport.SP_CATEGORY) TokenParam theService) {
 		return diagnosticReportResource.getDiagnosticReportByPatientNameAndServiceCategory(theSubject, theService);

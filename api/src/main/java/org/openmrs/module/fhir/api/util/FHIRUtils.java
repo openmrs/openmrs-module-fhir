@@ -86,47 +86,47 @@ public class FHIRUtils {
 	}
 
 	public static String getMedicationStrategy() {
-		return Context.getAdministrationService().getGlobalProperty("fhir.medication.medicationStrategy");
+		return Context.getAdministrationService().getGlobalProperty("fhir.medication.strategy");
 	}
 
 	public static String getAllergyStrategy() {
-		return Context.getAdministrationService().getGlobalProperty("fhir.allergy.allergyStrategy");
+		return Context.getAdministrationService().getGlobalProperty("fhir.allergy.strategy");
 	}
 
 	public static String getPersonStrategy() {
-		return Context.getAdministrationService().getGlobalProperty("fhir.person.personStrategy");
+		return Context.getAdministrationService().getGlobalProperty("fhir.person.strategy");
 	}
 
 	public static String getPatientStrategy() {
-		return Context.getAdministrationService().getGlobalProperty("fhir.patient.patientStrategy");
+		return Context.getAdministrationService().getGlobalProperty("fhir.patient.strategy");
 	}
 
 	public static String getRelatedPersonStrategy() {
-		return Context.getAdministrationService().getGlobalProperty("fhir.relatedPerson.relatedPersonStrategy");
+		return Context.getAdministrationService().getGlobalProperty("fhir.relatedPerson.strategy");
 	}
 
 	public static String getAppointmentStrategy() {
-		return Context.getAdministrationService().getGlobalProperty("fhir.appointment.appointmentStrategy");
+		return Context.getAdministrationService().getGlobalProperty("fhir.appointment.strategy");
 	}
 
 	public static String getLocationStrategy() {
-		return Context.getAdministrationService().getGlobalProperty("fhir.location.locationStrategy");
+		return Context.getAdministrationService().getGlobalProperty("fhir.location.strategy");
 	}
 
 	public static String getObservationStrategy() {
-		return Context.getAdministrationService().getGlobalProperty("fhir.observation.observationStrategy");
+		return Context.getAdministrationService().getGlobalProperty("fhir.observation.strategy");
 	}
 
 	public static String getGroupStrategy() {
-		return Context.getAdministrationService().getGlobalProperty("fhir.group.groupStrategy");
+		return Context.getAdministrationService().getGlobalProperty("fhir.group.strategy");
 	}
 
 	public static String getEncounterStrategy() {
-		return Context.getAdministrationService().getGlobalProperty("fhir.encounter.encounterStrategy");
+		return Context.getAdministrationService().getGlobalProperty("fhir.encounter.strategy");
 	}
 
 	public static String getPractitionerStrategy() {
-		return Context.getAdministrationService().getGlobalProperty("fhir.practitioner.practitionerStrategy");
+		return Context.getAdministrationService().getGlobalProperty("fhir.practitioner.strategy");
 	}
 
 	public static String getPlanDefinitionStrategy() {
@@ -150,7 +150,7 @@ public class FHIRUtils {
 	}
 
 	public static String getObsAllergyStrategyConceptUuid() {
-		return Context.getAdministrationService().getGlobalProperty("fhir.allergy.ObsAllergyStrategy.concept.uuid");
+		return Context.getAdministrationService().getGlobalProperty("fhir.allergy.strategy.concept.uuid");
 	}
 
 	public static String getConceptCodingSystem() {

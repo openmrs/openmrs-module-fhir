@@ -30,6 +30,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -189,7 +190,7 @@ public class SwaggerCodeGenerator {
 
             try (Writer swaggerFileWriter = new BufferedWriter(
                     new OutputStreamWriter(
-                            new FileOutputStream(swaggerDefFile.getAbsoluteFile()), "UTF-8"))) {
+                            new FileOutputStream(swaggerDefFile.getAbsoluteFile()), StandardCharsets.UTF_8))) {
 
                 swaggerFileWriter.write(formattedSwaggerDef);
 

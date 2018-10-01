@@ -44,7 +44,7 @@ public class FHIRAppointmentUtil {
 
         org.hl7.fhir.dstu3.model.Appointment.AppointmentParticipantComponent practitionerParticipant =
                                                                                         fhirAppointment.addParticipant();
-        List<CodeableConcept> types = new ArrayList();
+        List<CodeableConcept> types = new ArrayList<>();
         CodeableConcept type = new CodeableConcept();
         type.addCoding(new Coding(FHIRConstants.PRACTITIONER, FHIRConstants.PRACTITIONER, FHIRConstants.PRACTITIONER));
         types.add(type);
@@ -93,7 +93,7 @@ public class FHIRAppointmentUtil {
         fhirAppointment.setStart(appointment.getTimeSlot().getEndDate());
 
         //Set reason
-        List<CodeableConcept> codeableConcepts = new ArrayList();
+        List<CodeableConcept> codeableConcepts = new ArrayList<>();
         CodeableConcept reason = new CodeableConcept();
         reason.setText(appointment.getReason());
         codeableConcepts.add(reason);

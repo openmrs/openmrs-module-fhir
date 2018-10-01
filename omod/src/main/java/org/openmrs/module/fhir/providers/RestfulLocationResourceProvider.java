@@ -33,8 +33,8 @@ import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.Location;
 import org.hl7.fhir.dstu3.model.OperationOutcome;
 import org.hl7.fhir.dstu3.model.Resource;
-import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.resources.FHIRLocationResource;
+import org.openmrs.module.fhir.util.MethodOutcomeBuilder;
 
 import java.util.List;
 
@@ -59,11 +59,9 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	 *            annotated with the "@Read.IdParam" annotation.
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
-	@Read()
+	@Read
 	public Location getResourceById(@IdParam IdType theId) {
-		Location result = null;
-		result = locationResource.getByUniqueId(theId);
-		return result;
+		return locationResource.getByUniqueId(theId);
 	}
 	
 	/**
@@ -71,8 +69,8 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	 *
 	 * @param id object containing the requested id
 	 */
-	@Search()
-	public List<Location> searchLocationsByUniqueId(@RequiredParam(name = Location.SP_RES_ID) TokenParam id) {
+	@Search
+	public List<Location> findLocationsByUniqueId(@RequiredParam(name = Location.SP_RES_ID) TokenParam id) {
 		return locationResource.searchLocationsById(id);
 	}
 	
@@ -83,7 +81,7 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	 * @return This method returns a list of locations. This list may contain multiple matching
 	 *         resources, or it may also be empty.
 	 */
-	@Search()
+	@Search
 	public List<Location> findLocationsByName(@RequiredParam(name = Location.SP_NAME) StringParam name) {
 		return locationResource.searchLocationsByName(name);
 	}
@@ -95,8 +93,8 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	 * @return This method returns a list of locations. This list may contain multiple matching
 	 *         resources, or it may also be empty.
 	 */
-	@Search()
-	public List<Location> searchLocationsByStatus(@RequiredParam(name = Location.SP_STATUS) TokenParam active) {
+	@Search
+	public List<Location> findLocationsByStatus(@RequiredParam(name = Location.SP_STATUS) TokenParam active) {
 		return locationResource.searchLocationsByStatus(active);
 	}
 	
@@ -105,7 +103,7 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	 *
 	 * @param theId object containing the id
 	 */
-	@Delete()
+	@Delete
 	public void deleteLocation(@IdParam IdType theId) {
 		locationResource.deleteLocation(theId);
 	}
@@ -119,15 +117,7 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	 */
 	@Update
 	public MethodOutcome updateLocation(@ResourceParam Location location, @IdParam IdType theId) {
-		MethodOutcome retVal = new MethodOutcome();
-		OperationOutcome outcome = new OperationOutcome();
-		locationResource.updateLocation(theId.getIdPart(), location);
-		CodeableConcept concept = new CodeableConcept();
-		Coding coding = concept.addCoding();
-		coding.setDisplay("Location successfully updated" + theId.getId());
-		outcome.addIssue().setDetails(concept);
-		retVal.setOperationOutcome(outcome);
-		return retVal;
+		return MethodOutcomeBuilder.buildUpdate(locationResource.updateLocation(theId.getIdPart(), location));
 	}
 
 	/**
@@ -140,40 +130,30 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	 * @param theConditional This will have a value like "Location?name=Colombo
 	 * @return MethodOutcome which contains the status of the operation
 	 */
-	@Update()
+	@Update
 	public MethodOutcome updateLocationByName(@ResourceParam Location theLocation, @IdParam IdType theId,
 	                                          @ConditionalUrlParam String theConditional) {
-		MethodOutcome outcome = new MethodOutcome();
-		OperationOutcome operationoutcome = null;
 		if (theConditional != null) {
-			List<Location> locationList = null;
 			int startIndex = theConditional.lastIndexOf('=');
 			String locationName = theConditional.substring(startIndex + 1);
-			if (locationName == null) {
-				operationoutcome = new OperationOutcome();
-				CodeableConcept concept = new CodeableConcept();
-				Coding coding = concept.addCoding();
-				coding.setDisplay("Please check Condition URL format");
-				operationoutcome.addIssue().setDetails(concept);
-				outcome.setOperationOutcome(operationoutcome);
-				return outcome;
+			if (locationName.isEmpty()) {
+				return MethodOutcomeBuilder.buildCustom("Please check Condition URL format");
 			}
 			StringParam nameParam = new StringParam();
 			nameParam.setValue(locationName);
-			locationList = locationResource.searchLocationsByName(nameParam);
-			if (locationList.size() == 0) {
-				outcome = updateLocation(theLocation, null);
+			List<Location> locationList = locationResource.searchLocationsByName(nameParam);
+			if (locationList.isEmpty()) {
+				return updateLocation(theLocation, null);
 			} else if (locationList.size() == 1) {
 				IdType idType = new IdType();
 				idType.setValue(locationList.get(0).getId());
-				outcome = updateLocation(theLocation, idType);
+				return updateLocation(theLocation, idType);
 			} else {
 				throw new PreconditionFailedException("There are more than one Location for the given condition");
 			}
 		} else {
-			outcome = updateLocation(theLocation, theId);
+			return updateLocation(theLocation, theId);
 		}
-		return outcome;
 	}
 	
 	/**
@@ -184,16 +164,7 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	 */
 	@Create
 	public MethodOutcome createFHIRLocation(@ResourceParam Location location) {
-		location = locationResource.createLocation(location);
-		MethodOutcome retVal = new MethodOutcome();
-		retVal.setId(new IdType(FHIRConstants.LOCATION, location.getId()));
-		OperationOutcome outcome = new OperationOutcome();
-		CodeableConcept concept = new CodeableConcept();
-		Coding coding = concept.addCoding();
-		coding.setDisplay("Location is successfully created with id " + location.getId());
-		outcome.addIssue().setDetails(concept);
-		retVal.setOperationOutcome(outcome);
-		return retVal;
+		return MethodOutcomeBuilder.buildCreate(locationResource.createLocation(location));
 	}
 	
 }

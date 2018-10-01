@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
-import org.openmrs.module.fhir.exception.FHIRValidationException;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import java.util.List;
@@ -51,20 +50,20 @@ public class MedicationRequestTest extends BaseModuleContextSensitiveTest {
 		String medicationRequestUuid = "56b9196c-bcac-4c2f-b3a2-123464a96439";
 		MedicationRequest medicationRequest = getService().getMedicationRequestById(medicationRequestUuid);
 		assertNotNull(medicationRequest);
-		assertEquals(medicationRequestUuid, medicationRequest.getId().toString());
+		assertEquals(medicationRequestUuid, medicationRequest.getId());
 	}
 
 	@Test
-	public void searchMedicationRequestById_shouldReturnBundle() throws FHIRValidationException {
+	public void searchMedicationRequestById_shouldReturnBundle() {
 		String medicationRequestUuid = "56b9196c-bcac-4c2f-b3a2-123464a96439";
 		List<MedicationRequest> medicationRequests = getService().searchMedicationRequestById(medicationRequestUuid);
 		assertNotNull(medicationRequests);
 		assertEquals(medicationRequests.size(), 1);
-		assertEquals(medicationRequestUuid, medicationRequests.get(0).getId().toString());
+		assertEquals(medicationRequestUuid, medicationRequests.get(0).getId());
 	}
 
 	@Test
-	public void searchMedicationRequestByPatientId_shouldReturnBundle() throws FHIRValidationException {
+	public void searchMedicationRequestByPatientId_shouldReturnBundle() {
 		Patient patient = Context.getPatientService().getPatient(2);
 		String patientUuid = patient.getUuid();
 		List<MedicationRequest> medicationRequests = getService().searchMedicationRequestByPatientId(patientUuid);
@@ -83,7 +82,7 @@ public class MedicationRequestTest extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void createMedicationRequest_shouldCreateNewMedicationRequest() throws FHIRValidationException {
+	public void createMedicationRequest_shouldCreateNewMedicationRequest() {
 		String medicationRequestUuid = "56b9196c-bcac-4c2f-b3a2-123464a96439";
 		MedicationRequest medicationRequest = getService().getMedicationRequestById(medicationRequestUuid);
 		assertNotNull(medicationRequest);

@@ -24,22 +24,21 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.hl7.fhir.dstu3.model.CodeableConcept;
-import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.MedicationRequest;
-import org.hl7.fhir.dstu3.model.OperationOutcome;
 import org.hl7.fhir.dstu3.model.Resource;
-import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.resources.FHIRMedicationRequestResource;
+import org.openmrs.module.fhir.util.MethodOutcomeBuilder;
 
 import java.util.List;
 
 public class RestfulMedicationRequestProvider implements IResourceProvider {
 
-	;
-
 	private FHIRMedicationRequestResource fhirMedicationRequestResource;
+
+	private static final String ERROR_MESSAGE = "No Person is associated with the given UUID to update. Please"
+			+ " make sure you have set at lease one non-delete name, Gender and birthday to create a new "
+			+ "Person with the given Id";
 
 	public RestfulMedicationRequestProvider() {
 		this.fhirMedicationRequestResource = new FHIRMedicationRequestResource();
@@ -58,11 +57,9 @@ public class RestfulMedicationRequestProvider implements IResourceProvider {
 	 *            annotated with the "@Read.IdParam" annotation.
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
-	@Read()
+	@Read
 	public MedicationRequest getResourceById(@IdParam IdType theId) {
-		MedicationRequest result = null;
-		result = fhirMedicationRequestResource.getByUniqueId(theId);
-		return result;
+		return fhirMedicationRequestResource.getByUniqueId(theId);
 	}
 
 	/**
@@ -70,8 +67,8 @@ public class RestfulMedicationRequestProvider implements IResourceProvider {
 	 *
 	 * @param id object
 	 */
-	@Search()
-	public List<MedicationRequest> searchMedicatoonRequestByUniqueId(
+	@Search
+	public List<MedicationRequest> findMedicatoonRequestByUniqueId(
 															@RequiredParam(name = MedicationRequest.SP_RES_ID) TokenParam id) {
 		return fhirMedicationRequestResource.searchByUniqueId(id);
 	}
@@ -81,8 +78,8 @@ public class RestfulMedicationRequestProvider implements IResourceProvider {
 	 *
 	 * @param patient patient reference with uuid
 	 */
-	@Search()
-	public List<MedicationRequest> searchMedicatoonRequestByPatientId(
+	@Search
+	public List<MedicationRequest> findMedicatoonRequestByPatientId(
 			@RequiredParam(name = MedicationRequest.SP_PATIENT) ReferenceParam patient) {
 		return fhirMedicationRequestResource.searchByPatientId(patient);
 	}
@@ -93,17 +90,8 @@ public class RestfulMedicationRequestProvider implements IResourceProvider {
 	 * @param medicationRequest fhir medication object
 	 */
 	@Create
-	public MethodOutcome createFHIRMedicationRequestr(@ResourceParam MedicationRequest medicationRequest) {
-		medicationRequest = fhirMedicationRequestResource.createFHIRMedicationRequest(medicationRequest);
-		MethodOutcome retVal = new MethodOutcome();
-		retVal.setId(new IdType(FHIRConstants.PERSON, medicationRequest.getId()));
-		OperationOutcome outcome = new OperationOutcome();
-		CodeableConcept concept = new CodeableConcept();
-		Coding coding = concept.addCoding();
-		coding.setDisplay("Medication request is successfully created with id " + medicationRequest.getId());
-		outcome.addIssue().setDetails(concept);
-		retVal.setOperationOutcome(outcome);
-		return retVal;
+	public MethodOutcome createFHIRMedicationRequest(@ResourceParam MedicationRequest medicationRequest) {
+		return MethodOutcomeBuilder.buildCreate(fhirMedicationRequestResource.createFHIRMedicationRequest(medicationRequest));
 	}
 
 	/**
@@ -113,27 +101,10 @@ public class RestfulMedicationRequestProvider implements IResourceProvider {
 	 */
 	@Update
 	public MethodOutcome updateMedicationRequest(@ResourceParam MedicationRequest medicationRequest, @IdParam IdType theId) {
-		MethodOutcome retVal = new MethodOutcome();
-		OperationOutcome outcome = new OperationOutcome();
 		try {
-			medicationRequest = fhirMedicationRequestResource.updateFHIRMedicationRequest(medicationRequest, medicationRequest.getId());
+			return MethodOutcomeBuilder.buildUpdate(fhirMedicationRequestResource.updateFHIRMedicationRequest(medicationRequest, medicationRequest.getId()));
 		} catch (Exception e) {
-			retVal.setOperationOutcome(outcome);
-			CodeableConcept concept = new CodeableConcept();
-			Coding coding = concept.addCoding();
-			coding.setDisplay(
-					"No Person is associated with the given UUID to update. Please"
-							+ " make sure you have set at lease one non-delete name, Gender and birthday to create a new "
-							+ "Person with the given Id" + medicationRequest.getId());
-			outcome.addIssue().setDetails(concept);
-			retVal.setOperationOutcome(outcome);
-			return retVal;
+			return MethodOutcomeBuilder.buildCustom(ERROR_MESSAGE);
 		}
-		CodeableConcept concept = new CodeableConcept();
-		Coding coding = concept.addCoding();
-		coding.setDisplay("Medication request is successfully updated " + medicationRequest.getId());
-		outcome.addIssue().setDetails(concept);
-		retVal.setOperationOutcome(outcome);
-		return retVal;
 	}
 }

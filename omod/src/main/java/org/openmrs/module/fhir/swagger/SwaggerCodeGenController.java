@@ -32,8 +32,7 @@ import java.io.OutputStream;
 public class SwaggerCodeGenController extends HttpServlet {
     protected Log log = LogFactory.getLog(getClass());
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
 
         String swaggerSpecificationJSON;
         try {

@@ -43,8 +43,8 @@ public class RestfulCompositionResourceProvider implements IResourceProvider {
 	 *
 	 * @param patient object containing the requested id
 	 */
-	@Search()
-	public List<Composition> searchCompositionEncountersByPatient(
+	@Search
+	public List<Composition> findCompositionEncountersByPatient(
 			@RequiredParam(name = Composition.SP_SUBJECT) ReferenceParam
 					patient) {
 		return compositionResource.searchEncounterCompostionsByPatient(patient);
@@ -55,8 +55,8 @@ public class RestfulCompositionResourceProvider implements IResourceProvider {
 	 *
 	 * @param encounter object containing the requested encounter id
 	 */
-	@Search()
-	public List<Composition> searchCompositionEncountersByEncounterId(@RequiredParam(name = FHIRConstants.ENCOUNTER_ID)
+	@Search
+	public List<Composition> findCompositionEncountersByEncounterId(@RequiredParam(name = FHIRConstants.ENCOUNTER_ID)
 	                                                                  TokenParam encounter) {
 		return compositionResource.searchEncounterCompostionsByEncounterId(encounter);
 	}

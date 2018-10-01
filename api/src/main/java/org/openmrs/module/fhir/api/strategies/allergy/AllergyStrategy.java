@@ -55,7 +55,7 @@ public class AllergyStrategy implements GenericAllergyStrategy {
 	public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(String identifier) {
 		org.openmrs.api.PatientService patientService = Context.getPatientService();
 		PatientService allergyService = Context.getService(PatientService.class);
-		List<AllergyIntolerance> allergies = new ArrayList();
+		List<AllergyIntolerance> allergies = new ArrayList<>();
 		List<PatientIdentifierType> allPatientIdentifierTypes = patientService.getAllPatientIdentifierTypes();
 		List<org.openmrs.Patient> patientList = patientService.getPatients(identifier, null, allPatientIdentifierTypes,
 				true);

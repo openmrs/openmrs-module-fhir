@@ -34,8 +34,8 @@ import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.OperationOutcome;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.Resource;
-import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.resources.FHIRObservationResource;
+import org.openmrs.module.fhir.util.MethodOutcomeBuilder;
 
 import java.util.List;
 
@@ -61,7 +61,7 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 *              IdDt and must be annotated with the "@Read.IdParam" annotation.
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
-	@Read()
+	@Read
 	public Observation getResourceById(@IdParam IdType theId) {
 		return provider.getByUniqueId(theId);
 	}
@@ -71,8 +71,8 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 *
 	 * @param id object containing the requested id
 	 */
-	@Search()
-	public List<Observation> searchObservationById(@RequiredParam(name = Observation.SP_RES_ID) TokenParam id) {
+	@Search
+	public List<Observation> findObsById(@RequiredParam(name = Observation.SP_RES_ID) TokenParam id) {
 		return provider.searchObsById(id);
 	}
 
@@ -81,8 +81,8 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 *
 	 * @param codes object containing the requested name
 	 */
-	@Search()
-	public List<Observation> searchObsByPatientAndConcept(@RequiredParam(name = Observation.SP_SUBJECT) ReferenceParam
+	@Search
+	public List<Observation> findObsByPatientAndConcept(@RequiredParam(name = Observation.SP_SUBJECT) ReferenceParam
 			                                                      person,
 	                                                      @RequiredParam(name = Observation.SP_CODE) TokenOrListParam
 			                                                      codes) {
@@ -94,8 +94,8 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 *
 	 * @param theCodings object containing the requested code
 	 */
-	@Search()
-	public List<Observation> searchObsByCode(@RequiredParam(name = Observation.SP_CODE) TokenOrListParam theCodings) {
+	@Search
+	public List<Observation> findObsByCode(@RequiredParam(name = Observation.SP_CODE) TokenOrListParam theCodings) {
 		return provider.searchObsByCode(theCodings);
 	}
 
@@ -104,8 +104,8 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 *
 	 * @param date object containing the requested date
 	 */
-	@Search()
-	public List<Observation> searchObsByDate(@RequiredParam(name = Observation.SP_DATE) DateParam date) {
+	@Search
+	public List<Observation> findObsByDate(@RequiredParam(name = Observation.SP_DATE) DateParam date) {
 		return provider.searchObsByDate(date);
 	}
 
@@ -114,8 +114,8 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 *
 	 * @param person object containing the requested person id
 	 */
-	@Search()
-	public List<Observation> searchObsByPerson(@RequiredParam(name = Observation.SP_SUBJECT) ReferenceParam person) {
+	@Search
+	public List<Observation> findObsByPerson(@RequiredParam(name = Observation.SP_SUBJECT) ReferenceParam person) {
 		return provider.searchObsByPerson(person);
 	}
 
@@ -124,8 +124,8 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 *
 	 * @param answerConceptName object containing the value concept name which is the answer concept
 	 */
-	@Search()
-	public List<Observation> searchObsByValueConcept(@RequiredParam(name = Observation.SP_VALUE_CONCEPT) TokenParam
+	@Search
+	public List<Observation> findObsByValueConcept(@RequiredParam(name = Observation.SP_VALUE_CONCEPT) TokenParam
 			                                                 answerConceptName) {
 		return provider.searchObsByValueConcept(answerConceptName);
 	}
@@ -135,11 +135,9 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 *
 	 * @param identifier object containing the patient identifier
 	 */
-	@Search()
-	public List<Observation> searchEncountersByPatientIdentifier(
-			@RequiredParam(name = Observation.SP_PATIENT, chainWhitelist = {
-					Patient.SP_IDENTIFIER }) ReferenceParam identifier
-	) {
+	@Search
+	public List<Observation> findEncountersByPatientIdentifier(
+			@RequiredParam(name = Observation.SP_PATIENT, chainWhitelist = { Patient.SP_IDENTIFIER }) ReferenceParam identifier) {
 		return provider.searchObsByPatientIdentifier(identifier);
 	}
 
@@ -148,7 +146,7 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 *
 	 * @param theId object containing the id
 	 */
-	@Delete()
+	@Delete
 	public void deleteObservation(@IdParam IdType theId) {
 		provider.deleteObservation(theId);
 	}
@@ -160,40 +158,15 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 */
 	@Create
 	public MethodOutcome createFHIRObservation(@ResourceParam Observation observation) {
-		observation = provider.createFHIRObservation(observation);
-		MethodOutcome retVal = new MethodOutcome();
-		retVal.setId(new IdType(FHIRConstants.OBSERVATION, observation.getId()));
-		OperationOutcome outcome = new OperationOutcome();
-		CodeableConcept concept = new CodeableConcept();
-		Coding coding = concept.addCoding();
-		coding.setDisplay("Observation is successfully created" + observation.getId());
-		outcome.addIssue().setDetails(concept);
-		retVal.setOperationOutcome(outcome);
-		return retVal;
+		return MethodOutcomeBuilder.buildCreate(provider.createFHIRObservation(observation));
 	}
 	
 	@Update
 	public MethodOutcome updateFHIRObservation(@ResourceParam Observation observation, @IdParam IdType theId) {
-		MethodOutcome retVal = new MethodOutcome();
-		OperationOutcome outcome = new OperationOutcome();
 		try {
-			observation = provider.updateFHIRObservation(observation, theId.getIdPart());
+			return MethodOutcomeBuilder.buildUpdate(provider.updateFHIRObservation(observation, theId.getIdPart()));
+		} catch (Exception e) {
+			return MethodOutcomeBuilder.buildCustom("Following exception occured " + e.getMessage());
 		}
-		catch (Exception e) {
-			CodeableConcept concept = new CodeableConcept();
-			Coding coding = concept.addCoding();
-			coding.setDisplay("Following exception occured " + e.getMessage());
-			outcome.addIssue()
-			.setDetails(concept);
-			retVal.setOperationOutcome(outcome);
-			return retVal;
-		}
-		CodeableConcept concept = new CodeableConcept();
-		Coding coding = concept.addCoding();
-		coding.setDisplay("Observation is successfully updated. New Observation UUID is " + observation.getId());
-		outcome.addIssue().setDetails(concept);
-		retVal.setOperationOutcome(outcome);
-		return retVal;
 	}
-
 }

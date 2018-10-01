@@ -55,7 +55,7 @@ public class FHIRRESTServer extends RestfulServer {
 	 * configuration, interceptors, etc.
 	 */
 	@Override
-	protected void initialize() throws ServletException {
+	protected void initialize() {
 		this.setServerAddressStrategy(new OpenMRSFHIRRequestAddressStrategy());
 		List<IResourceProvider> resourceProviders = new ArrayList<IResourceProvider>();
 		resourceProviders.add(new RestfulPatientResourceProvider());
