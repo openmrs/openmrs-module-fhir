@@ -16,15 +16,26 @@ package org.openmrs.module.fhir.util;
 public class FHIROmodConstants {
 
 	public static final String OPENMRS_FHIR_SERVER_NAME = "OpenMRS FHIR Server";
+
 	public static final String OPENMRS_FHIR_SERVER_VERSION = "0.9-SNAPSHOT";
+
 	public static final String OPENMRS_FHIR_SERVER_DES = "OpenMRS FHIR Resources";
+
 	public static final String OPENMRS_FHIR_SWAGGER_SHORT_PATH = "/module/fhir/rest/swagger.json";
+
 	public static final String OPENMRS_FHIR_SWAGGER_CODEGEN_SHORT_PATH = "/module/fhir/rest/swaggercodegen";
+
 	public static final String OPENMRS_FHIR_SWAGGER_ORG_PATH = "/ms/fhir/fhirDocServelet";
+
 	public static final String OPENMRS_FHIR_SWAGGER_SDK_PATH = "/ms/fhir/fhirCodeGenServelet";
+
 	public static final String CONTENT_TYPE = "Content-Type";
+
 	public static final String APPLICATION_ZIP_CHARSET_UTF_8 = "application/zip;charset=UTF-8";
+
 	public static final String CONTENT_DISPOSITION = "Content-Disposition";
+
 	public static final String ATTACHMENT_FILENAME = "attachment; filename=";
+
 	public static final String LANGUAGE = "language";
 }

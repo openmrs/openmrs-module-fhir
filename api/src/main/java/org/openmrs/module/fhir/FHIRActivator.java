@@ -21,7 +21,7 @@ import org.openmrs.module.ModuleActivator;
  * This class contains the logic that is run every time this module is either started or stopped.
  */
 public class FHIRActivator implements ModuleActivator {
-	
+
 	protected Log log = LogFactory.getLog(getClass());
 
 	/**
@@ -30,14 +30,14 @@ public class FHIRActivator implements ModuleActivator {
 	public void willRefreshContext() {
 		log.info("Refreshing FHIR Module");
 	}
-	
+
 	/**
 	 * @see ModuleActivator#contextRefreshed()
 	 */
 	public void contextRefreshed() {
 		log.info("FHIR Module refreshed");
 	}
-	
+
 	/**
 	 * @see ModuleActivator#willStart()
 	 */
@@ -45,21 +45,21 @@ public class FHIRActivator implements ModuleActivator {
 
 		log.info("Starting FHIR Module");
 	}
-	
+
 	/**
 	 * @see ModuleActivator#started()
 	 */
 	public void started() {
 		log.info("FHIR Module started");
 	}
-	
+
 	/**
 	 * @see ModuleActivator#willStop()
 	 */
 	public void willStop() {
 		log.info("Stopping FHIR Module");
 	}
-	
+
 	/**
 	 * @see ModuleActivator#stopped()
 	 */

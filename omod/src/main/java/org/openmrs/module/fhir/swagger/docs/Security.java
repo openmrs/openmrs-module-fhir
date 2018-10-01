@@ -15,13 +15,13 @@ package org.openmrs.module.fhir.swagger.docs;
 
 public class Security {
 
-    private String basicAuth = "[]";
+	private String basicAuth = "[]";
 
-    public String getBasicAuth() {
-        return basicAuth;
-    }
+	public String getBasicAuth() {
+		return basicAuth;
+	}
 
-    public void setBasicAuth(String basicAuth) {
-        this.basicAuth = basicAuth;
-    }
+	public void setBasicAuth(String basicAuth) {
+		this.basicAuth = basicAuth;
+	}
 }

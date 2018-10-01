@@ -38,11 +38,20 @@ import java.util.Map;
  */
 public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements DiagnosticReportService {
 
+	private static Map<String, DiagnosticReportHandler> handlers = null;
+
 	protected final Log log = LogFactory.getLog(this.getClass());
 
 	private FHIRDAO dao;
 
-	private static Map<String, DiagnosticReportHandler> handlers = null;
+	/**
+	 * Sets handlers using static method
+	 *
+	 * @param currentHandlers
+	 */
+	private static void setStaticHandlers(Map<String, DiagnosticReportHandler> currentHandlers) {
+		DiagnosticReportServiceImpl.handlers = currentHandlers;
+	}
 
 	/**
 	 * @return the dao
@@ -134,6 +143,15 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 	}
 
 	@Override
+	public Map<String, DiagnosticReportHandler> getHandlers() throws APIException {
+		if (handlers == null) {
+			handlers = new LinkedHashMap<>();
+		}
+
+		return handlers;
+	}
+
+	@Override
 	public void setHandlers(Map<String, DiagnosticReportHandler> newHandlers) throws APIException {
 		if (newHandlers == null) {
 			DiagnosticReportServiceImpl.setStaticHandlers(null);
@@ -143,24 +161,6 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 			registerHandler(entry.getValue().getServiceCategory(), entry.getValue());
 
 		}
-	}
-
-	/**
-	 * Sets handlers using static method
-	 *
-	 * @param currentHandlers
-	 */
-	private static void setStaticHandlers(Map<String, DiagnosticReportHandler> currentHandlers) {
-		DiagnosticReportServiceImpl.handlers = currentHandlers;
-	}
-
-	@Override
-	public Map<String, DiagnosticReportHandler> getHandlers() throws APIException {
-		if (handlers == null) {
-			handlers = new LinkedHashMap<>();
-		}
-
-		return handlers;
 	}
 
 	@Override

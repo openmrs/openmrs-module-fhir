@@ -25,20 +25,20 @@ import java.util.List;
 
 public class FHIRAppointmentResource extends Resource {
 
-    public Appointment getByUniqueId(IdType id) {
-        AppointmentService appointmentService = Context.getService(AppointmentService.class);
-        Appointment appointment = appointmentService.getAppointmentById(id.getIdPart());
-        if (appointment == null) {
-            throw new ResourceNotFoundException("Appointment is not found for the given Id " + id.getIdPart());
-        }
-        return appointment;
-    }
+	public Appointment getByUniqueId(IdType id) {
+		AppointmentService appointmentService = Context.getService(AppointmentService.class);
+		Appointment appointment = appointmentService.getAppointmentById(id.getIdPart());
+		if (appointment == null) {
+			throw new ResourceNotFoundException("Appointment is not found for the given Id " + id.getIdPart());
+		}
+		return appointment;
+	}
 
-    public List<Appointment> searchAppointmentsById(TokenParam id) {
-        return Context.getService(AppointmentService.class).searchAppointmentById(id.getValue());
-    }
+	public List<Appointment> searchAppointmentsById(TokenParam id) {
+		return Context.getService(AppointmentService.class).searchAppointmentById(id.getValue());
+	}
 
-    public List<Appointment> searchAppointmentsByPatient(ReferenceParam patient) {
-        return Context.getService(AppointmentService.class).searchAppointmentsByPatient(patient.getIdPart());
-    }
+	public List<Appointment> searchAppointmentsByPatient(ReferenceParam patient) {
+		return Context.getService(AppointmentService.class).searchAppointmentsByPatient(patient.getIdPart());
+	}
 }

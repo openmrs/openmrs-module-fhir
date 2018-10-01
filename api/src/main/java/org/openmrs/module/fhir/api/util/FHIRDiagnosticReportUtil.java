@@ -68,7 +68,7 @@ public class FHIRDiagnosticReportUtil {
 	 * @return An instance of ca.uhn.fhir.model.dstu2.resource.DiagnosticReport
 	 */
 	public static DiagnosticReport updateDiagnosticReport(DiagnosticReport diagnosticReport, String theId,
-	                                                      DiagnosticReportHandler handler) {
+			DiagnosticReportHandler handler) {
 		return handler.updateFHIRDiagnosticReport(diagnosticReport, theId);
 	}
 

@@ -15,7 +15,7 @@ public class PlanDefinitionServiceImpl extends BaseOpenmrsService implements Pla
 	}
 
 	@Override
-	public PlanDefinition getPlanDefinitionByUuid(String uuid) throws APIException,ResourceNotFoundException {
+	public PlanDefinition getPlanDefinitionByUuid(String uuid) throws APIException, ResourceNotFoundException {
 		return PlanDefinitionStrategyUtil.getPlanDefinitionStrategy().getPlanDefinitionByUuid(uuid);
 	}
 

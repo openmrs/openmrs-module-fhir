@@ -79,7 +79,7 @@ public interface PractitionerService extends OpenmrsService {
 	 * @return fhir practitioner resource list
 	 */
 	List<Practitioner> searchPractitionersByIdentifier(String identifier);
-	
+
 	/**
 	 * Create Practitioner
 	 *
@@ -87,12 +87,12 @@ public interface PractitionerService extends OpenmrsService {
 	 * @return fhir practitioner resource list
 	 */
 	Practitioner createFHIRPractitioner(Practitioner practitioner);
-	
+
 	/**
 	 * Update Practitioner
 	 *
 	 * @param practitioner the practitioner to update
-	 * @param  theId , the uuid of the practitioner to update
+	 * @param theId        , the uuid of the practitioner to update
 	 * @return fhir practitioner resource list
 	 */
 	Practitioner updatePractitioner(Practitioner practitioner, String theId);

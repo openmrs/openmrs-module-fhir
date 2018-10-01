@@ -7,27 +7,27 @@ import java.util.List;
 
 public interface GenericPatientStrategy {
 
-    Patient getPatient(String uuid);
+	Patient getPatient(String uuid);
 
-    List<Patient> searchPatientsById(String id);
+	List<Patient> searchPatientsById(String id);
 
-    List<Patient> searchPatientsByIdentifier(String identifierValue, String identifierTypeName);
+	List<Patient> searchPatientsByIdentifier(String identifierValue, String identifierTypeName);
 
-    List<Patient> searchPatientsByIdentifier(String identifierValue);
+	List<Patient> searchPatientsByIdentifier(String identifierValue);
 
-    List<Patient> searchPatients(boolean active);
+	List<Patient> searchPatients(boolean active);
 
-    Bundle searchPatientsByGivenName(String givenName);
+	Bundle searchPatientsByGivenName(String givenName);
 
-    Bundle searchPatientsByFamilyName(String familyName);
+	Bundle searchPatientsByFamilyName(String familyName);
 
-    Bundle searchPatientsByName(String name);
+	Bundle searchPatientsByName(String name);
 
-    Bundle getPatientOperationsById(String patientId);
+	Bundle getPatientOperationsById(String patientId);
 
-    void deletePatient(String uuid);
+	void deletePatient(String uuid);
 
-    Patient createFHIRPatient(Patient patient);
+	Patient createFHIRPatient(Patient patient);
 
-    Patient updatePatient(Patient patient, String theId);
+	Patient updatePatient(Patient patient, String theId);
 }

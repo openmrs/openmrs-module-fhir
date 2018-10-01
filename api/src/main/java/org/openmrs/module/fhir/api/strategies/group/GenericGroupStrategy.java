@@ -6,15 +6,15 @@ import java.util.List;
 
 public interface GenericGroupStrategy {
 
-    Group getGroupById(String uuid);
+	Group getGroupById(String uuid);
 
-    List<Group> searchGroupById(String uuid);
+	List<Group> searchGroupById(String uuid);
 
-    List<Group> searchGroupByName(String name);
+	List<Group> searchGroupByName(String name);
 
-    Group createGroup(Group group);
+	Group createGroup(Group group);
 
-    Group updateGroup(Group group, String uuid);
+	Group updateGroup(Group group, String uuid);
 
-    void deleteGroup(String uuid);
+	void deleteGroup(String uuid);
 }

@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface GenericMedicationStrategy {
 
-    Medication getMedicationById(String uuid);
+	Medication getMedicationById(String uuid);
 
-    List<Medication> searchMedicationById(String uuid);
+	List<Medication> searchMedicationById(String uuid);
 
-    Medication createMedication(Medication medication);
+	Medication createMedication(Medication medication);
 
-    Medication updateMedication(Medication medication, String uuid);
+	Medication updateMedication(Medication medication, String uuid);
 
-    void purgeMedication(String uuid);
+	void purgeMedication(String uuid);
 }

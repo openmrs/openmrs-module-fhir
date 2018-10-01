@@ -147,7 +147,7 @@ public class FHIRLocationUtil {
 			// locationService.saveLocation()
 			errors.add(
 					"Status cannot be set to 'inactive' with the fhir update operation. Retiring resource may require a "
-					+ "Delete verb");
+							+ "Delete verb");
 			omrsLocation.setRetired(true);
 		}
 

@@ -28,8 +28,6 @@ import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.PreconditionFailedException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.Coding;
@@ -93,7 +91,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 *
 	 * @param name name of the patient
 	 * @return This method returns a Bundle of Patients. This list may contain multiple matching
-	 *         resources, or it may also be empty.
+	 * resources, or it may also be empty.
 	 */
 	@Search
 	public Bundle findPatientsByName(@RequiredParam(name = Patient.SP_NAME) StringParam name) {
@@ -105,7 +103,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 *
 	 * @param identifier
 	 * @return This method returns a list of Patients. This list may contain multiple matching
-	 *         resources, or it may also be empty.
+	 * resources, or it may also be empty.
 	 */
 	@Search
 	public List<Patient> findPatientsByIdentifier(@RequiredParam(name = Patient.SP_IDENTIFIER) TokenParam identifier) {
@@ -117,7 +115,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 *
 	 * @param active search term
 	 * @return This method returns a list of Patients. This list may contain multiple matching
-	 *         resources, or it may also be empty.
+	 * resources, or it may also be empty.
 	 */
 	@Search
 	public List<Patient> findActivePatients(@RequiredParam(name = Patient.SP_ACTIVE) TokenParam active) {
@@ -129,7 +127,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 *
 	 * @param givenName given name of the patient
 	 * @return This method returns a list of Patients. This list may contain multiple matching
-	 *         resources, or it may also be empty.
+	 * resources, or it may also be empty.
 	 */
 	@Search
 	public Bundle findPatientsByGivenName(@RequiredParam(name = Patient.SP_GIVEN) StringParam givenName) {
@@ -156,37 +154,37 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	public void deletePatient(@IdParam IdType theId) {
 		patientResource.deletePatient(theId);
 	}
-	
+
 	/**
 	 * Create Patient
 	 *
 	 * @param patient fhir patient oobject
 	 * @return This method returns Meth codOutcome object, which contains information about the
-	 *         create operation
+	 * create operation
 	 */
 	@Create
 	public MethodOutcome createFHIRPatient(@ResourceParam Patient patient) {
 		return MethodOutcomeBuilder.buildCreate(patientResource.createFHIRPatient(patient));
 	}
-	
+
 	@Update
 	public MethodOutcome updatePatient(@ResourceParam Patient patient, @IdParam IdType theId) {
 		return MethodOutcomeBuilder.buildUpdate(patientResource.updatePatient(patient, theId.getIdPart()));
 	}
-	
+
 	/**
 	 * Update Patient by identifier.
 	 *
-	 * @param patient {@link ca.uhn.fhir.model.dstu2.resource.Patient} object provided by the
-	 *            {@link ca.uhn.fhir .rest.server.RestfulServer}
-	 * @param theId Only one of theId or theConditional will have a value and the other will be
-	 *            null, depending on the URL passed into the server
+	 * @param patient        {@link ca.uhn.fhir.model.dstu2.resource.Patient} object provided by the
+	 *                       {@link ca.uhn.fhir .rest.server.RestfulServer}
+	 * @param theId          Only one of theId or theConditional will have a value and the other will be
+	 *                       null, depending on the URL passed into the server
 	 * @param theConditional This will have a value like "Patient?identifier=7C00001
 	 * @return MethodOutcome which contains the status of the update operation
 	 */
 	@Update
 	public MethodOutcome updatePatientByIdentifier(@ResourceParam Patient patient, @IdParam IdType theId,
-	                                               @ConditionalUrlParam String theConditional) {
+			@ConditionalUrlParam String theConditional) {
 		MethodOutcome outcome = new MethodOutcome();
 		OperationOutcome operationoutcome;
 		if (theConditional != null) {
@@ -199,7 +197,8 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 				String paraArgs[] = parameterPart.split("=");
 				parameterName = paraArgs[0];
 				paramValue = paraArgs[1];
-			} catch (NullPointerException | IndexOutOfBoundsException e) {
+			}
+			catch (NullPointerException | IndexOutOfBoundsException e) {
 				operationoutcome = new OperationOutcome();
 				CodeableConcept concept = new CodeableConcept();
 				Coding coding = concept.addCoding();

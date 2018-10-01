@@ -27,7 +27,6 @@ import org.openmrs.module.fhir.api.util.FHIRFamilyMemberHistoryUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class FamilyMemberHistoryServiceImpl extends BaseOpenmrsService implements FamilyMemberHistoryService {
 
 	protected final Log log = LogFactory.getLog(this.getClass());

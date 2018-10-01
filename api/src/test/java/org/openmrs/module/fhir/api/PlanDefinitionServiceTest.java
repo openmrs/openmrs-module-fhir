@@ -45,7 +45,7 @@ public class PlanDefinitionServiceTest extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void deletePlanDefinition_shouldDeletePlanDefinition() throws Exception  {
+	public void deletePlanDefinition_shouldDeletePlanDefinition() throws Exception {
 		getService().deletePlanDefinition(UUID);
 		Program planDefinition = Context.getProgramWorkflowService().getProgramByUuid(UUID);
 		assertTrue(planDefinition.isRetired());

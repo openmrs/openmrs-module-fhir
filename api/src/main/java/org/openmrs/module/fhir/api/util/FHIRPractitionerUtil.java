@@ -117,7 +117,7 @@ public class FHIRPractitionerUtil {
 		FHIRUtils.validate(practitioner);
 		return practitioner;
 	}
-	
+
 	public static Person generateOpenMRSPerson(Person personFromRequest) {
 		Set<PersonName> nameList = personFromRequest.getNames();
 		PersonName usedName = null;
@@ -127,9 +127,9 @@ public class FHIRPractitionerUtil {
 				break;
 			}
 		}
-		
+
 		Set<Person> personList = Context.getPersonService().getSimilarPeople(usedName.getFullName(),
-		    1900 + personFromRequest.getBirthdate().getYear(), personFromRequest.getGender()); // filter Persons
+				1900 + personFromRequest.getBirthdate().getYear(), personFromRequest.getGender()); // filter Persons
 		boolean createPerson = false;
 		if (personList.isEmpty()) {
 			createPerson = true;
@@ -138,28 +138,28 @@ public class FHIRPractitionerUtil {
 				createPerson = true;
 			}
 		}
-		
+
 		Person personForProvider = null;
 		if (createPerson) {
 			personForProvider = Context.getPersonService().savePerson(personFromRequest);
 		} else {
-			for (Iterator<Person> pers = personList.iterator(); pers.hasNext();) {
+			for (Iterator<Person> pers = personList.iterator(); pers.hasNext(); ) {
 				personForProvider = pers.next();
 			}
 		}
 		return personForProvider;
 	}
-	
+
 	public static Person extractOpenMRSPerson(Practitioner practitioner) {
 		Person omrsPerson = new Person();
 		List<HumanName> humanNameDts = practitioner.getName();
 
-		if(humanNameDts.isEmpty()) {
+		if (humanNameDts.isEmpty()) {
 			return null;
 		}
 
 		Set<PersonName> names = new TreeSet<PersonName>();
-		for(HumanName humanNameDt : humanNameDts) {
+		for (HumanName humanNameDt : humanNameDts) {
 			PersonName name = new PersonName();
 			if (humanNameDt != null) {
 				List<StringType> givenNames = humanNameDt.getGiven();
@@ -228,11 +228,14 @@ public class FHIRPractitionerUtil {
 			addresses.add(address);
 		}
 		omrsPerson.setAddresses(addresses);
-		if (String.valueOf(Enumerations.AdministrativeGender.MALE.toCode()).equalsIgnoreCase(practitioner.getGender().toCode())) {
+		if (String.valueOf(Enumerations.AdministrativeGender.MALE.toCode())
+				.equalsIgnoreCase(practitioner.getGender().toCode())) {
 			omrsPerson.setGender(FHIRConstants.MALE);
-		} else if (String.valueOf(Enumerations.AdministrativeGender.FEMALE.toCode()).equalsIgnoreCase(practitioner.getGender().toCode())) {
+		} else if (String.valueOf(Enumerations.AdministrativeGender.FEMALE.toCode())
+				.equalsIgnoreCase(practitioner.getGender().toCode())) {
 			omrsPerson.setGender(FHIRConstants.FEMALE);
-		} else if (String.valueOf(Enumerations.AdministrativeGender.MALE.toCode()).equalsIgnoreCase(practitioner.getGender().toCode())) {
+		} else if (String.valueOf(Enumerations.AdministrativeGender.MALE.toCode())
+				.equalsIgnoreCase(practitioner.getGender().toCode())) {
 			omrsPerson.setGender(FHIRConstants.OTHER_GENDER);
 		} else {
 			return null;
@@ -254,9 +257,9 @@ public class FHIRPractitionerUtil {
 		}
 		return entity;
 	}
-	
+
 	public static org.openmrs.Provider updatePractitionerAttributes(Practitioner practitioner,
-	                                                                org.openmrs.Provider retrievedProvider) {
+			org.openmrs.Provider retrievedProvider) {
 		String gender = practitioner.getGender().toCode();
 
 		Person providerPerson = retrievedProvider.getPerson(); // get the person associates with the practitioner resource
@@ -266,7 +269,7 @@ public class FHIRPractitionerUtil {
 			if (gender != null) {
 				Person newPerson = new Person();
 				Set<PersonName> names = new TreeSet<PersonName>();
-				for(HumanName humanNameDt : humanNameDts) {
+				for (HumanName humanNameDt : humanNameDts) {
 					PersonName name = new PersonName();
 					if (humanNameDt != null) {
 						List<StringType> givenNames = humanNameDt.getGiven();
@@ -301,10 +304,12 @@ public class FHIRPractitionerUtil {
 					}
 				}
 				newPerson.setNames(names);
-				
-				if (String.valueOf(Enumerations.AdministrativeGender.MALE.toCode()).equalsIgnoreCase(practitioner.getGender().toCode())) {
+
+				if (String.valueOf(Enumerations.AdministrativeGender.MALE.toCode())
+						.equalsIgnoreCase(practitioner.getGender().toCode())) {
 					newPerson.setGender(FHIRConstants.MALE);
-				} else if (String.valueOf(Enumerations.AdministrativeGender.FEMALE).equalsIgnoreCase(practitioner.getGender().toCode())) {
+				} else if (String.valueOf(Enumerations.AdministrativeGender.FEMALE)
+						.equalsIgnoreCase(practitioner.getGender().toCode())) {
 					newPerson.setGender(FHIRConstants.FEMALE);
 				} else {
 					newPerson.setGender("o");
@@ -320,7 +325,7 @@ public class FHIRPractitionerUtil {
 					pname.setPreferred(false);
 				}
 				Set<PersonName> names = new TreeSet<PersonName>();
-				for(HumanName humanNameDt : humanNameDts) {
+				for (HumanName humanNameDt : humanNameDts) {
 					PersonName name = new PersonName();
 					if (humanNameDt != null) {
 						List<StringType> givenNames = humanNameDt.getGiven();
@@ -397,9 +402,11 @@ public class FHIRPractitionerUtil {
 		}
 
 		if (practitioner.getGender() != null) {
-			if (String.valueOf(Enumerations.AdministrativeGender.MALE.toCode()).equalsIgnoreCase(practitioner.getGender().toCode())) {
+			if (String.valueOf(Enumerations.AdministrativeGender.MALE.toCode())
+					.equalsIgnoreCase(practitioner.getGender().toCode())) {
 				providerPerson.setGender(FHIRConstants.MALE);
-			} else if (String.valueOf(Enumerations.AdministrativeGender.FEMALE.toCode()).equalsIgnoreCase(practitioner.getGender().toCode())) {
+			} else if (String.valueOf(Enumerations.AdministrativeGender.FEMALE.toCode())
+					.equalsIgnoreCase(practitioner.getGender().toCode())) {
 				providerPerson.setGender(FHIRConstants.FEMALE);
 			} else {
 				providerPerson.setGender("o");
@@ -417,6 +424,7 @@ public class FHIRPractitionerUtil {
 
 	/**
 	 * Build FhIRe reference from provider
+	 *
 	 * @param provider provider resource
 	 * @return FHIR Reference
 	 */

@@ -5,9 +5,9 @@ import org.openmrs.module.fhir.api.util.FHIRUtils;
 
 public class MedicationStrategyUtil {
 
-    public static GenericMedicationStrategy getMedicationStrategy() {
-        String strategy = FHIRUtils.getMedicationStrategy();
-        return strategy == null ? new MedicationStrategy() :
-                Context.getRegisteredComponent(strategy, GenericMedicationStrategy.class);
-    }
+	public static GenericMedicationStrategy getMedicationStrategy() {
+		String strategy = FHIRUtils.getMedicationStrategy();
+		return strategy == null ? new MedicationStrategy() :
+				Context.getRegisteredComponent(strategy, GenericMedicationStrategy.class);
+	}
 }

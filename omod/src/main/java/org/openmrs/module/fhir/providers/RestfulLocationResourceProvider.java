@@ -27,11 +27,8 @@ import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.PreconditionFailedException;
-import org.hl7.fhir.dstu3.model.CodeableConcept;
-import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.Location;
-import org.hl7.fhir.dstu3.model.OperationOutcome;
 import org.hl7.fhir.dstu3.model.Resource;
 import org.openmrs.module.fhir.resources.FHIRLocationResource;
 import org.openmrs.module.fhir.util.MethodOutcomeBuilder;
@@ -39,31 +36,31 @@ import org.openmrs.module.fhir.util.MethodOutcomeBuilder;
 import java.util.List;
 
 public class RestfulLocationResourceProvider implements IResourceProvider {
-	
+
 	private FHIRLocationResource locationResource;
-	
+
 	public RestfulLocationResourceProvider() {
 		this.locationResource = new FHIRLocationResource();
 	}
-	
+
 	@Override
 	public Class<? extends Resource> getResourceType() {
 		return Location.class;
 	}
-	
+
 	/**
 	 * The "@Read" annotation indicates that this method supports the read operation. Read
 	 * operations should return a single resource instance.
 	 *
 	 * @param theId The read operation takes one parameter, which must be of type IdDt and must be
-	 *            annotated with the "@Read.IdParam" annotation.
+	 *              annotated with the "@Read.IdParam" annotation.
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read
 	public Location getResourceById(@IdParam IdType theId) {
 		return locationResource.getByUniqueId(theId);
 	}
-	
+
 	/**
 	 * Search locations by unique id
 	 *
@@ -73,31 +70,31 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	public List<Location> findLocationsByUniqueId(@RequiredParam(name = Location.SP_RES_ID) TokenParam id) {
 		return locationResource.searchLocationsById(id);
 	}
-	
+
 	/**
 	 * Get locations by name
 	 *
 	 * @param name name of the location
 	 * @return This method returns a list of locations. This list may contain multiple matching
-	 *         resources, or it may also be empty.
+	 * resources, or it may also be empty.
 	 */
 	@Search
 	public List<Location> findLocationsByName(@RequiredParam(name = Location.SP_NAME) StringParam name) {
 		return locationResource.searchLocationsByName(name);
 	}
-	
+
 	/**
 	 * Search location by status
 	 *
 	 * @param active search term
 	 * @return This method returns a list of locations. This list may contain multiple matching
-	 *         resources, or it may also be empty.
+	 * resources, or it may also be empty.
 	 */
 	@Search
 	public List<Location> findLocationsByStatus(@RequiredParam(name = Location.SP_STATUS) TokenParam active) {
 		return locationResource.searchLocationsByStatus(active);
 	}
-	
+
 	/**
 	 * Delete Location by unique id
 	 *
@@ -107,12 +104,12 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	public void deleteLocation(@IdParam IdType theId) {
 		locationResource.deleteLocation(theId);
 	}
-	
+
 	/**
 	 * Update Location
-	 * 
+	 *
 	 * @param location fhir Location object
-	 * @param theId , the uuid of the Location resource to be update
+	 * @param theId    , the uuid of the Location resource to be update
 	 * @return Method outcome contains the status of the update operation
 	 */
 	@Update
@@ -122,17 +119,17 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 
 	/**
 	 * Conditionally update location by name.
-	 * 
-	 * @param theLocation {@link org.hl7.fhir.dstu3.model.Location} object provided by the
-	 *            {@link ca.uhn.fhir .rest.server.RestfulServer}
-	 * @param theId Only one of theId or theConditional will have a value and the other will be
-	 *            null, depending on the URL passed into the server
+	 *
+	 * @param theLocation    {@link org.hl7.fhir.dstu3.model.Location} object provided by the
+	 *                       {@link ca.uhn.fhir .rest.server.RestfulServer}
+	 * @param theId          Only one of theId or theConditional will have a value and the other will be
+	 *                       null, depending on the URL passed into the server
 	 * @param theConditional This will have a value like "Location?name=Colombo
 	 * @return MethodOutcome which contains the status of the operation
 	 */
 	@Update
 	public MethodOutcome updateLocationByName(@ResourceParam Location theLocation, @IdParam IdType theId,
-	                                          @ConditionalUrlParam String theConditional) {
+			@ConditionalUrlParam String theConditional) {
 		if (theConditional != null) {
 			int startIndex = theConditional.lastIndexOf('=');
 			String locationName = theConditional.substring(startIndex + 1);
@@ -155,10 +152,10 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 			return updateLocation(theLocation, theId);
 		}
 	}
-	
+
 	/**
 	 * Create Location
-	 * 
+	 *
 	 * @param location fhir Location object
 	 * @return Method outcome object which contains the identity of the created resource.
 	 */
@@ -166,5 +163,5 @@ public class RestfulLocationResourceProvider implements IResourceProvider {
 	public MethodOutcome createFHIRLocation(@ResourceParam Location location) {
 		return MethodOutcomeBuilder.buildCreate(locationResource.createLocation(location));
 	}
-	
+
 }

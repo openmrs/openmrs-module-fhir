@@ -35,123 +35,125 @@ import java.util.zip.ZipOutputStream;
 
 public class Utils {
 
-    protected static  Log log = LogFactory.getLog(Utils.class);
+	protected static Log log = LogFactory.getLog(Utils.class);
 
-    /**
-     * Method used to create the archive from the given directory
-     *
-     * @param sourceDirectory directory to create zip archive from
-     * @param archiveLocation path to the archive location, excluding archive name
-     * @param archiveName     name of the archive to create
-     * @throws FHIRModuleOmodException if an error occurs while creating the archive
-     */
-    public static void archiveDirectory(String sourceDirectory, String archiveLocation, String archiveName)
-                                                                                        throws FHIRModuleOmodException {
+	/**
+	 * Method used to create the archive from the given directory
+	 *
+	 * @param sourceDirectory directory to create zip archive from
+	 * @param archiveLocation path to the archive location, excluding archive name
+	 * @param archiveName     name of the archive to create
+	 * @throws FHIRModuleOmodException if an error occurs while creating the archive
+	 */
+	public static void archiveDirectory(String sourceDirectory, String archiveLocation, String archiveName)
+			throws FHIRModuleOmodException {
 
-        File directoryToZip = new File(sourceDirectory);
+		File directoryToZip = new File(sourceDirectory);
 
-        List<File> fileList = new ArrayList<>();
-        getAllFiles(directoryToZip, fileList);
-        try {
-            writeArchiveFile(directoryToZip, fileList, archiveLocation, archiveName);
-        } catch (IOException e) {
-            String errorMsg = "Error while writing archive file " + directoryToZip.getPath() + " to archive " +
-                    archiveLocation;
-            log.error(errorMsg, e);
-            throw new FHIRModuleOmodException(errorMsg, e);
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("Archived SDK Zip file generated successfully" + archiveName);
-        }
+		List<File> fileList = new ArrayList<>();
+		getAllFiles(directoryToZip, fileList);
+		try {
+			writeArchiveFile(directoryToZip, fileList, archiveLocation, archiveName);
+		}
+		catch (IOException e) {
+			String errorMsg = "Error while writing archive file " + directoryToZip.getPath() + " to archive " +
+					archiveLocation;
+			log.error(errorMsg, e);
+			throw new FHIRModuleOmodException(errorMsg, e);
+		}
+		if (log.isDebugEnabled()) {
+			log.debug("Archived SDK Zip file generated successfully" + archiveName);
+		}
 
-    }
+	}
 
-    /**
-     * Get the list of directories available under a root directory path
-     *
-     * @param path full path of the root directory
-     * @return Set of directory path under the root directory given by path
-     * @throws FHIRModuleOmodException if an error occurs while listing directories
-     */
-    public static Set<String> getDirectoryList(String path) throws FHIRModuleOmodException {
-        Set<String> directoryNames = new HashSet<>();
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(path))) {
-            for (Path directoryPath : directoryStream) {
-                directoryNames.add(directoryPath.toString());
-            }
-        } catch (IOException e) {
-            String errorMsg = "Error while listing directories under " + path;
-            log.error(errorMsg, e);
-            throw new FHIRModuleOmodException(errorMsg, e);
-        }
-        return directoryNames;
-    }
+	/**
+	 * Get the list of directories available under a root directory path
+	 *
+	 * @param path full path of the root directory
+	 * @return Set of directory path under the root directory given by path
+	 * @throws FHIRModuleOmodException if an error occurs while listing directories
+	 */
+	public static Set<String> getDirectoryList(String path) throws FHIRModuleOmodException {
+		Set<String> directoryNames = new HashSet<>();
+		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(path))) {
+			for (Path directoryPath : directoryStream) {
+				directoryNames.add(directoryPath.toString());
+			}
+		}
+		catch (IOException e) {
+			String errorMsg = "Error while listing directories under " + path;
+			log.error(errorMsg, e);
+			throw new FHIRModuleOmodException(errorMsg, e);
+		}
+		return directoryNames;
+	}
 
-    /**
-     * Queries all files under a directory recursively
-     *
-     * @param sourceDirectory full path to the root directory
-     * @param fileList        list containing the files
-     */
-    private static void getAllFiles(File sourceDirectory, List<File> fileList) {
-        File[] files = sourceDirectory.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                fileList.add(file);
-                if (file.isDirectory()) {
-                    getAllFiles(file, fileList);
-                }
-            }
-        }
-    }
+	/**
+	 * Queries all files under a directory recursively
+	 *
+	 * @param sourceDirectory full path to the root directory
+	 * @param fileList        list containing the files
+	 */
+	private static void getAllFiles(File sourceDirectory, List<File> fileList) {
+		File[] files = sourceDirectory.listFiles();
+		if (files != null) {
+			for (File file : files) {
+				fileList.add(file);
+				if (file.isDirectory()) {
+					getAllFiles(file, fileList);
+				}
+			}
+		}
+	}
 
-    /**
-     * Write the file archive
-     *
-     * @param directoryToZip directory location which directory should be zipped
-     * @param fileList list of files
-     * @param archiveLocation location which archive should be created
-     * @param archiveName zip archive name
-     * @throws IOException if any error occurred
-     */
-    private static void writeArchiveFile(File directoryToZip, List<File> fileList, String archiveLocation,
-                                         String archiveName) throws IOException {
+	/**
+	 * Write the file archive
+	 *
+	 * @param directoryToZip  directory location which directory should be zipped
+	 * @param fileList        list of files
+	 * @param archiveLocation location which archive should be created
+	 * @param archiveName     zip archive name
+	 * @throws IOException if any error occurred
+	 */
+	private static void writeArchiveFile(File directoryToZip, List<File> fileList, String archiveLocation,
+			String archiveName) throws IOException {
 
-        try (FileOutputStream fileOutputStream = new FileOutputStream(archiveLocation +
-                File.separator + archiveName + ".zip");
-             ZipOutputStream zipOutputStream = new ZipOutputStream(fileOutputStream)) {
-            for (File file : fileList) {
-                if (!file.isDirectory()) {
-                    addToArchive(directoryToZip, file, zipOutputStream);
-                }
-            }
-        }
-    }
+		try (FileOutputStream fileOutputStream = new FileOutputStream(archiveLocation +
+				File.separator + archiveName + ".zip");
+		     ZipOutputStream zipOutputStream = new ZipOutputStream(fileOutputStream)) {
+			for (File file : fileList) {
+				if (!file.isDirectory()) {
+					addToArchive(directoryToZip, file, zipOutputStream);
+				}
+			}
+		}
+	}
 
-    /**
-     * Add files to zip archive
-     *
-     * @param directoryToZip directory location which directory should be zipped
-     * @param file file to be added to the zip
-     * @param zipOutputStream zip output stream
-     * @throws IOException if any error occurred
-     */
-    private static void addToArchive(File directoryToZip, File file, ZipOutputStream zipOutputStream)
-            throws IOException {
-        // Add a file to archive
-        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+	/**
+	 * Add files to zip archive
+	 *
+	 * @param directoryToZip  directory location which directory should be zipped
+	 * @param file            file to be added to the zip
+	 * @param zipOutputStream zip output stream
+	 * @throws IOException if any error occurred
+	 */
+	private static void addToArchive(File directoryToZip, File file, ZipOutputStream zipOutputStream)
+			throws IOException {
+		// Add a file to archive
+		try (FileInputStream fileInputStream = new FileInputStream(file)) {
 
-            // Get relative path from archive directory to the specific file
-            String zipFilePath = file.getCanonicalPath()
-                    .substring(directoryToZip.getCanonicalPath().length() + 1, file.getCanonicalPath().length());
-            if (File.separatorChar != '/') {
-                zipFilePath = zipFilePath.replace(File.separatorChar, '/');
-            }
-            ZipEntry zipEntry = new ZipEntry(zipFilePath);
-            zipOutputStream.putNextEntry(zipEntry);
+			// Get relative path from archive directory to the specific file
+			String zipFilePath = file.getCanonicalPath()
+					.substring(directoryToZip.getCanonicalPath().length() + 1, file.getCanonicalPath().length());
+			if (File.separatorChar != '/') {
+				zipFilePath = zipFilePath.replace(File.separatorChar, '/');
+			}
+			ZipEntry zipEntry = new ZipEntry(zipFilePath);
+			zipOutputStream.putNextEntry(zipEntry);
 
-            IOUtils.copy(fileInputStream, zipOutputStream);
-            zipOutputStream.closeEntry();
-        }
-    }
+			IOUtils.copy(fileInputStream, zipOutputStream);
+			zipOutputStream.closeEntry();
+		}
+	}
 }

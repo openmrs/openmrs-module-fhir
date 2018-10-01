@@ -21,40 +21,40 @@ import java.util.List;
 
 public class RestfulMedicationResourceProvider implements IResourceProvider {
 
-    private FHIRMedicationResource medicationResource;
+	private FHIRMedicationResource medicationResource;
 
-    public RestfulMedicationResourceProvider() {
-        medicationResource = new FHIRMedicationResource();
-    }
+	public RestfulMedicationResourceProvider() {
+		medicationResource = new FHIRMedicationResource();
+	}
 
-    @Override
-    public Class<? extends IBaseResource> getResourceType() {
-        return Medication.class;
-    }
+	@Override
+	public Class<? extends IBaseResource> getResourceType() {
+		return Medication.class;
+	}
 
-    @Create
-    public MethodOutcome createFHIRMedication(@ResourceParam Medication medication) {
-        return MethodOutcomeBuilder.buildCreate(medicationResource.createMedication(medication));
-    }
+	@Create
+	public MethodOutcome createFHIRMedication(@ResourceParam Medication medication) {
+		return MethodOutcomeBuilder.buildCreate(medicationResource.createMedication(medication));
+	}
 
-    @Update
-    public MethodOutcome updateFHIRMedication(@ResourceParam Medication medication, @IdParam IdType id) {
-        return MethodOutcomeBuilder.buildUpdate(medicationResource.updateMedication(medication, id.getIdPart()));
-    }
+	@Update
+	public MethodOutcome updateFHIRMedication(@ResourceParam Medication medication, @IdParam IdType id) {
+		return MethodOutcomeBuilder.buildUpdate(medicationResource.updateMedication(medication, id.getIdPart()));
+	}
 
-    @Delete
-    public void deleteMedication(@IdParam IdType id) {
-        medicationResource.deleteMedication(id);
-    }
+	@Delete
+	public void deleteMedication(@IdParam IdType id) {
+		medicationResource.deleteMedication(id);
+	}
 
-    @Read
-    public Medication getResourceById(@IdParam IdType id) {
-        return medicationResource.getByUniqueId(id);
-    }
+	@Read
+	public Medication getResourceById(@IdParam IdType id) {
+		return medicationResource.getByUniqueId(id);
+	}
 
-    @Search
-    public List<Medication> findMedicationById(
-            @RequiredParam(name = Medication.SP_RES_ID)TokenParam id) {
-        return medicationResource.searchMedicationById(id);
-    }
+	@Search
+	public List<Medication> findMedicationById(
+			@RequiredParam(name = Medication.SP_RES_ID) TokenParam id) {
+		return medicationResource.searchMedicationById(id);
+	}
 }

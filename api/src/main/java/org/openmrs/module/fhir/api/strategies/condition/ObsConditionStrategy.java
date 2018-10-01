@@ -35,7 +35,6 @@ import java.util.List;
 public class ObsConditionStrategy implements GenericConditionStrategy {
 
 	/**
-	 *
 	 * @param uuid the uuid of the Observation
 	 * @return fhir condition resource and if condition is not found for the given id then return null
 	 */
@@ -90,7 +89,6 @@ public class ObsConditionStrategy implements GenericConditionStrategy {
 			}
 		}
 
-
 		//Set Asserter
 		fhirCondition.setAssertedDate(openMrsObs.getDateCreated());
 
@@ -116,7 +114,7 @@ public class ObsConditionStrategy implements GenericConditionStrategy {
 			fhirCondition.setCode(conceptDt);
 		}
 
-		if(!StringUtils.isEmpty(openMrsObs.getComment())) {
+		if (!StringUtils.isEmpty(openMrsObs.getComment())) {
 			List<Annotation> annotations = new ArrayList<Annotation>();
 			Annotation annotation = new Annotation();
 			annotation.setText(openMrsObs.getComment());

@@ -18,7 +18,9 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.ObsService;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
-import org.openmrs.module.fhir.api.util.*;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.module.fhir.api.util.FHIRObsUtil;
+import org.openmrs.module.fhir.api.util.FHIRUtils;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -29,15 +31,15 @@ import java.util.Set;
 
 public class LaboratoryHandler extends AbstractHandler implements DiagnosticReportHandler {
 
+	private static final String ServiceCategory = "LAB";
+
+	private static final String RESOURCE_TYPE = "DiagnosticReport";
+
 	protected final Log log = LogFactory.getLog(this.getClass());
 
 	public LaboratoryHandler() {
 		super();
 	}
-
-	private static final String ServiceCategory = "LAB";
-
-	private static final String RESOURCE_TYPE = "DiagnosticReport";
 
 	public String getServiceCategory() {
 		return ServiceCategory;
@@ -119,7 +121,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 
 	@Override
 	public DiagnosticReport updateFHIRDiagnosticReport(DiagnosticReport diagnosticReport, String theId) {
-		log.debug("Laboratory Handler : UpdateFHIRDiagnosticReport with ID" + theId );
+		log.debug("Laboratory Handler : UpdateFHIRDiagnosticReport with ID" + theId);
 
 		org.openmrs.api.ObsService obsService = Context.getObsService();
 		EncounterService encounterService = Context.getEncounterService();
@@ -180,7 +182,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 
 	private void setAttachmentCreation(DiagnosticReport diagnosticReport, Attachment attachment) {
 		if (attachment.getCreation() == null) {
-			if(diagnosticReport.getIssued() != null) {
+			if (diagnosticReport.getIssued() != null) {
 				attachment.setCreation(diagnosticReport.getIssued());
 			}
 		}

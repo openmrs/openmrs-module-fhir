@@ -31,6 +31,7 @@ import static org.junit.Assert.assertTrue;
 public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 
 	protected static final String PAT_INITIAL_DATA_XML = "org/openmrs/api/include/PatientServiceTest-createPatient.xml";
+
 	protected static final String PAT_SEARCH_DATA_XML = "org/openmrs/api/include/PatientServiceTest-findPatients.xml";
 
 	public PatientService getService() {
@@ -146,7 +147,7 @@ public class PatientServiceTest extends BaseModuleContextSensitiveTest {
 		assertNotNull(patients);
 		assertEquals(3, patients.size());
 	}
-	
+
 	@Test
 	public void shouldFetchAllPatientsByName() {
 		List<org.openmrs.Patient> patients = Context.getPatientService().getPatients("Jeannette", null, null, true);

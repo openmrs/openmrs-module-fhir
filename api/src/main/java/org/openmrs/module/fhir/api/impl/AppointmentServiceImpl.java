@@ -24,53 +24,52 @@ import java.util.List;
 
 public class AppointmentServiceImpl implements AppointmentService {
 
-    protected final Log log = LogFactory.getLog(this.getClass());
+	protected final Log log = LogFactory.getLog(this.getClass());
 
-    private FHIRDAO dao;
-    
-    /**
-     * @return the dao
-     */
-    public FHIRDAO getDao() {
-        return dao;
-    }
+	private FHIRDAO dao;
 
-    /**
-     * @param dao the dao to set
-     */
-    public void setDao(FHIRDAO dao) {
-        this.dao = dao;
-    }
+	/**
+	 * @return the dao
+	 */
+	public FHIRDAO getDao() {
+		return dao;
+	}
 
-    /**
-     * Get appointment by uuid
-     *
-     * @param uuid of the requesting appointment
-     * @return appointment obj
-     */
-    public Appointment getAppointmentById(String uuid) {
-        return AppointmentStrategyUtil.getAppointmentStrategy().getAppointmentById(uuid);
-    }
+	/**
+	 * @param dao the dao to set
+	 */
+	public void setDao(FHIRDAO dao) {
+		this.dao = dao;
+	}
 
-    /**
-     * Search appointment list by uuid
-     *
-     * @param uuid of the appointment
-     * @return appointment obj
-     */
-    public List<Appointment> searchAppointmentById(String uuid) {
-        return AppointmentStrategyUtil.getAppointmentStrategy().searchAppointmentsById(uuid);
-    }
+	/**
+	 * Get appointment by uuid
+	 *
+	 * @param uuid of the requesting appointment
+	 * @return appointment obj
+	 */
+	public Appointment getAppointmentById(String uuid) {
+		return AppointmentStrategyUtil.getAppointmentStrategy().getAppointmentById(uuid);
+	}
 
+	/**
+	 * Search appointment list by uuid
+	 *
+	 * @param uuid of the appointment
+	 * @return appointment obj
+	 */
+	public List<Appointment> searchAppointmentById(String uuid) {
+		return AppointmentStrategyUtil.getAppointmentStrategy().searchAppointmentsById(uuid);
+	}
 
-    /**
-     * Searcj appointment list by pattient uuid
-     *
-     * @param patientUuid the id of the patient which needs to search the appoinments
-     * @return appointment obj
-     */
-    public List<Appointment> searchAppointmentsByPatient(String patientUuid) {
-        return AppointmentStrategyUtil.getAppointmentStrategy().searchAppointmentsByPatient(patientUuid);
-    }
+	/**
+	 * Searcj appointment list by pattient uuid
+	 *
+	 * @param patientUuid the id of the patient which needs to search the appoinments
+	 * @return appointment obj
+	 */
+	public List<Appointment> searchAppointmentsByPatient(String patientUuid) {
+		return AppointmentStrategyUtil.getAppointmentStrategy().searchAppointmentsByPatient(patientUuid);
+	}
 
 }

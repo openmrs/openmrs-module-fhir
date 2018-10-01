@@ -16,313 +16,316 @@
 
 <module configVersion="1.2">
 
-    <!-- Module Properties -->
-    <id>${project.parent.artifactId}</id>
-    <name>${project.parent.name}</name>
-    <version>${project.parent.version}</version>
-    <package>${project.parent.groupId}.${project.parent.artifactId}</package>
-    <author>snkasthu</author>
-    <description>
-        ${project.parent.description}
-    </description>
-    <updateURL>https://modules.openmrs.org/modules/download/${project.parent.artifactId}/update.rdf</updateURL>
-    <require_version>2.0.0</require_version>
-    <!-- / Module Properties -->
+	<!-- Module Properties -->
+	<id>${project.parent.artifactId}</id>
+	<name>${project.parent.name}</name>
+	<version>${project.parent.version}</version>
+	<package>${project.parent.groupId}.${project.parent.artifactId}</package>
+	<author>snkasthu</author>
+	<description>
+		${project.parent.description}
+	</description>
+	<updateURL>https://modules.openmrs.org/modules/download/${project.parent.artifactId}/update.rdf</updateURL>
+	<require_version>2.0.0</require_version>
+	<!-- / Module Properties -->
 
-    <require_modules>
-        <!-- <require_module version="2.0">org.openmrs.module.webservices.rest</require_module> -->
-    </require_modules>
+	<require_modules>
+		<!-- <require_module version="2.0">org.openmrs.module.webservices.rest</require_module> -->
+	</require_modules>
 
-    <!-- Module Activator -->
-    <activator>${project.parent.groupId}.${project.parent.artifactId}.FHIRActivator</activator>
-
-
-    <!-- Adds link to admin page -->
-    <extension>
-        <point>org.openmrs.admin.list</point>
-        <class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.AdminList</class>
-    </extension>
-
-    <aware_of_modules>
-        <aware_of_module version="1.1-SNAPSHOT">org.openmrs.module.allergyapi</aware_of_module>
-        <aware_of_module>org.openmrs.module.legacyui</aware_of_module>
-    </aware_of_modules>
-
-    <!-- Maps hibernate file's, if present -->
-    <mappingFiles>
-
-        FHIR.hbm.xml
-
-    </mappingFiles>
-
-    <servlet>
-        <servlet-name>fhirServelet</servlet-name>
-        <servlet-class>org.openmrs.module.fhir.server.FHIRRESTServer</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>fhirDocServelet</servlet-name>
-        <servlet-class>org.openmrs.module.fhir.swagger.SwaggerSpecificationController</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>fhirCodeGenServelet</servlet-name>
-        <servlet-class>org.openmrs.module.fhir.swagger.SwaggerCodeGenController</servlet-class>
-    </servlet>
-    <!-- Internationalization -->
-    <!-- All message codes should start with ${project.parent.artifactId}. -->
-    <messages>
-        <lang>en</lang>
-        <file>messages.properties</file>
-    </messages>
-    <messages>
-        <lang>fr</lang>
-        <file>messages_fr.properties</file>
-    </messages>
-    <messages>
-        <lang>es</lang>
-        <file>messages_es.properties</file>
-    </messages>
-    <!-- /Internationalization -->
+	<!-- Module Activator -->
+	<activator>${project.parent.groupId}.${project.parent.artifactId}.FHIRActivator</activator>
 
 
-    <filter>
-        <filter-name>FHIR Authorization</filter-name>
-        <filter-class>org.openmrs.module.fhir.filter.AuthorizationFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>FHIR Authorization</filter-name>
-        <url-pattern>/ws/fhir/*</url-pattern>
-    </filter-mapping>
-    <filter>
-        <filter-name>FHIR Authorization Direct</filter-name>
-        <filter-class>org.openmrs.module.fhir.filter.AuthorizationFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>FHIR Authorization Direct</filter-name>
-        <url-pattern>/ms/fhir/fhirServelet/*</url-pattern>
-    </filter-mapping>
-    <filter>
-        <filter-name>forwardingFilterr</filter-name>
-        <filter-class>org.openmrs.module.fhir.filter.ForwardingFilter</filter-class>
-    </filter>
-    <filter>
-        <filter-name>swaggerForwardingFilterr</filter-name>
-        <filter-class>org.openmrs.module.fhir.filter.SwaggerForwardingFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>forwardingFilterr</filter-name>
-        <url-pattern>/ws/fhir/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>forwardingFilterr</filter-name>
-        <url-pattern>/ms/fhir/fhirServelet/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>swaggerForwardingFilterr</filter-name>
-        <url-pattern>/module/fhir/rest/swagger.json</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>swaggerForwardingFilterr</filter-name>
-        <url-pattern>/module/fhir/rest/swaggercodegen</url-pattern>
-    </filter-mapping>
+	<!-- Adds link to admin page -->
+	<extension>
+		<point>org.openmrs.admin.list</point>
+		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.AdminList</class>
+	</extension>
 
-    <globalProperty>
-        <property>${project.parent.artifactId}.baseUrl</property>
-        <defaultValue>http://localhost:8080/openmrs/ws/fhir</defaultValue>
-        <description>The URI prefix through which clients consuming FHIR services will connect to the web application, should
-            be of the form http://{ipAddress}:{port}/{contextPath}/ws/fhir
-        </description>
-    </globalProperty>
+	<aware_of_modules>
+		<aware_of_module version="1.1-SNAPSHOT">org.openmrs.module.allergyapi</aware_of_module>
+		<aware_of_module>org.openmrs.module.legacyui</aware_of_module>
+	</aware_of_modules>
 
-    <globalProperty>
-        <property>${project.parent.artifactId}.isCustomerNarrativesEnabled</property>
-        <defaultValue>false</defaultValue>
-        <description>Set true if you need to enable custom narratives</description>
-    </globalProperty>
+	<!-- Maps hibernate file's, if present -->
+	<mappingFiles>
 
-    <globalProperty>
-        <property>${project.parent.artifactId}.customNarrativePropertiesPath</property>
-        <defaultValue>classpath:/com/foo/customnarrative.properties</defaultValue>
-        <description>Set custom narratives property path</description>
-    </globalProperty>
+		FHIR.hbm.xml
 
-    <globalProperty>
-        <property>${project.parent.artifactId}.allergy.strategy</property>
-        <defaultValue>ActiveListAllergyStrategy</defaultValue>
-        <description>Set allergy strategy</description>
-    </globalProperty>
+	</mappingFiles>
 
-    <globalProperty>
-        <property>${project.parent.artifactId}.person.strategy</property>
-        <defaultValue>DefaultPersonStrategy</defaultValue>
-        <description>Set person strategy.</description>
-    </globalProperty>
+	<servlet>
+		<servlet-name>fhirServelet</servlet-name>
+		<servlet-class>org.openmrs.module.fhir.server.FHIRRESTServer</servlet-class>
+	</servlet>
 
-    <globalProperty>
-        <property>${project.parent.artifactId}.relatedPerson.strategy</property>
-        <defaultValue>DefaultRelatedPersonStrategy</defaultValue>
-        <description>Set related person strategy.</description>
-    </globalProperty>
+	<servlet>
+		<servlet-name>fhirDocServelet</servlet-name>
+		<servlet-class>org.openmrs.module.fhir.swagger.SwaggerSpecificationController</servlet-class>
+	</servlet>
 
-    <globalProperty>
-        <property>${project.parent.artifactId}.location.strategy</property>
-        <defaultValue>DefaultLocationStrategy</defaultValue>
-        <description>Set location strategy</description>
-    </globalProperty>
+	<servlet>
+		<servlet-name>fhirCodeGenServelet</servlet-name>
+		<servlet-class>org.openmrs.module.fhir.swagger.SwaggerCodeGenController</servlet-class>
+	</servlet>
+	<!-- Internationalization -->
+	<!-- All message codes should start with ${project.parent.artifactId}. -->
+	<messages>
+		<lang>en</lang>
+		<file>messages.properties</file>
+	</messages>
+	<messages>
+		<lang>fr</lang>
+		<file>messages_fr.properties</file>
+	</messages>
+	<messages>
+		<lang>es</lang>
+		<file>messages_es.properties</file>
+	</messages>
+	<!-- /Internationalization -->
 
-    <globalProperty>
-        <property>${project.parent.artifactId}.patient.strategy</property>
-        <defaultValue>DefaultPatientStrategy</defaultValue>
-        <description>Set patient strategy.</description>
-    </globalProperty>
 
-    <globalProperty>
-        <property>${project.parent.artifactId}.group.strategy</property>
-        <defaultValue>DefaultGroupStrategy</defaultValue>
-        <description>Set group strategy.</description>
-    </globalProperty>
-
-    <globalProperty>
-        <property>${project.parent.artifactId}.encounter.strategy</property>
-        <defaultValue>DefaultEncounterStrategy</defaultValue>
-        <description>Set encounter strategy.</description>
-    </globalProperty>
-
-    <globalProperty>
-        <property>${project.parent.artifactId}.appointment.strategy</property>
-        <defaultValue>DefaultAppointmentStrategy</defaultValue>
-        <description>Set appointment strategy.</description>
-    </globalProperty>
-
-    <globalProperty>
-        <property>${project.parent.artifactId}.practitioner.strategy</property>
-        <defaultValue>DefaultPractitionerStrategy</defaultValue>
-        <description>Set practitioner strategy.</description>
-    </globalProperty>
-
-    <globalProperty>
-        <property>${project.parent.artifactId}.allergy.strategy.concept.uuid</property>
-        <defaultValue>1234</defaultValue>
-        <description>Concept id for allergy obs</description>
-    </globalProperty>
-
-    <globalProperty>
-        <property>${project.parent.artifactId}.observation.strategy</property>
-        <defaultValue>DefaultObservationStrategy</defaultValue>
-        <description>Set observation strategy.</description>
-    </globalProperty>
+	<filter>
+		<filter-name>FHIR Authorization</filter-name>
+		<filter-class>org.openmrs.module.fhir.filter.AuthorizationFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>FHIR Authorization</filter-name>
+		<url-pattern>/ws/fhir/*</url-pattern>
+	</filter-mapping>
+	<filter>
+		<filter-name>FHIR Authorization Direct</filter-name>
+		<filter-class>org.openmrs.module.fhir.filter.AuthorizationFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>FHIR Authorization Direct</filter-name>
+		<url-pattern>/ms/fhir/fhirServelet/*</url-pattern>
+	</filter-mapping>
+	<filter>
+		<filter-name>forwardingFilterr</filter-name>
+		<filter-class>org.openmrs.module.fhir.filter.ForwardingFilter</filter-class>
+	</filter>
+	<filter>
+		<filter-name>swaggerForwardingFilterr</filter-name>
+		<filter-class>org.openmrs.module.fhir.filter.SwaggerForwardingFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>forwardingFilterr</filter-name>
+		<url-pattern>/ws/fhir/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>forwardingFilterr</filter-name>
+		<url-pattern>/ms/fhir/fhirServelet/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>swaggerForwardingFilterr</filter-name>
+		<url-pattern>/module/fhir/rest/swagger.json</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>swaggerForwardingFilterr</filter-name>
+		<url-pattern>/module/fhir/rest/swaggercodegen</url-pattern>
+	</filter-mapping>
 
 	<globalProperty>
-        <property>${project.parent.artifactId}.planDefinition.strategy</property>
-        <defaultValue>DefaultPlanDefinitionStrategy</defaultValue>
-        <description>Set plan definition strategy.</description>
-    </globalProperty>
+		<property>${project.parent.artifactId}.baseUrl</property>
+		<defaultValue>http://localhost:8080/openmrs/ws/fhir</defaultValue>
+		<description>The URI prefix through which clients consuming FHIR services will connect to the web application, should
+			be of the form http://{ipAddress}:{port}/{contextPath}/ws/fhir
+		</description>
+	</globalProperty>
 
-    <globalProperty>
-        <property>${project.parent.artifactId}.medication.strategy</property>
-        <defaultValue>DefaultMedicationStrategy</defaultValue>
-        <description>Set medication strategy.</description>
-    </globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.isCustomerNarrativesEnabled</property>
+		<defaultValue>false</defaultValue>
+		<description>Set true if you need to enable custom narratives</description>
+	</globalProperty>
 
-    <globalProperty>
-        <property>${project.parent.artifactId}.concept.codingSystem</property>
-        <defaultValue>OPENMRS</defaultValue>
-        <description>Concept Coding System</description>
-    </globalProperty>
-    <!-- Diagnostic Report -->
-    <globalProperty>
-        <property>${project.parent.artifactId}.encounter.encounterRoleUuid</property>
-        <defaultValue>73bbb069-9781-4afc-a9d1-54b6b2270e03</defaultValue>
-        <description>Encounter Role uuid</description>
-    </globalProperty>
-    <globalProperty>
-        <property>${project.parent.artifactId}.encounter.encounterType.DEFAULT</property>
-        <defaultValue>01234-abcde-56789</defaultValue>
-        <description>EncounterType uuid for Default (not available in http://hl7.org/implement/standards/fhir/v2/0074/index
-            .html)</description>
-    </globalProperty>
-    <globalProperty>
-        <property>${project.parent.artifactId}.encounter.encounterType.LAB</property>
-        <defaultValue>01234-abcde-56789</defaultValue>
-        <description>EncounterType uuid for Laboratory in http://hl7.org/implement/standards/fhir/v2/0074/index.html
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>${project.parent.artifactId}.encounter.encounterType.RAD</property>
-        <defaultValue>01234-abcde-56789</defaultValue>
-        <description>EncounterType uuid for Radiology in http://hl7.org/implement/standards/fhir/v2/0074/index.html
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>${project.parent.artifactId}.diagnosticreport.name</property>
-        <defaultValue>0123456789</defaultValue>
-        <description>Concept Id for 'Name' field in http://www.hl7.org/FHIR/2015May/diagnosticreport.html
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>${project.parent.artifactId}.diagnosticreport.status</property>
-        <defaultValue>0123456789</defaultValue>
-        <description>Concept Id for 'Status' field in http://www.hl7.org/FHIR/2015May/diagnosticreport.html
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>${project.parent.artifactId}.diagnosticreport.result</property>
-        <defaultValue>0123456789</defaultValue>
-        <description>Concept Id for 'Result' field in http://www.hl7.org/FHIR/2015May/diagnosticreport.html
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>${project.parent.artifactId}.diagnosticreport.imagingstudy</property>
-        <defaultValue>0123456789</defaultValue>
-        <description>Concept Id for 'ImagingStudy' field in http://www.hl7.org/FHIR/2015May/diagnosticreport.html
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>${project.parent.artifactId}.imagingstudy.series</property>
-        <defaultValue>0123456789</defaultValue>
-        <description>Concept Id for 'ImagingStudy.Series' field in http://www.hl7.org/FHIR/2015May/diagnosticreport.html
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>${project.parent.artifactId}.imagingstudy.series.instance</property>
-        <defaultValue>0123456789</defaultValue>
-        <description>Concept Id for 'ImagingStudy.Series.Instance' field in
-            http://www.hl7.org/FHIR/2015May/diagnosticreport.html
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>${project.parent.artifactId}.diagnosticreport.presentedform</property>
-        <defaultValue>0123456789</defaultValue>
-        <description>Concept Id for 'PresentedForm' field in http://www.hl7.org/FHIR/2015May/diagnosticreport.html
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>${project.parent.artifactId}.imagingstudy.series.instance.content</property>
-        <defaultValue>0123456789</defaultValue>
-        <description>Concept Id for 'ImagingStudy.Series.Content' field in http://www.hl7.org/FHIR/2015May/imagingstudy.html
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>${project.parent.artifactId}.diagnosticreport.radiology.server</property>
-        <defaultValue>http://fhir-dev.healthintersections.com.au/open</defaultValue>
-        <description>The URL of third party FHIR base server that use to retrieve Radiology Diagnostic Reports
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>${project.parent.artifactId}.concepts.conditions</property>
-        <defaultValue></defaultValue>
-        <description>The set of IDs of the concepts that can be matched to conditions which is needed to be stored as
-            Observations
-        </description>
-    </globalProperty>
-    <globalProperty>
-        <property>${project.parent.artifactId}.uriPrefix</property>
-        <description>The URI prefix through which clients consuming web services will connect to the web application, should be of the form http://{ipAddress}:{port}/{contextPath}</description>
-    </globalProperty>
-    <privilege>
-        <name>View FHIR Client</name>
-        <description>Gives access to FHIR rest client</description>
-    </privilege>
+	<globalProperty>
+		<property>${project.parent.artifactId}.customNarrativePropertiesPath</property>
+		<defaultValue>classpath:/com/foo/customnarrative.properties</defaultValue>
+		<description>Set custom narratives property path</description>
+	</globalProperty>
+
+	<globalProperty>
+		<property>${project.parent.artifactId}.allergy.strategy</property>
+		<defaultValue>ActiveListAllergyStrategy</defaultValue>
+		<description>Set allergy strategy</description>
+	</globalProperty>
+
+	<globalProperty>
+		<property>${project.parent.artifactId}.person.strategy</property>
+		<defaultValue>DefaultPersonStrategy</defaultValue>
+		<description>Set person strategy.</description>
+	</globalProperty>
+
+	<globalProperty>
+		<property>${project.parent.artifactId}.relatedPerson.strategy</property>
+		<defaultValue>DefaultRelatedPersonStrategy</defaultValue>
+		<description>Set related person strategy.</description>
+	</globalProperty>
+
+	<globalProperty>
+		<property>${project.parent.artifactId}.location.strategy</property>
+		<defaultValue>DefaultLocationStrategy</defaultValue>
+		<description>Set location strategy</description>
+	</globalProperty>
+
+	<globalProperty>
+		<property>${project.parent.artifactId}.patient.strategy</property>
+		<defaultValue>DefaultPatientStrategy</defaultValue>
+		<description>Set patient strategy.</description>
+	</globalProperty>
+
+	<globalProperty>
+		<property>${project.parent.artifactId}.group.strategy</property>
+		<defaultValue>DefaultGroupStrategy</defaultValue>
+		<description>Set group strategy.</description>
+	</globalProperty>
+
+	<globalProperty>
+		<property>${project.parent.artifactId}.encounter.strategy</property>
+		<defaultValue>DefaultEncounterStrategy</defaultValue>
+		<description>Set encounter strategy.</description>
+	</globalProperty>
+
+	<globalProperty>
+		<property>${project.parent.artifactId}.appointment.strategy</property>
+		<defaultValue>DefaultAppointmentStrategy</defaultValue>
+		<description>Set appointment strategy.</description>
+	</globalProperty>
+
+	<globalProperty>
+		<property>${project.parent.artifactId}.practitioner.strategy</property>
+		<defaultValue>DefaultPractitionerStrategy</defaultValue>
+		<description>Set practitioner strategy.</description>
+	</globalProperty>
+
+	<globalProperty>
+		<property>${project.parent.artifactId}.allergy.strategy.concept.uuid</property>
+		<defaultValue>1234</defaultValue>
+		<description>Concept id for allergy obs</description>
+	</globalProperty>
+
+	<globalProperty>
+		<property>${project.parent.artifactId}.observation.strategy</property>
+		<defaultValue>DefaultObservationStrategy</defaultValue>
+		<description>Set observation strategy.</description>
+	</globalProperty>
+
+	<globalProperty>
+		<property>${project.parent.artifactId}.planDefinition.strategy</property>
+		<defaultValue>DefaultPlanDefinitionStrategy</defaultValue>
+		<description>Set plan definition strategy.</description>
+	</globalProperty>
+
+	<globalProperty>
+		<property>${project.parent.artifactId}.medication.strategy</property>
+		<defaultValue>DefaultMedicationStrategy</defaultValue>
+		<description>Set medication strategy.</description>
+	</globalProperty>
+
+	<globalProperty>
+		<property>${project.parent.artifactId}.concept.codingSystem</property>
+		<defaultValue>OPENMRS</defaultValue>
+		<description>Concept Coding System</description>
+	</globalProperty>
+	<!-- Diagnostic Report -->
+	<globalProperty>
+		<property>${project.parent.artifactId}.encounter.encounterRoleUuid</property>
+		<defaultValue>73bbb069-9781-4afc-a9d1-54b6b2270e03</defaultValue>
+		<description>Encounter Role uuid</description>
+	</globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.encounter.encounterType.DEFAULT</property>
+		<defaultValue>01234-abcde-56789</defaultValue>
+		<description>EncounterType uuid for Default (not available in http://hl7.org/implement/standards/fhir/v2/0074/index
+			.html)
+		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.encounter.encounterType.LAB</property>
+		<defaultValue>01234-abcde-56789</defaultValue>
+		<description>EncounterType uuid for Laboratory in http://hl7.org/implement/standards/fhir/v2/0074/index.html
+		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.encounter.encounterType.RAD</property>
+		<defaultValue>01234-abcde-56789</defaultValue>
+		<description>EncounterType uuid for Radiology in http://hl7.org/implement/standards/fhir/v2/0074/index.html
+		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.diagnosticreport.name</property>
+		<defaultValue>0123456789</defaultValue>
+		<description>Concept Id for 'Name' field in http://www.hl7.org/FHIR/2015May/diagnosticreport.html
+		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.diagnosticreport.status</property>
+		<defaultValue>0123456789</defaultValue>
+		<description>Concept Id for 'Status' field in http://www.hl7.org/FHIR/2015May/diagnosticreport.html
+		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.diagnosticreport.result</property>
+		<defaultValue>0123456789</defaultValue>
+		<description>Concept Id for 'Result' field in http://www.hl7.org/FHIR/2015May/diagnosticreport.html
+		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.diagnosticreport.imagingstudy</property>
+		<defaultValue>0123456789</defaultValue>
+		<description>Concept Id for 'ImagingStudy' field in http://www.hl7.org/FHIR/2015May/diagnosticreport.html
+		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.imagingstudy.series</property>
+		<defaultValue>0123456789</defaultValue>
+		<description>Concept Id for 'ImagingStudy.Series' field in http://www.hl7.org/FHIR/2015May/diagnosticreport.html
+		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.imagingstudy.series.instance</property>
+		<defaultValue>0123456789</defaultValue>
+		<description>Concept Id for 'ImagingStudy.Series.Instance' field in
+			http://www.hl7.org/FHIR/2015May/diagnosticreport.html
+		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.diagnosticreport.presentedform</property>
+		<defaultValue>0123456789</defaultValue>
+		<description>Concept Id for 'PresentedForm' field in http://www.hl7.org/FHIR/2015May/diagnosticreport.html
+		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.imagingstudy.series.instance.content</property>
+		<defaultValue>0123456789</defaultValue>
+		<description>Concept Id for 'ImagingStudy.Series.Content' field in http://www.hl7.org/FHIR/2015May/imagingstudy.html
+		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.diagnosticreport.radiology.server</property>
+		<defaultValue>http://fhir-dev.healthintersections.com.au/open</defaultValue>
+		<description>The URL of third party FHIR base server that use to retrieve Radiology Diagnostic Reports
+		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.concepts.conditions</property>
+		<defaultValue></defaultValue>
+		<description>The set of IDs of the concepts that can be matched to conditions which is needed to be stored as
+			Observations
+		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.uriPrefix</property>
+		<description>The URI prefix through which clients consuming web services will connect to the web application, should
+			be of the form http://{ipAddress}:{port}/{contextPath}
+		</description>
+	</globalProperty>
+	<privilege>
+		<name>View FHIR Client</name>
+		<description>Gives access to FHIR rest client</description>
+	</privilege>
 </module>
 

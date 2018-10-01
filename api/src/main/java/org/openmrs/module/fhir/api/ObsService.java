@@ -95,7 +95,7 @@ public interface ObsService extends OpenmrsService {
 	 * @param id uuid of the observation
 	 */
 	void deleteObs(String id);
-	
+
 	/**
 	 * Create observation
 	 *
@@ -103,12 +103,12 @@ public interface ObsService extends OpenmrsService {
 	 * @return observation fhir resource
 	 */
 	Observation createFHIRObservation(Observation observation);
-	
+
 	/**
 	 * Update observation
 	 *
 	 * @param observation the fhir observation to update
-	 * @param theId the uuid of the obs
+	 * @param theId       the uuid of the obs
 	 * @return observation fhir resource
 	 */
 	Observation updateFHIRObservation(Observation observation, String theId);

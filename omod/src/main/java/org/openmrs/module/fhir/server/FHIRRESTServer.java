@@ -40,13 +40,13 @@ import org.openmrs.module.fhir.providers.RestfulPractitionerResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulRelatedPersonProvider;
 import org.openmrs.module.fhir.util.FHIROmodConstants;
 
-import javax.servlet.ServletException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FHIRRESTServer extends RestfulServer {
 
 	private static final long serialVersionUID = 1L;
+
 	private static final String MODULE_SERVELET_PREFIX = "/fhir/fhirServelet";
 
 	/**
@@ -93,7 +93,7 @@ public class FHIRRESTServer extends RestfulServer {
 		registerInterceptor(loggingInterceptor);
 		loggingInterceptor.setLoggerName("test.accesslog");
 		loggingInterceptor
-		        .setMessageFormat("Source[${remoteAddr}] Operation[${operationType} ${idOrResourceName}] " +
+				.setMessageFormat("Source[${remoteAddr}] Operation[${operationType} ${idOrResourceName}] " +
 						"UA[${requestHeader.user-agent}] Params[${requestParameters}]");
 		ServerCapabilityStatementProvider sc = new ServerCapabilityStatementProvider(this);
 		this.setServerConformanceProvider(sc);

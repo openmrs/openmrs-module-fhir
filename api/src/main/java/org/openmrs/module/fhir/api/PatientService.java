@@ -98,19 +98,19 @@ public interface PatientService extends OpenmrsService {
 	 * @param id uuid of the patient
 	 */
 	void deletePatient(String id);
-	
+
 	/**
 	 * Create patient
 	 *
 	 * @param patient the patient to create
 	 */
 	Patient createFHIRPatient(Patient patient);
-	
+
 	/**
 	 * Update patient
 	 *
 	 * @param patient the patient to update
-	 * @param uuid the uuid of the patient to update
+	 * @param uuid    the uuid of the patient to update
 	 */
 	Patient updatePatient(Patient patient, String uuid);
 }

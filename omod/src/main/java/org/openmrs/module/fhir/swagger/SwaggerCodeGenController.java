@@ -21,7 +21,6 @@ import org.openmrs.module.fhir.filter.ForwardingFilter;
 import org.openmrs.module.fhir.swagger.codegen.SwaggerCodeGenerator;
 import org.openmrs.module.fhir.util.FHIROmodConstants;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,58 +29,60 @@ import java.io.FileInputStream;
 import java.io.OutputStream;
 
 public class SwaggerCodeGenController extends HttpServlet {
-    protected Log log = LogFactory.getLog(getClass());
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+	protected Log log = LogFactory.getLog(getClass());
 
-        String swaggerSpecificationJSON;
-        try {
-            StringBuilder baseUrl = new StringBuilder();
-            String scheme = request.getScheme();
-            int port = request.getServerPort();
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) {
 
-            baseUrl.append(scheme); // http, https
-            baseUrl.append(SwaggerDocConstants.SLASHES);
-            baseUrl.append(request.getServerName());
-            if ((SwaggerDocConstants.HTTP.equals(scheme) && port != 80) ||
-                    (SwaggerDocConstants.HTTPS.equals(scheme) && port != 443)) {
-                baseUrl.append(SwaggerDocConstants.COLON);
-                baseUrl.append(request.getServerPort());
-            }
+		String swaggerSpecificationJSON;
+		try {
+			StringBuilder baseUrl = new StringBuilder();
+			String scheme = request.getScheme();
+			int port = request.getServerPort();
 
-            baseUrl.append(request.getContextPath());
-            String resourcesUrl = Context.getAdministrationService().
-                    getGlobalProperty(FHIRConstants.URI_PREFIX_GLOBAL_PROPERTY_NAME, baseUrl.toString());
-            String urlWithoutScheme = "";
-            String basePath = ForwardingFilter.getContextPath() + "/ws/fhir";
-            if (SwaggerDocConstants.HTTP.equals(scheme)) {
-                urlWithoutScheme = resourcesUrl.replace(SwaggerDocConstants.HTTP_WITH_SLASHES,
-                        SwaggerDocConstants.STR_EMPTY);
-            } else if (SwaggerDocConstants.HTTPS.equals(scheme)) {
-                urlWithoutScheme = resourcesUrl.replace(SwaggerDocConstants.HTTPS_WITH_SLASHES,
-                        SwaggerDocConstants.STR_EMPTY);
-            }
-            urlWithoutScheme = urlWithoutScheme.replace(ForwardingFilter.getContextPath(), SwaggerDocConstants.STR_EMPTY);
-            SwaggerSpecificationCreator creator = new SwaggerSpecificationCreator(urlWithoutScheme, basePath, request);
-            swaggerSpecificationJSON = creator.buildJSON();
-            SwaggerCodeGenerator swaggerCodeGenerator = new SwaggerCodeGenerator();
-            String language = request.getParameter(FHIROmodConstants.LANGUAGE);
-            String path = swaggerCodeGenerator.generateSDK(language, swaggerSpecificationJSON);
-            File sdkZipFile = new File(path);
-            response.setHeader(FHIROmodConstants.CONTENT_TYPE, FHIROmodConstants.APPLICATION_ZIP_CHARSET_UTF_8);
-            response.setHeader(FHIROmodConstants.CONTENT_DISPOSITION, FHIROmodConstants.ATTACHMENT_FILENAME
-                                                                                  + "\"" + sdkZipFile.getName() + "\"");
-            FileInputStream fileInputStream = new FileInputStream(sdkZipFile);
-            OutputStream responseOutputStream = response.getOutputStream();
-            int bytes;
-            while ((bytes = fileInputStream.read()) != -1) {
-                responseOutputStream.write(bytes);
-            }
-            response.flushBuffer();
-        } catch (Exception e) {
-            log.error("Error while processing request", e);
-        }
-    }
+			baseUrl.append(scheme); // http, https
+			baseUrl.append(SwaggerDocConstants.SLASHES);
+			baseUrl.append(request.getServerName());
+			if ((SwaggerDocConstants.HTTP.equals(scheme) && port != 80) ||
+					(SwaggerDocConstants.HTTPS.equals(scheme) && port != 443)) {
+				baseUrl.append(SwaggerDocConstants.COLON);
+				baseUrl.append(request.getServerPort());
+			}
+
+			baseUrl.append(request.getContextPath());
+			String resourcesUrl = Context.getAdministrationService().
+					getGlobalProperty(FHIRConstants.URI_PREFIX_GLOBAL_PROPERTY_NAME, baseUrl.toString());
+			String urlWithoutScheme = "";
+			String basePath = ForwardingFilter.getContextPath() + "/ws/fhir";
+			if (SwaggerDocConstants.HTTP.equals(scheme)) {
+				urlWithoutScheme = resourcesUrl.replace(SwaggerDocConstants.HTTP_WITH_SLASHES,
+						SwaggerDocConstants.STR_EMPTY);
+			} else if (SwaggerDocConstants.HTTPS.equals(scheme)) {
+				urlWithoutScheme = resourcesUrl.replace(SwaggerDocConstants.HTTPS_WITH_SLASHES,
+						SwaggerDocConstants.STR_EMPTY);
+			}
+			urlWithoutScheme = urlWithoutScheme.replace(ForwardingFilter.getContextPath(), SwaggerDocConstants.STR_EMPTY);
+			SwaggerSpecificationCreator creator = new SwaggerSpecificationCreator(urlWithoutScheme, basePath, request);
+			swaggerSpecificationJSON = creator.buildJSON();
+			SwaggerCodeGenerator swaggerCodeGenerator = new SwaggerCodeGenerator();
+			String language = request.getParameter(FHIROmodConstants.LANGUAGE);
+			String path = swaggerCodeGenerator.generateSDK(language, swaggerSpecificationJSON);
+			File sdkZipFile = new File(path);
+			response.setHeader(FHIROmodConstants.CONTENT_TYPE, FHIROmodConstants.APPLICATION_ZIP_CHARSET_UTF_8);
+			response.setHeader(FHIROmodConstants.CONTENT_DISPOSITION, FHIROmodConstants.ATTACHMENT_FILENAME
+					+ "\"" + sdkZipFile.getName() + "\"");
+			FileInputStream fileInputStream = new FileInputStream(sdkZipFile);
+			OutputStream responseOutputStream = response.getOutputStream();
+			int bytes;
+			while ((bytes = fileInputStream.read()) != -1) {
+				responseOutputStream.write(bytes);
+			}
+			response.flushBuffer();
+		}
+		catch (Exception e) {
+			log.error("Error while processing request", e);
+		}
+	}
 
 }
 

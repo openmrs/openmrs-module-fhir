@@ -22,46 +22,46 @@ import java.util.List;
 
 public class RestfulGroupResourceProvider implements IResourceProvider {
 
-    private FHIRGroupResource groupResource;
+	private FHIRGroupResource groupResource;
 
-    public RestfulGroupResourceProvider() {
-        groupResource = new FHIRGroupResource();
-    }
+	public RestfulGroupResourceProvider() {
+		groupResource = new FHIRGroupResource();
+	}
 
-    @Override
-    public Class<? extends IBaseResource> getResourceType() {
-        return Group.class;
-    }
+	@Override
+	public Class<? extends IBaseResource> getResourceType() {
+		return Group.class;
+	}
 
-    @Create
-    public MethodOutcome createGroup(@ResourceParam Group group) {
-        return MethodOutcomeBuilder.buildCreate(groupResource.createGroup(group));
-    }
+	@Create
+	public MethodOutcome createGroup(@ResourceParam Group group) {
+		return MethodOutcomeBuilder.buildCreate(groupResource.createGroup(group));
+	}
 
-    @Update
-    public MethodOutcome updateGroup(@ResourceParam Group group, @IdParam IdType id) {
-        return MethodOutcomeBuilder.buildUpdate(groupResource.updateGroup(group, id.getIdPart()));
-    }
+	@Update
+	public MethodOutcome updateGroup(@ResourceParam Group group, @IdParam IdType id) {
+		return MethodOutcomeBuilder.buildUpdate(groupResource.updateGroup(group, id.getIdPart()));
+	}
 
-    @Delete
-    public void deleteGroup(@IdParam IdType id) {
-        groupResource.deleteGroup(id);
-    }
+	@Delete
+	public void deleteGroup(@IdParam IdType id) {
+		groupResource.deleteGroup(id);
+	}
 
-    @Read
-    public Group getResourceById(@IdParam IdType id) {
-        return groupResource.getByUniqueId(id);
-    }
+	@Read
+	public Group getResourceById(@IdParam IdType id) {
+		return groupResource.getByUniqueId(id);
+	}
 
-    @Search
-    public List<Group> findGroupsById(
-            @RequiredParam(name = Group.SP_RES_ID)TokenParam id) {
-        return groupResource.searchGroupById(id);
-    }
+	@Search
+	public List<Group> findGroupsById(
+			@RequiredParam(name = Group.SP_RES_ID) TokenParam id) {
+		return groupResource.searchGroupById(id);
+	}
 
-    @Search
-    public List<Group> findGroupsByName(
-            @RequiredParam(name = "name") StringParam name) {
-        return groupResource.searchGroupByName(name);
-    }
+	@Search
+	public List<Group> findGroupsByName(
+			@RequiredParam(name = "name") StringParam name) {
+		return groupResource.searchGroupByName(name);
+	}
 }

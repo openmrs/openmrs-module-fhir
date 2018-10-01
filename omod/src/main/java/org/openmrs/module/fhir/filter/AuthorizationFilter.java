@@ -85,7 +85,8 @@ public class AuthorizationFilter implements Filter {
 						if (log.isDebugEnabled()) {
 							log.debug("authenticated " + userAndPass[0]);
 						}
-					} catch (Exception ex) {
+					}
+					catch (Exception ex) {
 						// This filter never stops execution. If the user failed to
 						// authenticate, that will be caught later.
 					}

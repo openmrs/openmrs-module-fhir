@@ -16,98 +16,100 @@ import java.util.Set;
 
 public final class FHIRMedicationUtil {
 
-    // needed because name is required
-    private static final String DRUG_NAME_PLACEHOLDER = "drugName";
+	// needed because name is required
+	private static final String DRUG_NAME_PLACEHOLDER = "drugName";
 
-    public static Medication generateMedication(Drug drug) {
-        Medication medication = new Medication();
+	public static Medication generateMedication(Drug drug) {
+		Medication medication = new Medication();
 
-        medication.setId(drug.getUuid());
+		medication.setId(drug.getUuid());
 
-        for (ConceptMap map : drug.getDosageForm().getConceptMappings()) {
-            medication.setForm(FHIRUtils.getCodeableConceptConceptMappings(map));
-        }
+		for (ConceptMap map : drug.getDosageForm().getConceptMappings()) {
+			medication.setForm(FHIRUtils.getCodeableConceptConceptMappings(map));
+		}
 
-        for (ConceptMap map : drug.getConcept().getConceptMappings()) {
-            medication.setCode(FHIRUtils.getCodeableConceptConceptMappings(map));
-        }
+		for (ConceptMap map : drug.getConcept().getConceptMappings()) {
+			medication.setCode(FHIRUtils.getCodeableConceptConceptMappings(map));
+		}
 
-        medication.setIngredient(generateIngredient(drug.getIngredients()));
+		medication.setIngredient(generateIngredient(drug.getIngredients()));
 
-        return medication;
-    }
+		return medication;
+	}
 
-    public static Drug generateDrug(Medication medication, List<String> errors) {
-        Drug drug = new Drug();
+	public static Drug generateDrug(Medication medication, List<String> errors) {
+		Drug drug = new Drug();
 
-        drug.setName(DRUG_NAME_PLACEHOLDER);
+		drug.setName(DRUG_NAME_PLACEHOLDER);
 
-        if (medication.getId() != null) {
-            drug.setUuid(FHIRUtils.extractUuid(medication.getId()));
-        }
+		if (medication.getId() != null) {
+			drug.setUuid(FHIRUtils.extractUuid(medication.getId()));
+		}
 
-        drug.setDosageForm(FHIRUtils.getConceptFromCode(medication.getForm(), errors));
+		drug.setDosageForm(FHIRUtils.getConceptFromCode(medication.getForm(), errors));
 
-        drug.setConcept(FHIRUtils.getConceptFromCode(medication.getCode(), errors));
+		drug.setConcept(FHIRUtils.getConceptFromCode(medication.getCode(), errors));
 
-        try {
-            drug.setIngredients(generateOpenMRSIngredient(medication.getIngredient(), errors));
-        } catch (FHIRException e) {
-            errors.add(e.getMessage());
-        }
+		try {
+			drug.setIngredients(generateOpenMRSIngredient(medication.getIngredient(), errors));
+		}
+		catch (FHIRException e) {
+			errors.add(e.getMessage());
+		}
 
-        return drug;
+		return drug;
 
-    }
+	}
 
-    public static Drug updateDrug(Drug newDrug, Drug drugToUpdate) {
-        for (DrugReferenceMap drugReferenceMap : newDrug.getDrugReferenceMaps()) {
-            drugToUpdate.addDrugReferenceMap(drugReferenceMap);
-        }
-        drugToUpdate.setIngredients(newDrug.getIngredients());
-        drugToUpdate.setConcept(newDrug.getConcept());
-        drugToUpdate.setDosageForm(newDrug.getDosageForm());
-        drugToUpdate.setMaximumDailyDose(newDrug.getMaximumDailyDose());
-        drugToUpdate.setMinimumDailyDose(newDrug.getMinimumDailyDose());
-        drugToUpdate.setCombination(newDrug.getCombination());
-        drugToUpdate.setStrength(newDrug.getStrength());
-        drugToUpdate.setName(newDrug.getName());
+	public static Drug updateDrug(Drug newDrug, Drug drugToUpdate) {
+		for (DrugReferenceMap drugReferenceMap : newDrug.getDrugReferenceMaps()) {
+			drugToUpdate.addDrugReferenceMap(drugReferenceMap);
+		}
+		drugToUpdate.setIngredients(newDrug.getIngredients());
+		drugToUpdate.setConcept(newDrug.getConcept());
+		drugToUpdate.setDosageForm(newDrug.getDosageForm());
+		drugToUpdate.setMaximumDailyDose(newDrug.getMaximumDailyDose());
+		drugToUpdate.setMinimumDailyDose(newDrug.getMinimumDailyDose());
+		drugToUpdate.setCombination(newDrug.getCombination());
+		drugToUpdate.setStrength(newDrug.getStrength());
+		drugToUpdate.setName(newDrug.getName());
 
-        return drugToUpdate;
-    }
+		return drugToUpdate;
+	}
 
-//region OpenMRS methods
-    private static Collection<DrugIngredient> generateOpenMRSIngredient(
-            List<Medication.MedicationIngredientComponent> ingredient, List<String> errors) throws FHIRException {
-        Set<DrugIngredient> drugIngredients = new HashSet<>();
+	//region OpenMRS methods
+	private static Collection<DrugIngredient> generateOpenMRSIngredient(
+			List<Medication.MedicationIngredientComponent> ingredient, List<String> errors) throws FHIRException {
+		Set<DrugIngredient> drugIngredients = new HashSet<>();
 
-        for (Medication.MedicationIngredientComponent component : ingredient) {
-            DrugIngredient drugIngredient = new DrugIngredient();
-            Concept ingredientConcept = FHIRUtils.getConceptFromCode(component.getItemCodeableConcept(), errors);
-            drugIngredient.setIngredient(ingredientConcept);
-            drugIngredients.add(drugIngredient);
-        }
+		for (Medication.MedicationIngredientComponent component : ingredient) {
+			DrugIngredient drugIngredient = new DrugIngredient();
+			Concept ingredientConcept = FHIRUtils.getConceptFromCode(component.getItemCodeableConcept(), errors);
+			drugIngredient.setIngredient(ingredientConcept);
+			drugIngredients.add(drugIngredient);
+		}
 
-        return drugIngredients;
-    }
-//endregion
+		return drugIngredients;
+	}
+	//endregion
 
-//region FHIR methods
-    private static List<Medication.MedicationIngredientComponent> generateIngredient(Collection<DrugIngredient> drugIngredients) {
-        List<Medication.MedicationIngredientComponent> ingredientComponents = new ArrayList<>();
+	//region FHIR methods
+	private static List<Medication.MedicationIngredientComponent> generateIngredient(
+			Collection<DrugIngredient> drugIngredients) {
+		List<Medication.MedicationIngredientComponent> ingredientComponents = new ArrayList<>();
 
-        for (DrugIngredient drugIngredient : drugIngredients) {
+		for (DrugIngredient drugIngredient : drugIngredients) {
 
-            for (ConceptMap map : drugIngredient.getIngredient().getConceptMappings()) {
-                Medication.MedicationIngredientComponent ingredientComponent =
-                        new Medication.MedicationIngredientComponent(
-                                FHIRUtils.getCodeableConceptConceptMappings(map)
-                        );
-                ingredientComponents.add(ingredientComponent);
-            }
-        }
+			for (ConceptMap map : drugIngredient.getIngredient().getConceptMappings()) {
+				Medication.MedicationIngredientComponent ingredientComponent =
+						new Medication.MedicationIngredientComponent(
+								FHIRUtils.getCodeableConceptConceptMappings(map)
+						);
+				ingredientComponents.add(ingredientComponent);
+			}
+		}
 
-        return ingredientComponents;
-    }
-//endregion
+		return ingredientComponents;
+	}
+	//endregion
 }

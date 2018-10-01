@@ -6,18 +6,18 @@ import java.util.List;
 
 public interface GenericPersonStrategy {
 
-    Person getPerson(String uuid);
+	Person getPerson(String uuid);
 
-    List<Person> searchPersonByUuid(String uuid);
+	List<Person> searchPersonByUuid(String uuid);
 
-    List<Person> searchPersons(String name, Integer birthYear, String gender);
+	List<Person> searchPersons(String name, Integer birthYear, String gender);
 
-    List<Person> searchPersonsByName(String name);
+	List<Person> searchPersonsByName(String name);
 
-    Person createFHIRPerson(Person person);
+	Person createFHIRPerson(Person person);
 
-    Person updateFHIRPerson(Person person, String uuid);
+	Person updateFHIRPerson(Person person, String uuid);
 
-    void retirePerson(String uuid);
+	void retirePerson(String uuid);
 
 }

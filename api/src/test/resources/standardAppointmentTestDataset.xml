@@ -1,27 +1,61 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
-	<appointmentscheduling_appointment_type appointment_type_id="1" name="Initial HIV Clinic Appointment" duration="54" description="Initial HIV Clinic Appointment Description" creator="1" date_created="2005-01-01 00:00:00.0" retired="false" uuid="c0c579b0-8e59-401d-8a4a-976a0b183519" confidential="1"/>
-	<appointmentscheduling_appointment_type appointment_type_id="2" name="Return TB Clinic Appointment"  duration="5" description="Return TB Clinic Appointment Description" creator="1" date_created="2005-01-01 00:00:00.0" retired="false" uuid="759799ab-c9a5-435e-b671-77773ada74e4" confidential="0"/>
-	<appointmentscheduling_appointment_type appointment_type_id="3" name="Hospitalization2" description="Hospitalization Description" duration="10" creator="1" date_created="2005-01-01 00:00:00.0" retired="false" retire_reason="Some Retire Reason" uuid="759799ab-c9a5-435e-b671-77773ada74e6" confidential="0"/>
-	<appointmentscheduling_appointment_type appointment_type_id="4" name="Hospitalization" description="Hospitalization Description" duration="10" creator="1" date_created="2005-01-01 00:00:00.0" retired="true" retire_reason="Some Retire Reason" uuid="759799ab-c9a5-435e-b671-77373ada74e6" confidential="0"/>
+	<appointmentscheduling_appointment_type appointment_type_id="1" name="Initial HIV Clinic Appointment" duration="54"
+											description="Initial HIV Clinic Appointment Description" creator="1"
+											date_created="2005-01-01 00:00:00.0" retired="false"
+											uuid="c0c579b0-8e59-401d-8a4a-976a0b183519" confidential="1"/>
+	<appointmentscheduling_appointment_type appointment_type_id="2" name="Return TB Clinic Appointment" duration="5"
+											description="Return TB Clinic Appointment Description" creator="1"
+											date_created="2005-01-01 00:00:00.0" retired="false"
+											uuid="759799ab-c9a5-435e-b671-77773ada74e4" confidential="0"/>
+	<appointmentscheduling_appointment_type appointment_type_id="3" name="Hospitalization2"
+											description="Hospitalization Description" duration="10" creator="1"
+											date_created="2005-01-01 00:00:00.0" retired="false"
+											retire_reason="Some Retire Reason" uuid="759799ab-c9a5-435e-b671-77773ada74e6"
+											confidential="0"/>
+	<appointmentscheduling_appointment_type appointment_type_id="4" name="Hospitalization"
+											description="Hospitalization Description" duration="10" creator="1"
+											date_created="2005-01-01 00:00:00.0" retired="true"
+											retire_reason="Some Retire Reason" uuid="759799ab-c9a5-435e-b671-77373ada74e6"
+											confidential="0"/>
 
-	<appointmentscheduling_appointment_block appointment_block_id="1" start_date="2005-01-01 00:00:00.0" end_date="2005-01-01 11:00:00.0" provider_id="1" location_id="3"  uuid="c0c579b0-8e59-401d-8a4a-976a0b183599" date_created="2005-01-01 00:00:00.0" date_changed="2005-01-01 00:00:00.0" date_voided="2005-01-01 00:00:00.0" voided="false" creator="1" changed_by="1"/>
+	<appointmentscheduling_appointment_block appointment_block_id="1" start_date="2005-01-01 00:00:00.0"
+											 end_date="2005-01-01 11:00:00.0" provider_id="1" location_id="3"
+											 uuid="c0c579b0-8e59-401d-8a4a-976a0b183599" date_created="2005-01-01 00:00:00.0"
+											 date_changed="2005-01-01 00:00:00.0" date_voided="2005-01-01 00:00:00.0"
+											 voided="false" creator="1" changed_by="1"/>
 
-	<provider provider_id="1" person_id="502" identifier="Test Provider" creator="1" date_created="2005-01-01 00:00:00.0" retired="false" uuid="c0c549b0-8e59-401d-8a4a-976a0b183599" />
+	<provider provider_id="1" person_id="502" identifier="Test Provider" creator="1" date_created="2005-01-01 00:00:00.0"
+			  retired="false" uuid="c0c549b0-8e59-401d-8a4a-976a0b183599"/>
 
 	<appointmentscheduling_block_type_map appointment_block_id="1" appointment_type_id="1"/>
 
-	<appointmentscheduling_time_slot time_slot_id="1" appointment_block_id="1" start_date="2006-01-01 00:00:00.0" end_date="2006-01-01 01:00:00.0" uuid="c0c579b0-8e59-401d-8a4a-976a0b183604" date_created="2005-01-01 00:00:00.0" voided="false" creator="1" />
+	<appointmentscheduling_time_slot time_slot_id="1" appointment_block_id="1" start_date="2006-01-01 00:00:00.0"
+									 end_date="2006-01-01 01:00:00.0" uuid="c0c579b0-8e59-401d-8a4a-976a0b183604"
+									 date_created="2005-01-01 00:00:00.0" voided="false" creator="1"/>
 
-	<visit visit_id="1" patient_id="2" date_started="2005-01-01 00:00:00.0" uuid="c0c579b0-8e59-401d-8a4a-976a0b183600" date_created="2005-01-01 00:00:00.0" voided="false" creator="1" />
+	<visit visit_id="1" patient_id="2" date_started="2005-01-01 00:00:00.0" uuid="c0c579b0-8e59-401d-8a4a-976a0b183600"
+		   date_created="2005-01-01 00:00:00.0" voided="false" creator="1"/>
 	<patient patient_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false"/>
 
-	<appointmentscheduling_appointment appointment_id="1" time_slot_id="1" appointment_type_id="1" patient_id="1" status="SCHEDULED" uuid="c0c579b0-8e59-401d-8a4a-976a0b183601" date_created="2005-01-01 00:00:00.0" voided="false" creator="1"/>
+	<appointmentscheduling_appointment appointment_id="1" time_slot_id="1" appointment_type_id="1" patient_id="1"
+									   status="SCHEDULED" uuid="c0c579b0-8e59-401d-8a4a-976a0b183601"
+									   date_created="2005-01-01 00:00:00.0" voided="false" creator="1"/>
 
-	<appointmentscheduling_appointment_status_history appointment_status_history_id="1" appointment_id="1" status="WAITING" start_date="2005-01-01 00:00:00.0" end_date="2005-01-01 01:00:00.0"/>
+	<appointmentscheduling_appointment_status_history appointment_status_history_id="1" appointment_id="1" status="WAITING"
+													  start_date="2005-01-01 00:00:00.0" end_date="2005-01-01 01:00:00.0"/>
 
-	<appointmentscheduling_appointment_request appointment_request_id="1" appointment_type_id="1" patient_id="2" provider_id="1" status="PENDING" requested_on="2014-01-01 00:00:00.0" requested_by="1" min_time_frame_value="0" min_time_frame_units="DAYS" max_time_frame_value="7" max_time_frame_units="DAYS" notes="ASAP" uuid="862c94f0-3dae-11e4-916c-0800200c9a66" date_created="2005-01-01 00:00:00.0" voided="false" creator="1"/>
+	<appointmentscheduling_appointment_request appointment_request_id="1" appointment_type_id="1" patient_id="2"
+											   provider_id="1" status="PENDING" requested_on="2014-01-01 00:00:00.0"
+											   requested_by="1" min_time_frame_value="0" min_time_frame_units="DAYS"
+											   max_time_frame_value="7" max_time_frame_units="DAYS" notes="ASAP"
+											   uuid="862c94f0-3dae-11e4-916c-0800200c9a66"
+											   date_created="2005-01-01 00:00:00.0" voided="false" creator="1"/>
 
-	<location location_id="2" name="Xanadu" description="A metaphor for opulence, most famously in the English Romantic Samuel Taylor Coleridge&apos;s poem Kubla Khan." address1="800 Boylston Street" address2="" city_village="Boston" state_province="MA" postal_code="02115" country="USA" latitude="" longitude="" creator="1" date_created="2008-08-15 13:46:50.0" retired="false" uuid="9356400c-a5a2-4532-8f2b-2361b3446eb7"/>
+	<location location_id="2" name="Xanadu"
+			  description="A metaphor for opulence, most famously in the English Romantic Samuel Taylor Coleridge&apos;s poem Kubla Khan."
+			  address1="800 Boylston Street" address2="" city_village="Boston" state_province="MA" postal_code="02115"
+			  country="USA" latitude="" longitude="" creator="1" date_created="2008-08-15 13:46:50.0" retired="false"
+			  uuid="9356400c-a5a2-4532-8f2b-2361b3446eb7"/>
 
 </dataset>

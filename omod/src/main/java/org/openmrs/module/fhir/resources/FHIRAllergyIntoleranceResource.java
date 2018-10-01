@@ -61,7 +61,8 @@ public class FHIRAllergyIntoleranceResource extends Resource {
 	public List<AllergyIntolerance> searchAllergiesByPatientUuid(ReferenceParam uuid) {
 		List<AllergyIntolerance> fhirAllergies = new ArrayList<>();
 		if (Patient.SP_RES_ID.equals(uuid.getChain())) {
-			fhirAllergies = Context.getService(AllergyIntoleranceService.class).searchAllergiesByPatientUuid(uuid.getValue());
+			fhirAllergies = Context.getService(AllergyIntoleranceService.class)
+					.searchAllergiesByPatientUuid(uuid.getValue());
 		}
 		return fhirAllergies;
 	}

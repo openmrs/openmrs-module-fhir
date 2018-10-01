@@ -43,7 +43,7 @@ public interface DiagnosticReportService {
 	 * Updates OpenMRS objects from FHIR Diagnostic Report
 	 *
 	 * @param diagnosticReport FHIR Diagnostic Report
-	 * @param theId The ID of Stored Diagnostic Report to be updated
+	 * @param theId            The ID of Stored Diagnostic Report to be updated
 	 * @return Updated FHIR Diagnostic Report
 	 */
 	DiagnosticReport updateFHIRDiagnosticReport(DiagnosticReport diagnosticReport, String theId);
@@ -73,6 +73,15 @@ public interface DiagnosticReportService {
 	DiagnosticReportHandler getHandler(String key) throws APIException;
 
 	/**
+	 * Gets the handlers map registered
+	 *
+	 * @return map of keys to handlers
+	 * @throws APIException
+	 * @should never return null
+	 */
+	Map<String, DiagnosticReportHandler> getHandlers() throws APIException;
+
+	/**
 	 * <u>Add</u> the given map to this service's handlers. This method registers each
 	 * DiagnosticReportHandler to this service. If the given String key exists, that handler is
 	 * overwritten with the given handler For most situations, this map is set via spring, see the
@@ -82,15 +91,6 @@ public interface DiagnosticReportService {
 	 * @throws APIException
 	 */
 	void setHandlers(Map<String, DiagnosticReportHandler> handlers) throws APIException;
-
-	/**
-	 * Gets the handlers map registered
-	 *
-	 * @return map of keys to handlers
-	 * @throws APIException
-	 * @should never return null
-	 */
-	Map<String, DiagnosticReportHandler> getHandlers() throws APIException;
 
 	/**
 	 * Registers the given handler with the given key If the given String key exists, that handler

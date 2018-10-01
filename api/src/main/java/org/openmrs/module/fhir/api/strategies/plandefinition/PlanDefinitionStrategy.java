@@ -67,7 +67,8 @@ public class PlanDefinitionStrategy implements GenericPlanDefinitionStrategy {
 
 		try {
 			getProgramWorkflowService().retireProgram(program, FHIRConstants.FHIR_RETIRED_MESSAGE);
-		} catch (APIException apie) {
+		}
+		catch (APIException apie) {
 			throw new MethodNotAllowedException(String.format("OpenMRS has failed to retire program '%s': %s", uuid,
 					apie.getMessage()));
 		}

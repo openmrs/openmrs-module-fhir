@@ -50,7 +50,7 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	 * operations should return a single resource instance.
 	 *
 	 * @param theId The read operation takes one parameter, which must be of type IdType and must be
-	 *            annotated with the "@Read.IdParam" annotation.
+	 *              annotated with the "@Read.IdParam" annotation.
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read
@@ -74,7 +74,8 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	 * @param theFamilyName object contaning the requested family name
 	 */
 	@Search
-	public List<Practitioner> findPractitionersByFamilyName(@RequiredParam(name = Practitioner.SP_FAMILY) StringParam theFamilyName) {
+	public List<Practitioner> findPractitionersByFamilyName(
+			@RequiredParam(name = Practitioner.SP_FAMILY) StringParam theFamilyName) {
 		return practitionerResource.searchByFamilyName(theFamilyName);
 	}
 
@@ -83,7 +84,7 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	 *
 	 * @param name name of the Practitioner
 	 * @return This method returns a list of Practitioners. This list may contain multiple matching
-	 *         resources, or it may also be empty.
+	 * resources, or it may also be empty.
 	 */
 	@Search
 	public List<Practitioner> findPractitionersByName(@RequiredParam(name = Practitioner.SP_NAME) StringParam name) {
@@ -95,10 +96,11 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	 *
 	 * @param identifier
 	 * @return This method returns a list of Practitioners. This list may contain multiple matching
-	 *         resources, or it may also be empty.
+	 * resources, or it may also be empty.
 	 */
 	@Search
-	public List<Practitioner> findPractitionersByIdentifier(@RequiredParam(name = Practitioner.SP_IDENTIFIER) TokenParam identifier) {
+	public List<Practitioner> findPractitionersByIdentifier(
+			@RequiredParam(name = Practitioner.SP_IDENTIFIER) TokenParam identifier) {
 		return practitionerResource.searchByIdentifier(identifier);
 	}
 
@@ -107,13 +109,14 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	 *
 	 * @param givenName given name of the Practitioner
 	 * @return This method returns a list of Practitioners. This list may contain multiple matching
-	 *         resources, or it may also be empty.
+	 * resources, or it may also be empty.
 	 */
 	@Search
-	public List<Practitioner> findPractitionersByGivenName(@RequiredParam(name = Practitioner.SP_GIVEN) StringParam givenName) {
+	public List<Practitioner> findPractitionersByGivenName(
+			@RequiredParam(name = Practitioner.SP_GIVEN) StringParam givenName) {
 		return practitionerResource.searchByGivenName(givenName);
 	}
-	
+
 	/**
 	 * Create Practitioner
 	 *
@@ -123,12 +126,14 @@ public class RestfulPractitionerResourceProvider implements IResourceProvider {
 	public MethodOutcome createFHIRPractitioner(@ResourceParam Practitioner practitioner) {
 		return MethodOutcomeBuilder.buildCreate(practitionerResource.createFHIRPractitioner(practitioner));
 	}
-	
+
 	@Update
 	public MethodOutcome updatePractitioner(@ResourceParam Practitioner practitioner, @IdParam IdType theId) {
 		try {
-			return MethodOutcomeBuilder.buildUpdate(practitionerResource.updatePractitioner(practitioner, theId.getIdPart()));
-		} catch (Exception e) {
+			return MethodOutcomeBuilder
+					.buildUpdate(practitionerResource.updatePractitioner(practitioner, theId.getIdPart()));
+		}
+		catch (Exception e) {
 			return MethodOutcomeBuilder.buildCustom("Following exception occured " + e.getMessage());
 		}
 	}

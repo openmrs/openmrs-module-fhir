@@ -93,7 +93,7 @@ public class LocationServiceImpl extends BaseOpenmrsService implements LocationS
 	public Location updateLocation(String uuid, Location location) {
 		return LocationStrategyUtil.getLocationStrategy().updateLocation(uuid, location);
 	}
-	
+
 	/**
 	 * @see org.openmrs.module.fhir.api.LocationService#createLocation(Location)
 	 */

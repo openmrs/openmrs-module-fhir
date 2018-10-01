@@ -6,18 +6,18 @@ import java.util.List;
 
 public interface GenericLocationStrategy {
 
-    Location getLocation(String uuid);
+	Location getLocation(String uuid);
 
-    List<Location> searchLocationsByUuid(String uuid);
+	List<Location> searchLocationsByUuid(String uuid);
 
-    List<Location> searchLocationsByStatus(boolean status);
+	List<Location> searchLocationsByStatus(boolean status);
 
-    List<Location> searchLocationsByName(String name);
+	List<Location> searchLocationsByName(String name);
 
-    void deleteLocation(String uuid);
+	void deleteLocation(String uuid);
 
-    Location updateLocation(String uuid, Location location);
+	Location updateLocation(String uuid, Location location);
 
-    Location createLocation(Location location);
+	Location createLocation(Location location);
 
 }

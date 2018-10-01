@@ -26,6 +26,10 @@ public class ForwardingFilter implements Filter {
 
 	private static String openmrsPath;
 
+	public static String getContextPath() {
+		return openmrsPath;
+	}
+
 	@Override
 	public void init(FilterConfig fc) throws ServletException {
 		openmrsPath = fc.getServletContext().getContextPath();
@@ -47,9 +51,5 @@ public class ForwardingFilter implements Filter {
 
 	@Override
 	public void destroy() {
-	}
-
-	public static String getContextPath() {
-		return openmrsPath;
 	}
 }

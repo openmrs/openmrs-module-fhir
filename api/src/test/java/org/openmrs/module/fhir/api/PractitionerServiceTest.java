@@ -39,7 +39,7 @@ import static org.junit.Assert.assertNotNull;
 public class PractitionerServiceTest extends BaseModuleContextSensitiveTest {
 
 	protected static final String PRACTITIONER_INITIAL_DATA_XML = "org/openmrs/api/include/ProviderServiceTest-initial.xml";
-	
+
 	protected static final String PERSOM_INITIAL_DATA_XML = "org/openmrs/api/include/PersonServiceTest-createPersonPurgeVoidTest.xml";
 
 	public PractitionerService getService() {
@@ -103,11 +103,11 @@ public class PractitionerServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals(practitionerList.size(), 1);
 		assertEquals(practitionerUuid, practitionerList.get(0).getId().toString());
 	}
-	
+
 	@Test
 	public void createPractitioner_shoulcreateNewPerson() {
 		Practitioner practitioner = new Practitioner();
-		
+
 		HumanName fhirName = new HumanName();
 		fhirName.setFamily("xxx");
 		StringType givenName = new StringType();
@@ -118,23 +118,23 @@ public class PractitionerServiceTest extends BaseModuleContextSensitiveTest {
 		List<HumanName> names = new ArrayList<HumanName>();
 		names.add(fhirName);
 		practitioner.setName(names);
-		
+
 		practitioner.setGender(Enumerations.AdministrativeGender.MALE);
 		Date bdate = new Date();
 		practitioner.setBirthDate(bdate);
-		
+
 		List<Identifier> identifiers = new ArrayList<Identifier>();
 		Identifier identifier = new Identifier();
 		identifier.setValue("fhirTest");
 		identifiers.add(identifier);
 		practitioner.setIdentifier(identifiers);
-		
+
 		Practitioner practitionerNew = getService().createFHIRPractitioner(practitioner);
 		assertNotNull(practitionerNew);
 		List<HumanName> humanNameDts = practitionerNew.getName();
 		String fmlyName = humanNameDts.get(0).getFamily();
 		assertEquals(fmlyName, "xxx");
-		List<StringType> gvnNames =  humanNameDts.get(0).getGiven();
+		List<StringType> gvnNames = humanNameDts.get(0).getGiven();
 		assertEquals(gvnNames.get(0).getValue(), "yyy");
 		assertEquals(practitionerNew.getGender(), Enumerations.AdministrativeGender.MALE);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -143,36 +143,36 @@ public class PractitionerServiceTest extends BaseModuleContextSensitiveTest {
 		identifier = identifiers.get(0);
 		assertEquals(identifier.getValue(), "fhirTest");
 	}
-	
+
 	@Test
 	public void createPractitioner_shoulNotcreateNewPerson() {
 		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
 		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);
 		Person personfhir = FHIRPersonUtil.generatePerson(person);
-		
+
 		Practitioner practitioner = new Practitioner();
 		practitioner.setGender(personfhir.getGenderElement().getValue());
 		practitioner.setBirthDate(personfhir.getBirthDate());
-		
+
 		practitioner.setName(personfhir.getName());
-		
+
 		List<Identifier> identifiers = new ArrayList<Identifier>();
 		Identifier idnt = new Identifier();
 		idnt.setValue("fhirTest");
 		identifiers.add(idnt);
 		practitioner.setIdentifier(identifiers);
-		
+
 		Practitioner practitionerNew = getService().createFHIRPractitioner(practitioner);
-		
+
 		Set<PersonName> naa = person.getNames();
 		PersonName name = null;
-		for (Iterator<PersonName> naam = naa.iterator(); naam.hasNext();) {
+		for (Iterator<PersonName> naam = naa.iterator(); naam.hasNext(); ) {
 			name = naam.next();
 		}
-		
+
 		Set<org.openmrs.Person> personList = Context.getPersonService().getSimilarPeople(name.getFullName(),
-		    1900 + person.getBirthdate().getYear(), person.getGender());
+				1900 + person.getBirthdate().getYear(), person.getGender());
 		assertEquals(personList.size(), 1); // which means no new person created for the given representation.
-											// It has mapped the representation to a existing person.
+		// It has mapped the representation to a existing person.
 	}
 }

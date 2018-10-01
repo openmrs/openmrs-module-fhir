@@ -5,10 +5,10 @@ import org.openmrs.module.fhir.api.util.FHIRUtils;
 
 public class PractitionerStrategyUtil {
 
-    public static PractitionerStrategy getPractitionerStrategy() {
-        String strategy = FHIRUtils.getPractitionerStrategy();
+	public static PractitionerStrategy getPractitionerStrategy() {
+		String strategy = FHIRUtils.getPractitionerStrategy();
 
-        return (strategy == null) ? new PractitionerStrategy() :
-                Context.getRegisteredComponent(strategy, PractitionerStrategy.class);
-    }
+		return (strategy == null) ? new PractitionerStrategy() :
+				Context.getRegisteredComponent(strategy, PractitionerStrategy.class);
+	}
 }

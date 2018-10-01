@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 @Controller
 public class FHIRManageController {
-	
+
 	protected final static Log log = LogFactory.getLog(FHIRManageController.class);
 
 	@RequestMapping(value = "/module/fhir/manage", method = RequestMethod.GET)

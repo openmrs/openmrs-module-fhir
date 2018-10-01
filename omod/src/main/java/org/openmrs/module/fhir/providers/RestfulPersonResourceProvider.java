@@ -38,11 +38,11 @@ import java.util.List;
 
 public class RestfulPersonResourceProvider implements IResourceProvider {
 
-	private FHIRPersonResource personResource;
-
 	private static final String ERROR_MESSAGE = "No Person is associated with the given UUID to update."
 			+ " Please make sure you have set at lease one non-delete name, Gender and Birthdate to create a new "
 			+ "Person with the given UUID";
+
+	private FHIRPersonResource personResource;
 
 	public RestfulPersonResourceProvider() {
 		this.personResource = new FHIRPersonResource();
@@ -87,8 +87,8 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	 */
 	@Search
 	public List<Person> findPersons(@RequiredParam(name = Person.SP_NAME) StringParam name,
-	                                 @RequiredParam(name = Person.SP_BIRTHDATE) DateParam birthDate,
-	                                 @RequiredParam(name = Person.SP_GENDER) StringParam gender) {
+			@RequiredParam(name = Person.SP_BIRTHDATE) DateParam birthDate,
+			@RequiredParam(name = Person.SP_GENDER) StringParam gender) {
 		Integer birthYear = 1900 + birthDate.getValue().getYear(); // e.g. 2011-01-02
 		return personResource.searchPersons(name.getValue(), birthYear, gender);
 	}
@@ -121,7 +121,8 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	public MethodOutcome updatePersonConditional(@ResourceParam Person thePerson, @IdParam IdType theId) {
 		try {
 			return MethodOutcomeBuilder.buildUpdate(personResource.updateFHIRPerson(thePerson, theId.getIdPart()));
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			return MethodOutcomeBuilder.buildCustom(ERROR_MESSAGE);
 		}
 	}
@@ -135,20 +136,20 @@ public class RestfulPersonResourceProvider implements IResourceProvider {
 	public void deletePerson(@IdParam IdType theId) {
 		personResource.deletePerson(theId);
 	}
-	
+
 	/**
 	 * Update Person by name.
 	 *
-	 * @param person {@link ca.uhn.fhir.model.dstu2.resource.Person} object provided by the
-	 *            {@link ca.uhn.fhir .rest.server.RestfulServer}
-	 * @param theId Only one of theId or theConditional will have a value and the other will be
-	 *            null, depending on the URL passed into the server
+	 * @param person         {@link ca.uhn.fhir.model.dstu2.resource.Person} object provided by the
+	 *                       {@link ca.uhn.fhir .rest.server.RestfulServer}
+	 * @param theId          Only one of theId or theConditional will have a value and the other will be
+	 *                       null, depending on the URL passed into the server
 	 * @param theConditional This will have a value like "Person?name=John
 	 * @return MethodOutcome which contains the status of the operation
 	 */
 	@Update
 	public MethodOutcome updatePersonByName(@ResourceParam Person person, @IdParam IdType theId,
-	                                        @ConditionalUrlParam String theConditional) {
+			@ConditionalUrlParam String theConditional) {
 		if (theConditional != null) {
 			int startIndex = theConditional.lastIndexOf('=');
 			List<Person> personList = personResource.searchPersons(theConditional.substring(startIndex + 1), null, null);

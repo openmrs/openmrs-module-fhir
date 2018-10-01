@@ -51,8 +51,9 @@ import static org.junit.Assert.assertTrue;
 public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 
 	protected static final String OBS_INITIAL_DATA_XML = "org/openmrs/api/include/ObsServiceTest-initial.xml";
+
 	protected static final String CONCEPT_CUSTOM_INITIAL_DATA_XML = "Concept_customTestData.xml";
-	
+
 	protected static final String PERSOM_INITIAL_DATA_XML = "org/openmrs/api/include/PersonServiceTest-createPersonPurgeVoidTest.xml";
 
 	public ObsService getService() {
@@ -135,7 +136,7 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		assertNotNull(obs);
 		assertEquals(5, obs.size());
 	}
-	
+
 	@Test
 	public void deleteObs_shouldDeleteTheSpecifiedObs() {
 		org.openmrs.api.ObsService obsService = Context.getObsService();
@@ -147,10 +148,10 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		obs = obsService.getObs(9);
 		assertTrue(obs.isVoided());
 	}
-	
+
 	@Test
 	public void createObs_shouldCreatedObs() {
-		
+
 		String openmrsPersonUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
 		String openmrsConceptUuid = "4a5048b1-cf85-4c64-9339-7cab41e5e364";
 		Date openmrsDateApplies = new Date();
@@ -160,7 +161,7 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		obsn.setValueNumeric(8d);
 		obsn.setStatus(Status.PRELIMINARY);
 		obsn.setInterpretation(Interpretation.HIGH);
-		
+
 		Observation newObs = FHIRObsUtil.generateObs(obsn);
 		newObs = Context.getService(ObsService.class).createFHIRObservation(newObs);
 		obsn = Context.getObsService().getObsByUuid(newObs.getId());
@@ -169,7 +170,7 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		List<Coding> dts = dt.getCoding();
 		Coding coding = dts.get(0);
 		String fhirConceptUuid = coding.getCode();
-		
+
 		Reference subjectref = newObs.getSubject();
 		String fhirPatientUuid = subjectref.getId();
 
@@ -194,11 +195,11 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		String obsUuid = "be3a4d7a-f9ab-47bb-aaad-bc0b452fcda4";
 		Observation fhirObservation = getService().getObs(obsUuid);
 		fhirObservation.setStatus(Observation.ObservationStatus.AMENDED);
-		
+
 		CodeableConcept interpretation = new CodeableConcept();
 		interpretation.setText("CRITICALLY_LOW");
 		fhirObservation.setInterpretation(interpretation);
-		
+
 		Encounter encounter = Context.getEncounterService().getEncounter(3);
 		Obs obs = FHIRObsUtil.generateOpenMRSObsWithEncounter(fhirObservation, encounter, new ArrayList<String>());
 		assertNotNull(obs);
@@ -207,10 +208,9 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals(Interpretation.CRITICALLY_LOW, obs.getInterpretation());
 	}
 
-
 	@Test
 	public void createObsWithEncounterContext_shouldCreatedObsWithEncounterContext() {
-		
+
 		String openmrsPersonUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
 		String openmrsConceptUuid = "4a5048b1-cf85-4c64-9339-7cab41e5e364";
 		Date openmrsDateApplies = new Date();
@@ -220,11 +220,11 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		obsn.setValueNumeric(8d);
 		obsn.setStatus(Status.PRELIMINARY);
 		obsn.setInterpretation(Interpretation.HIGH);
-		
+
 		Reference encRef = new Reference();
 		String encRefUri = "encounter/6519d653-393b-4118-9c83-a3715b82d4ac";
 		encRef.setReference(encRefUri);
-		
+
 		Observation newObs = FHIRObsUtil.generateObs(obsn);
 		newObs.setContext(encRef);
 		newObs = Context.getService(ObsService.class).createFHIRObservation(newObs);
@@ -234,7 +234,7 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		List<Coding> dts = dt.getCoding();
 		Coding coding = dts.get(0);
 		String fhirConceptUuid = coding.getCode();
-		
+
 		Reference subjectref = newObs.getSubject();
 		String fhirPatientUuid = subjectref.getId();
 
@@ -253,6 +253,5 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals(Status.PRELIMINARY.name().toLowerCase(), newObs.getStatus().toCode());
 		assertEquals(Interpretation.HIGH.name(), newObs.getInterpretation().getText());
 	}
-
 
 }

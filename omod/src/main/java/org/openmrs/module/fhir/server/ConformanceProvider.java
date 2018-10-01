@@ -21,29 +21,31 @@ import javax.servlet.http.HttpServletRequest;
 
 public class ConformanceProvider {
 
-    private static CapabilityStatement conformance = null;
-    private static RestfulServer restfulServer;
+	private static CapabilityStatement conformance = null;
 
-    public static void setConformance(CapabilityStatement conformanceStatement) {
-        conformance = conformanceStatement;
-    }
+	private static RestfulServer restfulServer;
 
-    public static CapabilityStatement getConformance(HttpServletRequest request) {
-        if(conformance == null) {
-            //Get server conformance provider
-            ServerCapabilityStatementProvider confProvider = (ServerCapabilityStatementProvider)restfulServer.getServerConformanceProvider();
-            conformance = confProvider.getServerConformance(request);
-            return conformance;
-        } else {
-            return conformance;
-        }
-    }
+	public static void setConformance(CapabilityStatement conformanceStatement) {
+		conformance = conformanceStatement;
+	}
 
-    public static RestfulServer getRestfulServer() {
-        return restfulServer;
-    }
+	public static CapabilityStatement getConformance(HttpServletRequest request) {
+		if (conformance == null) {
+			//Get server conformance provider
+			ServerCapabilityStatementProvider confProvider = (ServerCapabilityStatementProvider) restfulServer
+					.getServerConformanceProvider();
+			conformance = confProvider.getServerConformance(request);
+			return conformance;
+		} else {
+			return conformance;
+		}
+	}
 
-    public void setRestfulServer(RestfulServer restfulServer) {
-        this.restfulServer = restfulServer;
-    }
+	public static RestfulServer getRestfulServer() {
+		return restfulServer;
+	}
+
+	public void setRestfulServer(RestfulServer restfulServer) {
+		this.restfulServer = restfulServer;
+	}
 }

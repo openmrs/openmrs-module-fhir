@@ -16,54 +16,54 @@ import org.openmrs.module.fhir.util.MethodOutcomeBuilder;
 
 public class RestfulRelatedPersonProvider implements IResourceProvider {
 
-    private FHIRRelatedPersonResource relatedPersonResource;
+	private FHIRRelatedPersonResource relatedPersonResource;
 
-    public RestfulRelatedPersonProvider() {
-        relatedPersonResource = new FHIRRelatedPersonResource();
-    }
+	public RestfulRelatedPersonProvider() {
+		relatedPersonResource = new FHIRRelatedPersonResource();
+	}
 
-    @Override
-    public Class<? extends IBaseResource> getResourceType() {
-        return RelatedPerson.class;
-    }
+	@Override
+	public Class<? extends IBaseResource> getResourceType() {
+		return RelatedPerson.class;
+	}
 
-    /**
-     * Get related person by unique id
-     *
-     * @param theId object containing the id
-     */
-    @Read
-    public RelatedPerson getResourceById(@IdParam IdType theId) {
-        return relatedPersonResource.getByUniqueId(theId);
-    }
+	/**
+	 * Get related person by unique id
+	 *
+	 * @param theId object containing the id
+	 */
+	@Read
+	public RelatedPerson getResourceById(@IdParam IdType theId) {
+		return relatedPersonResource.getByUniqueId(theId);
+	}
 
-    /**
-     * Delete related person by unique id
-     *
-     * @param theId object containing the id
-     */
-    @Delete
-    public void deleteRelatedPerson(@IdParam IdType theId) {
-        relatedPersonResource.deleteRelatedPerson(theId);
-    }
+	/**
+	 * Delete related person by unique id
+	 *
+	 * @param theId object containing the id
+	 */
+	@Delete
+	public void deleteRelatedPerson(@IdParam IdType theId) {
+		relatedPersonResource.deleteRelatedPerson(theId);
+	}
 
-    /**
-     * Update related person by unique id
-     *
-     * @param theId object containing the id
-     */
-    @Update
-    public MethodOutcome updateRelatedPerson(@ResourceParam RelatedPerson relatedPerson, @IdParam IdType theId) {
-        return MethodOutcomeBuilder.buildUpdate(relatedPerson);
-    }
+	/**
+	 * Update related person by unique id
+	 *
+	 * @param theId object containing the id
+	 */
+	@Update
+	public MethodOutcome updateRelatedPerson(@ResourceParam RelatedPerson relatedPerson, @IdParam IdType theId) {
+		return MethodOutcomeBuilder.buildUpdate(relatedPerson);
+	}
 
-    /**
-     * Create related person
-     *
-     * @param relatedPerson fhir related person object
-     */
-    @Create
-    public MethodOutcome createRelatedPerson(@ResourceParam RelatedPerson relatedPerson) {
-        return MethodOutcomeBuilder.buildCreate(relatedPersonResource.createRelatedPerson(relatedPerson));
-    }
+	/**
+	 * Create related person
+	 *
+	 * @param relatedPerson fhir related person object
+	 */
+	@Create
+	public MethodOutcome createRelatedPerson(@ResourceParam RelatedPerson relatedPerson) {
+		return MethodOutcomeBuilder.buildCreate(relatedPersonResource.createRelatedPerson(relatedPerson));
+	}
 }

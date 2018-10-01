@@ -103,7 +103,7 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
 		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);
 		person.setUuid(""); // remove the uuid value from the Person. This will let this
-							// resource to be persist on the db with random uuid
+		// resource to be persist on the db with random uuid
 		Person fhirPerson = FHIRPersonUtil.generatePerson(person);
 		fhirPerson = Context.getService(PersonService.class).createFHIRPerson(fhirPerson);
 		assertNotNull(fhirPerson);

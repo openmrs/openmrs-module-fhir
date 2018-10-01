@@ -3,12 +3,10 @@
  * Version 1.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
  * http://license.openmrs.org
- *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations
  * under the License.
- *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 package org.openmrs.module.fhir.swagger.docs;
@@ -20,26 +18,26 @@ import java.util.Map;
 //Holds the relative path to the individual endpoints. The path is appended to the basePath in order to construct the full URL
 public class Path {
 
-    //Describes the operations available on a single path
-    private Map<String, Operation> operations;
+	//Describes the operations available on a single path
+	private Map<String, Operation> operations;
 
-    public Path() {
+	public Path() {
 
-    }
+	}
 
-    /**
-     * @return the operation
-     */
-    @JsonAnyGetter
-    public Map<String, Operation> getOperations() {
-        return operations;
-    }
+	/**
+	 * @return the operation
+	 */
+	@JsonAnyGetter
+	public Map<String, Operation> getOperations() {
+		return operations;
+	}
 
-    /**
-     * @param operation the operation to set
-     */
-    public void setOperations(Map<String, Operation> operations) {
-        this.operations = operations;
-    }
+	/**
+	 * @param operation the operation to set
+	 */
+	public void setOperations(Map<String, Operation> operations) {
+		this.operations = operations;
+	}
 
 }

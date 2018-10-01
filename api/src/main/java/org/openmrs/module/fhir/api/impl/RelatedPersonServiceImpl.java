@@ -10,41 +10,41 @@ import org.openmrs.module.fhir.api.strategies.relatedperson.RelatedPersonStrager
 
 public class RelatedPersonServiceImpl extends BaseOpenmrsService implements RelatedPersonService {
 
-    protected final Log log = LogFactory.getLog(this.getClass());
+	protected final Log log = LogFactory.getLog(this.getClass());
 
-    private FHIRDAO dao;
+	private FHIRDAO dao;
 
-    /**
-     * @return the dao
-     */
-    public FHIRDAO getDao() {
-        return dao;
-    }
+	/**
+	 * @return the dao
+	 */
+	public FHIRDAO getDao() {
+		return dao;
+	}
 
-    /**
-     * @param dao the dao to set
-     */
-    public void setDao(FHIRDAO dao) {
-        this.dao = dao;
-    }
+	/**
+	 * @param dao the dao to set
+	 */
+	public void setDao(FHIRDAO dao) {
+		this.dao = dao;
+	}
 
-    @Override
-    public RelatedPerson getRelatedPerson(String uuid) {
-        return RelatedPersonStrageryUtil.getPersonStrategy().getRelatedPerson(uuid);
-    }
+	@Override
+	public RelatedPerson getRelatedPerson(String uuid) {
+		return RelatedPersonStrageryUtil.getPersonStrategy().getRelatedPerson(uuid);
+	}
 
-    @Override
-    public void deleteRelatedPerson(String uuid) {
-        RelatedPersonStrageryUtil.getPersonStrategy().deleteRelatedPerson(uuid);
-    }
+	@Override
+	public void deleteRelatedPerson(String uuid) {
+		RelatedPersonStrageryUtil.getPersonStrategy().deleteRelatedPerson(uuid);
+	}
 
-    @Override
-    public RelatedPerson updateRelatedPerson(String uuid, RelatedPerson relatedPerson) {
-        return RelatedPersonStrageryUtil.getPersonStrategy().updateRelatedPerson(uuid, relatedPerson);
-    }
+	@Override
+	public RelatedPerson updateRelatedPerson(String uuid, RelatedPerson relatedPerson) {
+		return RelatedPersonStrageryUtil.getPersonStrategy().updateRelatedPerson(uuid, relatedPerson);
+	}
 
-    @Override
-    public RelatedPerson createRelatedPerson(RelatedPerson relatedPerson) {
-        return RelatedPersonStrageryUtil.getPersonStrategy().createRelatedPerson(relatedPerson);
-    }
+	@Override
+	public RelatedPerson createRelatedPerson(RelatedPerson relatedPerson) {
+		return RelatedPersonStrageryUtil.getPersonStrategy().createRelatedPerson(relatedPerson);
+	}
 }
