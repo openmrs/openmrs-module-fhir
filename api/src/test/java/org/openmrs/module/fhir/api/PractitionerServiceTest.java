@@ -24,7 +24,6 @@ import org.junit.Test;
 import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
-import org.openmrs.module.fhir.exception.FHIRValidationException;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import java.text.SimpleDateFormat;
@@ -67,7 +66,7 @@ public class PractitionerServiceTest extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void SearchPractitionerById_shouldReturnBundle() throws FHIRValidationException {
+	public void SearchPractitionerById_shouldReturnBundle() {
 		String practitionerUuid = "a3a5913e-6b94-11e0-93c3-18a905e044dc";
 		List<Practitioner> practitionerList = getService().searchPractitionersById(practitionerUuid);
 		assertNotNull(practitionerList);
@@ -76,7 +75,7 @@ public class PractitionerServiceTest extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void searchPractitionersByName_shouldReturnBundle() throws FHIRValidationException {
+	public void searchPractitionersByName_shouldReturnBundle() {
 		String name = "RobertClive";
 		String practitionerUuid = "a2c3868a-6b90-11e0-93c3-18a905e044dc";
 		List<Practitioner> practitionerList = getService().searchPractitionersByName(name);
@@ -86,7 +85,7 @@ public class PractitionerServiceTest extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void searchPractitionersByGivenName_shouldReturnBundle() throws FHIRValidationException {
+	public void searchPractitionersByGivenName_shouldReturnBundle() {
 		String givenName = "Collet";
 		String practitionerUuid = "ba4781f4-6b94-11e0-93c3-18a905e044dc";
 		List<Practitioner> practitionerList = getService().searchPractitionersByGivenName(givenName);
@@ -96,7 +95,7 @@ public class PractitionerServiceTest extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void searchPractitionersByIdentifier_shouldReturnBundle() throws FHIRValidationException {
+	public void searchPractitionersByIdentifier_shouldReturnBundle() {
 		String identifier = "8A762";
 		String practitionerUuid = "ae401f88-6b94-11e0-93c3-18a905e044dc";
 		List<Practitioner> practitionerList = getService().searchPractitionersByIdentifier(identifier);
@@ -106,7 +105,7 @@ public class PractitionerServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	public void createPractitioner_shoulcreateNewPerson() throws FHIRValidationException {
+	public void createPractitioner_shoulcreateNewPerson() {
 		Practitioner practitioner = new Practitioner();
 		
 		HumanName fhirName = new HumanName();
@@ -146,7 +145,7 @@ public class PractitionerServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	public void createPractitioner_shoulNotcreateNewPerson() throws FHIRValidationException {
+	public void createPractitioner_shoulNotcreateNewPerson() {
 		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
 		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);
 		Person personfhir = FHIRPersonUtil.generatePerson(person);

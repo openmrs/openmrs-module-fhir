@@ -27,8 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 public class SwaggerSpecificationController extends HttpServlet {
     protected Log log = LogFactory.getLog(getClass());
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
 
         String swaggerSpecificationJSON;
         try {
