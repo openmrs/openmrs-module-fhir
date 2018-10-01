@@ -39,13 +39,12 @@ import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.Resource;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.resources.FHIRPatientResource;
+import org.openmrs.module.fhir.util.MethodOutcomeBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RestfulPatientResourceProvider implements IResourceProvider {
-
-	private static final Log log = LogFactory.getLog(RestfulPatientResourceProvider.class);
 
 	private FHIRPatientResource patientResource;
 
@@ -64,11 +63,9 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 * @param id id object containing the requested id
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
-	@Read()
+	@Read
 	public Patient getResourceById(@IdParam IdType id) {
-		Patient patient = null;
-		patient = patientResource.getByUniqueId(id);
-		return patient;
+		return patientResource.getByUniqueId(id);
 	}
 
 	/**
@@ -76,8 +73,8 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 *
 	 * @param id object containing the requested id
 	 */
-	@Search()
-	public List<Patient> searchPatientByUniqueId(@RequiredParam(name = Patient.SP_RES_ID) TokenParam id) {
+	@Search
+	public List<Patient> findPatientByUniqueId(@RequiredParam(name = Patient.SP_RES_ID) TokenParam id) {
 		return patientResource.searchByUniqueId(id);
 	}
 
@@ -86,7 +83,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 *
 	 * @param theFamilyName object contaning the requested family name
 	 */
-	@Search()
+	@Search
 	public Bundle findPatientsByFamilyName(@RequiredParam(name = Patient.SP_FAMILY) StringParam theFamilyName) {
 		return patientResource.searchByFamilyName(theFamilyName);
 	}
@@ -98,7 +95,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 * @return This method returns a Bundle of Patients. This list may contain multiple matching
 	 *         resources, or it may also be empty.
 	 */
-	@Search()
+	@Search
 	public Bundle findPatientsByName(@RequiredParam(name = Patient.SP_NAME) StringParam name) {
 		return patientResource.searchByName(name);
 	}
@@ -110,8 +107,8 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 * @return This method returns a list of Patients. This list may contain multiple matching
 	 *         resources, or it may also be empty.
 	 */
-	@Search()
-	public List<Patient> searchPatientsByIdentifier(@RequiredParam(name = Patient.SP_IDENTIFIER) TokenParam identifier) {
+	@Search
+	public List<Patient> findPatientsByIdentifier(@RequiredParam(name = Patient.SP_IDENTIFIER) TokenParam identifier) {
 		return patientResource.searchByIdentifier(identifier);
 	}
 
@@ -122,7 +119,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 * @return This method returns a list of Patients. This list may contain multiple matching
 	 *         resources, or it may also be empty.
 	 */
-	@Search()
+	@Search
 	public List<Patient> findActivePatients(@RequiredParam(name = Patient.SP_ACTIVE) TokenParam active) {
 		return patientResource.searchPatients(active);
 	}
@@ -134,7 +131,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 * @return This method returns a list of Patients. This list may contain multiple matching
 	 *         resources, or it may also be empty.
 	 */
-	@Search()
+	@Search
 	public Bundle findPatientsByGivenName(@RequiredParam(name = Patient.SP_GIVEN) StringParam givenName) {
 		return patientResource.searchByGivenName(givenName);
 	}
@@ -169,29 +166,12 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 */
 	@Create
 	public MethodOutcome createFHIRPatient(@ResourceParam Patient patient) {
-		patient = patientResource.createFHIRPatient(patient);
-		MethodOutcome retVal = new MethodOutcome();
-		retVal.setId(new IdType(FHIRConstants.PATIENT, patient.getId()));
-		OperationOutcome outcome = new OperationOutcome();
-		CodeableConcept concept = new CodeableConcept();
-		Coding coding = concept.addCoding();
-		coding.setDisplay("Patient is successfully created with id" + patient.getId());
-		outcome.addIssue().setDetails(concept);
-		retVal.setOperationOutcome(outcome);
-		return retVal;
+		return MethodOutcomeBuilder.buildCreate(patientResource.createFHIRPatient(patient));
 	}
 	
 	@Update
 	public MethodOutcome updatePatient(@ResourceParam Patient patient, @IdParam IdType theId) {
-		MethodOutcome retVal = new MethodOutcome();
-		OperationOutcome outcome = new OperationOutcome();
-		patientResource.updatePatient(patient, theId.getIdPart());
-		CodeableConcept concept = new CodeableConcept();
-		Coding coding = concept.addCoding();
-		coding.setDisplay("Patient is successfully updated with id " + patient.getId());
-		outcome.addIssue().setDetails(concept);
-		retVal.setOperationOutcome(outcome);
-		return retVal;
+		return MethodOutcomeBuilder.buildUpdate(patientResource.updatePatient(patient, theId.getIdPart()));
 	}
 	
 	/**
@@ -204,22 +184,22 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 	 * @param theConditional This will have a value like "Patient?identifier=7C00001
 	 * @return MethodOutcome which contains the status of the update operation
 	 */
-	@Update()
+	@Update
 	public MethodOutcome updatePatientByIdentifier(@ResourceParam Patient patient, @IdParam IdType theId,
 	                                               @ConditionalUrlParam String theConditional) {
 		MethodOutcome outcome = new MethodOutcome();
-		OperationOutcome operationoutcome = null;
+		OperationOutcome operationoutcome;
 		if (theConditional != null) {
-			String paramValue = null;
+			String paramValue;
 			List<Patient> patientList = null;
-			String parameterName = null;
+			String parameterName;
 			try {
 				String args[] = theConditional.split("?");
 				String parameterPart = args[1];
 				String paraArgs[] = parameterPart.split("=");
 				parameterName = paraArgs[0];
 				paramValue = paraArgs[1];
-			} catch (Exception e) { // will catch nullpointerexceptions and indexoutofboundexceptions
+			} catch (NullPointerException | IndexOutOfBoundsException e) {
 				operationoutcome = new OperationOutcome();
 				CodeableConcept concept = new CodeableConcept();
 				Coding coding = concept.addCoding();
@@ -232,15 +212,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 				StringParam param = new StringParam();
 				param.setValue(paramValue);
 				Bundle patientBundle = patientResource.searchByName(param);
-				if (patientBundle != null) {
-					if (patientBundle.getEntry().size() > 0) {
-						patientList = new ArrayList<Patient>();
-					}
-					for (Bundle.BundleEntryComponent entry : patientBundle.getEntry()) {
-						Patient fhirPatient = (Patient) entry.getResource();
-						patientList.add(fhirPatient);
-					}
-				}
+				patientList = generatePatientsList(patientList, patientBundle);
 			} else if (FHIRConstants.PARAMETER_IDENTIFIER.equals(parameterName)) {
 				TokenParam params = new TokenParam();
 				params.setValue(paramValue);
@@ -249,15 +221,7 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 				StringParam param = new StringParam();
 				param.setValue(paramValue);
 				Bundle patientBundle = patientResource.searchByGivenName(param);
-				if (patientBundle != null) {
-					if (patientBundle.getEntry().size() > 0) {
-						patientList = new ArrayList<Patient>();
-					}
-					for (Bundle.BundleEntryComponent entry : patientBundle.getEntry()) {
-						Patient fhirPatient = (Patient) entry.getResource();
-						patientList.add(fhirPatient);
-					}
-				}
+				patientList = generatePatientsList(patientList, patientBundle);
 			}
 			if (patientList != null) {
 				if (patientList.size() == 0) {
@@ -272,6 +236,19 @@ public class RestfulPatientResourceProvider implements IResourceProvider {
 			outcome = updatePatient(patient, theId);
 		}
 		return outcome;
+	}
+
+	private List<Patient> generatePatientsList(List<Patient> patientList, Bundle patientBundle) {
+		if (patientBundle != null) {
+			if (!patientBundle.getEntry().isEmpty()) {
+				patientList = new ArrayList<>();
+			}
+			for (Bundle.BundleEntryComponent entry : patientBundle.getEntry()) {
+				Patient fhirPatient = (Patient) entry.getResource();
+				patientList.add(fhirPatient);
+			}
+		}
+		return patientList;
 	}
 
 }

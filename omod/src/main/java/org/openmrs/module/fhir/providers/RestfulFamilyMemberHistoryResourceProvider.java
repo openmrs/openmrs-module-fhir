@@ -49,11 +49,9 @@ public class RestfulFamilyMemberHistoryResourceProvider implements IResourceProv
 	 *              IdDt and must be annotated with the "@Read.IdParam" annotation.
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
-	@Read()
+	@Read
 	public FamilyMemberHistory getResourceById(@IdParam IdType theId) {
-		FamilyMemberHistory result = null;
-		result = familyHistoryResource.getByUniqueId(theId);
-		return result;
+		return familyHistoryResource.getByUniqueId(theId);
 	}
 
 	/**
@@ -61,8 +59,8 @@ public class RestfulFamilyMemberHistoryResourceProvider implements IResourceProv
 	 *
 	 * @param id object containing the requested id
 	 */
-	@Search()
-	public List<FamilyMemberHistory> searchFamilyHistoryByUniqueId(
+	@Search
+	public List<FamilyMemberHistory> findFamilyHistoryByUniqueId(
 			@RequiredParam(name = FamilyMemberHistory.SP_RES_ID) TokenParam id) {
 		return familyHistoryResource.searchFamilyHistoryByUniqueId(id);
 	}
@@ -72,8 +70,8 @@ public class RestfulFamilyMemberHistoryResourceProvider implements IResourceProv
 	 *
 	 * @param person object containing the requested patient id
 	 */
-	@Search()
-	public List<FamilyMemberHistory> searchFamilyHistoryByPerson(
+	@Search
+	public List<FamilyMemberHistory> findFamilyHistoryByPerson(
 			@RequiredParam(name = FamilyMemberHistory.SP_PATIENT) ReferenceParam person) {
 		return familyHistoryResource.searchFamilyHistoryByPerson(person);
 	}

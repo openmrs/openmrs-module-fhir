@@ -49,7 +49,7 @@ public class RestfulAppointmentResourceProvider implements IResourceProvider {
      *              IdDt and must be annotated with the "@Read.IdParam" annotation.
      * @return Returns a resource matching this identifier, or null if none exists.
      */
-    @Read()
+    @Read
     public Appointment getResourceById(@IdParam IdType theId) {
         return appointmentResource.getByUniqueId(theId);
     }
@@ -59,8 +59,8 @@ public class RestfulAppointmentResourceProvider implements IResourceProvider {
      *
      * @param id object containing the requested id
      */
-    @Search()
-    public List<Appointment> searchAppointmentsByUniqueId(
+    @Search
+    public List<Appointment> findAppointmentsByUniqueId(
             @RequiredParam(name = Appointment.SP_RES_ID) TokenParam id) {
         return appointmentResource.searchAppointmentsById(id);
     }
@@ -70,8 +70,8 @@ public class RestfulAppointmentResourceProvider implements IResourceProvider {
      *
      * @param patient object containing the patient details
      */
-    @Search()
-    public List<Appointment> searchAppointmentsByPatient(
+    @Search
+    public List<Appointment> findAppointmentsByPatient(
             @RequiredParam(name = Appointment.SP_RES_ID) ReferenceParam patient) {
         return appointmentResource.searchAppointmentsByPatient(patient);
     }

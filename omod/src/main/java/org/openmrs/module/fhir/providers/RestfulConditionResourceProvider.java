@@ -49,7 +49,7 @@ public class RestfulConditionResourceProvider implements IResourceProvider {
      *              IdDt and must be annotated with the "@Read.IdParam" annotation.
      * @return Returns a resource matching this identifier, or null if none exists.
      */
-    @Read()
+    @Read
     public Condition getResourceById(@IdParam IdType theId) {
         return conditionResource.getByUniqueId(theId);
     }
@@ -62,7 +62,7 @@ public class RestfulConditionResourceProvider implements IResourceProvider {
      * @param theId id of the OpenMrs Obs
      * @return Returns a resource matching to the OpenMrs Obs which has the identifier theId, or null if none exists.
      */
-    @Read()
+    @Read
     public Condition getResourceByObsUID(@IdParam IdType theId) {
         return conditionResource.getConditionByObsUniqueId(theId);
     }
@@ -72,8 +72,8 @@ public class RestfulConditionResourceProvider implements IResourceProvider {
      *
      * @param id object containing the requested id
      */
-    @Search()
-    public List<Condition> searchConditionsByUniqueId(
+    @Search
+    public List<Condition> findConditionsByUniqueId(
             @RequiredParam(name = Condition.SP_RES_ID) TokenParam id) {
         return conditionResource.searchConditionsById(id);
     }
@@ -83,8 +83,8 @@ public class RestfulConditionResourceProvider implements IResourceProvider {
      *
      * @param patient object containing the patient details
      */
-    @Search()
-    public List<Condition> searchConditionssByPatient(
+    @Search
+    public List<Condition> findConditionssByPatient(
             @RequiredParam(name = Condition.SP_PATIENT) ReferenceParam patient) {
         return conditionResource.searchConditionsByPatient(patient);
     }

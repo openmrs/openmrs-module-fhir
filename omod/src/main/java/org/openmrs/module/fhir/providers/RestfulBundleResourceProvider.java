@@ -51,16 +51,10 @@ public class RestfulBundleResourceProvider implements IResourceProvider {
 	public Bundle transaction(@TransactionParam Bundle theResources) {
 		// theResources will contain a complete bundle of all resources to persist
 		// in a single transaction
-		List<Resource> postResources = new ArrayList<Resource>();
-		List<Resource> putResources = new ArrayList<Resource>();
-		List<String> deleteResources = new ArrayList<String>();
+		List<Resource> postResources = new ArrayList<>();
 		for (Bundle.BundleEntryComponent entry : theResources.getEntry()) {
-			if(FHIRConstants.POST.equals(entry.getRequest().getMethod())){
+			if(FHIRConstants.POST.equals(entry.getRequest().getMethod().getDisplay())){
 				postResources.add(entry.getResource());
-			}else if(FHIRConstants.PUT.equals(entry.getRequest().getMethod())){
-				putResources.add(entry.getResource());
-			}else if(FHIRConstants.DELETE.equals(entry.getRequest().getMethod())){
-				deleteResources.add(entry.getRequest().getUrl());
 			}
         }
 		
@@ -82,26 +76,9 @@ public class RestfulBundleResourceProvider implements IResourceProvider {
 				personResource.createFHIRPerson((Person) next);
 			}
 		}
-		
-		// According to the specification, a bundle must be returned. This bundle will contain
-		// all of the created/updated/deleted resources, including their new/updated identities.
-		//
-		// The returned list must be the exact same size as the list of resources
-		// passed in, and it is acceptable to return the same list instance that was
-		// passed in.
-		/*
-		 * Populate each returned resource with the new ID for that resource,
-		 * including the new version if the server supports versioning.
-		 */
-		/*Bundle retVal = new Bundle();//(theResources);
-		for (IResource next : theResources) {
-			
-			IdType newId = new IdType("Patient", "1", "2");
-			next.setId(newId);
-		}*/
-		
-		// If wanted, you may optionally also return an OperationOutcome resource
-		// If present, the OperationOutcome must come first in the returned list.
+
+		//TODO (Implementation proposal can be found in git history)
+
 		return theResources;
 	}
 

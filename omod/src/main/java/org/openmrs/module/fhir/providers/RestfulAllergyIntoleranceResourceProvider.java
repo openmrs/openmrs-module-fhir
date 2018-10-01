@@ -51,7 +51,7 @@ public class RestfulAllergyIntoleranceResourceProvider implements IResourceProvi
 	 *              IdType and must be annotated with the "@Read.IdParam" annotation.
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
-	@Read()
+	@Read
 	public AllergyIntolerance getResourceById(@IdParam IdType theId) {
 		return allergyIntoleranceResource.getByUniqueId(theId);
 	}
@@ -61,8 +61,8 @@ public class RestfulAllergyIntoleranceResourceProvider implements IResourceProvi
 	 *
 	 * @param id object containing the requested id
 	 */
-	@Search()
-	public List<AllergyIntolerance> searchAllergiesByUniqueId(
+	@Search
+	public List<AllergyIntolerance> findAllergiesByUniqueId(
 			@RequiredParam(name = AllergyIntolerance.SP_RES_ID) TokenParam id) {
 		return allergyIntoleranceResource.searchAllergiesById(id);
 	}
@@ -72,8 +72,8 @@ public class RestfulAllergyIntoleranceResourceProvider implements IResourceProvi
 	 *
 	 * @param identifier object containing the patient identifier
 	 */
-	@Search()
-	public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(
+	@Search
+	public List<AllergyIntolerance> findllergiesByPatientIdentifier(
 			@RequiredParam(name = AllergyIntolerance.SP_PATIENT, chainWhitelist = {
 					Patient.SP_IDENTIFIER }) ReferenceParam identifier) {
 		return allergyIntoleranceResource.searchAllergiesByPatientIdentifier(identifier);
@@ -84,15 +84,15 @@ public class RestfulAllergyIntoleranceResourceProvider implements IResourceProvi
 	 *
 	 * @param name object containing the patient name
 	 */
-	@Search()
-	public List<AllergyIntolerance> searchAllergiesByPatientName(
+	@Search
+	public List<AllergyIntolerance> findAllergiesByPatientName(
 			@RequiredParam(name = AllergyIntolerance.SP_PATIENT, chainWhitelist = { Patient.SP_NAME }) ReferenceParam
 					name) {
 		return allergyIntoleranceResource.searchAllergiesByPatientName(name);
 	}
 
-	@Search()
-	public List<AllergyIntolerance> searchAllergiesByPatientUuid(
+	@Search
+	public List<AllergyIntolerance> findAllergiesByPatientUuid(
 			@RequiredParam(name = AllergyIntolerance.SP_PATIENT, chainWhitelist = { Patient.SP_RES_ID})
 			ReferenceParam uuid) {
 		return allergyIntoleranceResource.searchAllergiesByPatientUuid(uuid);
