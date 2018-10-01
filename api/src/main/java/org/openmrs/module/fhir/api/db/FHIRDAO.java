@@ -17,7 +17,7 @@ package org.openmrs.module.fhir.api.db;
  * Database methods for FHIR Module
  */
 public interface FHIRDAO {
-	
+
 	/*
 	 * Add DAO methods here
 	 */

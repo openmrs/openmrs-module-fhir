@@ -116,20 +116,22 @@ public class FHIRAllergyIntoleranceUtil {
 				}
 				//Setting omrs concept
 				if (reaction.getReaction().getName() != null) {
-					manifest.add(new CodeableConcept().addCoding(new Coding().setCode(reaction.getReaction().getUuid()).setDisplay(
-							reaction.getReaction().getName().getName()).setSystem(FHIRConstants.OPENMRS_URI)));
+					manifest.add(new CodeableConcept()
+							.addCoding(new Coding().setCode(reaction.getReaction().getUuid()).setDisplay(
+									reaction.getReaction().getName().getName()).setSystem(FHIRConstants.OPENMRS_URI)));
 				} else {
-					manifest.add(new CodeableConcept().addCoding(new Coding().setCode(reaction.getReaction().getUuid()).setSystem(
-							FHIRConstants.OPENMRS_URI)));
+					manifest.add(
+							new CodeableConcept().addCoding(new Coding().setCode(reaction.getReaction().getUuid()).setSystem(
+									FHIRConstants.OPENMRS_URI)));
 				}
 			}
 		}
 
 		List<Annotation> note = new ArrayList<>();
 		if (allergy.getComment() != null) {
-		    Annotation annotation = new Annotation();
-		    annotation.setText(allergy.getComment());
-        }
+			Annotation annotation = new Annotation();
+			annotation.setText(allergy.getComment());
+		}
 		allergyIntolerance.setNote(note);
 
 		return allergyIntolerance;

@@ -96,7 +96,7 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 
 	/**
 	 * @see org.openmrs.module.fhir.api.EncounterService#getEncounterOperationsById(String,
-	 *      org.hl7.fhir.dstu3.model.Bundle, boolean)
+	 * org.hl7.fhir.dstu3.model.Bundle, boolean)
 	 */
 	public Bundle getEncounterOperationsById(String encounterId, Bundle bundle, boolean includePatient) {
 		return EncounterStrategyUtil.getEncounterStrategy().getEncounterOperationsById(encounterId, bundle, includePatient);
@@ -112,22 +112,23 @@ public class EncounterServiceImpl extends BaseOpenmrsService implements Encounte
 
 	/**
 	 * @see org.openmrs.module.fhir.api.EncounterService#searchEncountersByPatientIdentifierAndPartOf(String,
-	 *      String)
+	 * String)
 	 */
 	@Override
 	public List<Encounter> searchEncountersByPatientIdentifierAndPartOf(String patientIdentifier, String partOf) {
-		return EncounterStrategyUtil.getEncounterStrategy().searchEncountersByPatientIdentifierAndPartOf(patientIdentifier, partOf);
+		return EncounterStrategyUtil.getEncounterStrategy()
+				.searchEncountersByPatientIdentifierAndPartOf(patientIdentifier, partOf);
 	}
 
 	/**
 	 * @see org.openmrs.module.fhir.api.EncounterService#searchEncountersByEncounterIdAndPartOf(String,
-	 *      String)
+	 * String)
 	 */
 	@Override
 	public List<Encounter> searchEncountersByEncounterIdAndPartOf(String encounterId, String partOf) {
 		return EncounterStrategyUtil.getEncounterStrategy().searchEncountersByEncounterIdAndPartOf(encounterId, partOf);
 	}
-	
+
 	/**
 	 * @see org.openmrs.module.fhir.api.EncounterService#createFHIREncounter(Encounter)
 	 */

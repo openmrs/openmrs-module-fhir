@@ -45,7 +45,7 @@
 	function sendToServer() {
 
 		jQuery("#output").html('<spring:message code="fhir.send.request"/>' + " <img id='spinner' src='" + openmrsContextPath
-		                       + "/images/loading.gif'/>");
+			+ "/images/loading.gif'/>");
 
 		var u = jQuery("#url").val()
 		var d = jQuery("#json").val();
@@ -53,23 +53,23 @@
 		var rep = jQuery("#rep").val();
 
 		jQuery.ajax({
-			            type: type,
-			            contentType: "application/json;",
-			            url: u,
-			            data: d,
-			            //dataType: "json",
-			            success: onSuccess,
-			            error: function (req, msg, errorThrown) {
-				            jQuery("#output").html("error!<br/>msg: " + msg + "<br/>errorThrown: " + errorThrown + "<br/>req: " + req);
-				            var tbl = prettyPrint(req);
-				            jQuery("#output").append(tbl);
-			            },
-			            statusCode: {
-				            404: function () {
-					            alert('404 thrown: page/object not found');
-				            }
-			            }
-		            });
+			type: type,
+			contentType: "application/json;",
+			url: u,
+			data: d,
+			//dataType: "json",
+			success: onSuccess,
+			error: function (req, msg, errorThrown) {
+				jQuery("#output").html("error!<br/>msg: " + msg + "<br/>errorThrown: " + errorThrown + "<br/>req: " + req);
+				var tbl = prettyPrint(req);
+				jQuery("#output").append(tbl);
+			},
+			statusCode: {
+				404: function () {
+					alert('404 thrown: page/object not found');
+				}
+			}
+		});
 
 		return false;
 	}
@@ -148,29 +148,29 @@
 
 				/* colSpan is calculated by length of null items in array */
 				var colSpan = util.count(cells, null) + 1,
-						tr = util.el('tr'), td,
-						attrs = {
-							style: util.getStyles(cellType, type),
-							colSpan: colSpan,
-							onmouseover: function () {
-								var tds = this.parentNode.childNodes;
-								util.forEach(tds, function (cell) {
-									if (cell.nodeName.toLowerCase() !== 'td') {
-										return;
-									}
-									util.applyCSS(cell, util.getStyles('td_hover', type));
-								});
-							},
-							onmouseout: function () {
-								var tds = this.parentNode.childNodes;
-								util.forEach(tds, function (cell) {
-									if (cell.nodeName.toLowerCase() !== 'td') {
-										return;
-									}
-									util.applyCSS(cell, util.getStyles('td', type));
-								});
-							}
-						};
+					tr = util.el('tr'), td,
+					attrs = {
+						style: util.getStyles(cellType, type),
+						colSpan: colSpan,
+						onmouseover: function () {
+							var tds = this.parentNode.childNodes;
+							util.forEach(tds, function (cell) {
+								if (cell.nodeName.toLowerCase() !== 'td') {
+									return;
+								}
+								util.applyCSS(cell, util.getStyles('td_hover', type));
+							});
+						},
+						onmouseout: function () {
+							var tds = this.parentNode.childNodes;
+							util.forEach(tds, function (cell) {
+								if (cell.nodeName.toLowerCase() !== 'td') {
+									return;
+								}
+								util.applyCSS(cell, util.getStyles('td', type));
+							});
+						}
+					};
 
 				util.forEach(cells, function (cell) {
 
@@ -205,19 +205,19 @@
 
 				/* Creates new table: */
 				var attrs = {
-							thead: {
-								style: util.getStyles('thead', type)
-							},
-							tbody: {
-								style: util.getStyles('tbody', type)
-							},
-							table: {
-								style: util.getStyles('table', type)
-							}
+						thead: {
+							style: util.getStyles('thead', type)
 						},
-						tbl = util.el('table', attrs.table),
-						thead = util.el('thead', attrs.thead),
-						tbody = util.el('tbody', attrs.tbody);
+						tbody: {
+							style: util.getStyles('tbody', type)
+						},
+						table: {
+							style: util.getStyles('table', type)
+						}
+					},
+					tbl = util.el('table', attrs.table),
+					thead = util.el('thead', attrs.thead),
+					tbody = util.el('tbody', attrs.tbody);
 
 				if (headings.length) {
 					tbl.appendChild(thead);
@@ -362,26 +362,26 @@
 			common: {
 				circRef: function (obj, key, settings) {
 					return util.expander(
-							'[POINTS BACK TO <strong>' + (key) + '</strong>]',
-							'Click to show this item anyway',
-							function () {
-								this.parentNode.appendChild(prettyPrintThis(obj, {maxDepth: 1}));
-							}
+						'[POINTS BACK TO <strong>' + (key) + '</strong>]',
+						'Click to show this item anyway',
+						function () {
+							this.parentNode.appendChild(prettyPrintThis(obj, {maxDepth: 1}));
+						}
 					);
 				},
 				depthReached: function (obj, settings) {
 					return util.expander(
-							'[DEPTH REACHED]',
-							'Click to show this item anyway',
-							function () {
-								try {
-									this.parentNode.appendChild(prettyPrintThis(obj, {maxDepth: 1}));
-								} catch (e) {
-									this.parentNode.appendChild(
-											util.table(['ERROR OCCURED DURING OBJECT RETRIEVAL'], 'error').addRow([e.message]).node
-									);
-								}
+						'[DEPTH REACHED]',
+						'Click to show this item anyway',
+						function () {
+							try {
+								this.parentNode.appendChild(prettyPrintThis(obj, {maxDepth: 1}));
+							} catch (e) {
+								this.parentNode.appendChild(
+									util.table(['ERROR OCCURED DURING OBJECT RETRIEVAL'], 'error').addRow([e.message]).node
+								);
 							}
+						}
 					);
 				}
 			},
@@ -389,7 +389,7 @@
 			getStyles: function (el, type) {
 				type = prettyPrintThis.settings.styles[type] || {};
 				return util.merge(
-						{}, prettyPrintThis.settings.styles['default'][el], type[el]
+					{}, prettyPrintThis.settings.styles['default'][el], type[el]
 				);
 			},
 
@@ -422,7 +422,7 @@
 				 - This is used for when |settings.expanded === false| */
 
 				var type = util.type(obj),
-						str, first = true;
+					str, first = true;
 				if (type === 'array') {
 					str = '[';
 					util.forEach(obj, function (item, i) {
@@ -484,11 +484,11 @@
 			options = options || {};
 
 			var settings = util.merge({}, prettyPrintThis.config, options),
-					container = util.el('div'),
-					config = prettyPrintThis.config,
-					currentDepth = 0,
-					stack = {},
-					hasRunOnce = false;
+				container = util.el('div'),
+				config = prettyPrintThis.config,
+				currentDepth = 0,
+				stack = {},
+				hasRunOnce = false;
 
 			/* Expose per-call settings.
 			 Note: "config" is overwritten (where necessary) by options/"settings"
@@ -507,29 +507,29 @@
 					var miniTable = util.table(['RegExp', null], 'regexp');
 					var flags = util.table();
 					var span = util.expander(
-							'/' + item.source + '/',
-							'Click to show more',
-							function () {
-								this.parentNode.appendChild(miniTable.node);
-							}
+						'/' + item.source + '/',
+						'Click to show more',
+						function () {
+							this.parentNode.appendChild(miniTable.node);
+						}
 					);
 
 					flags
-							.addRow(['g', item.global])
-							.addRow(['i', item.ignoreCase])
-							.addRow(['m', item.multiline]);
+						.addRow(['g', item.global])
+						.addRow(['i', item.ignoreCase])
+						.addRow(['m', item.multiline]);
 
 					miniTable
-							.addRow(['source', '/' + item.source + '/'])
-							.addRow(['flags', flags.node])
-							.addRow(['lastIndex', item.lastIndex]);
+						.addRow(['source', '/' + item.source + '/'])
+						.addRow(['flags', flags.node])
+						.addRow(['lastIndex', item.lastIndex]);
 
 					return settings.expanded ? miniTable.node : span;
 				},
 				domelement: function (element, depth) {
 
 					var miniTable = util.table(['DOMElement', null], 'domelement'),
-							props = ['id', 'className', 'innerHTML', 'src', 'href'], elname = element.nodeName || '';
+						props = ['id', 'className', 'innerHTML', 'src', 'href'], elname = element.nodeName || '';
 
 					miniTable.addRow(['tag', '&lt;' + elname.toLowerCase() + '&gt;']);
 
@@ -540,28 +540,28 @@
 					});
 
 					return settings.expanded ? miniTable.node : util.expander(
-							'DOMElement (' + elname.toLowerCase() + ')',
-							'Click to show more',
-							function () {
-								this.parentNode.appendChild(miniTable.node);
-							}
+						'DOMElement (' + elname.toLowerCase() + ')',
+						'Click to show more',
+						function () {
+							this.parentNode.appendChild(miniTable.node);
+						}
 					);
 				},
 				domnode: function (node) {
 
 					/* Deals with all DOMNodes that aren't elements (nodeType !== 1) */
 					var miniTable = util.table(['DOMNode', null], 'domelement'),
-							data = util.htmlentities((node.data || 'UNDEFINED').replace(/\n/g, '\\n'));
+						data = util.htmlentities((node.data || 'UNDEFINED').replace(/\n/g, '\\n'));
 					miniTable
-							.addRow(['nodeType', node.nodeType + ' (' + node.nodeName + ')'])
-							.addRow(['data', data]);
+						.addRow(['nodeType', node.nodeType + ' (' + node.nodeName + ')'])
+						.addRow(['data', data]);
 
 					return settings.expanded ? miniTable.node : util.expander(
-							'DOMNode',
-							'Click to show more',
-							function () {
-								this.parentNode.appendChild(miniTable.node);
-							}
+						'DOMNode',
+						'Click to show more',
+						function () {
+							this.parentNode.appendChild(miniTable.node);
+						}
 					);
 				},
 				jquery: function (obj, depth, key) {
@@ -581,12 +581,12 @@
 					}
 
 					var table = util.table(['Object', null], 'object'),
-							isEmpty = true;
+						isEmpty = true;
 
 					for (var i in obj) {
 						if (!obj.hasOwnProperty || obj.hasOwnProperty(i)) {
 							var item = obj[i],
-									type = util.type(item);
+								type = util.type(item);
 							isEmpty = false;
 							try {
 								table.addRow([i, typeDealer[type](item, depth + 1, i)], type);
@@ -603,16 +603,16 @@
 						table.addRow(['<small>[empty]</small>']);
 					} else {
 						table.thead.appendChild(
-								util.hRow(['key', 'value'], 'colHeader')
+							util.hRow(['key', 'value'], 'colHeader')
 						);
 					}
 
 					var ret = (settings.expanded || hasRunOnce) ? table.node : util.expander(
-							util.stringify(obj),
-							'Click to show more',
-							function () {
-								this.parentNode.appendChild(table.node);
-							}
+						util.stringify(obj),
+						'Click to show more',
+						function () {
+							this.parentNode.appendChild(table.node);
+						}
 					);
 
 					hasRunOnce = true;
@@ -634,8 +634,9 @@
 					}
 
 					/* Accepts a table and modifies it */
-					var me = jquery ? 'jQuery' : 'Array', table = util.table([me + '(' + arr.length + ')', null], jquery ? 'jquery' : me.toLowerCase()),
-							isEmpty = true;
+					var me = jquery ? 'jQuery' : 'Array',
+						table = util.table([me + '(' + arr.length + ')', null], jquery ? 'jquery' : me.toLowerCase()),
+						isEmpty = true;
 
 					if (jquery) {
 						table.addRow(['selector', arr.selector]);
@@ -655,11 +656,11 @@
 					}
 
 					return settings.expanded ? table.node : util.expander(
-							util.stringify(arr),
-							'Click to show more',
-							function () {
-								this.parentNode.appendChild(table.node);
-							}
+						util.stringify(arr),
+						'Click to show more',
+						function () {
+							this.parentNode.appendChild(table.node);
+						}
 					);
 
 				},
@@ -673,38 +674,38 @@
 					stack[key || 'TOP'] = fn;
 
 					var miniTable = util.table(['Function', null], 'function'),
-							argsTable = util.table(['Arguments']),
-							args = fn.toString().match(/\((.+?)\)/),
-							body = fn.toString().match(/\(.*?\)\s+?\{?([\S\s]+)/)[1].replace(/\}?$/, '');
+						argsTable = util.table(['Arguments']),
+						args = fn.toString().match(/\((.+?)\)/),
+						body = fn.toString().match(/\(.*?\)\s+?\{?([\S\s]+)/)[1].replace(/\}?$/, '');
 
 					miniTable
-							.addRow(['arguments', args ? args[1].replace(/[^\w_,\s]/g, '') : '<small>[none/native]</small>'])
-							.addRow(['body', body]);
+						.addRow(['arguments', args ? args[1].replace(/[^\w_,\s]/g, '') : '<small>[none/native]</small>'])
+						.addRow(['body', body]);
 
 					return settings.expanded ? miniTable.node : util.expander(
-							'function(){...}',
-							'Click to see more about this function.',
-							function () {
-								this.parentNode.appendChild(miniTable.node);
-							}
+						'function(){...}',
+						'Click to see more about this function.',
+						function () {
+							this.parentNode.appendChild(miniTable.node);
+						}
 					);
 				},
 				'date': function (date) {
 
 					var miniTable = util.table(['Date', null], 'date'),
-							sDate = date.toString().split(/\s/);
+						sDate = date.toString().split(/\s/);
 
 					/* TODO: Make this work well in IE! */
 					miniTable
-							.addRow(['Time', sDate[4]])
-							.addRow(['Date', sDate.slice(0, 4).join('-')]);
+						.addRow(['Time', sDate[4]])
+						.addRow(['Date', sDate.slice(0, 4).join('-')]);
 
 					return settings.expanded ? miniTable.node : util.expander(
-							'Date (timestamp): ' + (+date),
-							'Click to see a little more info about this date',
-							function () {
-								this.parentNode.appendChild(miniTable.node);
-							}
+						'Date (timestamp): ' + (+date),
+						'Click to see a little more info about this date',
+						function () {
+							this.parentNode.appendChild(miniTable.node);
+						}
 					);
 
 				},

@@ -5,10 +5,12 @@ import org.openmrs.module.fhir.api.util.FHIRUtils;
 
 public class PatientStrategyUtil {
 
-    public static GenericPatientStrategy getPatientStrategy() {
-        String strategy = FHIRUtils.getPatientStrategy();
+	public static GenericPatientStrategy getPatientStrategy() {
+		String strategy = FHIRUtils.getPatientStrategy();
 
-        return strategy == null ? new PatientStrategy() : Context.getRegisteredComponent(strategy, GenericPatientStrategy.class);
-    }
+		return strategy == null ?
+				new PatientStrategy() :
+				Context.getRegisteredComponent(strategy, GenericPatientStrategy.class);
+	}
 
 }

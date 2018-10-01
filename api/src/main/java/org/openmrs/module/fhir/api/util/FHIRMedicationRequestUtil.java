@@ -40,430 +40,433 @@ import java.util.List;
 
 public class FHIRMedicationRequestUtil {
 
-    /**
-     * Generate medication request from drug order
-     * @param omrsDrugOrder openmrs drug order
-     * @return MedicationRequest object
-     */
-    public static MedicationRequest generateMedicationRequest(org.openmrs.DrugOrder omrsDrugOrder) {
-        MedicationRequest request = new MedicationRequest();
+	/**
+	 * Generate medication request from drug order
+	 *
+	 * @param omrsDrugOrder openmrs drug order
+	 * @return MedicationRequest object
+	 */
+	public static MedicationRequest generateMedicationRequest(org.openmrs.DrugOrder omrsDrugOrder) {
+		MedicationRequest request = new MedicationRequest();
 
-        //Set id
-        if (!StringUtils.isEmpty(omrsDrugOrder.getUuid())) {
-            request.setId(omrsDrugOrder.getUuid());
-        }
+		//Set id
+		if (!StringUtils.isEmpty(omrsDrugOrder.getUuid())) {
+			request.setId(omrsDrugOrder.getUuid());
+		}
 
-        //set Status
-        if (omrsDrugOrder.isActive()) {
-            request.setStatus(MedicationRequest.MedicationRequestStatus.ACTIVE);
-        } else if (omrsDrugOrder.isDiscontinuedRightNow()) {
-            request.setStatus(MedicationRequest.MedicationRequestStatus.STOPPED);
-        } else {
-            request.setStatus(MedicationRequest.MedicationRequestStatus.COMPLETED);
-        }
+		//set Status
+		if (omrsDrugOrder.isActive()) {
+			request.setStatus(MedicationRequest.MedicationRequestStatus.ACTIVE);
+		} else if (omrsDrugOrder.isDiscontinuedRightNow()) {
+			request.setStatus(MedicationRequest.MedicationRequestStatus.STOPPED);
+		} else {
+			request.setStatus(MedicationRequest.MedicationRequestStatus.COMPLETED);
+		}
 
-        //Set intent
-        request.setIntent(MedicationRequest.MedicationRequestIntent.ORDER);
+		//Set intent
+		request.setIntent(MedicationRequest.MedicationRequestIntent.ORDER);
 
-        //Set priority
-        if (Order.Urgency.ROUTINE.toString().equalsIgnoreCase(omrsDrugOrder.getUrgency().toString())) {
-            request.setPriority(MedicationRequest.MedicationRequestPriority.ROUTINE);
-        } else if (Order.Urgency.STAT.toString().equalsIgnoreCase(omrsDrugOrder.getUrgency().toString())) {
-            request.setPriority(MedicationRequest.MedicationRequestPriority.STAT);
-        } else {
-            request.setPriority(MedicationRequest.MedicationRequestPriority.ROUTINE);
-        }
+		//Set priority
+		if (Order.Urgency.ROUTINE.toString().equalsIgnoreCase(omrsDrugOrder.getUrgency().toString())) {
+			request.setPriority(MedicationRequest.MedicationRequestPriority.ROUTINE);
+		} else if (Order.Urgency.STAT.toString().equalsIgnoreCase(omrsDrugOrder.getUrgency().toString())) {
+			request.setPriority(MedicationRequest.MedicationRequestPriority.STAT);
+		} else {
+			request.setPriority(MedicationRequest.MedicationRequestPriority.ROUTINE);
+		}
 
-        //Set medication
-        CodeableConcept medication = new CodeableConcept();
-        Concept medicationConcept = omrsDrugOrder.getDrug().getConcept();
-        List<Coding> medicationDts = medication.getCoding();
-        addCodings(medicationConcept, medicationDts);
-        medication.setId(omrsDrugOrder.getDrug().getUuid());
-        request.setMedication(medication);
+		//Set medication
+		CodeableConcept medication = new CodeableConcept();
+		Concept medicationConcept = omrsDrugOrder.getDrug().getConcept();
+		List<Coding> medicationDts = medication.getCoding();
+		addCodings(medicationConcept, medicationDts);
+		medication.setId(omrsDrugOrder.getDrug().getUuid());
+		request.setMedication(medication);
 
-        //Set patient
-        Patient patient = omrsDrugOrder.getPatient();
-        Reference patientRef = FHIRPatientUtil.buildPatientReference(patient);
-        patientRef.setId(patient.getUuid());
+		//Set patient
+		Patient patient = omrsDrugOrder.getPatient();
+		Reference patientRef = FHIRPatientUtil.buildPatientReference(patient);
+		patientRef.setId(patient.getUuid());
 
-        request.setSubject(patientRef);
+		request.setSubject(patientRef);
 
-        //Set Encounter
-        Encounter encounter = omrsDrugOrder.getEncounter();
-        if (encounter != null) {
-            Reference encounterRef = FHIRObsUtil.getFHIREncounterReference(encounter);
-            encounterRef.setId(encounter.getUuid());
-            request.setContext(encounterRef);
-        }
+		//Set Encounter
+		Encounter encounter = omrsDrugOrder.getEncounter();
+		if (encounter != null) {
+			Reference encounterRef = FHIRObsUtil.getFHIREncounterReference(encounter);
+			encounterRef.setId(encounter.getUuid());
+			request.setContext(encounterRef);
+		}
 
-        //Set author on date
-        request.setAuthoredOn(omrsDrugOrder.getDateCreated());
+		//Set author on date
+		request.setAuthoredOn(omrsDrugOrder.getDateCreated());
 
-        //Set requester
-        Provider provider = omrsDrugOrder.getOrderer();
-        if (provider != null) {
-            Reference providerRef = FHIRPractitionerUtil.buildPractionaerReference(provider);
-            providerRef.setId(provider.getUuid());
-            MedicationRequest.MedicationRequestRequesterComponent reqComponent =
-                    new MedicationRequest.MedicationRequestRequesterComponent();
-            reqComponent.setAgent(providerRef);
-            request.setRequester(reqComponent);
-            request.setRecorder(providerRef);
-        }
+		//Set requester
+		Provider provider = omrsDrugOrder.getOrderer();
+		if (provider != null) {
+			Reference providerRef = FHIRPractitionerUtil.buildPractionaerReference(provider);
+			providerRef.setId(provider.getUuid());
+			MedicationRequest.MedicationRequestRequesterComponent reqComponent =
+					new MedicationRequest.MedicationRequestRequesterComponent();
+			reqComponent.setAgent(providerRef);
+			request.setRequester(reqComponent);
+			request.setRecorder(providerRef);
+		}
 
-        //set route
-        List<Dosage> dosages = new ArrayList<Dosage>();
-        Dosage dosage = new Dosage();
-        CodeableConcept route = new CodeableConcept();
+		//set route
+		List<Dosage> dosages = new ArrayList<Dosage>();
+		Dosage dosage = new Dosage();
+		CodeableConcept route = new CodeableConcept();
 
-        Concept routeConcept = omrsDrugOrder.getRoute();
-        if (routeConcept != null) {
-            route.setText(omrsDrugOrder.getRoute().getName().getName());
-            route.setId(omrsDrugOrder.getRoute().getUuid());
+		Concept routeConcept = omrsDrugOrder.getRoute();
+		if (routeConcept != null) {
+			route.setText(omrsDrugOrder.getRoute().getName().getName());
+			route.setId(omrsDrugOrder.getRoute().getUuid());
 
-            List<Coding> dts = route.getCoding();
-            addCodings(routeConcept, dts);
-            dosage.setRoute(route);
-        }
+			List<Coding> dts = route.getCoding();
+			addCodings(routeConcept, dts);
+			dosage.setRoute(route);
+		}
 
-        dosage.setText(omrsDrugOrder.getDosingInstructions());
-        dosage.setSequence(1);
+		dosage.setText(omrsDrugOrder.getDosingInstructions());
+		dosage.setSequence(1);
 
-        //Set timing
-        Timing timing = new Timing();
-        OrderFrequency orderFrequency = omrsDrugOrder.getFrequency();
-        if (orderFrequency != null) {
-            CodeableConcept timingCode = new CodeableConcept();
-            timingCode.setText(orderFrequency.getName());
-            List<Coding> timingDts = timingCode.getCoding();
-            addCodings(orderFrequency.getConcept(), timingDts);
-            timing.setCode(timingCode);
-        }
-        dosage.setTiming(timing);
+		//Set timing
+		Timing timing = new Timing();
+		OrderFrequency orderFrequency = omrsDrugOrder.getFrequency();
+		if (orderFrequency != null) {
+			CodeableConcept timingCode = new CodeableConcept();
+			timingCode.setText(orderFrequency.getName());
+			List<Coding> timingDts = timingCode.getCoding();
+			addCodings(orderFrequency.getConcept(), timingDts);
+			timing.setCode(timingCode);
+		}
+		dosage.setTiming(timing);
 
-        SimpleQuantity dose = new SimpleQuantity();
-        Concept doseUnit = omrsDrugOrder.getDoseUnits();
-        if (doseUnit != null) {
-            dose.setUnit(doseUnit.getName().getName());
-        }
+		SimpleQuantity dose = new SimpleQuantity();
+		Concept doseUnit = omrsDrugOrder.getDoseUnits();
+		if (doseUnit != null) {
+			dose.setUnit(doseUnit.getName().getName());
+		}
 
-        if (omrsDrugOrder.getDose() != null) {
-            dose.setValue(omrsDrugOrder.getDose());
-            dosage.setDose(dose);
-        }
+		if (omrsDrugOrder.getDose() != null) {
+			dose.setValue(omrsDrugOrder.getDose());
+			dosage.setDose(dose);
+		}
 
-        Drug drug = omrsDrugOrder.getDrug();
-        if (drug != null) {
-            SimpleQuantity maxDose = new SimpleQuantity();
-            if (doseUnit != null) {
-                maxDose.setUnit(doseUnit.getName().getName());
-            }
-            if (drug.getMaximumDailyDose() != null) {
-                maxDose.setValue(drug.getMaximumDailyDose());
-                dosage.setMaxDosePerAdministration(maxDose);
-            }
-        }
-        dosages.add(dosage);
-        request.setDosageInstruction(dosages);
+		Drug drug = omrsDrugOrder.getDrug();
+		if (drug != null) {
+			SimpleQuantity maxDose = new SimpleQuantity();
+			if (doseUnit != null) {
+				maxDose.setUnit(doseUnit.getName().getName());
+			}
+			if (drug.getMaximumDailyDose() != null) {
+				maxDose.setValue(drug.getMaximumDailyDose());
+				dosage.setMaxDosePerAdministration(maxDose);
+			}
+		}
+		dosages.add(dosage);
+		request.setDosageInstruction(dosages);
 
-        MedicationRequest.MedicationRequestDispenseRequestComponent component = new
-                MedicationRequest.MedicationRequestDispenseRequestComponent();
-        Duration duration = new Duration();
-        Concept durationUnit = omrsDrugOrder.getDurationUnits();
-        if (durationUnit != null) {
-            duration.setUnit(durationUnit.getName().getName());
-        }
+		MedicationRequest.MedicationRequestDispenseRequestComponent component = new
+				MedicationRequest.MedicationRequestDispenseRequestComponent();
+		Duration duration = new Duration();
+		Concept durationUnit = omrsDrugOrder.getDurationUnits();
+		if (durationUnit != null) {
+			duration.setUnit(durationUnit.getName().getName());
+		}
 
-        if (omrsDrugOrder.getDuration() != null) {
-            duration.setValue(omrsDrugOrder.getDuration());
-        }
+		if (omrsDrugOrder.getDuration() != null) {
+			duration.setValue(omrsDrugOrder.getDuration());
+		}
 
-        component.setExpectedSupplyDuration(duration);
-        if (omrsDrugOrder.getQuantityUnits() != null) {
-            SimpleQuantity quantity = new SimpleQuantity();
-            quantity.setUnit(omrsDrugOrder.getQuantityUnits().getName().getName());
-            quantity.setValue(omrsDrugOrder.getQuantity());
-            component.setQuantity(quantity);
-        }
+		component.setExpectedSupplyDuration(duration);
+		if (omrsDrugOrder.getQuantityUnits() != null) {
+			SimpleQuantity quantity = new SimpleQuantity();
+			quantity.setUnit(omrsDrugOrder.getQuantityUnits().getName().getName());
+			quantity.setValue(omrsDrugOrder.getQuantity());
+			component.setQuantity(quantity);
+		}
 
-        request.setDispenseRequest(component);
+		request.setDispenseRequest(component);
 
-        return request;
-    }
+		return request;
+	}
 
-    /**
-     * Generate openmrs drug order from medication request
-     * @param fhirMedicationRequest medication request
-     * @param errors error list
-     * @return openmrs drug order
-     */
-    public static DrugOrder generateDrugOrder(MedicationRequest fhirMedicationRequest, List<String> errors) {
-        DrugOrder order = new DrugOrder();
-        Drug drug = new Drug();
+	/**
+	 * Generate openmrs drug order from medication request
+	 *
+	 * @param fhirMedicationRequest medication request
+	 * @param errors                error list
+	 * @return openmrs drug order
+	 */
+	public static DrugOrder generateDrugOrder(MedicationRequest fhirMedicationRequest, List<String> errors) {
+		DrugOrder order = new DrugOrder();
+		Drug drug = new Drug();
 
-        //Set patient
-        Reference patientRef = fhirMedicationRequest.getSubject();
-        if (patientRef != null) {
-            String patientUuid = patientRef.getId();
-            org.openmrs.Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
-            if (patient == null) {
-                String patientRefId = patientRef.getReference();
-                if (!StringUtils.isEmpty(patientRefId)) {
-                    String[] patientSplits = patientRefId.split("/");
-                    if (patientSplits.length > 0) {
-                        patientUuid = patientSplits[0];
-                        patient = Context.getPatientService().getPatientByUuid(patientUuid);
-                        order.setPatient(patient);
-                    } else {
-                        errors.add("There is no patient for the given uuid");
-                    }
-                }
-            } else {
-                order.setPatient(patient);
-            }
-        } else {
-            errors.add("Subject cannot be empty");
-        }
+		//Set patient
+		Reference patientRef = fhirMedicationRequest.getSubject();
+		if (patientRef != null) {
+			String patientUuid = patientRef.getId();
+			org.openmrs.Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
+			if (patient == null) {
+				String patientRefId = patientRef.getReference();
+				if (!StringUtils.isEmpty(patientRefId)) {
+					String[] patientSplits = patientRefId.split("/");
+					if (patientSplits.length > 0) {
+						patientUuid = patientSplits[0];
+						patient = Context.getPatientService().getPatientByUuid(patientUuid);
+						order.setPatient(patient);
+					} else {
+						errors.add("There is no patient for the given uuid");
+					}
+				}
+			} else {
+				order.setPatient(patient);
+			}
+		} else {
+			errors.add("Subject cannot be empty");
+		}
 
-        //Cant set other status to order it check data for all orders
-        MedicationRequest.MedicationRequestStatus medicationRequestStatus = fhirMedicationRequest.getStatus();
-        if (medicationRequestStatus != null) {
-            if (MedicationRequest.MedicationRequestStatus.STOPPED.toCode().
-                    equalsIgnoreCase(medicationRequestStatus.toCode())) {
-                order.setAction(Order.Action.DISCONTINUE);
-            }
-        }
+		//Cant set other status to order it check data for all orders
+		MedicationRequest.MedicationRequestStatus medicationRequestStatus = fhirMedicationRequest.getStatus();
+		if (medicationRequestStatus != null) {
+			if (MedicationRequest.MedicationRequestStatus.STOPPED.toCode().
+					equalsIgnoreCase(medicationRequestStatus.toCode())) {
+				order.setAction(Order.Action.DISCONTINUE);
+			}
+		}
 
-        //Set urgency can't map all priorities
-        if (MedicationRequest.MedicationRequestPriority.ROUTINE.toCode().
-                equalsIgnoreCase(fhirMedicationRequest.getPriority().toCode())) {
-            order.setUrgency(Order.Urgency.ROUTINE);
-        } else if (MedicationRequest.MedicationRequestPriority.STAT.toCode().
-                equalsIgnoreCase(fhirMedicationRequest.getPriority().toCode())) {
-            order.setUrgency(Order.Urgency.STAT);
-        } else {
-            order.setUrgency(Order.Urgency.ROUTINE);
-        }
+		//Set urgency can't map all priorities
+		if (MedicationRequest.MedicationRequestPriority.ROUTINE.toCode().
+				equalsIgnoreCase(fhirMedicationRequest.getPriority().toCode())) {
+			order.setUrgency(Order.Urgency.ROUTINE);
+		} else if (MedicationRequest.MedicationRequestPriority.STAT.toCode().
+				equalsIgnoreCase(fhirMedicationRequest.getPriority().toCode())) {
+			order.setUrgency(Order.Urgency.STAT);
+		} else {
+			order.setUrgency(Order.Urgency.ROUTINE);
+		}
 
-        CodeableConcept drugConcept = (CodeableConcept) fhirMedicationRequest.getMedication();
-        String drugId = fhirMedicationRequest.getMedication().getId();
-        Concept drugOmrsConcept;
-        if (drugConcept == null) {
-            errors.add("Medication cannot be empty");
-        } else {
-            drugOmrsConcept = FHIRUtils.getConceptFromCode(drugConcept, errors);
-            drug.setConcept(drugOmrsConcept);
-            drug.setUuid(drugId);
-            order.setDrug(drug);
-        }
+		CodeableConcept drugConcept = (CodeableConcept) fhirMedicationRequest.getMedication();
+		String drugId = fhirMedicationRequest.getMedication().getId();
+		Concept drugOmrsConcept;
+		if (drugConcept == null) {
+			errors.add("Medication cannot be empty");
+		} else {
+			drugOmrsConcept = FHIRUtils.getConceptFromCode(drugConcept, errors);
+			drug.setConcept(drugOmrsConcept);
+			drug.setUuid(drugId);
+			order.setDrug(drug);
+		}
 
-        //Set encounter
-        Reference encounterRef = fhirMedicationRequest.getContext();
-        if (encounterRef != null) {
-            String encounterUuid = encounterRef.getId();
-            org.openmrs.Encounter encounter = Context.getEncounterService().getEncounterByUuid(encounterUuid);
-            if (encounter != null) {
-                order.setEncounter(encounter);
-            } else {
-                String encounterRefId = encounterRef.getReference();
-                if (!StringUtils.isEmpty(encounterRefId)) {
-                    String[] encounterSplits = encounterRefId.split("/");
-                    if (encounterSplits.length > 0) {
-                        encounterUuid = encounterSplits[1];
-                        encounter = Context.getEncounterService().getEncounterByUuid(encounterUuid);
-                        order.setEncounter(encounter);
-                    } else {
-                        errors.add("There is no encounter for the given uuid");
-                    }
-                }
-            }
-        }
+		//Set encounter
+		Reference encounterRef = fhirMedicationRequest.getContext();
+		if (encounterRef != null) {
+			String encounterUuid = encounterRef.getId();
+			org.openmrs.Encounter encounter = Context.getEncounterService().getEncounterByUuid(encounterUuid);
+			if (encounter != null) {
+				order.setEncounter(encounter);
+			} else {
+				String encounterRefId = encounterRef.getReference();
+				if (!StringUtils.isEmpty(encounterRefId)) {
+					String[] encounterSplits = encounterRefId.split("/");
+					if (encounterSplits.length > 0) {
+						encounterUuid = encounterSplits[1];
+						encounter = Context.getEncounterService().getEncounterByUuid(encounterUuid);
+						order.setEncounter(encounter);
+					} else {
+						errors.add("There is no encounter for the given uuid");
+					}
+				}
+			}
+		}
 
-        //Set created date
-        if (fhirMedicationRequest.getAuthoredOn() != null) {
-            order.setDateCreated(fhirMedicationRequest.getAuthoredOn());
-        } else {
-            order.setDateCreated(new Date());
-        }
+		//Set created date
+		if (fhirMedicationRequest.getAuthoredOn() != null) {
+			order.setDateCreated(fhirMedicationRequest.getAuthoredOn());
+		} else {
+			order.setDateCreated(new Date());
+		}
 
-        //Set provider
-        MedicationRequest.MedicationRequestRequesterComponent medicationRequestRequesterComponent
-                                                                            = fhirMedicationRequest.getRequester();
-        if (medicationRequestRequesterComponent != null) {
-            Reference providerRef = medicationRequestRequesterComponent.getAgent();
-            String providerUuid = providerRef.getId();
-            org.openmrs.Provider provider = Context.getProviderService().getProviderByUuid(providerUuid);
-            if (provider != null) {
-                order.setOrderer(provider);
-            }
-        }
+		//Set provider
+		MedicationRequest.MedicationRequestRequesterComponent medicationRequestRequesterComponent
+				= fhirMedicationRequest.getRequester();
+		if (medicationRequestRequesterComponent != null) {
+			Reference providerRef = medicationRequestRequesterComponent.getAgent();
+			String providerUuid = providerRef.getId();
+			org.openmrs.Provider provider = Context.getProviderService().getProviderByUuid(providerUuid);
+			if (provider != null) {
+				order.setOrderer(provider);
+			}
+		}
 
-        List<Dosage> dosages = fhirMedicationRequest.getDosageInstruction();
-        //Consider only first dosage
-        if(dosages.size() > 0) {
-            Dosage dosage = dosages.get(0);
-            //Set route
-            CodeableConcept routeConcept = (CodeableConcept) dosage.getRoute();
-            if (routeConcept != null) {
-                Concept omrsRouteConcept = FHIRUtils.getConceptFromCode(routeConcept, errors);
-                order.setRoute(omrsRouteConcept);
-            }
+		List<Dosage> dosages = fhirMedicationRequest.getDosageInstruction();
+		//Consider only first dosage
+		if (dosages.size() > 0) {
+			Dosage dosage = dosages.get(0);
+			//Set route
+			CodeableConcept routeConcept = (CodeableConcept) dosage.getRoute();
+			if (routeConcept != null) {
+				Concept omrsRouteConcept = FHIRUtils.getConceptFromCode(routeConcept, errors);
+				order.setRoute(omrsRouteConcept);
+			}
 
-            //Set dosing instructions
-            order.setDosingInstructions(dosage.getText());
+			//Set dosing instructions
+			order.setDosingInstructions(dosage.getText());
 
-            //set order frequency
-            if (dosage.getTiming() != null) {
-                CodeableConcept orderFrequencyConcept = dosage.getTiming().getCode();
-                Concept omrsTimingConcept = FHIRUtils.getConceptFromCode(orderFrequencyConcept, errors);
-                OrderFrequency orderFrequency = new OrderFrequency();
-                orderFrequency.setConcept(omrsTimingConcept);
-            }
+			//set order frequency
+			if (dosage.getTiming() != null) {
+				CodeableConcept orderFrequencyConcept = dosage.getTiming().getCode();
+				Concept omrsTimingConcept = FHIRUtils.getConceptFromCode(orderFrequencyConcept, errors);
+				OrderFrequency orderFrequency = new OrderFrequency();
+				orderFrequency.setConcept(omrsTimingConcept);
+			}
 
-            //Set dosage
-            SimpleQuantity dose = (SimpleQuantity) dosage.getDose();
-            if (dose != null) {
-                order.setDose(dose.getValue().doubleValue());
-                Concept unitConcept = Context.getConceptService().getConceptByName(dose.getUnit());
-                order.setDoseUnits(unitConcept);
-            }
+			//Set dosage
+			SimpleQuantity dose = (SimpleQuantity) dosage.getDose();
+			if (dose != null) {
+				order.setDose(dose.getValue().doubleValue());
+				Concept unitConcept = Context.getConceptService().getConceptByName(dose.getUnit());
+				order.setDoseUnits(unitConcept);
+			}
 
-            //Set max dose
-            SimpleQuantity maxDose = dosage.getMaxDosePerAdministration();
-            if (maxDose != null) {
-                if (maxDose.getValue() != null) {
-                    drug.setMaximumDailyDose(maxDose.getValue().doubleValue());
-                }
-            }
+			//Set max dose
+			SimpleQuantity maxDose = dosage.getMaxDosePerAdministration();
+			if (maxDose != null) {
+				if (maxDose.getValue() != null) {
+					drug.setMaximumDailyDose(maxDose.getValue().doubleValue());
+				}
+			}
 
-            MedicationRequest.MedicationRequestDispenseRequestComponent component
-                    = fhirMedicationRequest.getDispenseRequest();
+			MedicationRequest.MedicationRequestDispenseRequestComponent component
+					= fhirMedicationRequest.getDispenseRequest();
 
-            if (component != null) {
-                //Set duration
-                Duration duration = component.getExpectedSupplyDuration();
-                if(duration != null) {
-                    if (duration.getValue() != null) {
-                        order.setDuration(duration.getValue().intValue());
-                    }
+			if (component != null) {
+				//Set duration
+				Duration duration = component.getExpectedSupplyDuration();
+				if (duration != null) {
+					if (duration.getValue() != null) {
+						order.setDuration(duration.getValue().intValue());
+					}
 
-                    if (duration.getUnit() != null) {
-                        Concept unitConcept = Context.getConceptService().getConceptByName(duration.getUnit());
-                        order.setDurationUnits(unitConcept);
-                    }
-                }
+					if (duration.getUnit() != null) {
+						Concept unitConcept = Context.getConceptService().getConceptByName(duration.getUnit());
+						order.setDurationUnits(unitConcept);
+					}
+				}
 
-                //Set quantity
-                SimpleQuantity quantity = component.getQuantity();
-                if(quantity != null) {
-                    if (quantity.getValue() != null) {
-                        order.setQuantity(quantity.getValue().doubleValue());
-                    }
-                    if (quantity.getUnit() != null) {
-                        Concept unitConcept = Context.getConceptService().getConceptByName(quantity.getUnit());
-                        order.setQuantityUnits(unitConcept);
-                    }
-                }
+				//Set quantity
+				SimpleQuantity quantity = component.getQuantity();
+				if (quantity != null) {
+					if (quantity.getValue() != null) {
+						order.setQuantity(quantity.getValue().doubleValue());
+					}
+					if (quantity.getUnit() != null) {
+						Concept unitConcept = Context.getConceptService().getConceptByName(quantity.getUnit());
+						order.setQuantityUnits(unitConcept);
+					}
+				}
 
-            }
-        }
+			}
+		}
 
-        return order;
-    }
+		return order;
+	}
 
-    /**
-     * Update drug order
-     * @param requestOrder drug order coming in request
-     * @param retrievedOrder drug order saved in database
-     * @param errors if errors occur
-     * @return updated DrugOrder
-     */
-    public static DrugOrder copyObsAttributes(DrugOrder requestOrder, DrugOrder retrievedOrder, List<String> errors) {
-        //set dose
-        if(requestOrder.getDose() != null) {
-            retrievedOrder.setDose(requestOrder.getDose());
-        }
+	/**
+	 * Update drug order
+	 *
+	 * @param requestOrder   drug order coming in request
+	 * @param retrievedOrder drug order saved in database
+	 * @param errors         if errors occur
+	 * @return updated DrugOrder
+	 */
+	public static DrugOrder copyObsAttributes(DrugOrder requestOrder, DrugOrder retrievedOrder, List<String> errors) {
+		//set dose
+		if (requestOrder.getDose() != null) {
+			retrievedOrder.setDose(requestOrder.getDose());
+		}
 
-        //set dose units
-        if(requestOrder.getDoseUnits() != null) {
-            retrievedOrder.setDoseUnits(requestOrder.getDoseUnits());
-        }
+		//set dose units
+		if (requestOrder.getDoseUnits() != null) {
+			retrievedOrder.setDoseUnits(requestOrder.getDoseUnits());
+		}
 
-        //set quantity units
-        if(requestOrder.getQuantityUnits() != null) {
-            retrievedOrder.setQuantityUnits(requestOrder.getQuantityUnits());
-        }
+		//set quantity units
+		if (requestOrder.getQuantityUnits() != null) {
+			retrievedOrder.setQuantityUnits(requestOrder.getQuantityUnits());
+		}
 
-        //set quantity
-        if(requestOrder.getQuantity() != null) {
-            retrievedOrder.setQuantity(requestOrder.getQuantity());
-        }
+		//set quantity
+		if (requestOrder.getQuantity() != null) {
+			retrievedOrder.setQuantity(requestOrder.getQuantity());
+		}
 
-        //set drug
-        if(requestOrder.getDrug() != null) {
-            retrievedOrder.setDrug(requestOrder.getDrug());
-        }
+		//set drug
+		if (requestOrder.getDrug() != null) {
+			retrievedOrder.setDrug(requestOrder.getDrug());
+		}
 
-        //set dosing instructions
-        if(requestOrder.getDosingInstructions() != null) {
-            retrievedOrder.setDosingInstructions(requestOrder.getDosingInstructions());
-        }
+		//set dosing instructions
+		if (requestOrder.getDosingInstructions() != null) {
+			retrievedOrder.setDosingInstructions(requestOrder.getDosingInstructions());
+		}
 
-        //set duration units
-        if(requestOrder.getDurationUnits() != null) {
-            retrievedOrder.setDurationUnits(requestOrder.getDurationUnits());
-        }
+		//set duration units
+		if (requestOrder.getDurationUnits() != null) {
+			retrievedOrder.setDurationUnits(requestOrder.getDurationUnits());
+		}
 
-        //set duration
-        if(requestOrder.getDuration() != null) {
-            retrievedOrder.setDuration(requestOrder.getDuration());
-        }
+		//set duration
+		if (requestOrder.getDuration() != null) {
+			retrievedOrder.setDuration(requestOrder.getDuration());
+		}
 
-        //set route
-        if(requestOrder.getRoute() != null) {
-            retrievedOrder.setRoute(requestOrder.getRoute());
-        }
+		//set route
+		if (requestOrder.getRoute() != null) {
+			retrievedOrder.setRoute(requestOrder.getRoute());
+		}
 
-        //set patient
-        if(requestOrder.getPatient() != null) {
-            retrievedOrder.setPatient(requestOrder.getPatient());
-        }
+		//set patient
+		if (requestOrder.getPatient() != null) {
+			retrievedOrder.setPatient(requestOrder.getPatient());
+		}
 
-        //set encounter
-        if(requestOrder.getEncounter() != null) {
-            retrievedOrder.setEncounter(requestOrder.getEncounter());
-        }
+		//set encounter
+		if (requestOrder.getEncounter() != null) {
+			retrievedOrder.setEncounter(requestOrder.getEncounter());
+		}
 
-        //set orderer
-        if(requestOrder.getOrderer() != null) {
-            retrievedOrder.setOrderer(requestOrder.getOrderer());
-        }
+		//set orderer
+		if (requestOrder.getOrderer() != null) {
+			retrievedOrder.setOrderer(requestOrder.getOrderer());
+		}
 
-        return retrievedOrder;
-    }
+		return retrievedOrder;
+	}
 
-    /**
-     * Add codings from OpenMRS mappings
-     */
-    private static void addCodings(Concept concept, List<Coding> codings) {
-        //Set concept coding
-        Collection<ConceptMap> conceptMappings = concept.getConceptMappings();
-        if (conceptMappings != null && !conceptMappings.isEmpty()) {
-            for (ConceptMap map : conceptMappings) {
-                if (map.getConceptReferenceTerm() != null) {
-                    codings.add(FHIRUtils.getCodingDtByConceptMappings(map));
-                }
-            }
-        }
+	/**
+	 * Add codings from OpenMRS mappings
+	 */
+	private static void addCodings(Concept concept, List<Coding> codings) {
+		//Set concept coding
+		Collection<ConceptMap> conceptMappings = concept.getConceptMappings();
+		if (conceptMappings != null && !conceptMappings.isEmpty()) {
+			for (ConceptMap map : conceptMappings) {
+				if (map.getConceptReferenceTerm() != null) {
+					codings.add(FHIRUtils.getCodingDtByConceptMappings(map));
+				}
+			}
+		}
 
-        //Setting default omrs concept
-        if (concept.getName() != null) {
-            codings.add(new Coding().setCode(concept.getUuid()).setDisplay(
-                    concept.getName().getName()).setSystem(FHIRConstants.OPENMRS_URI));
-        } else {
-            codings.add(new Coding().setCode(concept.getUuid()).setSystem(
-                    FHIRConstants.OPENMRS_URI));
-        }
-    }
+		//Setting default omrs concept
+		if (concept.getName() != null) {
+			codings.add(new Coding().setCode(concept.getUuid()).setDisplay(
+					concept.getName().getName()).setSystem(FHIRConstants.OPENMRS_URI));
+		} else {
+			codings.add(new Coding().setCode(concept.getUuid()).setSystem(
+					FHIRConstants.OPENMRS_URI));
+		}
+	}
 }

@@ -24,9 +24,9 @@ import org.openmrs.module.fhir.api.db.FHIRDAO;
 public class HibernateFHIRDAO implements FHIRDAO {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
-	
+
 	private SessionFactory sessionFactory;
-	
+
 	/**
 	 * @return the sessionFactory
 	 */

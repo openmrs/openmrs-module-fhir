@@ -48,11 +48,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 public class SwaggerSDKGenerationTestCase extends RestfulServer {
+
 	private static final String MODULE_SERVELET_PREFIX = "/fhir/fhirServelet";
 
 	public SwaggerSDKGenerationTestCase() {
 		initialize();
 	}
+
 	/**
 	 * The initialize method is automatically called when the servlet is starting up, so it can
 	 * be used to configure the servlet to define resource providers, or set up
@@ -115,7 +117,7 @@ public class SwaggerSDKGenerationTestCase extends RestfulServer {
 		assertNotNull(path);
 	}
 
-	@Test (expected = FHIRModuleOmodException.class)
+	@Test(expected = FHIRModuleOmodException.class)
 	public void generateSwaggerSDKForInvalidLanguage_shouldNotGenerateSwaggerSDK() throws FHIRModuleOmodException {
 		String urlWithoutScheme = "http";
 		String language = "non-exist";

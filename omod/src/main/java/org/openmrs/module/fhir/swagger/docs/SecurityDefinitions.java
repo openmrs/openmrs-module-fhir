@@ -15,13 +15,13 @@ package org.openmrs.module.fhir.swagger.docs;
 
 public class SecurityDefinitions {
 
-    private BasicAuth basicAuth;
+	private BasicAuth basicAuth;
 
-    public BasicAuth getBasicAuth() {
-        return basicAuth;
-    }
+	public BasicAuth getBasicAuth() {
+		return basicAuth;
+	}
 
-    public void setBasicAuth(BasicAuth basicAuth) {
-        this.basicAuth = basicAuth;
-    }
+	public void setBasicAuth(BasicAuth basicAuth) {
+		this.basicAuth = basicAuth;
+	}
 }

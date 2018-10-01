@@ -33,7 +33,7 @@ import java.util.TreeSet;
 import static java.lang.String.valueOf;
 
 public class FHIRPersonUtil {
-	
+
 	public static Person generatePerson(org.openmrs.Person omrsPerson) {
 		Person person = new Person();
 		//Set person ID
@@ -47,7 +47,7 @@ public class FHIRPersonUtil {
 			List<StringType> givenNames = new ArrayList<StringType>();
 			givenNames.add(givenName);
 			fhirName.setGiven(givenNames);
-			
+
 			if (name.getFamilyNameSuffix() != null) {
 				StringType suffix = new StringType();
 				suffix.setValue(name.getFamilyNameSuffix());
@@ -55,7 +55,7 @@ public class FHIRPersonUtil {
 				suffixes.add(suffix);
 				fhirName.setSuffix(suffixes);
 			}
-			
+
 			if (name.getFamilyNamePrefix() != null) {
 				StringType prefix = new StringType();
 				prefix.setValue(name.getPrefix());
@@ -71,7 +71,7 @@ public class FHIRPersonUtil {
 			humanNames.add(fhirName);
 		}
 		person.setName(humanNames);
-		
+
 		//Set address in FHIR person
 		List<Address> addressList = new ArrayList<Address>();
 		Address fhirAddress;
@@ -94,7 +94,7 @@ public class FHIRPersonUtil {
 		} else {
 			person.setActive(false);
 		}
-		
+
 		//Check whether person converted to a patient
 		Patient patient = Context.getPatientService().getPatientByUuid(omrsPerson.getUuid());
 		if (patient != null) {
@@ -113,21 +113,21 @@ public class FHIRPersonUtil {
 			links.add(link);
 			person.setLink(links);
 		}
-		
+
 		FHIRUtils.validate(person);
 		return person;
 	}
-	
+
 	/**
 	 * @param personFHIR
 	 * @return OpenMRS person after giving a FHIR person
 	 * @should generate Oms Person
 	 */
 	public static org.openmrs.Person generateOpenMRSPerson(org.hl7.fhir.dstu3.model.Person personFHIR,
-	                                                       List<String> errors) {
+			List<String> errors) {
 		org.openmrs.Person omrsPerson = new org.openmrs.Person();
 		boolean preferredPresent = false, givennamePresent = false, familynamePresent = false, doCheckName = true;
-		
+
 		if (personFHIR.getId() != null) {
 			omrsPerson.setUuid(personFHIR.getId());
 		}
@@ -140,7 +140,7 @@ public class FHIRPersonUtil {
 			if (humanNameDt.getUse() != null) {
 				String getUse = humanNameDt.getUse().toCode();
 				if (String.valueOf(HumanName.NameUse.USUAL).equalsIgnoreCase(getUse)
-				        || String.valueOf(HumanName.NameUse.OFFICIAL).equalsIgnoreCase(getUse)) {
+						|| String.valueOf(HumanName.NameUse.OFFICIAL).equalsIgnoreCase(getUse)) {
 					preferredPresent = true;
 					personName.setPreferred(true);
 				}
@@ -162,7 +162,7 @@ public class FHIRPersonUtil {
 					personName.setFamilyNameSuffix(valueOf(suffix));
 				}
 			}
-			
+
 			List<StringType> givenNames = humanNameDt.getGiven();
 			if (givenNames != null) {
 				givennamePresent = true;
@@ -176,7 +176,8 @@ public class FHIRPersonUtil {
 			}
 
 			names.add(personName);
-			if (preferredPresent && givennamePresent && familynamePresent) { //if all are present in one name, further checking are not needed
+			if (preferredPresent && givennamePresent
+					&& familynamePresent) { //if all are present in one name, further checking are not needed
 				doCheckName = false; // cancel future checking
 			}
 			if (doCheckName) { // if no suitable names found, these variables should be reset
@@ -189,7 +190,7 @@ public class FHIRPersonUtil {
 		if (doCheckName) {
 			errors.add("Person should have atleast one preferred name with family name and given name");
 		}
-		
+
 		Set<PersonAddress> addresses = new TreeSet<PersonAddress>();
 		PersonAddress address;
 		for (Address fhirAddress : personFHIR.getAddress()) {
@@ -199,7 +200,7 @@ public class FHIRPersonUtil {
 			address.setStateProvince(fhirAddress.getState());
 			address.setPostalCode(fhirAddress.getPostalCode());
 			List<StringType> addressStrings = fhirAddress.getLine();
-			
+
 			if (addressStrings != null) {
 				for (int i = 0; i < addressStrings.size(); i++) {
 					if (i == 0) {
@@ -215,7 +216,7 @@ public class FHIRPersonUtil {
 					}
 				}
 			}
-			
+
 			if (String.valueOf(Address.AddressUse.HOME.toCode()).equalsIgnoreCase(fhirAddress.getUse().toCode())) {
 				address.setPreferred(true);
 			}
@@ -225,17 +226,18 @@ public class FHIRPersonUtil {
 			addresses.add(address);
 		}
 		omrsPerson.setAddresses(addresses);
-		
+
 		if (personFHIR.getGender() != null) {
 			if (personFHIR.getGender().toCode().equalsIgnoreCase(String.valueOf(Enumerations.AdministrativeGender.MALE))) {
 				omrsPerson.setGender(FHIRConstants.MALE);
-			} else if (personFHIR.getGender().toCode().equalsIgnoreCase(String.valueOf(Enumerations.AdministrativeGender.FEMALE))) {
+			} else if (personFHIR.getGender().toCode()
+					.equalsIgnoreCase(String.valueOf(Enumerations.AdministrativeGender.FEMALE))) {
 				omrsPerson.setGender(FHIRConstants.FEMALE);
 			}
 		} else {
 			errors.add("Gender cannot be empty");
 		}
-		
+
 		omrsPerson.setBirthdate(personFHIR.getBirthDate());
 		if (personFHIR.getActive()) {
 			omrsPerson.setPersonVoided(false);
@@ -243,20 +245,21 @@ public class FHIRPersonUtil {
 			omrsPerson.setPersonVoided(true);
 			omrsPerson.setPersonVoidReason("Deleted from FHIR module"); // deleted reason is compulsory
 		}
-		
+
 		return omrsPerson;
 	}
-	
+
 	/**
-	 * @param omrsPerson which contains OpenMRS Person who has the same attributes of the json
-	 *            request body
+	 * @param omrsPerson      which contains OpenMRS Person who has the same attributes of the json
+	 *                        request body
 	 * @param retrievedPerson the OpenMRS person which was read from the DB for the given uuid in
-	 *            the PUT request.
+	 *                        the PUT request.
 	 * @return OpenMRS person after copying all the attributes of the PUT request to the
-	 *         retrievedPerson
+	 * retrievedPerson
 	 * @should generate OpenMRS Person
 	 */
-	public static org.openmrs.Person updatePersonAttributes(org.openmrs.Person omrsPerson, org.openmrs.Person retrievedPerson) {
+	public static org.openmrs.Person updatePersonAttributes(org.openmrs.Person omrsPerson,
+			org.openmrs.Person retrievedPerson) {
 		Set<PersonName> all = retrievedPerson.getNames();
 		boolean needToSetPreferredName = false; // indicate whether any preferred names are in the request body.
 		for (PersonName name : omrsPerson.getNames()) {

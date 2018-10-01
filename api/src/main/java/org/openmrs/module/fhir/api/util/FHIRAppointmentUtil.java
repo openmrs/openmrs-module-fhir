@@ -25,89 +25,91 @@ import java.util.List;
 
 public class FHIRAppointmentUtil {
 
-    public static org.hl7.fhir.dstu3.model.Appointment generateFHIRAppointment(Appointment appointment) {
-        org.hl7.fhir.dstu3.model.Appointment fhirAppointment = new org.hl7.fhir.dstu3.model.Appointment();
-        IdType id = new IdType();
-        id.setValue(appointment.getUuid());
-        fhirAppointment.setId(id);
+	public static org.hl7.fhir.dstu3.model.Appointment generateFHIRAppointment(Appointment appointment) {
+		org.hl7.fhir.dstu3.model.Appointment fhirAppointment = new org.hl7.fhir.dstu3.model.Appointment();
+		IdType id = new IdType();
+		id.setValue(appointment.getUuid());
+		fhirAppointment.setId(id);
 
-        //Set appointment id as a identifier
-        Identifier identifier = new Identifier();
-        identifier.setValue(Integer.toString(appointment.getAppointmentId()));
-        fhirAppointment.addIdentifier(identifier);
+		//Set appointment id as a identifier
+		Identifier identifier = new Identifier();
+		identifier.setValue(Integer.toString(appointment.getAppointmentId()));
+		fhirAppointment.addIdentifier(identifier);
 
-        //Set patient reference
-        Reference patient = FHIRUtils.buildPatientOrPersonResourceReference(appointment.getPatient());
+		//Set patient reference
+		Reference patient = FHIRUtils.buildPatientOrPersonResourceReference(appointment.getPatient());
 
-        //Set practitioner reference
-        Reference practitioner = FHIRUtils.buildPractitionerReference(appointment.getTimeSlot().getAppointmentBlock().getProvider());
+		//Set practitioner reference
+		Reference practitioner = FHIRUtils
+				.buildPractitionerReference(appointment.getTimeSlot().getAppointmentBlock().getProvider());
 
-        org.hl7.fhir.dstu3.model.Appointment.AppointmentParticipantComponent practitionerParticipant =
-                                                                                        fhirAppointment.addParticipant();
-        List<CodeableConcept> types = new ArrayList<>();
-        CodeableConcept type = new CodeableConcept();
-        type.addCoding(new Coding(FHIRConstants.PRACTITIONER, FHIRConstants.PRACTITIONER, FHIRConstants.PRACTITIONER));
-        types.add(type);
-        practitionerParticipant.setType(types);
-        practitionerParticipant.setActor(practitioner);
+		org.hl7.fhir.dstu3.model.Appointment.AppointmentParticipantComponent practitionerParticipant =
+				fhirAppointment.addParticipant();
+		List<CodeableConcept> types = new ArrayList<>();
+		CodeableConcept type = new CodeableConcept();
+		type.addCoding(new Coding(FHIRConstants.PRACTITIONER, FHIRConstants.PRACTITIONER, FHIRConstants.PRACTITIONER));
+		types.add(type);
+		practitionerParticipant.setType(types);
+		practitionerParticipant.setActor(practitioner);
 
-        org.hl7.fhir.dstu3.model.Appointment.AppointmentParticipantComponent patientParticipant =
-                fhirAppointment.addParticipant();
-        practitionerParticipant.setActor(practitioner);
-        types = new ArrayList<CodeableConcept>();
-        type = new CodeableConcept();
-        type.addCoding(new Coding(FHIRConstants.PRACTITIONER, FHIRConstants.PRACTITIONER, FHIRConstants.PRACTITIONER));
-        types.add(type);
-        patientParticipant.setType(types);
-        patientParticipant.setActor(patient);
+		org.hl7.fhir.dstu3.model.Appointment.AppointmentParticipantComponent patientParticipant =
+				fhirAppointment.addParticipant();
+		practitionerParticipant.setActor(practitioner);
+		types = new ArrayList<CodeableConcept>();
+		type = new CodeableConcept();
+		type.addCoding(new Coding(FHIRConstants.PRACTITIONER, FHIRConstants.PRACTITIONER, FHIRConstants.PRACTITIONER));
+		types.add(type);
+		patientParticipant.setType(types);
+		patientParticipant.setActor(patient);
 
-        //Set appointment status
-        Appointment.AppointmentStatus appointmentStatus = appointment.getStatus();
+		//Set appointment status
+		Appointment.AppointmentStatus appointmentStatus = appointment.getStatus();
 
-        if (Appointment.AppointmentStatus.CANCELLED.getName().equalsIgnoreCase(appointmentStatus.getName())) {
-            fhirAppointment.setStatus(org.hl7.fhir.dstu3.model.Appointment.AppointmentStatus.CANCELLED);
-        } else if (Appointment.AppointmentStatus.SCHEDULED.getName().equalsIgnoreCase(appointmentStatus.getName())) {
-            fhirAppointment.setStatus(org.hl7.fhir.dstu3.model.Appointment.AppointmentStatus.BOOKED);
-        } else if (Appointment.AppointmentStatus.RESCHEDULED.getName().equalsIgnoreCase(appointmentStatus.getName())) {
-            fhirAppointment.setStatus(org.hl7.fhir.dstu3.model.Appointment.AppointmentStatus.BOOKED);
-        } else if (Appointment.AppointmentStatus.WALKIN.getName().equalsIgnoreCase(appointmentStatus.getName())) {
-            fhirAppointment.setStatus(org.hl7.fhir.dstu3.model.Appointment.AppointmentStatus.PENDING);
-        } else if (Appointment.AppointmentStatus.INCONSULTATION.getName().equalsIgnoreCase(appointmentStatus.getName())) {
-            fhirAppointment.setStatus(org.hl7.fhir.dstu3.model.Appointment.AppointmentStatus.ARRIVED);
-        } else if (Appointment.AppointmentStatus.CANCELLED.getName().equalsIgnoreCase(appointmentStatus.getName())) {
-            fhirAppointment.setStatus(org.hl7.fhir.dstu3.model.Appointment.AppointmentStatus.CANCELLED);
-        } else if (Appointment.AppointmentStatus.CANCELLED_AND_NEEDS_RESCHEDULE.getName().equalsIgnoreCase(appointmentStatus.getName())) {
-            fhirAppointment.setStatus(org.hl7.fhir.dstu3.model.Appointment.AppointmentStatus.CANCELLED);
-        } else if (Appointment.AppointmentStatus.MISSED.getName().equalsIgnoreCase(appointmentStatus.getName())) {
-            fhirAppointment.setStatus(org.hl7.fhir.dstu3.model.Appointment.AppointmentStatus.NOSHOW);
-        } else if (Appointment.AppointmentStatus.COMPLETED.getName().equalsIgnoreCase(appointmentStatus.getName())) {
-            fhirAppointment.setStatus(org.hl7.fhir.dstu3.model.Appointment.AppointmentStatus.FULFILLED);
-        } else {
-            fhirAppointment.setStatus(org.hl7.fhir.dstu3.model.Appointment.AppointmentStatus.PENDING);
-        }
+		if (Appointment.AppointmentStatus.CANCELLED.getName().equalsIgnoreCase(appointmentStatus.getName())) {
+			fhirAppointment.setStatus(org.hl7.fhir.dstu3.model.Appointment.AppointmentStatus.CANCELLED);
+		} else if (Appointment.AppointmentStatus.SCHEDULED.getName().equalsIgnoreCase(appointmentStatus.getName())) {
+			fhirAppointment.setStatus(org.hl7.fhir.dstu3.model.Appointment.AppointmentStatus.BOOKED);
+		} else if (Appointment.AppointmentStatus.RESCHEDULED.getName().equalsIgnoreCase(appointmentStatus.getName())) {
+			fhirAppointment.setStatus(org.hl7.fhir.dstu3.model.Appointment.AppointmentStatus.BOOKED);
+		} else if (Appointment.AppointmentStatus.WALKIN.getName().equalsIgnoreCase(appointmentStatus.getName())) {
+			fhirAppointment.setStatus(org.hl7.fhir.dstu3.model.Appointment.AppointmentStatus.PENDING);
+		} else if (Appointment.AppointmentStatus.INCONSULTATION.getName().equalsIgnoreCase(appointmentStatus.getName())) {
+			fhirAppointment.setStatus(org.hl7.fhir.dstu3.model.Appointment.AppointmentStatus.ARRIVED);
+		} else if (Appointment.AppointmentStatus.CANCELLED.getName().equalsIgnoreCase(appointmentStatus.getName())) {
+			fhirAppointment.setStatus(org.hl7.fhir.dstu3.model.Appointment.AppointmentStatus.CANCELLED);
+		} else if (Appointment.AppointmentStatus.CANCELLED_AND_NEEDS_RESCHEDULE.getName()
+				.equalsIgnoreCase(appointmentStatus.getName())) {
+			fhirAppointment.setStatus(org.hl7.fhir.dstu3.model.Appointment.AppointmentStatus.CANCELLED);
+		} else if (Appointment.AppointmentStatus.MISSED.getName().equalsIgnoreCase(appointmentStatus.getName())) {
+			fhirAppointment.setStatus(org.hl7.fhir.dstu3.model.Appointment.AppointmentStatus.NOSHOW);
+		} else if (Appointment.AppointmentStatus.COMPLETED.getName().equalsIgnoreCase(appointmentStatus.getName())) {
+			fhirAppointment.setStatus(org.hl7.fhir.dstu3.model.Appointment.AppointmentStatus.FULFILLED);
+		} else {
+			fhirAppointment.setStatus(org.hl7.fhir.dstu3.model.Appointment.AppointmentStatus.PENDING);
+		}
 
-        //Set start date
-        fhirAppointment.setStart(appointment.getTimeSlot().getStartDate());
+		//Set start date
+		fhirAppointment.setStart(appointment.getTimeSlot().getStartDate());
 
-        //Set end date
-        fhirAppointment.setStart(appointment.getTimeSlot().getEndDate());
+		//Set end date
+		fhirAppointment.setStart(appointment.getTimeSlot().getEndDate());
 
-        //Set reason
-        List<CodeableConcept> codeableConcepts = new ArrayList<>();
-        CodeableConcept reason = new CodeableConcept();
-        reason.setText(appointment.getReason());
-        codeableConcepts.add(reason);
-        fhirAppointment.setReason(codeableConcepts);
+		//Set reason
+		List<CodeableConcept> codeableConcepts = new ArrayList<>();
+		CodeableConcept reason = new CodeableConcept();
+		reason.setText(appointment.getReason());
+		codeableConcepts.add(reason);
+		fhirAppointment.setReason(codeableConcepts);
 
-        //Set appointment type
-        CodeableConcept appointmentType = new CodeableConcept();
-        type.setText(appointment.getAppointmentType().getName());
-        fhirAppointment.setAppointmentType(appointmentType);
+		//Set appointment type
+		CodeableConcept appointmentType = new CodeableConcept();
+		type.setText(appointment.getAppointmentType().getName());
+		fhirAppointment.setAppointmentType(appointmentType);
 
-        return fhirAppointment;
-    }
+		return fhirAppointment;
+	}
 
-    public static Appointment generateOpenMRSAppointmentModuleAppointment() {
-        return null;
-    }
+	public static Appointment generateOpenMRSAppointmentModuleAppointment() {
+		return null;
+	}
 }

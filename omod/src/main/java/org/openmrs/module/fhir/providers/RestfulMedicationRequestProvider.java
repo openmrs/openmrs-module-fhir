@@ -34,11 +34,11 @@ import java.util.List;
 
 public class RestfulMedicationRequestProvider implements IResourceProvider {
 
-	private FHIRMedicationRequestResource fhirMedicationRequestResource;
-
 	private static final String ERROR_MESSAGE = "No Person is associated with the given UUID to update. Please"
 			+ " make sure you have set at lease one non-delete name, Gender and birthday to create a new "
 			+ "Person with the given Id";
+
+	private FHIRMedicationRequestResource fhirMedicationRequestResource;
 
 	public RestfulMedicationRequestProvider() {
 		this.fhirMedicationRequestResource = new FHIRMedicationRequestResource();
@@ -54,7 +54,7 @@ public class RestfulMedicationRequestProvider implements IResourceProvider {
 	 * operations should return a single resource instance.
 	 *
 	 * @param theId The read operation takes one parameter, which must be of type IdType and must be
-	 *            annotated with the "@Read.IdParam" annotation.
+	 *              annotated with the "@Read.IdParam" annotation.
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read
@@ -69,7 +69,7 @@ public class RestfulMedicationRequestProvider implements IResourceProvider {
 	 */
 	@Search
 	public List<MedicationRequest> findMedicatoonRequestByUniqueId(
-															@RequiredParam(name = MedicationRequest.SP_RES_ID) TokenParam id) {
+			@RequiredParam(name = MedicationRequest.SP_RES_ID) TokenParam id) {
 		return fhirMedicationRequestResource.searchByUniqueId(id);
 	}
 
@@ -91,7 +91,8 @@ public class RestfulMedicationRequestProvider implements IResourceProvider {
 	 */
 	@Create
 	public MethodOutcome createFHIRMedicationRequest(@ResourceParam MedicationRequest medicationRequest) {
-		return MethodOutcomeBuilder.buildCreate(fhirMedicationRequestResource.createFHIRMedicationRequest(medicationRequest));
+		return MethodOutcomeBuilder
+				.buildCreate(fhirMedicationRequestResource.createFHIRMedicationRequest(medicationRequest));
 	}
 
 	/**
@@ -102,8 +103,10 @@ public class RestfulMedicationRequestProvider implements IResourceProvider {
 	@Update
 	public MethodOutcome updateMedicationRequest(@ResourceParam MedicationRequest medicationRequest, @IdParam IdType theId) {
 		try {
-			return MethodOutcomeBuilder.buildUpdate(fhirMedicationRequestResource.updateFHIRMedicationRequest(medicationRequest, medicationRequest.getId()));
-		} catch (Exception e) {
+			return MethodOutcomeBuilder.buildUpdate(
+					fhirMedicationRequestResource.updateFHIRMedicationRequest(medicationRequest, medicationRequest.getId()));
+		}
+		catch (Exception e) {
 			return MethodOutcomeBuilder.buildCustom(ERROR_MESSAGE);
 		}
 	}

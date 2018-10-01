@@ -45,12 +45,12 @@ public class FHIREncounterResource extends Resource {
 
 	public List<Encounter> searchEncountersByPatientIdentifier(ReferenceParam identifier) {
 		return Context.getService(EncounterService.class).searchEncountersByPatientIdentifier(
-					identifier.getIdPart());
+				identifier.getIdPart());
 	}
 
 	public List<Encounter> searchEncountersByPatientIdentifierAndPartOf(ReferenceParam identifier, ReferenceParam partOf) {
 		return Context.getService(EncounterService.class).searchEncountersByPatientIdentifierAndPartOf
-					(identifier.getIdPart(), partOf.getIdPart());
+				(identifier.getIdPart(), partOf.getIdPart());
 	}
 
 	public List<Encounter> searchEncountersByIdAndPartOf(TokenParam identifier, ReferenceParam partOf) {

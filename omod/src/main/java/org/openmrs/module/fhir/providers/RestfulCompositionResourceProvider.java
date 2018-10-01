@@ -57,7 +57,7 @@ public class RestfulCompositionResourceProvider implements IResourceProvider {
 	 */
 	@Search
 	public List<Composition> findCompositionEncountersByEncounterId(@RequiredParam(name = FHIRConstants.ENCOUNTER_ID)
-	                                                                  TokenParam encounter) {
+			TokenParam encounter) {
 		return compositionResource.searchEncounterCompostionsByEncounterId(encounter);
 	}
 }

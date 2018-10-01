@@ -29,7 +29,7 @@ public class FHIRRESTfulGenericClient {
 	private static final FhirContext ctx = FhirContext.forDstu3();
 
 	public static Patient readPatientById(String serverBase,
-	                                      String theID) {
+			String theID) {
 		IGenericClient client = ctx.newRestfulGenericClient(serverBase);
 		return client.read()
 				.resource(Patient.class)
@@ -38,7 +38,7 @@ public class FHIRRESTfulGenericClient {
 	}
 
 	public static Practitioner readPractitionerById(String serverBase,
-	                                                String theID) {
+			String theID) {
 		IGenericClient client = ctx.newRestfulGenericClient(serverBase);
 		return client.read()
 				.resource(Practitioner.class)
@@ -47,7 +47,7 @@ public class FHIRRESTfulGenericClient {
 	}
 
 	public static ImagingStudy readImagingStudyById(String serverBase,
-	                                                String theID) {
+			String theID) {
 		IGenericClient client = ctx.newRestfulGenericClient(serverBase);
 		return client.read()
 				.resource(ImagingStudy.class)
@@ -56,11 +56,11 @@ public class FHIRRESTfulGenericClient {
 	}
 
 	public static Bundle searchWhereReferenceAndToken(String serverBase,
-	                                                  Class<DiagnosticReport> fhirResource,
-	                                                  ICriterion<ReferenceClientParam> where,
-	                                                  ICriterion<TokenClientParam> and) {
+			Class<DiagnosticReport> fhirResource,
+			ICriterion<ReferenceClientParam> where,
+			ICriterion<TokenClientParam> and) {
 		IGenericClient client = ctx.newRestfulGenericClient(serverBase);
-		return (Bundle)client.search()
+		return (Bundle) client.search()
 				.forResource(fhirResource)
 				.where(where)
 				.and(and)
@@ -68,10 +68,10 @@ public class FHIRRESTfulGenericClient {
 	}
 
 	public static Bundle searchWhereReference(String serverBase,
-	                                          Class<DiagnosticReport> fhirResource,
-	                                          ICriterion<ReferenceClientParam> where) {
+			Class<DiagnosticReport> fhirResource,
+			ICriterion<ReferenceClientParam> where) {
 		IGenericClient client = ctx.newRestfulGenericClient(serverBase);
-		return (Bundle)client.search()
+		return (Bundle) client.search()
 				.forResource(fhirResource)
 				.where(where)
 				.execute();

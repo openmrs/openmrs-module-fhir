@@ -12,36 +12,35 @@ import java.util.List;
 
 public class FHIRGroupResource extends Resource {
 
-    public Group getByUniqueId(IdType id) {
-        Group group = getGroupService().getGroup(id.getIdPart());
-        if (group == null) {
-            throw new ResourceNotFoundException("Group is not found for given Id " + id.getIdPart());
-        }
-        return group;
-    }
+	public Group getByUniqueId(IdType id) {
+		Group group = getGroupService().getGroup(id.getIdPart());
+		if (group == null) {
+			throw new ResourceNotFoundException("Group is not found for given Id " + id.getIdPart());
+		}
+		return group;
+	}
 
-    public List<Group> searchGroupById(TokenParam id) {
-        return getGroupService().searchGroupById(id.getValue());
-    }
+	public List<Group> searchGroupById(TokenParam id) {
+		return getGroupService().searchGroupById(id.getValue());
+	}
 
-    public List<Group> searchGroupByName(StringParam name) {
-        return getGroupService().searchGroupByName(name.getValue());
-    }
+	public List<Group> searchGroupByName(StringParam name) {
+		return getGroupService().searchGroupByName(name.getValue());
+	}
 
-    public Group createGroup(Group group) {
-        return getGroupService().createGroup(group);
-    }
+	public Group createGroup(Group group) {
+		return getGroupService().createGroup(group);
+	}
 
+	public Group updateGroup(Group group, String uuid) {
+		return getGroupService().updateGroup(group, uuid);
+	}
 
-    public Group updateGroup(Group group, String uuid) {
-        return getGroupService().updateGroup(group, uuid);
-    }
+	public void deleteGroup(IdType id) {
+		getGroupService().deleteGroup(id.getIdPart());
+	}
 
-    public void deleteGroup(IdType id) {
-        getGroupService().deleteGroup(id.getIdPart());
-    }
-
-    private GroupService getGroupService() {
-        return Context.getService(GroupService.class);
-    }
+	private GroupService getGroupService() {
+		return Context.getService(GroupService.class);
+	}
 }

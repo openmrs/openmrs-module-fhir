@@ -13,7 +13,6 @@
  */
 package org.openmrs.module.fhir.api;
 
-
 import org.hl7.fhir.dstu3.model.AllergyIntolerance;
 
 import java.util.List;

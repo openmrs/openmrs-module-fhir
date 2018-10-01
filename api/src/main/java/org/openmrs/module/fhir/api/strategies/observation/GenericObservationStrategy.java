@@ -8,25 +8,25 @@ import java.util.Map;
 
 public interface GenericObservationStrategy {
 
-    Observation getObservation(String uuid);
+	Observation getObservation(String uuid);
 
-    List<Observation> searchObservationByPatientAndConcept(String patientUuid, Map<String, String> conceptNamesAndURIs);
+	List<Observation> searchObservationByPatientAndConcept(String patientUuid, Map<String, String> conceptNamesAndURIs);
 
-    List<Observation> searchObservationByUuid(String uuid);
+	List<Observation> searchObservationByUuid(String uuid);
 
-    List<Observation> searchObservationsByCode(Map<String, String> conceptNamesAndURIs);
+	List<Observation> searchObservationsByCode(Map<String, String> conceptNamesAndURIs);
 
-    List<Observation> searchObservationByDate(Date date);
+	List<Observation> searchObservationByDate(Date date);
 
-    List<Observation> searchObservationByPerson(String personUuid);
+	List<Observation> searchObservationByPerson(String personUuid);
 
-    List<Observation> searchObservationByValueConcept(String conceptName);
+	List<Observation> searchObservationByValueConcept(String conceptName);
 
-    List<Observation> searchObservationByPatientIdentifier(String identifier);
+	List<Observation> searchObservationByPatientIdentifier(String identifier);
 
-    void deleteObservation(String uuid);
+	void deleteObservation(String uuid);
 
-    Observation createFHIRObservation(Observation observation);
+	Observation createFHIRObservation(Observation observation);
 
-    Observation updateFHITObservation(Observation observation, String uuid);
+	Observation updateFHITObservation(Observation observation, String uuid);
 }

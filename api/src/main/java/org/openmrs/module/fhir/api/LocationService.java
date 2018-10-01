@@ -53,7 +53,7 @@ public interface LocationService extends OpenmrsService {
 	 * @return fhir location resource list
 	 */
 	List<Location> searchLocationsByName(String name);
-	
+
 	/**
 	 * Delete location by id
 	 *
@@ -64,13 +64,13 @@ public interface LocationService extends OpenmrsService {
 	/**
 	 * Update location
 	 *
-	 * @param uuid The uuid of location
+	 * @param uuid     The uuid of location
 	 * @param location representation of location fhir resource
 	 */
 	Location updateLocation(String uuid, Location location);
-	
+
 	/**
-	 * Create location 
+	 * Create location
 	 *
 	 * @param location representation of location fhir resource
 	 */

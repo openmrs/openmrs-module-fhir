@@ -29,63 +29,63 @@ import java.util.List;
 
 public class RestfulConditionResourceProvider implements IResourceProvider {
 
-    private FHIRConditionResource conditionResource;
+	private FHIRConditionResource conditionResource;
 
-    public RestfulConditionResourceProvider() {
-        conditionResource = new FHIRConditionResource();
-    }
+	public RestfulConditionResourceProvider() {
+		conditionResource = new FHIRConditionResource();
+	}
 
-    @Override
-    public Class<? extends Resource> getResourceType() {
-        return Condition.class;
-    }
+	@Override
+	public Class<? extends Resource> getResourceType() {
+		return Condition.class;
+	}
 
-    /**
-     * The "@Read" annotation indicates that this method supports the
-     * read operation. Read operations should return a single resource
-     * instance.
-     *
-     * @param theId The read operation takes one parameter, which must be of type
-     *              IdDt and must be annotated with the "@Read.IdParam" annotation.
-     * @return Returns a resource matching this identifier, or null if none exists.
-     */
-    @Read
-    public Condition getResourceById(@IdParam IdType theId) {
-        return conditionResource.getByUniqueId(theId);
-    }
+	/**
+	 * The "@Read" annotation indicates that this method supports the
+	 * read operation. Read operations should return a single resource
+	 * instance.
+	 *
+	 * @param theId The read operation takes one parameter, which must be of type
+	 *              IdDt and must be annotated with the "@Read.IdParam" annotation.
+	 * @return Returns a resource matching this identifier, or null if none exists.
+	 */
+	@Read
+	public Condition getResourceById(@IdParam IdType theId) {
+		return conditionResource.getByUniqueId(theId);
+	}
 
-    /**
-     * The "@Read" annotation indicates that this method supports the
-     * read operation. Read operations should return a single resource
-     * instance.
-     *
-     * @param theId id of the OpenMrs Obs
-     * @return Returns a resource matching to the OpenMrs Obs which has the identifier theId, or null if none exists.
-     */
-    @Read
-    public Condition getResourceByObsUID(@IdParam IdType theId) {
-        return conditionResource.getConditionByObsUniqueId(theId);
-    }
+	/**
+	 * The "@Read" annotation indicates that this method supports the
+	 * read operation. Read operations should return a single resource
+	 * instance.
+	 *
+	 * @param theId id of the OpenMrs Obs
+	 * @return Returns a resource matching to the OpenMrs Obs which has the identifier theId, or null if none exists.
+	 */
+	@Read
+	public Condition getResourceByObsUID(@IdParam IdType theId) {
+		return conditionResource.getConditionByObsUniqueId(theId);
+	}
 
-    /**
-     * Search appointments by unique id
-     *
-     * @param id object containing the requested id
-     */
-    @Search
-    public List<Condition> findConditionsByUniqueId(
-            @RequiredParam(name = Condition.SP_RES_ID) TokenParam id) {
-        return conditionResource.searchConditionsById(id);
-    }
+	/**
+	 * Search appointments by unique id
+	 *
+	 * @param id object containing the requested id
+	 */
+	@Search
+	public List<Condition> findConditionsByUniqueId(
+			@RequiredParam(name = Condition.SP_RES_ID) TokenParam id) {
+		return conditionResource.searchConditionsById(id);
+	}
 
-    /**
-     * Search appointments by unique id
-     *
-     * @param patient object containing the patient details
-     */
-    @Search
-    public List<Condition> findConditionssByPatient(
-            @RequiredParam(name = Condition.SP_PATIENT) ReferenceParam patient) {
-        return conditionResource.searchConditionsByPatient(patient);
-    }
+	/**
+	 * Search appointments by unique id
+	 *
+	 * @param patient object containing the patient details
+	 */
+	@Search
+	public List<Condition> findConditionssByPatient(
+			@RequiredParam(name = Condition.SP_PATIENT) ReferenceParam patient) {
+		return conditionResource.searchConditionsByPatient(patient);
+	}
 }

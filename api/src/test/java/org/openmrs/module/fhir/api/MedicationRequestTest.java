@@ -92,7 +92,7 @@ public class MedicationRequestTest extends BaseModuleContextSensitiveTest {
 		assertEquals(medicationRequest.getContext().getReference(), createdMedicationRequest.getContext().getReference());
 		assertEquals(medicationRequest.getRecorder().getReference(), createdMedicationRequest.getRecorder().getReference());
 		assertEquals(medicationRequest.getRequester().getAgent().getReference(),
-														createdMedicationRequest.getRequester().getAgent().getReference());
+				createdMedicationRequest.getRequester().getAgent().getReference());
 
 	}
 }

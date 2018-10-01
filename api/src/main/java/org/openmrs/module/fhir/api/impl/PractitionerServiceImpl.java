@@ -13,30 +13,15 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hl7.fhir.dstu3.model.HumanName;
-import org.hl7.fhir.dstu3.model.IdType;
-import org.hl7.fhir.dstu3.model.Identifier;
 import org.hl7.fhir.dstu3.model.Practitioner;
-import org.hl7.fhir.dstu3.model.StringType;
-import org.openmrs.Person;
-import org.openmrs.PersonName;
-import org.openmrs.Provider;
-import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.PractitionerService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
-import org.openmrs.module.fhir.api.strategies.practitioner.PractitionerStrategy;
 import org.openmrs.module.fhir.api.strategies.practitioner.PractitionerStrategyUtil;
-import org.openmrs.module.fhir.api.util.FHIRConstants;
-import org.openmrs.module.fhir.api.util.FHIRPractitionerUtil;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import static java.lang.String.valueOf;
 
 /**
  * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
@@ -102,17 +87,17 @@ public class PractitionerServiceImpl extends BaseOpenmrsService implements Pract
 	public List<Practitioner> searchPractitionersByIdentifier(String identifier) {
 		return PractitionerStrategyUtil.getPractitionerStrategy().searchPractitionersByIdentifier(identifier);
 	}
-	
+
 	/**
 	 * @see org.openmrs.module.fhir.api.PractitionerService#createFHIRPractitioner(Practitioner)
 	 */
 	public Practitioner createFHIRPractitioner(Practitioner practitioner) {
 		return PractitionerStrategyUtil.getPractitionerStrategy().createFHIRPractitioner(practitioner);
 	}
-	
+
 	/**
 	 * @see org.openmrs.module.fhir.api.PractitionerService#updatePractitioner(Practitioner
-	 *      practitioner, String theId)
+	 * practitioner, String theId)
 	 */
 	public Practitioner updatePractitioner(Practitioner practitioner, String theId) {
 		return PractitionerStrategyUtil.getPractitionerStrategy().updatePractitioner(practitioner, theId);

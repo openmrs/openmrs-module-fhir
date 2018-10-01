@@ -269,9 +269,8 @@ public class FHIRUtils {
 	 * Generates practitioner referenceDt
 	 *
 	 * @param provider the provider ob
-	 *
 	 * @return the practitioner resource reference
-     */
+	 */
 	public static Reference buildPractitionerReference(org.openmrs.Provider provider) {
 		Reference providerDt = new Reference();
 		StringBuilder providerNameDisplay = new StringBuilder();
@@ -315,13 +314,15 @@ public class FHIRUtils {
 		ConceptSourceNameURIPair sourceNameURIPair = FHIRConstants.conceptSourceMap.get(conceptMap
 				.getConceptReferenceTerm().getConceptSource().getName().toLowerCase());
 		if (sourceNameURIPair != null) {
-			return codeableConcept.addCoding(new Coding().setCode(conceptMap.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem
-					(sourceNameURIPair.getConceptSourceURI()));
+			return codeableConcept.addCoding(
+					new Coding().setCode(conceptMap.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem
+							(sourceNameURIPair.getConceptSourceURI()));
 		}
 		if (display != null && !display.isEmpty()) {
-			return codeableConcept.addCoding(new Coding().setCode(conceptMap.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-					conceptMap
-							.getConceptReferenceTerm().getConceptSource().getName()));
+			return codeableConcept.addCoding(
+					new Coding().setCode(conceptMap.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
+							conceptMap
+									.getConceptReferenceTerm().getConceptSource().getName()));
 		} else {
 			return codeableConcept.addCoding(new Coding().setCode(conceptMap.getConceptReferenceTerm().getCode()).setSystem(
 					conceptMap.getConceptReferenceTerm().getConceptSource().getName()));
@@ -329,10 +330,10 @@ public class FHIRUtils {
 	}
 
 	public static AllergyIntolerance.AllergyIntoleranceReactionComponent getAllergyReactionComponent(ConceptMap conceptMap
-												, AllergyIntolerance.AllergyIntoleranceReactionComponent component) {
+			, AllergyIntolerance.AllergyIntoleranceReactionComponent component) {
 		//Set concept source concept name as the display value and set concept uuid if name is empty
-		if(component == null) {
-			component  = new AllergyIntolerance.AllergyIntoleranceReactionComponent();
+		if (component == null) {
+			component = new AllergyIntolerance.AllergyIntoleranceReactionComponent();
 		}
 		CodeableConcept substance = new CodeableConcept();
 		String display = conceptMap.getConceptReferenceTerm().getName();
@@ -424,7 +425,7 @@ public class FHIRUtils {
 		Identifier identifier = objectRef.getIdentifier();
 		String uuid = objectRef.getId();
 
-		if(StringUtils.isEmpty(uuid) && identifier != null) {
+		if (StringUtils.isEmpty(uuid) && identifier != null) {
 			uuid = identifier.getId();
 		}
 
@@ -540,8 +541,9 @@ public class FHIRUtils {
 
 	/**
 	 * Get concept from code
+	 *
 	 * @param codeableConcept codeable concept
-	 * @param errors error list
+	 * @param errors          error list
 	 * @return OpenMRS concept
 	 */
 	public static Concept getConceptFromCode(CodeableConcept codeableConcept, List<String> errors) {

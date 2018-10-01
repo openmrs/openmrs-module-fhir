@@ -23,7 +23,12 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
-import org.openmrs.module.fhir.api.util.*;
+import org.openmrs.module.fhir.api.util.ErrorUtil;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.module.fhir.api.util.FHIRImagingStudyUtil;
+import org.openmrs.module.fhir.api.util.FHIRObsUtil;
+import org.openmrs.module.fhir.api.util.FHIRRESTfulGenericClient;
+import org.openmrs.module.fhir.api.util.FHIRUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -33,13 +38,13 @@ import java.util.Set;
 
 public class RadiologyHandler extends AbstractHandler implements DiagnosticReportHandler {
 
+	private static final String ServiceCategory = "RAD";
+
 	protected final Log log = LogFactory.getLog(this.getClass());
 
 	public RadiologyHandler() {
 		super();
 	}
-
-	private static final String ServiceCategory = "RAD";
 
 	@Override
 	public String getServiceCategory() {
@@ -107,7 +112,6 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 		return generateDiagnosticReport(diagnosticReport, omrsDiagnosticReport, obsSetsMap);
 	}
 
-
 	@Override
 	public DiagnosticReport saveFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
 		if (log.isDebugEnabled()) {
@@ -159,12 +163,12 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 			} else {
 				// Get Id of the Observation
 				String observationID = referenceDt.getId();
-				if(StringUtils.isEmpty(observationID)) {
+				if (StringUtils.isEmpty(observationID)) {
 					// Assume that the given Observation is stored in the OpenMRS database
 					observation = Context.getService(org.openmrs.module.fhir.api.ObsService.class).getObs(observationID);
 				} else {
 					String observationReference = referenceDt.getReference();
-					if(!StringUtils.isEmpty(observationReference) && "/".contains(observationReference)) {
+					if (!StringUtils.isEmpty(observationReference) && "/".contains(observationReference)) {
 						observationID = observationReference.split("/")[1];
 						observation = Context.getService(org.openmrs.module.fhir.api.ObsService.class).getObs(observationID);
 					}
@@ -219,7 +223,7 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 		for (Attachment attachment : diagnosticReport.getPresentedForm()) {
 			int conceptId = FHIRUtils.getDiagnosticReportPresentedFormConcept().getConceptId();
 			if (attachment.getCreation() == null) {
-				if(diagnosticReport.getIssued() != null) {
+				if (diagnosticReport.getIssued() != null) {
 					attachment.setCreation(diagnosticReport.getIssued());
 				}
 			}

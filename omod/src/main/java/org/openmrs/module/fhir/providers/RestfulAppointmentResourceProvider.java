@@ -29,50 +29,50 @@ import java.util.List;
 
 public class RestfulAppointmentResourceProvider implements IResourceProvider {
 
-    private FHIRAppointmentResource appointmentResource;
+	private FHIRAppointmentResource appointmentResource;
 
-    public RestfulAppointmentResourceProvider() {
-        appointmentResource = new FHIRAppointmentResource();
-    }
+	public RestfulAppointmentResourceProvider() {
+		appointmentResource = new FHIRAppointmentResource();
+	}
 
-    @Override
-    public Class<? extends Resource> getResourceType() {
-        return Appointment.class;
-    }
+	@Override
+	public Class<? extends Resource> getResourceType() {
+		return Appointment.class;
+	}
 
-    /**
-     * The "@Read" annotation indicates that this method supports the
-     * read operation. Read operations should return a single resource
-     * instance.
-     *
-     * @param theId The read operation takes one parameter, which must be of type
-     *              IdDt and must be annotated with the "@Read.IdParam" annotation.
-     * @return Returns a resource matching this identifier, or null if none exists.
-     */
-    @Read
-    public Appointment getResourceById(@IdParam IdType theId) {
-        return appointmentResource.getByUniqueId(theId);
-    }
+	/**
+	 * The "@Read" annotation indicates that this method supports the
+	 * read operation. Read operations should return a single resource
+	 * instance.
+	 *
+	 * @param theId The read operation takes one parameter, which must be of type
+	 *              IdDt and must be annotated with the "@Read.IdParam" annotation.
+	 * @return Returns a resource matching this identifier, or null if none exists.
+	 */
+	@Read
+	public Appointment getResourceById(@IdParam IdType theId) {
+		return appointmentResource.getByUniqueId(theId);
+	}
 
-    /**
-     * Search appointments by unique id
-     *
-     * @param id object containing the requested id
-     */
-    @Search
-    public List<Appointment> findAppointmentsByUniqueId(
-            @RequiredParam(name = Appointment.SP_RES_ID) TokenParam id) {
-        return appointmentResource.searchAppointmentsById(id);
-    }
+	/**
+	 * Search appointments by unique id
+	 *
+	 * @param id object containing the requested id
+	 */
+	@Search
+	public List<Appointment> findAppointmentsByUniqueId(
+			@RequiredParam(name = Appointment.SP_RES_ID) TokenParam id) {
+		return appointmentResource.searchAppointmentsById(id);
+	}
 
-    /**
-     * Search appointments by unique id
-     *
-     * @param patient object containing the patient details
-     */
-    @Search
-    public List<Appointment> findAppointmentsByPatient(
-            @RequiredParam(name = Appointment.SP_RES_ID) ReferenceParam patient) {
-        return appointmentResource.searchAppointmentsByPatient(patient);
-    }
+	/**
+	 * Search appointments by unique id
+	 *
+	 * @param patient object containing the patient details
+	 */
+	@Search
+	public List<Appointment> findAppointmentsByPatient(
+			@RequiredParam(name = Appointment.SP_RES_ID) ReferenceParam patient) {
+		return appointmentResource.searchAppointmentsByPatient(patient);
+	}
 }

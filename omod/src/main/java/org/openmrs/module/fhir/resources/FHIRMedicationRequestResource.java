@@ -49,7 +49,7 @@ public class FHIRMedicationRequestResource extends Resource {
 
 	public MedicationRequest createFHIRMedicationRequest(MedicationRequest medicationRequest) {
 		MedicationRequestService medicationRequestService = Context
-		        .getService(MedicationRequestService.class);
+				.getService(MedicationRequestService.class);
 		return medicationRequestService.createFHIRMedicationRequest(medicationRequest);
 	}
 

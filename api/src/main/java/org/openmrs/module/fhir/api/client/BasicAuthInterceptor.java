@@ -11,23 +11,25 @@ import java.nio.charset.Charset;
 
 public class BasicAuthInterceptor implements ClientHttpRequestInterceptor {
 
-    private String username;
-    private String password;
+	private String username;
 
-    public BasicAuthInterceptor(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
+	private String password;
 
-    @Override
-    public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
+	public BasicAuthInterceptor(String username, String password) {
+		this.username = username;
+		this.password = password;
+	}
 
-        Charset charset = Charset.forName("US-ASCII");
-        String auth = username + ":" + password;
-        byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(charset));
-        String authHeader = "Basic " + new String(encodedAuth, charset);
+	@Override
+	public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
+			throws IOException {
 
-        request.getHeaders().set("Authorization", authHeader);
-        return execution.execute(request, body);
-    }
+		Charset charset = Charset.forName("US-ASCII");
+		String auth = username + ":" + password;
+		byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(charset));
+		String authHeader = "Basic " + new String(encodedAuth, charset);
+
+		request.getHeaders().set("Authorization", authHeader);
+		return execution.execute(request, body);
+	}
 }

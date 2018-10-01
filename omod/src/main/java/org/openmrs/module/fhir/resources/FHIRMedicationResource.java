@@ -10,31 +10,32 @@ import org.openmrs.module.fhir.api.MedicationService;
 import java.util.List;
 
 public class FHIRMedicationResource {
-    public Medication getByUniqueId(IdType id) {
-        Medication medication = getMedicationService().getMedicationById(id.getIdPart());
-        if (medication == null) {
-            throw new ResourceNotFoundException("Medication is not found for the given id " + id.getIdPart());
-        }
-        return medication;
-    }
 
-    public List<Medication> searchMedicationById(TokenParam id) {
-        return getMedicationService().searchMedicationById(id.getValue());
-    }
+	public Medication getByUniqueId(IdType id) {
+		Medication medication = getMedicationService().getMedicationById(id.getIdPart());
+		if (medication == null) {
+			throw new ResourceNotFoundException("Medication is not found for the given id " + id.getIdPart());
+		}
+		return medication;
+	}
 
-    public Medication createMedication(Medication medication) {
-        return getMedicationService().createMedication(medication);
-    }
+	public List<Medication> searchMedicationById(TokenParam id) {
+		return getMedicationService().searchMedicationById(id.getValue());
+	}
 
-    public Medication updateMedication(Medication medication, String id) {
-        return getMedicationService().updateMedication(medication, id);
-    }
+	public Medication createMedication(Medication medication) {
+		return getMedicationService().createMedication(medication);
+	}
 
-    public void deleteMedication(IdType id) {
-        getMedicationService().deleteMedication(id.getIdPart());
-    }
+	public Medication updateMedication(Medication medication, String id) {
+		return getMedicationService().updateMedication(medication, id);
+	}
 
-    private MedicationService getMedicationService() {
-        return Context.getService(MedicationService.class);
-    }
+	public void deleteMedication(IdType id) {
+		getMedicationService().deleteMedication(id.getIdPart());
+	}
+
+	private MedicationService getMedicationService() {
+		return Context.getService(MedicationService.class);
+	}
 }

@@ -24,7 +24,7 @@ public interface PersonService {
 	/**
 	 * Get fhir person resource by uuid
 	 *
-	 * @param uuid 	The uuid of the patient.
+	 * @param uuid The uuid of the patient.
 	 * @return fhir patient resource and will return null if patient not found for the given uuid
 	 */
 	Person getPerson(String uuid);
@@ -67,7 +67,7 @@ public interface PersonService {
 	 * update a OpenMRS Person from FHIR Person
 	 *
 	 * @param person the FHIR representation of the {@link}Person to be updated
-	 * @param uuid  the uuid of the Person to be updated
+	 * @param uuid   the uuid of the Person to be updated
 	 * @return the updated FHIR {@link}Person Resource
 	 */
 	Person updateFHIRPerson(Person person, String uuid);

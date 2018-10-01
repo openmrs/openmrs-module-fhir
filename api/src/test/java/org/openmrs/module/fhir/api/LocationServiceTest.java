@@ -3,12 +3,10 @@
  * Version 1.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
  * http://license.openmrs.org
- *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations
  * under the License.
- *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 package org.openmrs.module.fhir.api;
@@ -91,7 +89,7 @@ public class LocationServiceTest extends BaseModuleContextSensitiveTest {
 		assertNotNull(locations);
 		assertEquals(5, locations.size());
 	}
-	
+
 	@Test
 	public void deleteLocation_shouldDeleteTheSpecifiedLocation() {
 		org.openmrs.api.LocationService locationService = Context.getLocationService();
@@ -158,10 +156,11 @@ public class LocationServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void createOpenMRSLocation() throws Exception {
 		String locationUuid = "6f42abbc-caac-40ae-a94e-9277ea15c125";
-		org.openmrs.Location omrsLocation=Context.getLocationService().getLocationByUuid(locationUuid);
-		omrsLocation.setUuid("");// remove the uuid value from the Location. This will let this resource to be persist on the db with
+		org.openmrs.Location omrsLocation = Context.getLocationService().getLocationByUuid(locationUuid);
+		omrsLocation.setUuid(
+				"");// remove the uuid value from the Location. This will let this resource to be persist on the db with
 		// random uuid
-		Location fhirLocation = FHIRLocationUtil.generateLocation(omrsLocation);	
+		Location fhirLocation = FHIRLocationUtil.generateLocation(omrsLocation);
 		fhirLocation.setName("New Location Test Name");
 		fhirLocation = Context.getService(LocationService.class).createLocation(fhirLocation);
 		assertNotNull(fhirLocation);

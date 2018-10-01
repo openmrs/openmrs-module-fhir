@@ -1,18 +1,35 @@
 package org.openmrs.module.fhir.api.diagnosticreport.handler;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hl7.fhir.dstu3.model.*;
-import org.openmrs.*;
+import org.hl7.fhir.dstu3.model.Attachment;
+import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.DiagnosticReport;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Observation;
+import org.hl7.fhir.dstu3.model.Reference;
+import org.openmrs.Concept;
+import org.openmrs.ConceptComplex;
 import org.openmrs.Encounter;
+import org.openmrs.EncounterRole;
+import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Person;
+import org.openmrs.Provider;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.util.*;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.openmrs.module.fhir.api.util.FHIRObsUtil;
+import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
+import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.openmrs.obs.ComplexData;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class AbstractHandler {
 
@@ -83,11 +100,12 @@ public abstract class AbstractHandler {
 			for (DiagnosticReport.DiagnosticReportPerformerComponent performerComponent : performers) {
 				if (performerComponent.isEmpty()) {
 					//TODO: org.openmrs.Provider omrsProvider = FHIRPractitionerUtil.generatePractitioner();
-					omrsDiagnosticReport.addProvider(encounterRole,  new Provider());
+					omrsDiagnosticReport.addProvider(encounterRole, new Provider());
 				} else {
 					// Get Id of the Performer
 					String practitionerId = FHIRUtils.getObjectUuidByReference(performerComponent.getActor());
-					omrsDiagnosticReport.addProvider(encounterRole, Context.getProviderService().getProviderByUuid(practitionerId));
+					omrsDiagnosticReport
+							.addProvider(encounterRole, Context.getProviderService().getProviderByUuid(practitionerId));
 				}
 			}
 		}
@@ -124,7 +142,7 @@ public abstract class AbstractHandler {
 		// If at least one provider is set (1..1 mapping in FHIR Diagnostic Report)
 		if (!omrsProviderList.isEmpty()) {
 			//Role name to a getCodingList display. Is that correct?
-			for(Provider practitioner : omrsProviderList) {
+			for (Provider practitioner : omrsProviderList) {
 				CodeableConcept roleConcept = new CodeableConcept();
 				Coding role = new Coding();
 				role.setDisplay(omrsEncounterRole.getName());

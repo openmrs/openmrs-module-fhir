@@ -21,6 +21,7 @@ public interface GenericConditionStrategy {
 
 	/**
 	 * Get condition by id
+	 *
 	 * @param uuid the uuid of the condition that need to retrieve
 	 * @return Condition Return fhir condition resource and will return null if condition is not found for the given id
 	 */

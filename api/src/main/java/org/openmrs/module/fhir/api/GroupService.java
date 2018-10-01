@@ -6,15 +6,15 @@ import java.util.List;
 
 public interface GroupService {
 
-    Group getGroup(String id);
+	Group getGroup(String id);
 
-    List<Group> searchGroupById(String id);
+	List<Group> searchGroupById(String id);
 
-    List<Group> searchGroupByName(String name);
+	List<Group> searchGroupByName(String name);
 
-    Group createGroup(Group group);
+	Group createGroup(Group group);
 
-    Group updateGroup(Group group, String uuid);
+	Group updateGroup(Group group, String uuid);
 
-    void deleteGroup(String uuid);
+	void deleteGroup(String uuid);
 }

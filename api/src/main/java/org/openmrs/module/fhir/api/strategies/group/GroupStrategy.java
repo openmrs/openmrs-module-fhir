@@ -20,93 +20,98 @@ import java.util.List;
 
 @Component("DefaultGroupStrategy")
 public class GroupStrategy implements GenericGroupStrategy {
-    @Override
-    public Group getGroupById(String uuid) {
-        Cohort cohort = getCohortService().getCohortByUuid(uuid);
 
-        return FHIRGroupUtil.generateGroup(cohort);
-    }
+	@Override
+	public Group getGroupById(String uuid) {
+		Cohort cohort = getCohortService().getCohortByUuid(uuid);
 
-    @Override
-    public List<Group> searchGroupById(String uuid) {
-        List<Group> groups = new ArrayList<>();
-        Cohort cohort = getCohortService().getCohortByUuid(uuid);
+		return FHIRGroupUtil.generateGroup(cohort);
+	}
 
-        if (cohort != null) {
-            groups.add(FHIRGroupUtil.generateGroup(cohort));
-        }
+	@Override
+	public List<Group> searchGroupById(String uuid) {
+		List<Group> groups = new ArrayList<>();
+		Cohort cohort = getCohortService().getCohortByUuid(uuid);
 
-        return groups;
-    }
+		if (cohort != null) {
+			groups.add(FHIRGroupUtil.generateGroup(cohort));
+		}
 
-    @Override
-    public List<Group> searchGroupByName(String name) {
-        List<Group> groups = new ArrayList<>();
-        List<Cohort> cohorts = getCohortService().getCohorts(name);
+		return groups;
+	}
 
-        for (Cohort cohort : cohorts) {
-            groups.add(FHIRGroupUtil.generateGroup(cohort));
-        }
+	@Override
+	public List<Group> searchGroupByName(String name) {
+		List<Group> groups = new ArrayList<>();
+		List<Cohort> cohorts = getCohortService().getCohorts(name);
 
-        return groups;
-    }
+		for (Cohort cohort : cohorts) {
+			groups.add(FHIRGroupUtil.generateGroup(cohort));
+		}
 
-    @Override
-    public Group createGroup(Group group) {
-        Cohort cohort = FHIRGroupUtil.generateCohort(group);
+		return groups;
+	}
 
-        try {
-            cohort = getCohortService().saveCohort(cohort);
-        } catch (APIException e) {
-            throw new UnprocessableEntityException(
-                    "The request cannot be processed due to the following issues \n" + e.getMessage());
-        }
+	@Override
+	public Group createGroup(Group group) {
+		Cohort cohort = FHIRGroupUtil.generateCohort(group);
 
-        return FHIRGroupUtil.generateGroup(cohort);
-    }
+		try {
+			cohort = getCohortService().saveCohort(cohort);
+		}
+		catch (APIException e) {
+			throw new UnprocessableEntityException(
+					"The request cannot be processed due to the following issues \n" + e.getMessage());
+		}
 
-    @Override
-    public Group updateGroup(Group group, String uuid) {
-        Cohort cohort = getCohortService().getCohortByUuid(uuid);
+		return FHIRGroupUtil.generateGroup(cohort);
+	}
 
-        return cohort != null ? updateGroup(group, cohort) : createGroup(group, uuid);
-    }
+	@Override
+	public Group updateGroup(Group group, String uuid) {
+		Cohort cohort = getCohortService().getCohortByUuid(uuid);
 
-    @Override
-    public void deleteGroup(String uuid) {
-        Cohort cohort = getCohortService().getCohortByUuid(FHIRUtils.extractUuid(uuid));
+		return cohort != null ? updateGroup(group, cohort) : createGroup(group, uuid);
+	}
 
-        if (cohort == null) {
-            throw new ResourceNotFoundException(new IdType(Group.class.getSimpleName(), uuid));
-        } else {
-            try {
-                getCohortService().voidCohort(cohort, FHIRConstants.FHIR_VOIDED_MESSAGE);
-            } catch (APIException e) {
-                throw new MethodNotAllowedException(String.format("The OpenMRS API refused to remove Group via FHIR request. Group id: %s", uuid));
-            }
-        }
-    }
+	@Override
+	public void deleteGroup(String uuid) {
+		Cohort cohort = getCohortService().getCohortByUuid(FHIRUtils.extractUuid(uuid));
 
-    private Group createGroup(Group group, String uuid) {
-        StrategyUtil.setIdIfNeeded(group, uuid);
-        return createGroup(group);
-    }
+		if (cohort == null) {
+			throw new ResourceNotFoundException(new IdType(Group.class.getSimpleName(), uuid));
+		} else {
+			try {
+				getCohortService().voidCohort(cohort, FHIRConstants.FHIR_VOIDED_MESSAGE);
+			}
+			catch (APIException e) {
+				throw new MethodNotAllowedException(
+						String.format("The OpenMRS API refused to remove Group via FHIR request. Group id: %s", uuid));
+			}
+		}
+	}
 
-    private Group updateGroup(Group group, Cohort cohortToUpdate) {
-        Cohort newCohort = FHIRGroupUtil.generateCohort(group);
+	private Group createGroup(Group group, String uuid) {
+		StrategyUtil.setIdIfNeeded(group, uuid);
+		return createGroup(group);
+	}
 
-        cohortToUpdate = FHIRGroupUtil.updateCohort(cohortToUpdate, newCohort);
+	private Group updateGroup(Group group, Cohort cohortToUpdate) {
+		Cohort newCohort = FHIRGroupUtil.generateCohort(group);
 
-        try {
-            cohortToUpdate = getCohortService().saveCohort(cohortToUpdate);
-        } catch (APIException e) {
-            throw new UnprocessableEntityException(
-                    "The request cannot be processed due to the following issues \n" + e.getMessage());
-        }
-        return FHIRGroupUtil.generateGroup(cohortToUpdate);
-    }
+		cohortToUpdate = FHIRGroupUtil.updateCohort(cohortToUpdate, newCohort);
 
-    private CohortService getCohortService() {
-        return Context.getCohortService();
-    }
+		try {
+			cohortToUpdate = getCohortService().saveCohort(cohortToUpdate);
+		}
+		catch (APIException e) {
+			throw new UnprocessableEntityException(
+					"The request cannot be processed due to the following issues \n" + e.getMessage());
+		}
+		return FHIRGroupUtil.generateGroup(cohortToUpdate);
+	}
+
+	private CohortService getCohortService() {
+		return Context.getCohortService();
+	}
 }

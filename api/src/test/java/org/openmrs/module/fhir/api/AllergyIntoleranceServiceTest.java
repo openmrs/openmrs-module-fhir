@@ -31,26 +31,26 @@ import static org.junit.Assert.assertNotNull;
  */
 @Ignore
 public class AllergyIntoleranceServiceTest extends BaseModuleContextSensitiveTest {
-	
+
 	protected static final String ALLERGY_INITIAL_DATA_XML = "AllergyIntoleranceServiceTest-initialData.xml";
-	
+
 	protected static final String PAT_SEARCH_DATA_XML = "org/openmrs/api/include/PatientServiceTest-findPatients.xml";
-	
+
 	public AllergyIntoleranceService getService() {
 		return Context.getService(AllergyIntoleranceService.class);
 	}
-	
+
 	@Before
 	public void runBeforeEachTest() throws Exception {
 		executeDataSet(ALLERGY_INITIAL_DATA_XML);
 		executeDataSet(PAT_SEARCH_DATA_XML);
 	}
-	
+
 	@Test
 	public void shouldSetupContext() {
 		assertNotNull(getService());
 	}
-	
+
 	/**
 	 * Test of getAllergyById method, of class AllergyIntoleranceService.
 	 */
@@ -61,7 +61,7 @@ public class AllergyIntoleranceServiceTest extends BaseModuleContextSensitiveTes
 		assertNotNull(allergy);
 		assertEquals(allergy.getId().toString(), allergyUuid);
 	}
-	
+
 	/**
 	 * Test of searchAllergiesById method, of class AllergyIntoleranceService.
 	 */
@@ -72,7 +72,7 @@ public class AllergyIntoleranceServiceTest extends BaseModuleContextSensitiveTes
 		assertNotNull(fhirAllergies);
 		assertEquals(fhirAllergies.get(0).getId(), allergyUuid);
 	}
-	
+
 	/**
 	 * Test of searchAllergiesByPatientIdentifier method, of class AllergyIntoleranceService.
 	 */
@@ -86,7 +86,7 @@ public class AllergyIntoleranceServiceTest extends BaseModuleContextSensitiveTes
 		AllergyIntolerance allergy = allergies.get(0);
 		assertEquals(allergy.getId().toString(), allergyUuid);
 	}
-	
+
 	/**
 	 * Test of searchAllergiesByPatientName method, of class AllergyIntoleranceService.
 	 */

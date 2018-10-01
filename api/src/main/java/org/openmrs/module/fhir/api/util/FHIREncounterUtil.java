@@ -300,7 +300,7 @@ public class FHIREncounterUtil {
 		retrievedEncounter.setLocation(omrsEncounter.getLocation());
 
 		Set<EncounterProvider> encounterProviders = omrsEncounter.getEncounterProviders();
-		for (EncounterProvider provider: encounterProviders) {
+		for (EncounterProvider provider : encounterProviders) {
 			retrievedEncounter.setProvider(provider.getEncounterRole(), provider.getProvider());
 		}
 

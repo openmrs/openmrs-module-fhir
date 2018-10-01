@@ -3,12 +3,10 @@
  * Version 1.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
  * http://license.openmrs.org
- *
  * Software distributed under the License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations
  * under the License.
- *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 package org.openmrs.module.fhir.swagger.docs;
@@ -19,215 +17,215 @@ import java.util.Map;
 /* The class describes the RESTful API in accordance with the Swagger specification and is represented as JSON objects and conform to the JSON standards */
 public class SwaggerSpecification {
 
-    //Specifies the Swagger Specification version being used
-    private String swagger = "2.0";
+	//Specifies the Swagger Specification version being used
+	private String swagger = "2.0";
 
-    // Provides metadata about the API
-    private Info info;
+	// Provides metadata about the API
+	private Info info;
 
-    //The host (name or ip) serving the API
-    private String host;
+	//The host (name or ip) serving the API
+	private String host;
 
-    //The base path on which the API is served
-    private String basePath;
+	//The base path on which the API is served
+	private String basePath;
 
-    //Allows adding meta data to a single tag that is used by the Operation Object.
-    private List<Tag> tags;
+	//Allows adding meta data to a single tag that is used by the Operation Object.
+	private List<Tag> tags;
 
-    //The transfer protocol of the API
-    private List<String> schemes;
+	//The transfer protocol of the API
+	private List<String> schemes;
 
-    //A list of MIME types the APIs can consume
-    private List<String> consumes;
+	//A list of MIME types the APIs can consume
+	private List<String> consumes;
 
-    //A list of MIME types the APIs can produce
-    private List<String> produces;
+	//A list of MIME types the APIs can produce
+	private List<String> produces;
 
-    //The available paths and operations for the API.
-    private Paths paths;
+	//The available paths and operations for the API.
+	private Paths paths;
 
-    //An object to hold data types produced and consumed by operations.
-    private Definitions definitions;
+	//An object to hold data types produced and consumed by operations.
+	private Definitions definitions;
 
-    //An object to hold external documentation
-    private ExternalDocs externalDocs;
+	//An object to hold external documentation
+	private ExternalDocs externalDocs;
 
-    //An object to hold security definitions
-    private SecurityDefinitions securityDefinitions;
+	//An object to hold security definitions
+	private SecurityDefinitions securityDefinitions;
 
-    //An object to hold security scheme
-    private Security security;
+	//An object to hold security scheme
+	private Security security;
 
-    //Object to hold common params
-    private Map<String, Parameter> parameters;
+	//Object to hold common params
+	private Map<String, Parameter> parameters;
 
-    public SwaggerSpecification() {
+	public SwaggerSpecification() {
 
-    }
+	}
 
-    /**
-     * @return the info
-     */
-    public Info getInfo() {
-        return info;
-    }
+	/**
+	 * @return the info
+	 */
+	public Info getInfo() {
+		return info;
+	}
 
-    /**
-     * @param info the info to set
-     */
-    public void setInfo(Info info) {
-        this.info = info;
-    }
+	/**
+	 * @param info the info to set
+	 */
+	public void setInfo(Info info) {
+		this.info = info;
+	}
 
-    /**
-     * @return the host
-     */
-    public String getHost() {
-        return host;
-    }
+	/**
+	 * @return the host
+	 */
+	public String getHost() {
+		return host;
+	}
 
-    /**
-     * @param host the host to set
-     */
-    public void setHost(String host) {
-        this.host = host;
-    }
+	/**
+	 * @param host the host to set
+	 */
+	public void setHost(String host) {
+		this.host = host;
+	}
 
-    /**
-     * @return the basePath
-     */
-    public String getBasePath() {
-        return basePath;
-    }
+	/**
+	 * @return the basePath
+	 */
+	public String getBasePath() {
+		return basePath;
+	}
 
-    /**
-     * @param basePath the basePath to set
-     */
-    public void setBasePath(String basePath) {
-        this.basePath = basePath;
-    }
+	/**
+	 * @param basePath the basePath to set
+	 */
+	public void setBasePath(String basePath) {
+		this.basePath = basePath;
+	}
 
-    /**
-     * @return the schemes
-     */
-    public List<String> getSchemes() {
-        return schemes;
-    }
+	/**
+	 * @return the schemes
+	 */
+	public List<String> getSchemes() {
+		return schemes;
+	}
 
-    /**
-     * @param schemes the schemes to set
-     */
-    public void setSchemes(List<String> schemes) {
-        this.schemes = schemes;
-    }
+	/**
+	 * @param schemes the schemes to set
+	 */
+	public void setSchemes(List<String> schemes) {
+		this.schemes = schemes;
+	}
 
-    /**
-     * @return the consumes
-     */
-    public List<String> getConsumes() {
-        return consumes;
-    }
+	/**
+	 * @return the consumes
+	 */
+	public List<String> getConsumes() {
+		return consumes;
+	}
 
-    /**
-     * @param consumes the consumes to set
-     */
-    public void setConsumes(List<String> consumes) {
-        this.consumes = consumes;
-    }
+	/**
+	 * @param consumes the consumes to set
+	 */
+	public void setConsumes(List<String> consumes) {
+		this.consumes = consumes;
+	}
 
-    /**
-     * @return the produces
-     */
-    public List<String> getProduces() {
-        return produces;
-    }
+	/**
+	 * @return the produces
+	 */
+	public List<String> getProduces() {
+		return produces;
+	}
 
-    /**
-     * @param produces the produces to set
-     */
-    public void setProduces(List<String> produces) {
-        this.produces = produces;
-    }
+	/**
+	 * @param produces the produces to set
+	 */
+	public void setProduces(List<String> produces) {
+		this.produces = produces;
+	}
 
-    /**
-     * @return the paths
-     */
-    public Paths getPaths() {
-        return paths;
-    }
+	/**
+	 * @return the paths
+	 */
+	public Paths getPaths() {
+		return paths;
+	}
 
-    /**
-     * @param paths the paths to set
-     */
-    public void setPaths(Paths paths) {
-        this.paths = paths;
-    }
+	/**
+	 * @param paths the paths to set
+	 */
+	public void setPaths(Paths paths) {
+		this.paths = paths;
+	}
 
-    /**
-     * @return the definitions
-     */
-    public Definitions getDefinitions() {
-        return definitions;
-    }
+	/**
+	 * @return the definitions
+	 */
+	public Definitions getDefinitions() {
+		return definitions;
+	}
 
-    /**
-     * @param definitions the definitions to set
-     */
-    public void setDefinitions(Definitions definitions) {
-        this.definitions = definitions;
-    }
+	/**
+	 * @param definitions the definitions to set
+	 */
+	public void setDefinitions(Definitions definitions) {
+		this.definitions = definitions;
+	}
 
-    /**
-     * @return the swagger
-     */
-    public String getSwagger() {
-        return swagger;
-    }
+	/**
+	 * @return the swagger
+	 */
+	public String getSwagger() {
+		return swagger;
+	}
 
-    /**
-     * @return the tags
-     */
-    public List<Tag> getTags() {
-        return tags;
-    }
+	/**
+	 * @return the tags
+	 */
+	public List<Tag> getTags() {
+		return tags;
+	}
 
-    /**
-     * @param tags the tags to set
-     */
-    public void setTags(List<Tag> tags) {
-        this.tags = tags;
-    }
+	/**
+	 * @param tags the tags to set
+	 */
+	public void setTags(List<Tag> tags) {
+		this.tags = tags;
+	}
 
-    public ExternalDocs getExternalDocs() {
-        return externalDocs;
-    }
+	public ExternalDocs getExternalDocs() {
+		return externalDocs;
+	}
 
-    public void setExternalDocs(ExternalDocs externalDocs) {
-        this.externalDocs = externalDocs;
-    }
+	public void setExternalDocs(ExternalDocs externalDocs) {
+		this.externalDocs = externalDocs;
+	}
 
-    public Map<String, Parameter> getParameters() {
-        return parameters;
-    }
+	public Map<String, Parameter> getParameters() {
+		return parameters;
+	}
 
-    public void setParameters(Map<String, Parameter> parameters) {
-        this.parameters = parameters;
-    }
+	public void setParameters(Map<String, Parameter> parameters) {
+		this.parameters = parameters;
+	}
 
-    public SecurityDefinitions getSecurityDefinitions() {
-        return securityDefinitions;
-    }
+	public SecurityDefinitions getSecurityDefinitions() {
+		return securityDefinitions;
+	}
 
-    public void setSecurityDefinitions(SecurityDefinitions securityDefinitions) {
-        this.securityDefinitions = securityDefinitions;
-    }
+	public void setSecurityDefinitions(SecurityDefinitions securityDefinitions) {
+		this.securityDefinitions = securityDefinitions;
+	}
 
-    public Security getSecurity() {
-        return security;
-    }
+	public Security getSecurity() {
+		return security;
+	}
 
-    public void setSecurity(Security security) {
-        this.security = security;
-    }
+	public void setSecurity(Security security) {
+		this.security = security;
+	}
 }
 

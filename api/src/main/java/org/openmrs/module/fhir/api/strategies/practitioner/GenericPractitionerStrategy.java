@@ -6,19 +6,19 @@ import java.util.List;
 
 public interface GenericPractitionerStrategy {
 
-    Practitioner getPractitioner(String id);
+	Practitioner getPractitioner(String id);
 
-    List<Practitioner> searchPractitionersByUuid(String id);
+	List<Practitioner> searchPractitionersByUuid(String id);
 
-    List<Practitioner> searchPractitionersByName(String name);
+	List<Practitioner> searchPractitionersByName(String name);
 
-    List<Practitioner> searchPractitionersByGivenName(String givenName);
+	List<Practitioner> searchPractitionersByGivenName(String givenName);
 
-    List<Practitioner> searchPractitionersByFamilyName(String familyName);
+	List<Practitioner> searchPractitionersByFamilyName(String familyName);
 
-    List<Practitioner> searchPractitionersByIdentifier(String identifier);
+	List<Practitioner> searchPractitionersByIdentifier(String identifier);
 
-    Practitioner createFHIRPractitioner(Practitioner practitioner);
+	Practitioner createFHIRPractitioner(Practitioner practitioner);
 
-    Practitioner updatePractitioner(Practitioner practitioner, String theId);
+	Practitioner updatePractitioner(Practitioner practitioner, String theId);
 }

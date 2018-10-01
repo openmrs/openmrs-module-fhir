@@ -5,10 +5,10 @@ import org.openmrs.module.fhir.api.util.FHIRUtils;
 
 public class GroupStrategyUtil {
 
-    public static GenericGroupStrategy getGroupStrategy() {
-        String strategy = FHIRUtils.getGroupStrategy();
+	public static GenericGroupStrategy getGroupStrategy() {
+		String strategy = FHIRUtils.getGroupStrategy();
 
-        return strategy == null ? new GroupStrategy()
-                : Context.getRegisteredComponent(strategy, GenericGroupStrategy.class);
-    }
+		return strategy == null ? new GroupStrategy()
+				: Context.getRegisteredComponent(strategy, GenericGroupStrategy.class);
+	}
 }

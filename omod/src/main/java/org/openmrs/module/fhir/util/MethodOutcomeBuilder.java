@@ -10,7 +10,11 @@ import org.hl7.fhir.dstu3.model.OperationOutcome;
 public final class MethodOutcomeBuilder {
 
 	private static final String UPDATE_PATTERN = "%s with id %s was successfully updated";
+
 	private static final String CREATE_PATTERN = "%s was successfully created with id %s";
+
+	private MethodOutcomeBuilder() {
+	}
 
 	public static MethodOutcome buildCustom(String message) {
 		return buildWithResource(null, message);
@@ -43,8 +47,5 @@ public final class MethodOutcomeBuilder {
 		outcome.addIssue().setDetails(concept);
 		retVal.setOperationOutcome(outcome);
 		return retVal;
-	}
-
-	private MethodOutcomeBuilder() {
 	}
 }

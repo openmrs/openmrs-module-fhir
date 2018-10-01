@@ -51,7 +51,7 @@ public class FHIRDiagnosticReportResource extends Resource {
 	}
 
 	public List<DiagnosticReport> getDiagnosticReportByPatientNameAndServiceCategory(ReferenceParam theSubject,
-	                                                                                 TokenParam service) {
+			TokenParam service) {
 		String name = null;
 		String chain = theSubject.getChain();
 		if (Patient.SP_GIVEN.equals(chain)) {

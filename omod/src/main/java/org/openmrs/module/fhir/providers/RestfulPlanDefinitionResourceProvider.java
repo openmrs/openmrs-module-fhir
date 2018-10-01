@@ -11,7 +11,6 @@ import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.PlanDefinition;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.openmrs.module.fhir.resources.FHIRPlanDefinitionResource;
 import org.openmrs.module.fhir.util.MethodOutcomeBuilder;
 
@@ -40,7 +39,8 @@ public class RestfulPlanDefinitionResourceProvider implements IResourceProvider 
 
 	@Update
 	public MethodOutcome updateResource(@ResourceParam PlanDefinition planDefinitionRequest, @IdParam IdType uuid) {
-		return MethodOutcomeBuilder.buildUpdate(planDefinitionResource.updatePlanDefinition(uuid.getIdPart(), planDefinitionRequest));
+		return MethodOutcomeBuilder
+				.buildUpdate(planDefinitionResource.updatePlanDefinition(uuid.getIdPart(), planDefinitionRequest));
 	}
 
 	@Delete

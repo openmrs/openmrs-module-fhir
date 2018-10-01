@@ -59,7 +59,8 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByPatientAndConcept(String, java.util.Map)
 	 */
 	public List<Observation> searchObsByPatientAndConcept(String patientUUid, Map<String, String> conceptNamesAndURIs) {
-		return ObservationStrategyUtil.getObservationStrategy().searchObservationByPatientAndConcept(patientUUid, conceptNamesAndURIs);
+		return ObservationStrategyUtil.getObservationStrategy()
+				.searchObservationByPatientAndConcept(patientUUid, conceptNamesAndURIs);
 	}
 
 	/**
@@ -111,7 +112,7 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	public void deleteObs(String id) {
 		ObservationStrategyUtil.getObservationStrategy().deleteObservation(id);
 	}
-	
+
 	/**
 	 * @see org.openmrs.module.fhir.api.ObsService#createFHIRObservation(Observation)
 	 */

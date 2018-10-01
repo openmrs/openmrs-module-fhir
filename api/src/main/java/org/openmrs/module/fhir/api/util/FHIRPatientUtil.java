@@ -42,7 +42,7 @@ import static org.openmrs.module.fhir.api.util.FHIRUtils.extractUuid;
 public class FHIRPatientUtil {
 
 	public static Patient generatePatient(org.openmrs.Patient omrsPatient) {
-		
+
 		Patient patient = new Patient();
 		//Set patient id to fhir patient
 		IdType uuid = new IdType();
@@ -53,7 +53,8 @@ public class FHIRPatientUtil {
 		for (PatientIdentifier identifier : omrsPatient.getActiveIdentifiers()) {
 			String urn = FHIRUtils.buildURN(FHIRConstants.UUID, identifier.getIdentifierType().getUuid());
 			if (identifier.isPreferred()) {
-				patient.addIdentifier().setUse(Identifier.IdentifierUse.USUAL).setSystem(identifier.getIdentifierType().getName())
+				patient.addIdentifier().setUse(Identifier.IdentifierUse.USUAL)
+						.setSystem(identifier.getIdentifierType().getName())
 						.setValue(identifier.getIdentifier());
 			} else {
 				patient.addIdentifier().setUse(Identifier.IdentifierUse.SECONDARY).setSystem(identifier.getIdentifierType()
@@ -110,19 +111,19 @@ public class FHIRPatientUtil {
 		FHIRUtils.validate(patient);
 		return patient;
 	}
-	
+
 	public static org.openmrs.Patient generateOmrsPatient(Patient patient, List<String> errors) {
 		boolean preferedPresent = false, givennamePresent = false, familynamePresent = false, doCheckName = true;
 
 		org.openmrs.Patient omrsPatient = new org.openmrs.Patient(); // add eror handli
-		
+
 		if (patient.getId() != null) {
 			omrsPatient.setUuid(extractUuid(patient.getId()));
 		}
 
 		List<Identifier> fhirIdList = patient.getIdentifier();
 		Set<PatientIdentifier> idList = new TreeSet<PatientIdentifier>();
-		
+
 		if (fhirIdList == null || fhirIdList.isEmpty()) {
 			errors.add("Identifiers cannot be empty");
 		}
@@ -142,7 +143,7 @@ public class FHIRPatientUtil {
 			}
 			patientIdentifier.setIdentifierType(type);
 
-			if(type != null) {
+			if (type != null) {
 				PatientIdentifierType.LocationBehavior lb = type.getLocationBehavior();
 				if (lb == null || lb == PatientIdentifierType.LocationBehavior.REQUIRED) {
 					LocationService locationService = Context.getLocationService();
@@ -163,7 +164,7 @@ public class FHIRPatientUtil {
 			if (humanNameDt.getUse() != null) {
 				String getUse = humanNameDt.getUse().toCode();
 				if (String.valueOf(HumanName.NameUse.OFFICIAL).equalsIgnoreCase(getUse)
-				        || String.valueOf(HumanName.NameUse.USUAL).equalsIgnoreCase(getUse)) {
+						|| String.valueOf(HumanName.NameUse.USUAL).equalsIgnoreCase(getUse)) {
 					preferedPresent = true;
 					personName.setPreferred(true);
 				}
@@ -185,7 +186,7 @@ public class FHIRPatientUtil {
 					personName.setFamilyNameSuffix(valueOf(suffix));
 				}
 			}
-			
+
 			List<StringType> givenNames = humanNameDt.getGiven();
 			if (givenNames != null) {
 				givennamePresent = true;
@@ -198,7 +199,8 @@ public class FHIRPatientUtil {
 				personName.setFamilyName(familyName);
 			}
 			names.add(personName);
-			if (preferedPresent && givennamePresent && familynamePresent) { //if all are present in one name, further checkings are not needed
+			if (preferedPresent && givennamePresent
+					&& familynamePresent) { //if all are present in one name, further checkings are not needed
 				doCheckName = false; // cancel future checkings
 			}
 			if (doCheckName) { // if no suitable names found, these variables should be reset
@@ -221,7 +223,7 @@ public class FHIRPatientUtil {
 			address.setStateProvince(fhirAddress.getState());
 			address.setPostalCode(fhirAddress.getPostalCode());
 			List<StringType> addressStrings = fhirAddress.getLine();
-			
+
 			if (addressStrings != null) {
 				for (int i = 0; i < addressStrings.size(); i++) {
 					if (i == 0) {
@@ -237,7 +239,7 @@ public class FHIRPatientUtil {
 					}
 				}
 			}
-			
+
 			if (String.valueOf(Address.AddressUse.HOME.toCode()).equalsIgnoreCase(fhirAddress.getUse().toCode())) {
 				address.setPreferred(true);
 			}
@@ -247,11 +249,12 @@ public class FHIRPatientUtil {
 			addresses.add(address);
 		}
 		omrsPatient.setAddresses(addresses);
-		
+
 		if (patient.getGender() != null) {
 			if (patient.getGender().toCode().equalsIgnoreCase(Enumerations.AdministrativeGender.MALE.toCode())) {
 				omrsPatient.setGender(FHIRConstants.MALE);
-			} else if (patient.getGender().toCode().equalsIgnoreCase(String.valueOf(Enumerations.AdministrativeGender.FEMALE))) {
+			} else if (patient.getGender().toCode()
+					.equalsIgnoreCase(String.valueOf(Enumerations.AdministrativeGender.FEMALE))) {
 				omrsPatient.setGender(FHIRConstants.FEMALE);
 			}
 		} else {
@@ -261,7 +264,7 @@ public class FHIRPatientUtil {
 
 		BooleanType Isdeceased = (BooleanType) patient.getDeceased();
 		omrsPatient.setDead(Isdeceased.getValue());
-		
+
 		if (patient.getActive()) {
 			omrsPatient.setPersonVoided(false);
 		} else {
@@ -270,9 +273,9 @@ public class FHIRPatientUtil {
 		}
 		return omrsPatient;
 	}
-	
+
 	public static org.openmrs.Patient updatePatientAttributes(org.openmrs.Patient omrsPatient,
-	                                                          org.openmrs.Patient retrievedPatient) {
+			org.openmrs.Patient retrievedPatient) {
 		Set<PersonName> all = retrievedPatient.getNames();
 		boolean needToSetPrefferedName = false; // indicate wheter any preffered names are in the request body. 
 		for (PersonName name : omrsPatient.getNames()) {
@@ -316,6 +319,7 @@ public class FHIRPatientUtil {
 
 	/**
 	 * Build FhIRe reference from Patient
+	 *
 	 * @param patient patient resource
 	 * @return FHIR Reference
 	 */
@@ -342,6 +346,7 @@ public class FHIRPatientUtil {
 
 	/**
 	 * Compares patient objects with only current name and current address.
+	 *
 	 * @param patient1
 	 * @param patient2
 	 * @return true if the patient are equalse, otherwise it returns false.

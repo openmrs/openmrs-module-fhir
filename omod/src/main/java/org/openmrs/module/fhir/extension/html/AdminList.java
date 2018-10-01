@@ -24,21 +24,21 @@ import java.util.Map;
  * "fhir.title" heading.
  */
 public class AdminList extends AdministrationSectionExt {
-	
+
 	/**
 	 * @see AdministrationSectionExt#getMediaType()
 	 */
 	public Extension.MEDIA_TYPE getMediaType() {
 		return Extension.MEDIA_TYPE.html;
 	}
-	
+
 	/**
 	 * @see AdministrationSectionExt#getTitle()
 	 */
 	public String getTitle() {
 		return "fhir.title";
 	}
-	
+
 	/**
 	 * @see AdministrationSectionExt#getLinks()
 	 */
@@ -50,5 +50,5 @@ public class AdminList extends AdministrationSectionExt {
 		map.put("/module/fhir/apidocs.form", "swagger.docs");
 		return map;
 	}
-	
+
 }

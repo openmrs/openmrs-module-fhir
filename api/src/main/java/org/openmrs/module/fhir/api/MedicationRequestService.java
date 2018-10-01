@@ -19,50 +19,52 @@ import java.util.List;
 
 public interface MedicationRequestService {
 
-    /**
-     * Get drrug order by uuid
-     *
-     * @param uuid of the requesting drug order
-     * @return drug order obj
-     */
-    MedicationRequest getMedicationRequestById(String uuid);
+	/**
+	 * Get drrug order by uuid
+	 *
+	 * @param uuid of the requesting drug order
+	 * @return drug order obj
+	 */
+	MedicationRequest getMedicationRequestById(String uuid);
 
-    /**
-     * Search drug orders list by uuid
-     *
-     * @param uuid of the drug order
-     * @return drug order obj
-     */
-    List<MedicationRequest> searchMedicationRequestById(String uuid);
+	/**
+	 * Search drug orders list by uuid
+	 *
+	 * @param uuid of the drug order
+	 * @return drug order obj
+	 */
+	List<MedicationRequest> searchMedicationRequestById(String uuid);
 
-    /**
-     * Search drug orders by patient uuid
-     *
-     * @param patientUuid uuid of the patient which drug orders should returned
-     * @return drug orders list
-     */
-    List<MedicationRequest> searchMedicationRequestByPatientId(String patientUuid);
+	/**
+	 * Search drug orders by patient uuid
+	 *
+	 * @param patientUuid uuid of the patient which drug orders should returned
+	 * @return drug orders list
+	 */
+	List<MedicationRequest> searchMedicationRequestByPatientId(String patientUuid);
 
-    /**
-     * Delete drug order by uuid
-     *
-     * @param uuid of the drug order to be deleted
-     * @return drug order obj
-     */
-    void deleteMedicationRequest(String uuid);
+	/**
+	 * Delete drug order by uuid
+	 *
+	 * @param uuid of the drug order to be deleted
+	 * @return drug order obj
+	 */
+	void deleteMedicationRequest(String uuid);
 
-    /**
-     * Create medication request
-     * @param medicationRequest fhir medication request
-     * @return created MedicationRequest
-     */
-    MedicationRequest createFHIRMedicationRequest(MedicationRequest medicationRequest);
+	/**
+	 * Create medication request
+	 *
+	 * @param medicationRequest fhir medication request
+	 * @return created MedicationRequest
+	 */
+	MedicationRequest createFHIRMedicationRequest(MedicationRequest medicationRequest);
 
-    /**
-     * Update medication request
-     * @param medicationRequest fhir medication request
-     * @return created MedicationRequest
-     */
-    MedicationRequest updateFHIRMedicationRequest(MedicationRequest medicationRequest, String uuid);
+	/**
+	 * Update medication request
+	 *
+	 * @param medicationRequest fhir medication request
+	 * @return created MedicationRequest
+	 */
+	MedicationRequest updateFHIRMedicationRequest(MedicationRequest medicationRequest, String uuid);
 
 }

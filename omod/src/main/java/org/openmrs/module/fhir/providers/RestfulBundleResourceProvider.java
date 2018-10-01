@@ -35,29 +35,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RestfulBundleResourceProvider implements IResourceProvider {
-	
+
 	private FHIRBundleResource bundleResource;
-	
+
 	public RestfulBundleResourceProvider() {
 		this.bundleResource = new FHIRBundleResource();
 	}
-	
+
 	@Override
 	public Class<? extends Resource> getResourceType() {
 		return Bundle.class;
 	}
-	
+
 	@Transaction
 	public Bundle transaction(@TransactionParam Bundle theResources) {
 		// theResources will contain a complete bundle of all resources to persist
 		// in a single transaction
 		List<Resource> postResources = new ArrayList<>();
 		for (Bundle.BundleEntryComponent entry : theResources.getEntry()) {
-			if(FHIRConstants.POST.equals(entry.getRequest().getMethod().getDisplay())){
+			if (FHIRConstants.POST.equals(entry.getRequest().getMethod().getDisplay())) {
 				postResources.add(entry.getResource());
 			}
-        }
-		
+		}
+
 		for (Resource next : postResources) {
 			if (next instanceof Encounter) {
 				FHIREncounterResource encounterResource = new FHIREncounterResource();
@@ -81,6 +81,5 @@ public class RestfulBundleResourceProvider implements IResourceProvider {
 
 		return theResources;
 	}
-
 
 }

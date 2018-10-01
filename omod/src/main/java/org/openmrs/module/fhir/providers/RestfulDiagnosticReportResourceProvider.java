@@ -26,11 +26,8 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import org.hl7.fhir.dstu3.model.CodeableConcept;
-import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.DiagnosticReport;
 import org.hl7.fhir.dstu3.model.IdType;
-import org.hl7.fhir.dstu3.model.OperationOutcome;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.Resource;
 import org.openmrs.module.fhir.resources.FHIRDiagnosticReportResource;
@@ -40,11 +37,12 @@ import java.util.List;
 
 public class RestfulDiagnosticReportResourceProvider implements IResourceProvider {
 
-	private FHIRDiagnosticReportResource diagnosticReportResource;
+	private static final String EXCEPTION_MESSAGE =
+			"No Diagnostic Report is associated with the given UUID to update. Please" +
+					" make sure you have set at lease one non-delete Issued, Subject, Performer and " +
+					"ServiceCategory to create a new Diagnostic Report with the given UUID.";
 
-	private static final String EXCEPTION_MESSAGE = "No Diagnostic Report is associated with the given UUID to update. Please" +
-			" make sure you have set at lease one non-delete Issued, Subject, Performer and " +
-			"ServiceCategory to create a new Diagnostic Report with the given UUID.";
+	private FHIRDiagnosticReportResource diagnosticReportResource;
 
 	public RestfulDiagnosticReportResourceProvider() {
 		diagnosticReportResource = new FHIRDiagnosticReportResource();
@@ -81,9 +79,11 @@ public class RestfulDiagnosticReportResourceProvider implements IResourceProvide
 	}
 
 	@Update
-	public MethodOutcome updateFHIRDiagnosticReport(@ResourceParam DiagnosticReport diagnosticReport, @IdParam IdType theId) {
+	public MethodOutcome updateFHIRDiagnosticReport(@ResourceParam DiagnosticReport diagnosticReport,
+			@IdParam IdType theId) {
 		try {
-			return MethodOutcomeBuilder.buildUpdate(diagnosticReportResource.updateFHIRDiagnosticReport(diagnosticReport, theId.getIdPart()));
+			return MethodOutcomeBuilder
+					.buildUpdate(diagnosticReportResource.updateFHIRDiagnosticReport(diagnosticReport, theId.getIdPart()));
 		}
 		catch (Exception e) {
 			return MethodOutcomeBuilder.buildCustom(EXCEPTION_MESSAGE);

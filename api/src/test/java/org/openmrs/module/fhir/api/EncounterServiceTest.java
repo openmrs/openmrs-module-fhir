@@ -39,7 +39,7 @@ import static org.junit.Assert.assertTrue;
 public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 
 	protected static final String ENCOUNTER_INITIAL_DATA_XML = "org/openmrs/api/include/EncounterServiceTest-initialData.xml";
-	
+
 	protected static final String VISIT_INITIAL_DATA_XML = "org/openmrs/api/include/VisitServiceTest-includeVisitsAndTypeToAutoClose.xml";
 
 	public EncounterService getService() {
@@ -60,7 +60,7 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 		assertNotNull(fhirEncounter);
 		assertEquals(fhirEncounter.getId().toString(), encounterUuid);
 	}
-	
+
 	@Test
 	public void FHIREncounter_shouldCreateEncounter() {
 		String encounterUuid = "430bbb70-6a9c-4e1e-badb-9d1034b1b5e9";
@@ -77,26 +77,26 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 		assertNotNull(fhirEncounter);
 		assertEquals(fhirEncounter.getPeriod().getStart().toString(), "2005-01-01 00:00:00.0");
 		Reference locationRef = fhirEncounter.getLocation().get(0).getLocation();
-		String locationId =  locationRef.getId();
+		String locationId = locationRef.getId();
 
-		if(StringUtils.isEmpty(locationId) && locationRef.getIdentifier() != null) {
-			if(!StringUtils.isEmpty(locationRef.getIdentifier().getId())) {
+		if (StringUtils.isEmpty(locationId) && locationRef.getIdentifier() != null) {
+			if (!StringUtils.isEmpty(locationRef.getIdentifier().getId())) {
 				locationId = locationRef.getIdentifier().getId();
 			}
 		}
 
-		if(StringUtils.isEmpty(locationId)) {
+		if (StringUtils.isEmpty(locationId)) {
 			String participantRefStr = locationRef.getReference();
 			String[] locationRefStrSplit = participantRefStr.split("/");
-			if(locationRefStrSplit.length > 1) {
-				locationId =locationRefStrSplit[1];
+			if (locationRefStrSplit.length > 1) {
+				locationId = locationRefStrSplit[1];
 			}
 		}
 
 		assertEquals(locationId,
-		    "c36006e5-9fbb-4f20-866b-0ece245615a1");
+				"c36006e5-9fbb-4f20-866b-0ece245615a1");
 	}
-	
+
 	@Test
 	public void FHIREncounter_shouldCreateVisit() {
 		String encounterUuid = "430bbb70-6a9c-4e1e-badb-9d1034b1b5e9";
@@ -205,7 +205,7 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 	public void searchEncounterByPatientIdentifierAndPartOfNone_shouldReturnsEncounterWithoutParentVisitOrVisit() {
 		String patientIdentifier = "1234";
 		List<Encounter> fhirEncounters = getService().searchEncountersByPatientIdentifierAndPartOf(patientIdentifier,
-		    FHIRConstants.NONE);
+				FHIRConstants.NONE);
 		assertNotNull(fhirEncounters);
 		assertEquals(8, fhirEncounters.size());
 	}
@@ -215,7 +215,7 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 		String patientIdentifier = "12345";
 		String visitUuid = "7fffd6b9-0970-4967-88c7-0b7b50f12ab9";
 		List<Encounter> fhirEncounters = getService().searchEncountersByPatientIdentifierAndPartOf(patientIdentifier,
-		    visitUuid);
+				visitUuid);
 		assertNotNull(fhirEncounters);
 		assertEquals(1, fhirEncounters.size());
 	}

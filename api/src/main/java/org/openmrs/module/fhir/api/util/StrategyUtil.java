@@ -3,8 +3,6 @@ package org.openmrs.module.fhir.api.util;
 import org.hl7.fhir.dstu3.model.DomainResource;
 import org.hl7.fhir.dstu3.model.IdType;
 
-import java.util.List;
-
 public final class StrategyUtil {
 
 	private StrategyUtil() {

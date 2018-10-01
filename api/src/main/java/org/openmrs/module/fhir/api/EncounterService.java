@@ -143,7 +143,7 @@ public interface EncounterService extends OpenmrsService {
 	 * Update encounter
 	 *
 	 * @param encounter the encounter to update
-	 * @param uuid the uuid of the patient to update
+	 * @param uuid      the uuid of the patient to update
 	 * @return fhir encounter
 	 */
 	Encounter updateEncounter(Encounter encounter, String uuid);
