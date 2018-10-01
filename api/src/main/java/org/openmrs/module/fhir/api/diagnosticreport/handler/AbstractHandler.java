@@ -86,19 +86,7 @@ public abstract class AbstractHandler {
 					omrsDiagnosticReport.addProvider(encounterRole,  new Provider());
 				} else {
 					// Get Id of the Performer
-					Identifier practitionerIdentifier = performerComponent.getActor().getIdentifier();
-					String practitionerId = "";
-					if (practitionerIdentifier != null) {
-						// Assume that Performer is stored in the OpenMRS database
-						//TODO: org.openmrs.Provider omrsProvider = FHIRPractitionerUtil.generateOpenMRSPractitioner();
-						practitionerId = practitionerIdentifier.getId();
-						//TODO: Get EncounterRole from DiagnosticReport (remove hard coded value)
-					} else {
-						String practitionerIdReference = performerComponent.getActor().getReference();
-						if (!StringUtils.isEmpty(practitionerIdReference) && "/".contains(practitionerIdReference)) {
-							practitionerId = practitionerIdReference.split("/")[1];
-						}
-					}
+					String practitionerId = FHIRUtils.getObjectUuidByReference(performerComponent.getActor());
 					omrsDiagnosticReport.addProvider(encounterRole, Context.getProviderService().getProviderByUuid(practitionerId));
 				}
 			}
@@ -112,17 +100,7 @@ public abstract class AbstractHandler {
 		Patient omrsPatient;
 		if (!subjectReference.isEmpty()) {
 			// Get Id of the Patient
-			Identifier patientIdentifier = subjectReference.getIdentifier();
-			String patientId = "";
-			if(patientIdentifier != null) {
-				// Assume that Patient is stored in the OpenMRS database
-				patientId = patientIdentifier.getId();
-			} else {
-				String patientIdReference = subjectReference.getReference();
-				if(!StringUtils.isEmpty(patientIdReference) && "/".contains(patientIdReference)) {
-					patientId = patientIdReference.split("/")[1];
-				}
-			}
+			String patientId = FHIRUtils.getObjectUuidByReference(subjectReference);
 			omrsPatient = Context.getPatientService().getPatientByUuid(patientId);
 			omrsDiagnosticReport.setPatient(omrsPatient);
 		} else {

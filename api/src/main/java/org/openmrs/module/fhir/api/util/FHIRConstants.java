@@ -191,6 +191,7 @@ public final class FHIRConstants {
 	public static final String OPENMRS_CONCEPT_CODING_SYSTEM = "OPENMRS";
 
 	public static final String NONE = "none";
+
 	static {
 		conceptSourceMap.put(LOINC.toLowerCase(), new ConceptSourceNameURIPair(LOINC, LOINC_URI));
 		conceptSourceMap.put(CIEL.toLowerCase(), new ConceptSourceNameURIPair(CIEL, CIEL_URI));
@@ -227,7 +228,7 @@ public final class FHIRConstants {
 		conceptSourceURINameMap.put(HL7_2X_URI, HL7_2X);
 		conceptSourceURINameMap.put(BT_3_URI, BT_3);
 		conceptSourceURINameMap.put(ICPC2_URI, ICPC2);
-		conceptSourceURINameMap.put(IMO_PROBLEM_URI, EMRAPI);
+		conceptSourceURINameMap.put(EMRAPI_URI, EMRAPI);
 		conceptSourceURINameMap.put(MDRTB_URI, MDRTB);
 		conceptSourceURINameMap.put(IMO_PROBLEM_URI, IMO_PROBLEM);
 		conceptSourceURINameMap.put(IMP_PROCEDURE_URI, IMP_PROCEDURE);

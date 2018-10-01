@@ -53,7 +53,7 @@ public class FHIRAllergyIntoleranceUtil {
 
 		//Set allergy category
 		if (allergy.getAllergen().getAllergenType() != null) {
-			List<Enumeration<AllergyIntolerance.AllergyIntoleranceCategory>> catagories = new ArrayList();
+			List<Enumeration<AllergyIntolerance.AllergyIntoleranceCategory>> catagories = new ArrayList<>();
 			Enumeration<AllergyIntolerance.AllergyIntoleranceCategory> enumeration = new Enumeration(
 					new AllergyIntolerance.AllergyIntoleranceCategoryEnumFactory());
 			switch (allergy.getAllergen().getAllergenType()) {

@@ -32,7 +32,7 @@ public class PersonStrategy implements GenericPersonStrategy {
     @Override
     public List<Person> searchPersonByUuid(String uuid) {
         org.openmrs.Person omrsPerson = Context.getPersonService().getPersonByUuid(uuid);
-        List<Person> personList = new ArrayList();
+        List<Person> personList = new ArrayList<>();
 
         if (omrsPerson != null && !omrsPerson.isPersonVoided()) {
             personList.add(FHIRPersonUtil.generatePerson(omrsPerson));
@@ -43,7 +43,7 @@ public class PersonStrategy implements GenericPersonStrategy {
     @Override
     public List<Person> searchPersons(String name, Integer birthYear, String gender) {
         Set<org.openmrs.Person> persons = Context.getPersonService().getSimilarPeople(name, birthYear, gender);
-        List<Person> fhirPersonsList = new ArrayList();
+        List<Person> fhirPersonsList = new ArrayList<>();
 
         for (org.openmrs.Person person : persons) {
             fhirPersonsList.add(FHIRPersonUtil.generatePerson(person));
@@ -54,7 +54,7 @@ public class PersonStrategy implements GenericPersonStrategy {
     @Override
     public List<Person> searchPersonsByName(String name) {
         List<org.openmrs.Person> persons = Context.getPersonService().getPeople(name, null);
-        List<Person> fhirPersonsList = new ArrayList();
+        List<Person> fhirPersonsList = new ArrayList<>();
         for (org.openmrs.Person person : persons) {
             fhirPersonsList.add(FHIRPersonUtil.generatePerson(person));
         }
@@ -63,7 +63,7 @@ public class PersonStrategy implements GenericPersonStrategy {
 
     @Override
     public Person createFHIRPerson(Person person) {
-        List<String> errors = new ArrayList();
+        List<String> errors = new ArrayList<>();
         org.openmrs.Person omrsPerson = FHIRPersonUtil.generateOpenMRSPerson(person, errors);
 
         FHIRUtils.checkGeneratorErrorList(errors);

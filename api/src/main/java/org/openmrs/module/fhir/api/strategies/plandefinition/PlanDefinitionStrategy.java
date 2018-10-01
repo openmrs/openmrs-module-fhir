@@ -20,7 +20,7 @@ public class PlanDefinitionStrategy implements GenericPlanDefinitionStrategy {
 
 	@Override
 	public PlanDefinition createPlanDefinition(PlanDefinition planDefinition) throws APIException {
-		List<String> errors = new ArrayList();
+		List<String> errors = new ArrayList<>();
 		FHIRPlanDefinitionUtil.validatePlanDefinition(planDefinition, errors);
 		FHIRUtils.checkGeneratorErrorList(errors);
 		Program program = FHIRPlanDefinitionUtil.generateProgram(planDefinition);
