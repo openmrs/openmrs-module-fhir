@@ -73,7 +73,7 @@ public class RestfulAllergyIntoleranceResourceProvider implements IResourceProvi
 	 * @param identifier object containing the patient identifier
 	 */
 	@Search
-	public List<AllergyIntolerance> findllergiesByPatientIdentifier(
+	public List<AllergyIntolerance> findAllergiesByPatientIdentifier(
 			@RequiredParam(name = AllergyIntolerance.SP_PATIENT, chainWhitelist = {
 					Patient.SP_IDENTIFIER }) ReferenceParam identifier) {
 		return allergyIntoleranceResource.searchAllergiesByPatientIdentifier(identifier);
