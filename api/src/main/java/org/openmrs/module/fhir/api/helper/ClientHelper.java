@@ -22,9 +22,9 @@ public interface ClientHelper {
 
 	RequestEntity updateRequest(String url, Object object) throws URISyntaxException;
 
-	Class resolveCategoryByCategory(String category);
+	Class resolveClassByCategory(String category);
 
 	List<ClientHttpRequestInterceptor> getCustomInterceptors(String username, String password);
 
-	List<HttpMessageConverter<?>> getCustomFHIRMessageConverter();
+	List<HttpMessageConverter<?>> getCustomMessageConverter();
 }

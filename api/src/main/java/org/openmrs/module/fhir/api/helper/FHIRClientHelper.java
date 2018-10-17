@@ -69,7 +69,7 @@ public class FHIRClientHelper implements ClientHelper {
 	}
 
 	@Override
-	public Class resolveCategoryByCategory(String category) {
+	public Class resolveClassByCategory(String category) {
 		if (CATEGORY_MAP.containsKey(category)) {
 			return CATEGORY_MAP.get(category);
 		}
@@ -84,7 +84,7 @@ public class FHIRClientHelper implements ClientHelper {
 	}
 
 	@Override
-	public List<HttpMessageConverter<?>> getCustomFHIRMessageConverter() {
+	public List<HttpMessageConverter<?>> getCustomMessageConverter() {
 		return Arrays.asList(new HttpMessageConverter<?>[]
 				{ new FHIRHttpMessageConverter(), new StringHttpMessageConverter() });
 	}
