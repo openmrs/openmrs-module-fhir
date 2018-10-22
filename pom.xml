@@ -59,7 +59,8 @@
 	<modules>
 		<module>api</module>
 		<module>omod</module>
-	</modules>
+		<module>ui-tests</module>
+    </modules>
 
 	<properties>
 		<openMRSVersion>2.1.0</openMRSVersion>
