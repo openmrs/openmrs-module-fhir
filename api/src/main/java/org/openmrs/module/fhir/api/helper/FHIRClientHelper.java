@@ -7,6 +7,7 @@ import org.hl7.fhir.dstu3.model.Location;
 import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.Practitioner;
+import org.hl7.fhir.dstu3.model.Person;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.openmrs.module.fhir.api.client.BasicAuthInterceptor;
 import org.openmrs.module.fhir.api.client.FHIRHttpMessageConverter;
@@ -41,6 +42,7 @@ public class FHIRClientHelper implements ClientHelper {
 		CATEGORY_MAP.put("location", Location.class);
 		CATEGORY_MAP.put("practitioner", Practitioner.class);
 		CATEGORY_MAP.put("provider", Practitioner.class);
+		CATEGORY_MAP.put("person", Person.class);
 	}
 
 	protected final Log log = LogFactory.getLog(this.getClass());
