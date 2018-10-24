@@ -49,6 +49,8 @@ public class FHIRMedicationRequestUtil {
 	public static MedicationRequest generateMedicationRequest(org.openmrs.DrugOrder omrsDrugOrder) {
 		MedicationRequest request = new MedicationRequest();
 
+		BaseOpenMRSDataUtil.setBaseExtensionFields(request, omrsDrugOrder);
+
 		//Set id
 		if (!StringUtils.isEmpty(omrsDrugOrder.getUuid())) {
 			request.setId(omrsDrugOrder.getUuid());
@@ -203,6 +205,8 @@ public class FHIRMedicationRequestUtil {
 	public static DrugOrder generateDrugOrder(MedicationRequest fhirMedicationRequest, List<String> errors) {
 		DrugOrder order = new DrugOrder();
 		Drug drug = new Drug();
+
+		BaseOpenMRSDataUtil.readBaseExtensionFields(order, fhirMedicationRequest);
 
 		//Set patient
 		Reference patientRef = fhirMedicationRequest.getSubject();

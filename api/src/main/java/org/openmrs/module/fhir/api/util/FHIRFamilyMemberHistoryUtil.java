@@ -30,6 +30,9 @@ public class FHIRFamilyMemberHistoryUtil {
 
 	public static FamilyMemberHistory generateFamilyHistory(Relationship relationship, Person person) {
 		FamilyMemberHistory familyMemberHistory = new FamilyMemberHistory();
+
+		BaseOpenMRSDataUtil.setBaseExtensionFields(familyMemberHistory, relationship);
+
 		IdType id = new IdType();
 		id.setValue(person.getUuid());
 		familyMemberHistory.setId(id);

@@ -25,6 +25,9 @@ public class FHIRRelatedPersonUtil {
 
 	public static RelatedPerson generateRelationshipObject(org.openmrs.Relationship omrsRelationship) {
 		RelatedPerson relatedPerson = new RelatedPerson();
+
+		BaseOpenMRSDataUtil.setBaseExtensionFields(relatedPerson, omrsRelationship);
+
 		org.openmrs.Person omrsRelatedPerson = omrsRelationship.getPersonA();
 
 		// id
@@ -106,6 +109,8 @@ public class FHIRRelatedPersonUtil {
 	public static org.openmrs.Relationship generateOmrsRelationshipObject(RelatedPerson relatedPerson,
 			List<String> errors) {
 		org.openmrs.Relationship omrsRelationship = new Relationship();
+
+		BaseOpenMRSDataUtil.readBaseExtensionFields(omrsRelationship, relatedPerson);
 
 		// UUID
 		omrsRelationship.setUuid(relatedPerson.getIdElement().getIdPart());

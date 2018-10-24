@@ -45,6 +45,8 @@ public class FHIREncounterUtil {
 
 		Composition composition = new Composition();
 
+		BaseOpenMRSDataUtil.setBaseExtensionFields(composition, omrsEncounter);
+
 		//Set id of the composition from omrs encounter id
 		IdType uuid = new IdType();
 		uuid.setValue(omrsEncounter.getUuid());
@@ -116,6 +118,8 @@ public class FHIREncounterUtil {
 
 	public static Encounter generateEncounter(org.openmrs.Encounter omrsEncounter) {
 		Encounter encounter = new Encounter();
+
+		BaseOpenMRSDataUtil.setBaseExtensionFields(encounter, omrsEncounter);
 
 		IdType uuid = new IdType();
 		uuid.setValue(omrsEncounter.getUuid());
@@ -241,6 +245,8 @@ public class FHIREncounterUtil {
 
 	public static org.openmrs.Encounter generateOMRSEncounter(Encounter encounter, List<String> errors) {
 		org.openmrs.Encounter omrsEncounter = new org.openmrs.Encounter();
+
+		BaseOpenMRSDataUtil.readBaseExtensionFields(omrsEncounter, encounter);
 
 		if (encounter.getId() != null) {
 			omrsEncounter.setUuid(extractUuid(encounter.getId()));

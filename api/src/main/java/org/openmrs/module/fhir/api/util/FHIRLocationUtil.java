@@ -29,6 +29,8 @@ public class FHIRLocationUtil {
 	public static Location generateLocation(org.openmrs.Location omrsLocation) {
 		Location location = new Location();
 
+		BaseOpenMRSDataUtil.setBaseExtensionFields(location, omrsLocation);
+
 		//Set resource id
 		IdType uuid = new IdType();
 		uuid.setValue(omrsLocation.getUuid());
@@ -101,6 +103,9 @@ public class FHIRLocationUtil {
 			// specification
 			omrsLocation = new org.openmrs.Location();
 		}
+
+		BaseOpenMRSDataUtil.readBaseExtensionFields(omrsLocation, location);
+
 		//Set name and location description
 		omrsLocation.setName(location.getName());
 		omrsLocation.setDescription(location.getDescription());

@@ -22,6 +22,8 @@ public final class FHIRMedicationUtil {
 	public static Medication generateMedication(Drug drug) {
 		Medication medication = new Medication();
 
+		BaseOpenMRSDataUtil.setBaseExtensionFields(medication, drug);
+
 		medication.setId(drug.getUuid());
 
 		for (ConceptMap map : drug.getDosageForm().getConceptMappings()) {
@@ -39,6 +41,8 @@ public final class FHIRMedicationUtil {
 
 	public static Drug generateDrug(Medication medication, List<String> errors) {
 		Drug drug = new Drug();
+
+		BaseOpenMRSDataUtil.readBaseExtensionFields(drug, medication);
 
 		drug.setName(DRUG_NAME_PLACEHOLDER);
 
