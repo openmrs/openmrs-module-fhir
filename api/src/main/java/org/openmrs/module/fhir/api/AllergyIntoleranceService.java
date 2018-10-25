@@ -55,8 +55,31 @@ public interface AllergyIntoleranceService {
 	 * Ger allergies by peron uuid
 	 *
 	 * @param personId uuid
-	 * @return
+	 * @return fhir allergy resource list
 	 */
 	List<AllergyIntolerance> searchAllergiesByPatientUuid(String personId);
 
+	/**
+	 * Create allergy tolerance
+	 *
+	 * @param allergyIntolerance to be created
+	 * @return created allergy tolerance obj
+	 */
+	AllergyIntolerance createAllergy(AllergyIntolerance allergyIntolerance);
+
+	/**
+	 * Update allergy tolerance with uuid
+	 *
+	 * @param allergyIntolerance to be updated
+	 * @param uuid of the requesting allergy
+	 * @return updated allergy tolerance obj
+	 */
+	AllergyIntolerance updateAllergy(AllergyIntolerance allergyIntolerance, String uuid);
+
+	/**
+	 * Delete allergy tolerance with uuid
+	 *
+	 * @param uuid of allergy tolerance to be deleted
+	 */
+	void deleteAllergy(String uuid);
 }

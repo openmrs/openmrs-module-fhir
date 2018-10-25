@@ -28,4 +28,10 @@ public interface GenericAllergyStrategy {
 	List<AllergyIntolerance> searchAllergiesByPatientName(String name);
 
 	List<AllergyIntolerance> searchAllergiesByPersonId(String uuid);
+
+	AllergyIntolerance createAllergy(AllergyIntolerance allergyIntolerance);
+
+	AllergyIntolerance updateAllergy(AllergyIntolerance allergyIntolerance, String uuid);
+
+	void deleteAllergy(String uuid);
 }

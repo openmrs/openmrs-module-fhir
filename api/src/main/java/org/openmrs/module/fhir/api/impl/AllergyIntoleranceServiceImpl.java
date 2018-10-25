@@ -24,7 +24,7 @@ import org.openmrs.module.fhir.api.strategies.allergy.AllergyStrategyUtil;
 import java.util.List;
 
 /**
- * It is a default implementation of {@link org.openmrs.module.fhir.api.PatientService}.
+ * It is a default implementation of {@link org.openmrs.module.fhir.api.AllergyIntoleranceService}.
  */
 public class AllergyIntoleranceServiceImpl extends BaseOpenmrsService implements AllergyIntoleranceService {
 
@@ -46,35 +46,43 @@ public class AllergyIntoleranceServiceImpl extends BaseOpenmrsService implements
 		this.dao = dao;
 	}
 
-	/**
-	 * @see org.openmrs.module.fhir.api.AllergyIntoleranceService#getAllergyById(String)
-	 */
+	@Override
 	public AllergyIntolerance getAllergyById(String uuid) {
 		return AllergyStrategyUtil.getAllergyStrategy().getAllergyById(uuid);
 	}
 
-	/**
-	 * @see org.openmrs.module.fhir.api.AllergyIntoleranceService#searchAllergiesById(String)
-	 */
+	@Override
 	public List<AllergyIntolerance> searchAllergiesById(String uuid) {
 		return AllergyStrategyUtil.getAllergyStrategy().searchAllergyById(uuid);
 	}
 
-	/**
-	 * @see org.openmrs.module.fhir.api.AllergyIntoleranceService#searchAllergiesByPatientIdentifier(String)
-	 */
+	@Override
 	public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(String identifier) {
 		return AllergyStrategyUtil.getAllergyStrategy().searchAllergiesByPatientIdentifier(identifier);
 	}
 
-	/**
-	 * @see org.openmrs.module.fhir.api.AllergyIntoleranceService#searchAllergiesByPatientName(String)
-	 */
+	@Override
 	public List<AllergyIntolerance> searchAllergiesByPatientName(String name) {
 		return AllergyStrategyUtil.getAllergyStrategy().searchAllergiesByPatientName(name);
 	}
 
+	@Override
 	public List<AllergyIntolerance> searchAllergiesByPatientUuid(String personId) {
 		return AllergyStrategyUtil.getAllergyStrategy().searchAllergiesByPersonId(personId);
+	}
+
+	@Override
+	public AllergyIntolerance createAllergy(AllergyIntolerance allergyIntolerance) {
+		return AllergyStrategyUtil.getAllergyStrategy().createAllergy(allergyIntolerance);
+	}
+
+	@Override
+	public AllergyIntolerance updateAllergy(AllergyIntolerance allergyIntolerance, String uuid) {
+		return AllergyStrategyUtil.getAllergyStrategy().updateAllergy(allergyIntolerance, uuid);
+	}
+
+	@Override
+	public void deleteAllergy(String uuid) {
+		AllergyStrategyUtil.getAllergyStrategy().deleteAllergy(uuid);
 	}
 }

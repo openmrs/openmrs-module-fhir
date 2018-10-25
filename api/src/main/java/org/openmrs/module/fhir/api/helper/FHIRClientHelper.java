@@ -2,6 +2,7 @@ package org.openmrs.module.fhir.api.helper;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hl7.fhir.dstu3.model.AllergyIntolerance;
 import org.hl7.fhir.dstu3.model.Encounter;
 import org.hl7.fhir.dstu3.model.Location;
 import org.hl7.fhir.dstu3.model.Observation;
@@ -41,6 +42,7 @@ public class FHIRClientHelper implements ClientHelper {
 		CATEGORY_MAP.put("location", Location.class);
 		CATEGORY_MAP.put("practitioner", Practitioner.class);
 		CATEGORY_MAP.put("provider", Practitioner.class);
+		CATEGORY_MAP.put("allergy", AllergyIntolerance.class);
 	}
 
 	protected final Log log = LogFactory.getLog(this.getClass());
