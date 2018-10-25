@@ -168,6 +168,11 @@ public class FHIRPersonUtil {
 				givennamePresent = true;
 				StringType givenName = givenNames.get(0);
 				personName.setGivenName(valueOf(givenName));
+
+				if(givenNames.size() > 1) {
+					StringType middleName = givenNames.get(1);
+					personName.setMiddleName(valueOf(middleName));
+				}
 			}
 			String familyName = humanNameDt.getFamily();
 			if (!StringUtils.isEmpty(familyName)) {
@@ -298,8 +303,7 @@ public class FHIRPersonUtil {
 		}
 		retrievedPerson.setBirthdate(omrsPerson.getBirthdate());
 		retrievedPerson.setGender(omrsPerson.getGender());
-		retrievedPerson.getActiveAttributes().get(0).setValue("Test");
-		retrievedPerson.getActiveAttributes().get(1).setValue("Test");
+
 		return retrievedPerson;
 	}
 }

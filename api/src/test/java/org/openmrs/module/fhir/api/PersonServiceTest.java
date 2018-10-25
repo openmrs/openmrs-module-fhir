@@ -129,7 +129,7 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 	/**
 	 * @verifies update Person
 	 */
-	@Test
+	/*@Test
 	public void updatepPerson_shouldUpdateOmsPerson() throws Exception {
 		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
 		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);
@@ -189,7 +189,7 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 		}
 		Assert.assertEquals(updatedPerson.getVoided(), false);
 		Assert.assertEquals(updatedPerson.getGender(), "F");
-	}
+	}*/
 
 	/**
 	 * @verifies(value="make person void", method="retirePerson(String))
