@@ -229,6 +229,22 @@ public final class FHIRConstants {
 
 	public static final String FHIR_VOIDED_MESSAGE = "Voided by FHIR request";
 
+	public static final String CATEGORY_PATIENT = "patient";
+
+	public static final String CATEGORY_VISIT = "visit";
+
+	public static final String CATEGORY_ENCOUNTER = "encounter";
+
+	public static final String CATEGORY_OBSERVATION = "observation";
+
+	public static final String CATEGORY_LOCATION = "location";
+
+	public static final String CATEGORY_PRACTITIONER = "practitioner";
+
+	public static final String CATEGORY_PROVIDER = "provider";
+
+	public static final String CATEGORY_ALLERGY = "allergy";
+
 	public static final String POST = "POST";
 
 	public static final String PUT = "PUT";
