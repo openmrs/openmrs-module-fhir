@@ -202,12 +202,6 @@
 	</globalProperty>
 
 	<globalProperty>
-		<property>${project.parent.artifactId}.allergy.strategy</property>
-		<defaultValue>DefaultAllergyStrategy</defaultValue>
-		<description>Set allergy strategy.</description>
-	</globalProperty>
-
-	<globalProperty>
 		<property>${project.parent.artifactId}.allergy.strategy.concept.uuid</property>
 		<defaultValue>1234</defaultValue>
 		<description>Concept id for allergy obs</description>
