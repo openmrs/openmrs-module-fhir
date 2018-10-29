@@ -149,7 +149,7 @@
 
 	<globalProperty>
 		<property>${project.parent.artifactId}.allergy.strategy</property>
-		<defaultValue>ActiveListAllergyStrategy</defaultValue>
+		<defaultValue>DefaultAllergyStrategy</defaultValue>
 		<description>Set allergy strategy</description>
 	</globalProperty>
 

@@ -35,6 +35,9 @@ public class FHIRVisitUtil {
 
 	public static Encounter generateEncounter(Visit omrsVisit) {
 		Encounter encounter = new Encounter();
+
+		BaseOpenMRSDataUtil.setBaseExtensionFields(encounter, omrsVisit);
+
 		encounter.setId(omrsVisit.getUuid());
 		encounter.setStatus(Encounter.EncounterStatus.FINISHED);
 		//TODO what class element needs to be set
@@ -87,7 +90,9 @@ public class FHIRVisitUtil {
 
 		VisitType visitType = omrsVisit.getVisitType();
 		CodeableConcept type = new CodeableConcept();
-		type.addCoding(new Coding(visitType.getUuid(), visitType.getId().toString(), visitType.getName()));
+		Coding coding = new Coding(visitType.getUuid(), visitType.getId().toString(), visitType.getName());
+		FHIREncounterUtil.markAsVisitType(coding);
+		type.addCoding(coding);
 		encounter.addType(type);
 
 		FHIRUtils.validate(encounter);
@@ -96,6 +101,8 @@ public class FHIRVisitUtil {
 
 	public static Visit generateOMRSVisit(Encounter encounter, List<String> errors) {
 		Visit visit = new Visit();
+
+		BaseOpenMRSDataUtil.readBaseExtensionFields(visit, encounter);
 
 		if (encounter.getId() != null) {
 			visit.setUuid(extractUuid(encounter.getId()));

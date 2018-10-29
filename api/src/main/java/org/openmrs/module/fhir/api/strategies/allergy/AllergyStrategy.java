@@ -13,23 +13,31 @@
  */
 package org.openmrs.module.fhir.api.strategies.allergy;
 
+import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
+import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.hl7.fhir.dstu3.model.AllergyIntolerance;
 import org.openmrs.Allergy;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.api.APIException;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRAllergyIntoleranceUtil;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component("DefaultAllergyStrategy")
 public class AllergyStrategy implements GenericAllergyStrategy {
+
+	@Autowired
+	private PatientService patientService;
 
 	@Override
 	public AllergyIntolerance getAllergyById(String uuid) {
-		PatientService patientService = Context.getPatientService();
-
 		org.openmrs.Allergy openMRSAllergy = patientService.getAllergyByUuid(uuid);
 
 		return openMRSAllergy != null ?
@@ -40,8 +48,6 @@ public class AllergyStrategy implements GenericAllergyStrategy {
 	@Override
 	public List<AllergyIntolerance> searchAllergyById(String uuid) {
 		List<AllergyIntolerance> list = new ArrayList<>();
-		PatientService patientService = Context.getPatientService();
-
 		org.openmrs.Allergy openMRSAllergy = patientService.getAllergyByUuid(uuid);
 
 		AllergyIntolerance allergyIntolerance = FHIRAllergyIntoleranceUtil.generateAllergyIntolerance(openMRSAllergy);
@@ -53,7 +59,6 @@ public class AllergyStrategy implements GenericAllergyStrategy {
 
 	@Override
 	public List<AllergyIntolerance> searchAllergiesByPatientIdentifier(String identifier) {
-		org.openmrs.api.PatientService patientService = Context.getPatientService();
 		PatientService allergyService = Context.getService(PatientService.class);
 		List<AllergyIntolerance> allergies = new ArrayList<>();
 		List<PatientIdentifierType> allPatientIdentifierTypes = patientService.getAllPatientIdentifierTypes();
@@ -71,7 +76,6 @@ public class AllergyStrategy implements GenericAllergyStrategy {
 
 	@Override
 	public List<AllergyIntolerance> searchAllergiesByPatientName(String name) {
-		org.openmrs.api.PatientService patientService = Context.getPatientService();
 		PatientService allergyService = Context.getService(PatientService.class);
 		List<org.openmrs.Patient> patientList = patientService.getPatients(name, null, null, true);
 		List<AllergyIntolerance> allergies = new ArrayList<>();
@@ -85,7 +89,6 @@ public class AllergyStrategy implements GenericAllergyStrategy {
 
 	@Override
 	public List<AllergyIntolerance> searchAllergiesByPersonId(String uuid) {
-		PatientService patientService = Context.getPatientService();
 		Patient patient = patientService.getPatientByUuid(uuid);
 		List<AllergyIntolerance> allergies = new ArrayList<>();
 		if (patient != null) {
@@ -94,5 +97,49 @@ public class AllergyStrategy implements GenericAllergyStrategy {
 			}
 		}
 		return allergies;
+	}
+
+	@Override
+	public AllergyIntolerance createAllergy(AllergyIntolerance allergyIntolerance) {
+		Allergy allergy = FHIRAllergyIntoleranceUtil.generateAllergy(allergyIntolerance);
+		return FHIRAllergyIntoleranceUtil.generateAllergyIntolerance(saveAllergy(allergy));
+	}
+
+	@Override
+	public AllergyIntolerance updateAllergy(AllergyIntolerance allergyIntolerance, String uuid) {
+		Allergy newAllergy = FHIRAllergyIntoleranceUtil.generateAllergy(allergyIntolerance);
+
+		Allergy allergy = patientService.getAllergyByUuid(uuid);
+		if (allergy != null) {
+			allergy = FHIRAllergyIntoleranceUtil.updateAllergyAttributes(allergy, newAllergy);
+			allergy = saveAllergy(allergy);
+		} else {
+			newAllergy.setUuid(uuid);
+			allergy = saveAllergy(newAllergy);
+		}
+
+		return FHIRAllergyIntoleranceUtil.generateAllergyIntolerance(allergy);
+	}
+
+	@Override
+	public void deleteAllergy(String uuid) {
+		Allergy allergy = patientService.getAllergyByUuid(uuid);
+
+		if (allergy == null) {
+			throw new ResourceNotFoundException(String.format("Allergy with id '%s' not found", uuid));
+		} else {
+			try {
+				patientService.removeAllergy(allergy, FHIRConstants.FHIR_RETIRED_MESSAGE);
+			} catch (APIException apie) {
+				throw new MethodNotAllowedException(String.format("OpenMRS has failed to retire allergy'%s': %s", uuid,
+						apie.getMessage()));
+			}
+		}
+	}
+
+	private Allergy saveAllergy(Allergy allergy) {
+		patientService.saveAllergy(allergy);
+		//retrieve is necessary as saveAllergy(...) returns no value
+		return patientService.getAllergyByUuid(allergy.getUuid());
 	}
 }

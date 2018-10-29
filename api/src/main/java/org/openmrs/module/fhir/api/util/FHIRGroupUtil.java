@@ -19,6 +19,8 @@ public class FHIRGroupUtil {
 		}
 		Group group = new Group();
 
+		BaseOpenMRSDataUtil.setBaseExtensionFields(group, cohort);
+
 		group.setId(cohort.getUuid());
 		group.setName(cohort.getName());
 		group.setType(Group.GroupType.PERSON);
@@ -55,6 +57,8 @@ public class FHIRGroupUtil {
 		}
 
 		Cohort cohort = new Cohort(group.getName(), group.getName(), ids);
+
+		BaseOpenMRSDataUtil.readBaseExtensionFields(cohort, group);
 
 		cohort.setUuid(FHIRUtils.extractUuid(group.getId()));
 

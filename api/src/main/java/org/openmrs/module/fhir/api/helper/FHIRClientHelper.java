@@ -4,6 +4,7 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hl7.fhir.dstu3.model.AllergyIntolerance;
 import org.hl7.fhir.dstu3.model.Encounter;
 import org.hl7.fhir.dstu3.model.Location;
 import org.hl7.fhir.dstu3.model.Observation;
@@ -13,6 +14,7 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.openmrs.module.fhir.api.client.BasicAuthInterceptor;
 import org.openmrs.module.fhir.api.client.FHIRHttpMessageConverter;
 import org.openmrs.module.fhir.api.client.HeaderClientHttpRequestInterceptor;
+import org.openmrs.module.fhir.api.util.FHIRAllergyIntoleranceUtil;
 import org.openmrs.module.fhir.api.util.FHIREncounterUtil;
 import org.openmrs.module.fhir.api.util.FHIRObsUtil;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
@@ -31,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_ALLERGY;
 import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_ENCOUNTER;
 import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_LOCATION;
 import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_OBSERVATION;
@@ -52,6 +55,7 @@ public class FHIRClientHelper implements ClientHelper {
 		CATEGORY_MAP.put(CATEGORY_LOCATION, Location.class);
 		CATEGORY_MAP.put(CATEGORY_PRACTITIONER, Practitioner.class);
 		CATEGORY_MAP.put(CATEGORY_PROVIDER, Practitioner.class);
+		CATEGORY_MAP.put(CATEGORY_ALLERGY, AllergyIntolerance.class);
 	}
 
 	private final IParser parser;
@@ -108,7 +112,7 @@ public class FHIRClientHelper implements ClientHelper {
 
 	@Override
 	public boolean compareResourceObjects(String category, Object from, Object dest) {
-		boolean result = false;
+		boolean result;
 		switch (category) {
 			case CATEGORY_PATIENT:
 				result = FHIRPatientUtil.compareCurrentPatients(dest, from);
@@ -121,6 +125,9 @@ public class FHIRClientHelper implements ClientHelper {
 				break;
 			case CATEGORY_OBSERVATION:
 				result = FHIRObsUtil.compareCurrentObs(dest, from);
+				break;
+			case CATEGORY_ALLERGY:
+				result = FHIRAllergyIntoleranceUtil.areAllergiesEquals(dest, from);
 				break;
 			default:
 				result = dest.equals(from);

@@ -44,6 +44,9 @@ public class FHIRPatientUtil {
 	public static Patient generatePatient(org.openmrs.Patient omrsPatient) {
 
 		Patient patient = new Patient();
+
+		BaseOpenMRSDataUtil.setBaseExtensionFields(patient, omrsPatient);
+
 		//Set patient id to fhir patient
 		IdType uuid = new IdType();
 		uuid.setValue(omrsPatient.getUuid());
@@ -116,6 +119,8 @@ public class FHIRPatientUtil {
 		boolean preferedPresent = false, givennamePresent = false, familynamePresent = false, doCheckName = true;
 
 		org.openmrs.Patient omrsPatient = new org.openmrs.Patient(); // add eror handli
+
+		BaseOpenMRSDataUtil.readBaseExtensionFields(omrsPatient, patient);
 
 		if (patient.getId() != null) {
 			omrsPatient.setUuid(extractUuid(patient.getId()));

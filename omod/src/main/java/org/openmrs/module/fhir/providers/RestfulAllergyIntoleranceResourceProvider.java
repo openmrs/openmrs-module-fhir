@@ -13,10 +13,15 @@
  */
 package org.openmrs.module.fhir.providers;
 
+import ca.uhn.fhir.rest.annotation.Create;
+import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
+import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.annotation.Update;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
@@ -25,6 +30,7 @@ import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.Resource;
 import org.openmrs.module.fhir.resources.FHIRAllergyIntoleranceResource;
+import org.openmrs.module.fhir.util.MethodOutcomeBuilder;
 
 import java.util.List;
 
@@ -95,5 +101,20 @@ public class RestfulAllergyIntoleranceResourceProvider implements IResourceProvi
 			@RequiredParam(name = AllergyIntolerance.SP_PATIENT, chainWhitelist = { Patient.SP_RES_ID })
 					ReferenceParam uuid) {
 		return allergyIntoleranceResource.searchAllergiesByPatientUuid(uuid);
+	}
+
+	@Delete
+	public void deleteAllergy(@IdParam IdType theId) {
+		allergyIntoleranceResource.deleteAllergy(theId);
+	}
+
+	@Create
+	public MethodOutcome createAllergy(@ResourceParam AllergyIntolerance allergyIntolerance) {
+		return MethodOutcomeBuilder.buildCreate(allergyIntoleranceResource.createAllergyIntolerance(allergyIntolerance));
+	}
+
+	@Update
+	public MethodOutcome updateAllergy(@ResourceParam AllergyIntolerance allergyIntolerance, @IdParam IdType theId) {
+		return MethodOutcomeBuilder.buildUpdate(allergyIntoleranceResource.updateAllergyIntolerance(allergyIntolerance, theId.getIdPart()));
 	}
 }

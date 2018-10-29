@@ -13,127 +13,260 @@
  */
 package org.openmrs.module.fhir.api.util;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hl7.fhir.dstu3.model.AllergyIntolerance;
 import org.hl7.fhir.dstu3.model.Annotation;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
-import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.Enumeration;
+import org.openmrs.Allergen;
+import org.openmrs.AllergenType;
 import org.openmrs.Allergy;
 import org.openmrs.AllergyReaction;
-import org.openmrs.ConceptMap;
+import org.openmrs.Concept;
+import org.openmrs.Patient;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.comparator.AllergyIntoleranceComparator;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+
+import static org.hl7.fhir.dstu3.model.AllergyIntolerance.AllergyIntoleranceCategory;
+import static org.hl7.fhir.dstu3.model.AllergyIntolerance.AllergyIntoleranceCriticality;
+import static org.hl7.fhir.dstu3.model.AllergyIntolerance.AllergyIntoleranceReactionComponent;
 
 public class FHIRAllergyIntoleranceUtil {
 
+	public static boolean areAllergiesEquals(Object ob1, Object ob2) {
+		AllergyIntoleranceComparator comparator = new AllergyIntoleranceComparator();
+		return comparator.areEquals((AllergyIntolerance) ob1, (AllergyIntolerance) ob2);
+	}
+
 	public static AllergyIntolerance generateAllergyIntolerance(Allergy allergy) {
 		AllergyIntolerance allergyIntolerance = new AllergyIntolerance();
+
+		BaseOpenMRSDataUtil.setBaseExtensionFields(allergyIntolerance, allergy);
+
 		allergyIntolerance.setId(allergy.getUuid());
-
-		//Build and set patient reference
 		allergyIntolerance.setPatient(FHIRUtils.buildPatientOrPersonResourceReference(allergy.getPatient()));
+		allergyIntolerance.setCriticality(buildCriticality(allergy));
 
-		//Set record date
-		allergyIntolerance.setAssertedDate(allergy.getDateLastUpdated());
-
-		//Set critically
-		if (allergy.getSeverity() != null) {
-			if (allergy.getSeverity().equals(FHIRUtils.getMildSeverityConcept())) {
-				allergyIntolerance.setCriticality(AllergyIntolerance.AllergyIntoleranceCriticality.LOW);
-			} else if (allergy.getSeverity().equals(FHIRUtils.getModerateSeverityConcept())) {
-				allergyIntolerance.setCriticality(AllergyIntolerance.AllergyIntoleranceCriticality.LOW);
-			} else if (allergy.getSeverity().equals(FHIRUtils.getSevereSeverityConcept())) {
-				allergyIntolerance.setCriticality(AllergyIntolerance.AllergyIntoleranceCriticality.HIGH);
-			} else {
-				allergyIntolerance.setCriticality(AllergyIntolerance.AllergyIntoleranceCriticality.UNABLETOASSESS);
-			}
+		for (Enumeration<AllergyIntoleranceCategory> category : buildCategory(allergy)) {
+			allergyIntolerance.addCategory(category.getValue());
 		}
 
-		//Set allergy category
-		if (allergy.getAllergen().getAllergenType() != null) {
-			List<Enumeration<AllergyIntolerance.AllergyIntoleranceCategory>> catagories = new ArrayList<>();
-			Enumeration<AllergyIntolerance.AllergyIntoleranceCategory> enumeration = new Enumeration(
+		for (AllergyIntoleranceReactionComponent reaction : buildReaction(allergy)) {
+			allergyIntolerance.addReaction(reaction);
+		}
+
+		for (Annotation note : buildNote(allergy)) {
+			allergyIntolerance.addNote(note);
+		}
+
+		allergyIntolerance.setCode(buildCode(allergy));
+		return allergyIntolerance;
+	}
+
+	public static Allergy generateAllergy(AllergyIntolerance allergyIntolerance) {
+		Allergy allergy = new Allergy();
+		allergy.setUuid(allergyIntolerance.getId());
+		allergy.setPatient(buildPatient(allergyIntolerance));
+		allergy.setSeverity(buildSeverity(allergyIntolerance));
+		allergy.setAllergen(buildAllergen(allergyIntolerance));
+		if (allergy.getAllergen() != null) {
+			allergy.setAllergenType(buildAllergenType(allergyIntolerance));
+		}
+		for (AllergyReaction reaction : buildReactions(allergyIntolerance)) {
+			allergy.addReaction(reaction);
+		}
+		allergy.setComment(buildComment(allergyIntolerance));
+		return allergy;
+	}
+
+	private static Patient buildPatient(AllergyIntolerance allergyIntolerance) {
+		String patientId = FHIRUtils.getObjectUuidByReference(allergyIntolerance.getPatient());
+		return Context.getPatientService().getPatientByUuid(patientId);
+	}
+
+	public static Allergy updateAllergyAttributes(Allergy allergy, Allergy newAllergy) {
+		allergy.setPatient(newAllergy.getPatient());
+		allergy.setSeverity(newAllergy.getSeverity());
+		allergy.setAllergenType(newAllergy.getAllergenType());
+		for (AllergyReaction reaction : newAllergy.getReactions()) {
+			allergy.addReaction(reaction);
+		}
+		allergy.setAllergen(newAllergy.getAllergen());
+		allergy.setComment(newAllergy.getComment());
+		return allergy;
+	}
+
+	private static List<Annotation> buildNote(Allergy allergy) {
+		if (StringUtils.isNotEmpty(allergy.getComment())) {
+			Annotation annotation = new Annotation();
+			annotation.setText(allergy.getComment());
+			return Collections.singletonList(annotation);
+		}
+		return new ArrayList<>();
+	}
+
+	private static String buildComment(AllergyIntolerance allergyIntolerance) {
+		if (CollectionUtils.isNotEmpty(allergyIntolerance.getNote())) {
+			return allergyIntolerance.getNoteFirstRep().getText();
+		}
+		return null;
+	}
+
+	private static List<AllergyIntoleranceReactionComponent> buildReaction(Allergy allergy) {
+		if (CollectionUtils.isNotEmpty(allergy.getReactions())) {
+			AllergyIntoleranceReactionComponent entry = new AllergyIntoleranceReactionComponent();
+			for (CodeableConcept codeableConcept : buildManifestations(allergy.getReactions())) {
+				entry.addManifestation(codeableConcept);
+			}
+			return Collections.singletonList(entry);
+		}
+		return new ArrayList<>();
+	}
+
+	private static List<AllergyReaction> buildReactions(AllergyIntolerance allergyIntolerance) {
+		List<AllergyReaction> result = new ArrayList<>();
+		if (CollectionUtils.isNotEmpty(allergyIntolerance.getReaction())) {
+			for (AllergyIntoleranceReactionComponent reaction : allergyIntolerance.getReaction()) {
+				result.addAll(buildReactionsFromManifestation(reaction));
+			}
+		}
+		return result;
+	}
+
+	private static List<AllergyReaction> buildReactionsFromManifestation(
+			AllergyIntoleranceReactionComponent reactionComponent) {
+		List<AllergyReaction> result = new ArrayList<>();
+		if (CollectionUtils.isNotEmpty(reactionComponent.getManifestation())) {
+			for (CodeableConcept codeableConcept : reactionComponent.getManifestation()) {
+				AllergyReaction allergyReaction = new AllergyReaction();
+				if (codeableConcept.getCoding().isEmpty()) {
+					allergyReaction.setReactionNonCoded(codeableConcept.getText());
+				} else {
+					allergyReaction.setReaction(FHIRUtils.getConceptByCodeableConcept(codeableConcept));
+				}
+				result.add(allergyReaction);
+			}
+		}
+		return result;
+	}
+
+	private static List<CodeableConcept> buildManifestations(List<AllergyReaction> reactions) {
+		List<CodeableConcept> result = new ArrayList<>();
+		for (AllergyReaction reaction : reactions) {
+			result.add(buildManifestation(reaction));
+		}
+		return result;
+	}
+
+	private static CodeableConcept buildManifestation(AllergyReaction reaction) {
+		CodeableConcept result = new CodeableConcept();
+		if (StringUtils.isNotEmpty(reaction.getReactionNonCoded())) {
+			result.setText(reaction.getReactionNonCoded());
+		} else {
+			result = FHIRUtils.createCodeableConcept(reaction.getReaction());
+		}
+		return result;
+	}
+
+	private static CodeableConcept buildCode(Allergy allergy) {
+		if (allergy.getAllergen() != null) {
+			if (StringUtils.isNotEmpty(allergy.getAllergen().getNonCodedAllergen())) {
+				CodeableConcept codeableConcept = new CodeableConcept();
+				codeableConcept.setText(allergy.getAllergen().getNonCodedAllergen());
+				return codeableConcept;
+			} else {
+				return FHIRUtils.createCodeableConcept(allergy.getAllergen().getCodedAllergen());
+			}
+		}
+		return null;
+	}
+
+	private static Allergen buildAllergen(AllergyIntolerance allergyIntolerance) {
+		if (allergyIntolerance.getCode() != null) {
+			Allergen result = new Allergen();
+			if (allergyIntolerance.getCode().getCoding().isEmpty()) {
+				result.setNonCodedAllergen(allergyIntolerance.getCode().getText());
+			} else {
+				result.setCodedAllergen(FHIRUtils.getConceptByCodeableConcept(allergyIntolerance.getCode()));
+			}
+			return result;
+		}
+		return null;
+	}
+
+	private static List<Enumeration<AllergyIntoleranceCategory>> buildCategory(Allergy allergy) {
+		List<Enumeration<AllergyIntoleranceCategory>> categories = new ArrayList<>();
+		if (allergy.getAllergen() != null && allergy.getAllergen().getAllergenType() != null) {
+			Enumeration<AllergyIntoleranceCategory> category = new Enumeration<>(
 					new AllergyIntolerance.AllergyIntoleranceCategoryEnumFactory());
 			switch (allergy.getAllergen().getAllergenType()) {
 				case DRUG:
-					enumeration.setValue(AllergyIntolerance.AllergyIntoleranceCategory.MEDICATION);
+					category.setValue(AllergyIntoleranceCategory.MEDICATION);
 					break;
 				case ENVIRONMENT:
-					enumeration.setValue(AllergyIntolerance.AllergyIntoleranceCategory.ENVIRONMENT);
+					category.setValue(AllergyIntoleranceCategory.ENVIRONMENT);
 					break;
 				case FOOD:
-					enumeration.setValue(AllergyIntolerance.AllergyIntoleranceCategory.FOOD);
+					category.setValue(AllergyIntoleranceCategory.FOOD);
 					break;
 				default:
-					enumeration.setValue(AllergyIntolerance.AllergyIntoleranceCategory.ENVIRONMENT);
+					category.setValue(AllergyIntoleranceCategory.ENVIRONMENT);
 					break;
 			}
-			catagories.add(enumeration);
-			allergyIntolerance.setCategory(catagories);
+			categories.add(category);
 		}
+		return categories;
+	}
 
-		//Set adverse reaction details
-		for (AllergyReaction reaction : allergy.getReactions()) {
-			AllergyIntolerance.AllergyIntoleranceReactionComponent event = allergyIntolerance.addReaction();
-			List<CodeableConcept> manifest = event.getManifestation();
-
-			//Set allergen
-			if (allergy.getAllergen().getCodedAllergen() != null) {
-				Collection<ConceptMap> mappings = allergy.getAllergen().getCodedAllergen().getConceptMappings();
-
-				//Set concept codings
-				if (mappings != null && !mappings.isEmpty()) {
-					for (ConceptMap map : mappings) {
-						if (map.getConceptReferenceTerm() != null) {
-							allergyIntolerance.addReaction(FHIRUtils.getAllergyReactionComponent(map, event));
-						}
-					}
-				}
-
-				//Setting default omrs concept
-				Coding code = new Coding();
-				code.setSystem(FHIRConstants.OPENMRS_URI);
-				code.setCode(allergy.getAllergen().getCodedAllergen().getUuid());
-				CodeableConcept substance = new CodeableConcept();
-				if (allergy.getAllergen().getCodedAllergen().getName() != null) {
-					code.setDisplay(allergy.getAllergen().getCodedAllergen().getName().getName());
-				}
-				substance.addCoding(code);
-				event.setSubstance(substance);
-			}
-
-			//Set concept codings reactions
-			if (reaction.getReaction() != null) { //TODO need to think about how non coded reactions going to represent
-				Collection<ConceptMap> conceptMappings = reaction.getReaction().getConceptMappings();
-				if (conceptMappings != null && !conceptMappings.isEmpty()) {
-					for (ConceptMap map : conceptMappings) {
-						if (map.getConceptReferenceTerm() != null) {
-							manifest.add(FHIRUtils.getCodeableConceptConceptMappings(map));
-						}
-					}
-				}
-				//Setting omrs concept
-				if (reaction.getReaction().getName() != null) {
-					manifest.add(new CodeableConcept()
-							.addCoding(new Coding().setCode(reaction.getReaction().getUuid()).setDisplay(
-									reaction.getReaction().getName().getName()).setSystem(FHIRConstants.OPENMRS_URI)));
-				} else {
-					manifest.add(
-							new CodeableConcept().addCoding(new Coding().setCode(reaction.getReaction().getUuid()).setSystem(
-									FHIRConstants.OPENMRS_URI)));
-				}
+	private static AllergenType buildAllergenType(AllergyIntolerance allergyIntolerance) {
+		if (CollectionUtils.isNotEmpty(allergyIntolerance.getCategory())) {
+			Enumeration<AllergyIntoleranceCategory> cat = allergyIntolerance.getCategory().get(0);
+			switch (cat.getValue()) {
+				case MEDICATION:
+					return AllergenType.DRUG;
+				case ENVIRONMENT:
+					return AllergenType.ENVIRONMENT;
+				case FOOD:
+					return AllergenType.FOOD;
+				default:
+					return null;
 			}
 		}
+		return null;
+	}
 
-		List<Annotation> note = new ArrayList<>();
-		if (allergy.getComment() != null) {
-			Annotation annotation = new Annotation();
-			annotation.setText(allergy.getComment());
+	private static AllergyIntoleranceCriticality buildCriticality(Allergy allergy) {
+		if (allergy.getSeverity() != null) {
+			if (allergy.getSeverity().equals(FHIRUtils.getMildSeverityConcept())) {
+				return AllergyIntoleranceCriticality.LOW;
+			} else if (allergy.getSeverity().equals(FHIRUtils.getModerateSeverityConcept())) {
+				return AllergyIntoleranceCriticality.LOW;
+			} else if (allergy.getSeverity().equals(FHIRUtils.getSevereSeverityConcept())) {
+				return AllergyIntoleranceCriticality.HIGH;
+			} else {
+				return AllergyIntoleranceCriticality.UNABLETOASSESS;
+			}
 		}
-		allergyIntolerance.setNote(note);
+		return null;
+	}
 
-		return allergyIntolerance;
+	private static Concept buildSeverity(AllergyIntolerance allergyIntolerance) {
+		AllergyIntoleranceCriticality criticality = allergyIntolerance.getCriticality();
+		if (criticality != null) {
+			switch (criticality) {
+				case LOW:
+					return FHIRUtils.getModerateSeverityConcept();
+				case HIGH:
+					return FHIRUtils.getSevereSeverityConcept();
+				default:
+					return null;
+			}
+		}
+		return null;
 	}
 }

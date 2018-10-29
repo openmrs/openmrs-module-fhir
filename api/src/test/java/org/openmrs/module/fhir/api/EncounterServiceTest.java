@@ -29,6 +29,7 @@ import org.openmrs.module.fhir.api.util.FHIREncounterUtil;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -105,11 +106,10 @@ public class EncounterServiceTest extends BaseModuleContextSensitiveTest {
 		List<Coding> typeCoding = new ArrayList<Coding>();
 		Coding code = new Coding();
 		code.setCode("1");
+		FHIREncounterUtil.markAsVisitType(code);
 		typeCoding.add(code);
 		typeAsCode.setCoding(typeCoding);
-		List<CodeableConcept> typeList = new ArrayList<CodeableConcept>();
-		typeList.add(typeAsCode);
-		fhirEncounter.setType(typeList);
+		fhirEncounter.setType(Collections.singletonList(typeAsCode));
 		fhirEncounter = getService().createFHIREncounter(fhirEncounter);
 		Visit visit = Context.getVisitService().getVisitByUuid(fhirEncounter.getId());
 		assertEquals(visit.getUuid(), fhirEncounter.getId());

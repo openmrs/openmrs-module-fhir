@@ -482,8 +482,9 @@ public class FHIRUtils {
 		for (Coding coding : codeableConcept.getCoding()) {
 			String code = coding.getCode();
 			String sourceName = FHIRConstants.conceptSourceURINameMap.get(coding.getSystem());
-			result = Context.getConceptService().getConceptByMapping(code, sourceName);
-			if (result != null) {
+			List<Concept> concepts = Context.getConceptService().getConceptsByMapping(code, sourceName);
+			if (!concepts.isEmpty()) {
+				result = concepts.get(0);
 				break;
 			}
 		}
