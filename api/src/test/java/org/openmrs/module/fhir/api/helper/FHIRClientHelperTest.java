@@ -1,10 +1,12 @@
 package org.openmrs.module.fhir.api.helper;
 
+import ca.uhn.fhir.context.FhirContext;
 import org.hl7.fhir.dstu3.model.Encounter;
 import org.hl7.fhir.dstu3.model.Location;
 import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.Practitioner;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.junit.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -32,7 +34,8 @@ public class FHIRClientHelperTest {
 	public void createRequest() throws Exception {
 		Patient patient = new Patient();
 		patient.setId(TEST_PATIENT_UUID);
-		RequestEntity expected = new RequestEntity(patient, HttpMethod.PUT, URI.create(TEST_URI + "/" + TEST_PATIENT_UUID));
+		String expectedBody = FhirContext.forDstu3().newJsonParser().encodeResourceToString(patient);
+		RequestEntity expected = new RequestEntity(expectedBody, HttpMethod.PUT, URI.create(TEST_URI + "/" + TEST_PATIENT_UUID));
 
 		FHIRClientHelper fhirClientHelper = new FHIRClientHelper();
 		assertEquals(expected, fhirClientHelper.createRequest(TEST_URI, patient));
@@ -53,21 +56,22 @@ public class FHIRClientHelperTest {
 	public void updateRequest() throws Exception {
 		Patient patient = new Patient();
 		patient.setId(TEST_PATIENT_UUID);
-		RequestEntity expected = new RequestEntity(patient, HttpMethod.PUT, URI.create(TEST_URI + "/" + TEST_PATIENT_UUID));
+		String expectedBody = FhirContext.forDstu3().newJsonParser().encodeResourceToString(patient);
+		RequestEntity expected = new RequestEntity(expectedBody, HttpMethod.PUT, URI.create(TEST_URI + "/" + TEST_PATIENT_UUID));
 
 		FHIRClientHelper fhirClientHelper = new FHIRClientHelper();
 		assertEquals(expected, fhirClientHelper.updateRequest(TEST_URI, patient));
 	}
 
 	@Test
-	public void resolveCategoryByCategory() {
+	public void resolveClassByCategory() {
 		FHIRClientHelper fhirClientHelper = new FHIRClientHelper();
-		assertEquals(Patient.class, fhirClientHelper.resolveCategoryByCategory("patient"));
-		assertEquals(Encounter.class, fhirClientHelper.resolveCategoryByCategory("visit"));
-		assertEquals(Encounter.class, fhirClientHelper.resolveCategoryByCategory("encounter"));
-		assertEquals(Observation.class, fhirClientHelper.resolveCategoryByCategory("observation"));
-		assertEquals(Location.class, fhirClientHelper.resolveCategoryByCategory("location"));
-		assertEquals(Practitioner.class, fhirClientHelper.resolveCategoryByCategory("practitioner"));
-		assertEquals(Practitioner.class, fhirClientHelper.resolveCategoryByCategory("provider"));
+		assertEquals(Patient.class, fhirClientHelper.resolveClassByCategory("patient"));
+		assertEquals(Encounter.class, fhirClientHelper.resolveClassByCategory("visit"));
+		assertEquals(Encounter.class, fhirClientHelper.resolveClassByCategory("encounter"));
+		assertEquals(Observation.class, fhirClientHelper.resolveClassByCategory("observation"));
+		assertEquals(Location.class, fhirClientHelper.resolveClassByCategory("location"));
+		assertEquals(Practitioner.class, fhirClientHelper.resolveClassByCategory("practitioner"));
+		assertEquals(Practitioner.class, fhirClientHelper.resolveClassByCategory("provider"));
 	}
 }
