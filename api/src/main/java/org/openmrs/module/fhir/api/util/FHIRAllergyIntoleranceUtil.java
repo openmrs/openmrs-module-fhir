@@ -45,6 +45,9 @@ public class FHIRAllergyIntoleranceUtil {
 
 	public static AllergyIntolerance generateAllergyIntolerance(Allergy allergy) {
 		AllergyIntolerance allergyIntolerance = new AllergyIntolerance();
+
+		BaseOpenMRSDataUtil.setBaseExtensionFields(allergyIntolerance, allergy);
+
 		allergyIntolerance.setId(allergy.getUuid());
 		allergyIntolerance.setPatient(FHIRUtils.buildPatientOrPersonResourceReference(allergy.getPatient()));
 		allergyIntolerance.setCriticality(buildCriticality(allergy));

@@ -36,6 +36,9 @@ public class FHIRPersonUtil {
 
 	public static Person generatePerson(org.openmrs.Person omrsPerson) {
 		Person person = new Person();
+
+		BaseOpenMRSDataUtil.setBaseExtensionFields(person, omrsPerson);
+
 		//Set person ID
 		person.setId(omrsPerson.getUuid());
 		List<HumanName> humanNames = new ArrayList<HumanName>();
@@ -127,6 +130,8 @@ public class FHIRPersonUtil {
 			List<String> errors) {
 		org.openmrs.Person omrsPerson = new org.openmrs.Person();
 		boolean preferredPresent = false, givennamePresent = false, familynamePresent = false, doCheckName = true;
+
+		BaseOpenMRSDataUtil.readBaseExtensionFields(omrsPerson, personFHIR);
 
 		if (personFHIR.getId() != null) {
 			omrsPerson.setUuid(personFHIR.getId());
