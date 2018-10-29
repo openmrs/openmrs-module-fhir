@@ -302,7 +302,7 @@ public class FHIRPersonUtil {
 		Set<PersonAddress> allAddress = retrievedPerson.getAddresses();
 		boolean needToSetHome = false;
 		for (PersonAddress address : omrsPerson.getAddresses()) {
-			if (address.isPreferred()) {
+			if (address.getPreferred()) {
 				needToSetHome = true;
 			}
 		}

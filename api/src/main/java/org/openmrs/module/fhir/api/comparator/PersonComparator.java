@@ -11,7 +11,6 @@ public class PersonComparator extends AbstractPropertyComparator<Person> {
 	protected boolean areCustomPropsEquals(Person b1, Person b2) {
 		List<Boolean> result = new ArrayList<>();
 
-		result.add(b1.getIdentifierFirstRep().equals(b2.getIdentifierFirstRep()));
 		result.add(b1.getNameFirstRep().equalsDeep(b2.getNameFirstRep()));
 		result.add(b1.getTelecomFirstRep().equalsDeep(b2.getTelecomFirstRep()));
 		result.add(b1.getGender().equals(b2.getGender()));
