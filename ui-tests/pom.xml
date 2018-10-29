@@ -17,6 +17,11 @@
         <login.password>Admin123</login.password>
         <webdriver>firefox</webdriver>
         <uitestframeworkVersion>2.4.0-SNAPSHOT</uitestframeworkVersion>
+        <junitversion>4.11</junitversion>
+        <seleniumversion>3.14.0</seleniumversion>
+        <slf4jversion>1.7.5</slf4jversion>
+        <commons-langversion>2.6</commons-langversion>
+        <commons-lang3version>3.1</commons-lang3version>
     </properties>
     <profiles>
         <profile>
@@ -157,13 +162,13 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>${junitversion}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>3.14.0</version>
+            <version>${seleniumversion}</version>
         </dependency>
         <dependency>
             <groupId>org.openmrs.contrib</groupId>
@@ -173,17 +178,17 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.5</version>
+            <version>${slf4jversion}</version>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
+            <version>${commons-langversion}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.1</version>
+            <version>${commons-lang3version}</version>
         </dependency>
     </dependencies>
 </project>
