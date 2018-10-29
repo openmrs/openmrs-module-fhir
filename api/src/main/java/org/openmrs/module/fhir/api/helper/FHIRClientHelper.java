@@ -2,6 +2,7 @@ package org.openmrs.module.fhir.api.helper;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hl7.fhir.dstu3.model.AllergyIntolerance;
 import org.hl7.fhir.dstu3.model.Encounter;
 import org.hl7.fhir.dstu3.model.Location;
 import org.hl7.fhir.dstu3.model.Observation;
@@ -12,6 +13,11 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.openmrs.module.fhir.api.client.BasicAuthInterceptor;
 import org.openmrs.module.fhir.api.client.FHIRHttpMessageConverter;
 import org.openmrs.module.fhir.api.client.HeaderClientHttpRequestInterceptor;
+import org.openmrs.module.fhir.api.util.FHIRAllergyIntoleranceUtil;
+import org.openmrs.module.fhir.api.util.FHIREncounterUtil;
+import org.openmrs.module.fhir.api.util.FHIRObsUtil;
+import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
+import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -25,6 +31,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_ALLERGY;
+import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_ENCOUNTER;
+import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_LOCATION;
+import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_OBSERVATION;
+import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_PATIENT;
+import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_PERSON;
+import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_PRACTITIONER;
+import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_PROVIDER;
+import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_VISIT;
+
 public class FHIRClientHelper implements ClientHelper {
 
 	private static final Map<String, Class> CATEGORY_MAP;
@@ -35,14 +51,15 @@ public class FHIRClientHelper implements ClientHelper {
 
 	static {
 		CATEGORY_MAP = new HashMap<>();
-		CATEGORY_MAP.put("patient", Patient.class);
-		CATEGORY_MAP.put("visit", Encounter.class);
-		CATEGORY_MAP.put("encounter", Encounter.class);
-		CATEGORY_MAP.put("obs", Observation.class);
-		CATEGORY_MAP.put("location", Location.class);
-		CATEGORY_MAP.put("practitioner", Practitioner.class);
-		CATEGORY_MAP.put("provider", Practitioner.class);
-		CATEGORY_MAP.put("person", Person.class);
+		CATEGORY_MAP.put(CATEGORY_PATIENT, Patient.class);
+		CATEGORY_MAP.put(CATEGORY_VISIT, Encounter.class);
+		CATEGORY_MAP.put(CATEGORY_ENCOUNTER, Encounter.class);
+		CATEGORY_MAP.put(CATEGORY_OBSERVATION, Observation.class);
+		CATEGORY_MAP.put(CATEGORY_LOCATION, Location.class);
+		CATEGORY_MAP.put(CATEGORY_PRACTITIONER, Practitioner.class);
+		CATEGORY_MAP.put(CATEGORY_PROVIDER, Practitioner.class);
+		CATEGORY_MAP.put(CATEGORY_ALLERGY, AllergyIntolerance.class);
+		CATEGORY_MAP.put(CATEGORY_PERSON, Person.class);
 	}
 
 	protected final Log log = LogFactory.getLog(this.getClass());
@@ -89,6 +106,34 @@ public class FHIRClientHelper implements ClientHelper {
 	public List<HttpMessageConverter<?>> getCustomFHIRMessageConverter() {
 		return Arrays.asList(new HttpMessageConverter<?>[]
 				{ new FHIRHttpMessageConverter(), new StringHttpMessageConverter() });
+	}
+
+	@Override
+	public boolean compareResourceObjects(String category, Object from, Object dest) {
+		boolean result;
+		switch (category) {
+			case CATEGORY_PATIENT:
+				result = FHIRPatientUtil.compareCurrentPatients(dest, from);
+				break;
+			case CATEGORY_ENCOUNTER:
+				result = FHIREncounterUtil.compareCurrentEncounters(dest, from);
+				break;
+			case CATEGORY_VISIT:
+				result = FHIREncounterUtil.compareCurrentEncounters(dest, from);
+				break;
+			case CATEGORY_OBSERVATION:
+				result = FHIRObsUtil.compareCurrentObs(dest, from);
+				break;
+			case CATEGORY_ALLERGY:
+				result = FHIRAllergyIntoleranceUtil.areAllergiesEquals(dest, from);
+				break;
+			case CATEGORY_PERSON:
+				result = FHIRPersonUtil.arePersonsEquals(dest, from);
+				break;
+			default:
+				result = dest.equals(from);
+		}
+		return result;
 	}
 
 	private String createUrl(String url, IBaseResource object) {

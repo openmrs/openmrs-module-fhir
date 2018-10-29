@@ -2,6 +2,7 @@ package org.openmrs.module.fhir.api.client;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
+import org.hl7.fhir.dstu3.model.AllergyIntolerance;
 import org.hl7.fhir.dstu3.model.Encounter;
 import org.hl7.fhir.dstu3.model.Location;
 import org.hl7.fhir.dstu3.model.Observation;
@@ -46,6 +47,7 @@ public class FHIRHttpMessageConverter extends AbstractHttpMessageConverter<IBase
 		SUPPORTED_CLASSES.add(Observation.class);
 		SUPPORTED_CLASSES.add(Location.class);
 		SUPPORTED_CLASSES.add(Practitioner.class);
+		SUPPORTED_CLASSES.add(AllergyIntolerance.class);
 		SUPPORTED_CLASSES.add(Person.class);
 	}
 

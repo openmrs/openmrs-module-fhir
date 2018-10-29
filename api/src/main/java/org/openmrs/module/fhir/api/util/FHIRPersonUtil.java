@@ -24,6 +24,7 @@ import org.openmrs.Patient;
 import org.openmrs.PersonAddress;
 import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.comparator.PersonComparator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +36,16 @@ import static org.openmrs.module.fhir.api.util.FHIRUtils.extractUuid;
 
 public class FHIRPersonUtil {
 
+	public static boolean arePersonsEquals(Object ob1, Object ob2) {
+		PersonComparator comparator = new PersonComparator();
+		return comparator.areEquals((Person) ob1, (Person) ob2);
+	}
+
 	public static Person generatePerson(org.openmrs.Person omrsPerson) {
 		Person person = new Person();
+
+		BaseOpenMRSDataUtil.setBaseExtensionFields(person, omrsPerson);
+
 		//Set person ID
 		person.setId(omrsPerson.getUuid());
 
@@ -132,6 +141,8 @@ public class FHIRPersonUtil {
 			List<String> errors) {
 		org.openmrs.Person omrsPerson = new org.openmrs.Person();
 		boolean preferredPresent = false, givennamePresent = false, familynamePresent = false, doCheckName = true;
+
+		BaseOpenMRSDataUtil.readBaseExtensionFields(omrsPerson, personFHIR);
 
 		if (personFHIR.getId() != null) {
 			omrsPerson.setUuid(extractUuid(personFHIR.getId()));

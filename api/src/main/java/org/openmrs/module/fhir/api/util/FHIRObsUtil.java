@@ -51,6 +51,9 @@ public class FHIRObsUtil {
 	public static Observation generateObs(Obs obs) {
 
 		Observation observation = new Observation();
+
+		BaseOpenMRSDataUtil.setBaseExtensionFields(observation, obs);
+
 		//Set observation id
 		observation.setId(obs.getUuid());
 		//Set issued date
@@ -255,6 +258,9 @@ public class FHIRObsUtil {
 
 	public static Obs generateOpenMRSObs(Observation observation, List<String> errors) {
 		Obs obs = new Obs();
+
+		BaseOpenMRSDataUtil.readBaseExtensionFields(obs, observation);
+
 		obs.setComment(observation.getComment());
 		if (observation.getSubject() != null) {
 			Reference subjectref = observation.getSubject();

@@ -43,4 +43,18 @@ public class ObsAllergyStrategy implements GenericAllergyStrategy {
 	public List<AllergyIntolerance> searchAllergiesByPersonId(String uuid) {
 		return null;
 	}
+
+	@Override
+	public AllergyIntolerance createAllergy(AllergyIntolerance allergy) {
+		return null;
+	}
+
+	@Override
+	public AllergyIntolerance updateAllergy(AllergyIntolerance allergy, String uuid) {
+		return null;
+	}
+
+	@Override
+	public void deleteAllergy(String uuid) {
+	}
 }
