@@ -66,4 +66,19 @@ public class FHIRAllergyIntoleranceResource extends Resource {
 		}
 		return fhirAllergies;
 	}
+
+	public void deleteAllergy(IdType id) {
+		AllergyIntoleranceService service = Context.getService(AllergyIntoleranceService.class);
+		service.deleteAllergy(id.getIdPart());
+	}
+
+	public AllergyIntolerance createAllergyIntolerance(AllergyIntolerance allergyIntolerance) {
+		AllergyIntoleranceService service = Context.getService(AllergyIntoleranceService.class);
+		return service.createAllergy(allergyIntolerance);
+	}
+
+	public AllergyIntolerance updateAllergyIntolerance(AllergyIntolerance allergyIntolerance, String theId) {
+		AllergyIntoleranceService service = Context.getService(AllergyIntoleranceService.class);
+		return service.updateAllergy(allergyIntolerance, theId);
+	}
 }

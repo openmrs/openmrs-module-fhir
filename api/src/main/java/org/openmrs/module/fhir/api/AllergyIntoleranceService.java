@@ -20,10 +20,10 @@ import java.util.List;
 public interface AllergyIntoleranceService {
 
 	/**
-	 * Get allergy tolerance by uuid
+	 * Get allergy intolerance by uuid
 	 *
 	 * @param uuid of the requesting allergy
-	 * @return allergy tolerance obj
+	 * @return allergy intolerance obj
 	 */
 	AllergyIntolerance getAllergyById(String uuid);
 
@@ -31,7 +31,7 @@ public interface AllergyIntoleranceService {
 	 * Get allergy list by uuid
 	 *
 	 * @param uuid of the requesting allergies
-	 * @return allergy tolerance obj
+	 * @return allergy intolerance obj
 	 */
 	List<AllergyIntolerance> searchAllergiesById(String uuid);
 
@@ -55,8 +55,31 @@ public interface AllergyIntoleranceService {
 	 * Ger allergies by peron uuid
 	 *
 	 * @param personId uuid
-	 * @return
+	 * @return fhir allergy resource list
 	 */
 	List<AllergyIntolerance> searchAllergiesByPatientUuid(String personId);
 
+	/**
+	 * Create allergy intolerance
+	 *
+	 * @param allergyIntolerance to be created
+	 * @return created allergy intolerance obj
+	 */
+	AllergyIntolerance createAllergy(AllergyIntolerance allergyIntolerance);
+
+	/**
+	 * Update allergy intolerance with uuid
+	 *
+	 * @param allergyIntolerance to be updated
+	 * @param uuid of the requesting allergy
+	 * @return updated allergy intolerance obj
+	 */
+	AllergyIntolerance updateAllergy(AllergyIntolerance allergyIntolerance, String uuid);
+
+	/**
+	 * Delete allergy intolerance with uuid
+	 *
+	 * @param uuid of allergy intolerance to be deleted
+	 */
+	void deleteAllergy(String uuid);
 }
