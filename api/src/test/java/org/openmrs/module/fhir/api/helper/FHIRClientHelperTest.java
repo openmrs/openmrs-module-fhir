@@ -65,7 +65,7 @@ public class FHIRClientHelperTest {
 		assertEquals(Patient.class, fhirClientHelper.resolveCategoryByCategory("patient"));
 		assertEquals(Encounter.class, fhirClientHelper.resolveCategoryByCategory("visit"));
 		assertEquals(Encounter.class, fhirClientHelper.resolveCategoryByCategory("encounter"));
-		assertEquals(Observation.class, fhirClientHelper.resolveCategoryByCategory("obs"));
+		assertEquals(Observation.class, fhirClientHelper.resolveCategoryByCategory("observation"));
 		assertEquals(Location.class, fhirClientHelper.resolveCategoryByCategory("location"));
 		assertEquals(Practitioner.class, fhirClientHelper.resolveCategoryByCategory("practitioner"));
 		assertEquals(Practitioner.class, fhirClientHelper.resolveCategoryByCategory("provider"));

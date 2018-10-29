@@ -90,7 +90,9 @@ public class FHIRVisitUtil {
 
 		VisitType visitType = omrsVisit.getVisitType();
 		CodeableConcept type = new CodeableConcept();
-		type.addCoding(new Coding(visitType.getUuid(), visitType.getId().toString(), visitType.getName()));
+		Coding coding = new Coding(visitType.getUuid(), visitType.getId().toString(), visitType.getName());
+		FHIREncounterUtil.markAsVisitType(coding);
+		type.addCoding(coding);
 		encounter.addType(type);
 
 		FHIRUtils.validate(encounter);
