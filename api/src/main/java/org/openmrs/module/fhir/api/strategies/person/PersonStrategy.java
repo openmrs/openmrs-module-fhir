@@ -24,7 +24,8 @@ public class PersonStrategy implements GenericPersonStrategy {
 	@Override
 	public Person getPerson(String uuid) {
 		org.openmrs.Person omrsPerson = Context.getPersonService().getPersonByUuid(uuid);
-		if (omrsPerson == null || omrsPerson.isPersonVoided()) {
+
+		if (omrsPerson == null || omrsPerson.getPersonVoided()) {
 			return null;
 		}
 		return FHIRPersonUtil.generatePerson(omrsPerson);
@@ -35,7 +36,7 @@ public class PersonStrategy implements GenericPersonStrategy {
 		org.openmrs.Person omrsPerson = Context.getPersonService().getPersonByUuid(uuid);
 		List<Person> personList = new ArrayList<>();
 
-		if (omrsPerson != null && !omrsPerson.isPersonVoided()) {
+		if (omrsPerson != null && !omrsPerson.getPersonVoided()) {
 			personList.add(FHIRPersonUtil.generatePerson(omrsPerson));
 		}
 		return personList;
@@ -56,6 +57,7 @@ public class PersonStrategy implements GenericPersonStrategy {
 	public List<Person> searchPersonsByName(String name) {
 		List<org.openmrs.Person> persons = Context.getPersonService().getPeople(name, null);
 		List<Person> fhirPersonsList = new ArrayList<>();
+
 		for (org.openmrs.Person person : persons) {
 			fhirPersonsList.add(FHIRPersonUtil.generatePerson(person));
 		}
@@ -76,15 +78,16 @@ public class PersonStrategy implements GenericPersonStrategy {
 
 	@Override
 	public Person updateFHIRPerson(Person person, String uuid) {
-		List<String> errors = new ArrayList<String>();
+		List<String> errors = new ArrayList<>();
 		org.openmrs.api.PersonService personService = Context.getPersonService();
 		org.openmrs.Person retrievedPerson = personService.getPersonByUuid(uuid);
-		if (retrievedPerson != null) { // update person
+
+		if (retrievedPerson != null) {
 			org.openmrs.Person omrsPerson = FHIRPersonUtil.generateOpenMRSPerson(person, errors);
 			retrievedPerson = FHIRPersonUtil.updatePersonAttributes(omrsPerson, retrievedPerson);
 			Context.getPersonService().savePerson(retrievedPerson);
 			return FHIRPersonUtil.generatePerson(retrievedPerson);
-		} else { // no person is associated with the given uuid. so create a new person with the given uuid
+		} else {
 			StrategyUtil.setIdIfNeeded(person, uuid);
 			return createFHIRPerson(person);
 		}
@@ -96,7 +99,7 @@ public class PersonStrategy implements GenericPersonStrategy {
 		if (person == null) {
 			throw new ResourceNotFoundException(String.format("Person with id '%s' not found", uuid));
 		}
-		if (person.isPersonVoided()) {
+		if (person.getPersonVoided()) {
 			return;
 		}
 		try {

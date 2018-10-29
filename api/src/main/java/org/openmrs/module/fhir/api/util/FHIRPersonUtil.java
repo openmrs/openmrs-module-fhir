@@ -39,6 +39,7 @@ public class FHIRPersonUtil {
 		Person person = new Person();
 		//Set person ID
 		person.setId(omrsPerson.getUuid());
+
 		List<HumanName> humanNames = new ArrayList<>();
 		for (PersonName name : omrsPerson.getNames()) {
 			HumanName fhirName = new HumanName();
@@ -64,11 +65,13 @@ public class FHIRPersonUtil {
 				prefixes.add(prefix);
 				fhirName.setPrefix(prefixes);
 			}
-			if (name.isPreferred()) {
+
+			if (name.getPreferred()) {
 				fhirName.setUse(HumanName.NameUse.USUAL);
 			} else {
 				fhirName.setUse(HumanName.NameUse.OLD);
 			}
+
 			humanNames.add(fhirName);
 		}
 		person.setName(humanNames);
@@ -79,6 +82,7 @@ public class FHIRPersonUtil {
 			addressList.add(FHIRUtils.buildAddress(address));
 		}
 		person.setAddress(addressList);
+
 		//Set gender in fhir person object
 		if (omrsPerson.getGender().equals("M")) {
 			person.setGender(Enumerations.AdministrativeGender.MALE);
@@ -87,9 +91,10 @@ public class FHIRPersonUtil {
 		} else {
 			person.setGender(Enumerations.AdministrativeGender.UNKNOWN);
 		}
-		;
+
 		person.setBirthDate(omrsPerson.getBirthdate());
-		if (!omrsPerson.isVoided()) {
+
+		if (!omrsPerson.getPersonVoided()) {
 			person.setActive(true);
 		} else {
 			person.setActive(false);
@@ -131,10 +136,12 @@ public class FHIRPersonUtil {
 		if (personFHIR.getId() != null) {
 			omrsPerson.setUuid(extractUuid(personFHIR.getId()));
 		}
+
 		Set<PersonName> names = new TreeSet<>();
 		if (personFHIR.getName().size() == 0) {
 			errors.add("Name cannot be empty");
 		}
+
 		for (HumanName humanNameDt : personFHIR.getName()) {
 			PersonName personName = new PersonName();
 			if (humanNameDt.getUse() != null) {
