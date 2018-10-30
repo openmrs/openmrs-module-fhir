@@ -245,6 +245,8 @@ public final class FHIRConstants {
 
 	public static final String CATEGORY_ALLERGY = "allergy";
 
+	public static final String CATEGORY_COHORT = "cohort";
+
 	public static final String POST = "POST";
 
 	public static final String PUT = "PUT";
