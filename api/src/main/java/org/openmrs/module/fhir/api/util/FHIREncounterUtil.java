@@ -187,6 +187,7 @@ public class FHIREncounterUtil {
 		String encounterType = omrsEncounter.getEncounterType().getName();
 		Coding dt = new Coding();
 		dt.setDisplay(encounterType);
+		markAsEncounterType(dt);
 		encounter.getTypeFirstRep().getCoding().add(dt);
 
 		//TODO uncomment the validation and check what's going wrong
@@ -338,5 +339,17 @@ public class FHIREncounterUtil {
 		}
 
 		return e1.getPartOf() != null ? e1.getPartOf().equalsDeep(e2.getPartOf()) : e2.getPartOf() == null;
+	}
+
+	public static boolean shouldBeConsideredAsVisit(Encounter encounter) {
+		return encounter.getTypeFirstRep().getCodingFirstRep().getUserSelected();
+	}
+
+	public static void markAsVisitType(Coding coding) {
+		coding.setUserSelected(true);
+	}
+
+	public static void markAsEncounterType(Coding coding) {
+		coding.setUserSelected(false);
 	}
 }

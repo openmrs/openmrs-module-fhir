@@ -287,19 +287,8 @@ public class EncounterStrategy implements GenericEncounterStrategy {
 		Reference encounterRef = encounter.getPartOf();
 		Visit visit;
 
-		if (encounterRef != null && !encounterRef
-				.isEmpty()) { // if partOf is not empty, This Encounter should be created under an Visit
-			encounterToCreate = FHIREncounterUtil.generateOMRSEncounter(encounter, errors);
-			String encounterRefUuid = FHIRUtils.getObjectUuidByReference(encounterRef);
-
-			visit = Context.getVisitService().getVisitByUuid(encounterRefUuid);
-			if (visit == null) {
-				errors.add("No Encounters found for id : " + encounterRefUuid);
-			} else {
-				encounterToCreate.setVisit(visit); // this is an encounter of an admitted patient
-			}
-		} else {
-			org.openmrs.Patient patient = null;
+		if (FHIREncounterUtil.shouldBeConsideredAsVisit(encounter)) {
+			Patient patient = null;
 			if (encounter.getSubject() != null) {
 				Reference patientRef = encounter.getSubject();
 				String patientUuid = FHIRUtils.getObjectUuidByReference(patientRef);
@@ -315,15 +304,25 @@ public class EncounterStrategy implements GenericEncounterStrategy {
 			}
 			visit = FHIRVisitUtil.generateOMRSVisit(encounter, errors);
 
+		} else {
+			encounterToCreate = FHIREncounterUtil.generateOMRSEncounter(encounter, errors);
+			String encounterRefUuid = FHIRUtils.getObjectUuidByReference(encounterRef);
+
+			visit = Context.getVisitService().getVisitByUuid(encounterRefUuid);
+			if (visit == null) {
+				errors.add("No Encounters found for id : " + encounterRefUuid);
+			} else {
+				encounterToCreate.setVisit(visit); // this is an encounter of an admitted patient
+			}
 		}
 		FHIRUtils.checkGeneratorErrorList(errors);
 
-		if (encounterRef != null && !encounterRef.isEmpty()) {
-			encounterToCreate = Context.getEncounterService().saveEncounter(encounterToCreate);
-			return FHIREncounterUtil.generateEncounter(encounterToCreate);
-		} else {
+		if (FHIREncounterUtil.shouldBeConsideredAsVisit(encounter)) {
 			visit = Context.getVisitService().saveVisit(visit);
 			return FHIRVisitUtil.generateEncounter(visit);
+		} else {
+			encounterToCreate = Context.getEncounterService().saveEncounter(encounterToCreate);
+			return FHIREncounterUtil.generateEncounter(encounterToCreate);
 		}
 	}
 
