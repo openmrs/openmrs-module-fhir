@@ -17,11 +17,15 @@ public interface ClientHelper {
 
 	RequestEntity updateRequest(String url, Object object) throws URISyntaxException;
 
-	Class resolveCategoryByCategory(String category);
+	Class resolveClassByCategory(String category);
 
 	List<ClientHttpRequestInterceptor> getCustomInterceptors(String username, String password);
 
-	List<HttpMessageConverter<?>> getCustomFHIRMessageConverter();
+	List<HttpMessageConverter<?>> getCustomMessageConverter();
 
 	boolean compareResourceObjects(String category, Object from, Object dest);
+
+    Object convertToObject(String formattedData, Class<?> clazz);
+
+    String convertToFormattedData(Object object);
 }

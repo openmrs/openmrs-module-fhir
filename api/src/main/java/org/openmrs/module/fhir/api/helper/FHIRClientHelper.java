@@ -1,5 +1,7 @@
 package org.openmrs.module.fhir.api.helper;
 
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.parser.IParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.AllergyIntolerance;
@@ -16,7 +18,9 @@ import org.openmrs.module.fhir.api.util.FHIRAllergyIntoleranceUtil;
 import org.openmrs.module.fhir.api.util.FHIREncounterUtil;
 import org.openmrs.module.fhir.api.util.FHIRObsUtil;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -42,10 +46,6 @@ public class FHIRClientHelper implements ClientHelper {
 
 	private static final Map<String, Class> CATEGORY_MAP;
 
-	private static final String ACCEPT_HEADER = "Accept";
-
-	private static final String ACCEPT_MIME_TYPE = "application/json";
-
 	static {
 		CATEGORY_MAP = new HashMap<>();
 		CATEGORY_MAP.put(CATEGORY_PATIENT, Patient.class);
@@ -58,7 +58,13 @@ public class FHIRClientHelper implements ClientHelper {
 		CATEGORY_MAP.put(CATEGORY_ALLERGY, AllergyIntolerance.class);
 	}
 
+	private final IParser parser;
+
 	protected final Log log = LogFactory.getLog(this.getClass());
+
+	public FHIRClientHelper() {
+        parser = FhirContext.forDstu3().newJsonParser();
+    }
 
 	@Override
 	public RequestEntity retrieveRequest(String url) throws URISyntaxException {
@@ -68,7 +74,7 @@ public class FHIRClientHelper implements ClientHelper {
 	@Override
 	public RequestEntity createRequest(String url, Object object) throws URISyntaxException {
 		url = createUrl(url, (IBaseResource) object);
-		return new RequestEntity(object, HttpMethod.PUT, new URI(url));
+		return new RequestEntity(parser.encodeResourceToString((IBaseResource)object), HttpMethod.PUT, new URI(url));
 	}
 
 	@Override
@@ -80,11 +86,11 @@ public class FHIRClientHelper implements ClientHelper {
 	@Override
 	public RequestEntity updateRequest(String url, Object object) throws URISyntaxException {
 		url = createUrl(url, (IBaseResource) object);
-		return new RequestEntity(object, HttpMethod.PUT, new URI(url));
+		return new RequestEntity(parser.encodeResourceToString((IBaseResource)object), HttpMethod.PUT, new URI(url));
 	}
 
 	@Override
-	public Class resolveCategoryByCategory(String category) {
+	public Class resolveClassByCategory(String category) {
 		if (CATEGORY_MAP.containsKey(category)) {
 			return CATEGORY_MAP.get(category);
 		}
@@ -95,11 +101,11 @@ public class FHIRClientHelper implements ClientHelper {
 	@Override
 	public List<ClientHttpRequestInterceptor> getCustomInterceptors(String username, String password) {
 		return Arrays.asList(new BasicAuthInterceptor(username, password),
-				new HeaderClientHttpRequestInterceptor(ACCEPT_HEADER, ACCEPT_MIME_TYPE));
+				new HeaderClientHttpRequestInterceptor(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE));
 	}
 
 	@Override
-	public List<HttpMessageConverter<?>> getCustomFHIRMessageConverter() {
+	public List<HttpMessageConverter<?>> getCustomMessageConverter() {
 		return Arrays.asList(new HttpMessageConverter<?>[]
 				{ new FHIRHttpMessageConverter(), new StringHttpMessageConverter() });
 	}
@@ -129,7 +135,17 @@ public class FHIRClientHelper implements ClientHelper {
 		return result;
 	}
 
-	private String createUrl(String url, IBaseResource object) {
+    @Override
+    public Object convertToObject(String formattedData, Class<?> clazz) {
+        return parser.parseResource(formattedData);
+    }
+
+    @Override
+    public String convertToFormattedData(Object object) {
+        return parser.encodeResourceToString((IBaseResource) object);
+    }
+
+    private String createUrl(String url, IBaseResource object) {
 		return url + "/" + object.getIdElement().getIdPart();
 	}
 }
