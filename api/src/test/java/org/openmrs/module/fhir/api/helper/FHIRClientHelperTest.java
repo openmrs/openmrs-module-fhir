@@ -4,6 +4,7 @@ import org.hl7.fhir.dstu3.model.Encounter;
 import org.hl7.fhir.dstu3.model.Location;
 import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.Person;
 import org.hl7.fhir.dstu3.model.Practitioner;
 import org.junit.Test;
 import org.springframework.http.HttpMethod;
@@ -69,5 +70,6 @@ public class FHIRClientHelperTest {
 		assertEquals(Location.class, fhirClientHelper.resolveCategoryByCategory("location"));
 		assertEquals(Practitioner.class, fhirClientHelper.resolveCategoryByCategory("practitioner"));
 		assertEquals(Practitioner.class, fhirClientHelper.resolveCategoryByCategory("provider"));
+		assertEquals(Person.class, fhirClientHelper.resolveCategoryByCategory("person"));
 	}
 }
