@@ -6,12 +6,17 @@ import org.openmrs.Cohort;
 import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.comparator.GroupComparator;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 public class FHIRGroupUtil {
+
+	public static boolean areGroupsEquals(Object ob1, Object ob2) {
+		return new GroupComparator().areCustomPropsEquals((Group) ob1, (Group) ob2);
+	}
 
 	public static Group generateGroup(Cohort cohort) {
 		if (cohort == null) {

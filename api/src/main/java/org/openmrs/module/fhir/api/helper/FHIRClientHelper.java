@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.AllergyIntolerance;
 import org.hl7.fhir.dstu3.model.Encounter;
+import org.hl7.fhir.dstu3.model.Group;
 import org.hl7.fhir.dstu3.model.Location;
 import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Patient;
@@ -16,6 +17,7 @@ import org.openmrs.module.fhir.api.client.FHIRHttpMessageConverter;
 import org.openmrs.module.fhir.api.client.HeaderClientHttpRequestInterceptor;
 import org.openmrs.module.fhir.api.util.FHIRAllergyIntoleranceUtil;
 import org.openmrs.module.fhir.api.util.FHIREncounterUtil;
+import org.openmrs.module.fhir.api.util.FHIRGroupUtil;
 import org.openmrs.module.fhir.api.util.FHIRObsUtil;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 import org.springframework.http.HttpHeaders;
@@ -34,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_ALLERGY;
+import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_COHORT;
 import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_ENCOUNTER;
 import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_LOCATION;
 import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_OBSERVATION;
@@ -56,6 +59,7 @@ public class FHIRClientHelper implements ClientHelper {
 		CATEGORY_MAP.put(CATEGORY_PRACTITIONER, Practitioner.class);
 		CATEGORY_MAP.put(CATEGORY_PROVIDER, Practitioner.class);
 		CATEGORY_MAP.put(CATEGORY_ALLERGY, AllergyIntolerance.class);
+		CATEGORY_MAP.put(CATEGORY_COHORT, Group.class);
 	}
 
 	private final IParser parser;
@@ -128,6 +132,9 @@ public class FHIRClientHelper implements ClientHelper {
 				break;
 			case CATEGORY_ALLERGY:
 				result = FHIRAllergyIntoleranceUtil.areAllergiesEquals(dest, from);
+				break;
+			case CATEGORY_COHORT:
+				result = FHIRGroupUtil.areGroupsEquals(dest, from);
 				break;
 			default:
 				result = dest.equals(from);

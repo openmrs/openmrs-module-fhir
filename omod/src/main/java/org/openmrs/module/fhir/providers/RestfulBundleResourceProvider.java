@@ -19,6 +19,7 @@ import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.hl7.fhir.dstu3.model.AllergyIntolerance;
 import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.Encounter;
+import org.hl7.fhir.dstu3.model.Group;
 import org.hl7.fhir.dstu3.model.Location;
 import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Patient;
@@ -28,6 +29,7 @@ import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.resources.FHIRAllergyIntoleranceResource;
 import org.openmrs.module.fhir.resources.FHIRBundleResource;
 import org.openmrs.module.fhir.resources.FHIREncounterResource;
+import org.openmrs.module.fhir.resources.FHIRGroupResource;
 import org.openmrs.module.fhir.resources.FHIRLocationResource;
 import org.openmrs.module.fhir.resources.FHIRObservationResource;
 import org.openmrs.module.fhir.resources.FHIRPatientResource;
@@ -79,6 +81,9 @@ public class RestfulBundleResourceProvider implements IResourceProvider {
 			} else if (next instanceof AllergyIntolerance) {
 				FHIRAllergyIntoleranceResource resource = new FHIRAllergyIntoleranceResource();
 				resource.createAllergyIntolerance((AllergyIntolerance) next);
+			} else if (next instanceof Group) {
+				FHIRGroupResource resource = new FHIRGroupResource();
+				resource.createGroup((Group) next);
 			}
 		}
 
