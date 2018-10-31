@@ -24,6 +24,7 @@ import org.openmrs.Patient;
 import org.openmrs.PersonAddress;
 import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.comparator.PersonComparator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +32,14 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import static java.lang.String.valueOf;
+import static org.openmrs.module.fhir.api.util.FHIRUtils.extractUuid;
 
 public class FHIRPersonUtil {
+
+	public static boolean arePersonsEquals(Object ob1, Object ob2) {
+		PersonComparator comparator = new PersonComparator();
+		return comparator.areEquals((Person) ob1, (Person) ob2);
+	}
 
 	public static Person generatePerson(org.openmrs.Person omrsPerson) {
 		Person person = new Person();
@@ -41,20 +48,21 @@ public class FHIRPersonUtil {
 
 		//Set person ID
 		person.setId(omrsPerson.getUuid());
-		List<HumanName> humanNames = new ArrayList<HumanName>();
+
+		List<HumanName> humanNames = new ArrayList<>();
 		for (PersonName name : omrsPerson.getNames()) {
 			HumanName fhirName = new HumanName();
 			fhirName.setFamily(name.getFamilyName());
 			StringType givenName = new StringType();
 			givenName.setValue(name.getGivenName());
-			List<StringType> givenNames = new ArrayList<StringType>();
+			List<StringType> givenNames = new ArrayList<>();
 			givenNames.add(givenName);
 			fhirName.setGiven(givenNames);
 
 			if (name.getFamilyNameSuffix() != null) {
 				StringType suffix = new StringType();
 				suffix.setValue(name.getFamilyNameSuffix());
-				List<StringType> suffixes = new ArrayList<StringType>();
+				List<StringType> suffixes = new ArrayList<>();
 				suffixes.add(suffix);
 				fhirName.setSuffix(suffixes);
 			}
@@ -62,26 +70,28 @@ public class FHIRPersonUtil {
 			if (name.getFamilyNamePrefix() != null) {
 				StringType prefix = new StringType();
 				prefix.setValue(name.getPrefix());
-				List<StringType> prefixes = new ArrayList<StringType>();
+				List<StringType> prefixes = new ArrayList<>();
 				prefixes.add(prefix);
 				fhirName.setPrefix(prefixes);
 			}
-			if (name.isPreferred()) {
+
+			if (name.getPreferred()) {
 				fhirName.setUse(HumanName.NameUse.USUAL);
 			} else {
 				fhirName.setUse(HumanName.NameUse.OLD);
 			}
+
 			humanNames.add(fhirName);
 		}
 		person.setName(humanNames);
 
 		//Set address in FHIR person
-		List<Address> addressList = new ArrayList<Address>();
-		Address fhirAddress;
+		List<Address> addressList = new ArrayList<>();
 		for (PersonAddress address : omrsPerson.getAddresses()) {
 			addressList.add(FHIRUtils.buildAddress(address));
 		}
 		person.setAddress(addressList);
+
 		//Set gender in fhir person object
 		if (omrsPerson.getGender().equals("M")) {
 			person.setGender(Enumerations.AdministrativeGender.MALE);
@@ -90,9 +100,10 @@ public class FHIRPersonUtil {
 		} else {
 			person.setGender(Enumerations.AdministrativeGender.UNKNOWN);
 		}
-		;
+
 		person.setBirthDate(omrsPerson.getBirthdate());
-		if (!omrsPerson.isVoided()) {
+
+		if (!omrsPerson.getPersonVoided()) {
 			person.setActive(true);
 		} else {
 			person.setActive(false);
@@ -134,12 +145,14 @@ public class FHIRPersonUtil {
 		BaseOpenMRSDataUtil.readBaseExtensionFields(omrsPerson, personFHIR);
 
 		if (personFHIR.getId() != null) {
-			omrsPerson.setUuid(personFHIR.getId());
+			omrsPerson.setUuid(extractUuid(personFHIR.getId()));
 		}
-		Set<PersonName> names = new TreeSet<PersonName>();
+
+		Set<PersonName> names = new TreeSet<>();
 		if (personFHIR.getName().size() == 0) {
 			errors.add("Name cannot be empty");
 		}
+
 		for (HumanName humanNameDt : personFHIR.getName()) {
 			PersonName personName = new PersonName();
 			if (humanNameDt.getUse() != null) {
@@ -153,8 +166,8 @@ public class FHIRPersonUtil {
 					personName.setPreferred(false);
 				}
 			}
-			if (humanNameDt.getSuffix() != null) {
-				List<StringType> prefixes = humanNameDt.getSuffix();
+			if (humanNameDt.getPrefix() != null) {
+				List<StringType> prefixes = humanNameDt.getPrefix();
 				if (prefixes.size() > 0) {
 					StringType prefix = prefixes.get(0);
 					personName.setPrefix(valueOf(prefix));
@@ -173,6 +186,11 @@ public class FHIRPersonUtil {
 				givennamePresent = true;
 				StringType givenName = givenNames.get(0);
 				personName.setGivenName(valueOf(givenName));
+
+				if(givenNames.size() > 1) {
+					StringType middleName = givenNames.get(1);
+					personName.setMiddleName(valueOf(middleName));
+				}
 			}
 			String familyName = humanNameDt.getFamily();
 			if (!StringUtils.isEmpty(familyName)) {
@@ -196,7 +214,7 @@ public class FHIRPersonUtil {
 			errors.add("Person should have atleast one preferred name with family name and given name");
 		}
 
-		Set<PersonAddress> addresses = new TreeSet<PersonAddress>();
+		Set<PersonAddress> addresses = new TreeSet<>();
 		PersonAddress address;
 		for (Address fhirAddress : personFHIR.getAddress()) {
 			address = new PersonAddress();
@@ -284,7 +302,7 @@ public class FHIRPersonUtil {
 		Set<PersonAddress> allAddress = retrievedPerson.getAddresses();
 		boolean needToSetHome = false;
 		for (PersonAddress address : omrsPerson.getAddresses()) {
-			if (address.isPreferred()) {
+			if (address.getPreferred()) {
 				needToSetHome = true;
 			}
 		}
@@ -303,8 +321,7 @@ public class FHIRPersonUtil {
 		}
 		retrievedPerson.setBirthdate(omrsPerson.getBirthdate());
 		retrievedPerson.setGender(omrsPerson.getGender());
-		retrievedPerson.getActiveAttributes().get(0).setValue("Test");
-		retrievedPerson.getActiveAttributes().get(1).setValue("Test");
+
 		return retrievedPerson;
 	}
 }

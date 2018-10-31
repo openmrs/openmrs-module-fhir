@@ -10,6 +10,7 @@ import org.hl7.fhir.dstu3.model.MedicationRequest;
 import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.Practitioner;
+import org.hl7.fhir.dstu3.model.Person;
 import org.hl7.fhir.dstu3.model.ProcedureRequest;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.springframework.http.HttpInputMessage;
@@ -50,6 +51,7 @@ public class FHIRHttpMessageConverter extends AbstractHttpMessageConverter<IBase
 		SUPPORTED_CLASSES.add(Location.class);
 		SUPPORTED_CLASSES.add(Practitioner.class);
 		SUPPORTED_CLASSES.add(AllergyIntolerance.class);
+		SUPPORTED_CLASSES.add(Person.class);
 		SUPPORTED_CLASSES.add(Group.class);
 		SUPPORTED_CLASSES.add(MedicationRequest.class);
 		SUPPORTED_CLASSES.add(ProcedureRequest.class);

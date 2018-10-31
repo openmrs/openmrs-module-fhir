@@ -13,6 +13,7 @@ import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.Practitioner;
 import org.hl7.fhir.dstu3.model.ProcedureRequest;
+import org.hl7.fhir.dstu3.model.Person;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.openmrs.module.fhir.api.client.BasicAuthInterceptor;
 import org.openmrs.module.fhir.api.client.FHIRHttpMessageConverter;
@@ -23,6 +24,7 @@ import org.openmrs.module.fhir.api.util.FHIRGroupUtil;
 import org.openmrs.module.fhir.api.util.FHIRMedicationRequestUtil;
 import org.openmrs.module.fhir.api.util.FHIRObsUtil;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
+import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
 import org.springframework.http.HttpHeaders;
 import org.openmrs.module.fhir.api.util.FHIRProcedureRequestUtil;
 import org.springframework.http.HttpMethod;
@@ -46,6 +48,7 @@ import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_ENCOUNTER;
 import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_LOCATION;
 import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_OBSERVATION;
 import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_PATIENT;
+import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_PERSON;
 import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_PRACTITIONER;
 import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_PROVIDER;
 import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_TEST_ORDER;
@@ -65,6 +68,7 @@ public class FHIRClientHelper implements ClientHelper {
 		CATEGORY_MAP.put(CATEGORY_PRACTITIONER, Practitioner.class);
 		CATEGORY_MAP.put(CATEGORY_PROVIDER, Practitioner.class);
 		CATEGORY_MAP.put(CATEGORY_ALLERGY, AllergyIntolerance.class);
+		CATEGORY_MAP.put(CATEGORY_PERSON, Person.class);
 		CATEGORY_MAP.put(CATEGORY_COHORT, Group.class);
 		CATEGORY_MAP.put(CATEGORY_DRUG_ORDER, MedicationRequest.class);
 		CATEGORY_MAP.put(CATEGORY_TEST_ORDER, ProcedureRequest.class);
@@ -141,6 +145,9 @@ public class FHIRClientHelper implements ClientHelper {
 			case CATEGORY_ALLERGY:
 				result = FHIRAllergyIntoleranceUtil.areAllergiesEquals(dest, from);
 				break;
+			case CATEGORY_PERSON:
+				result = FHIRPersonUtil.arePersonsEquals(dest, from);
+                break;
 			case CATEGORY_COHORT:
 				result = FHIRGroupUtil.areGroupsEquals(dest, from);
 				break;

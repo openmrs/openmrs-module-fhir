@@ -5,6 +5,7 @@ import org.hl7.fhir.dstu3.model.Encounter;
 import org.hl7.fhir.dstu3.model.Location;
 import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.Person;
 import org.hl7.fhir.dstu3.model.Practitioner;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.junit.Test;
@@ -73,5 +74,6 @@ public class FHIRClientHelperTest {
 		assertEquals(Location.class, fhirClientHelper.resolveClassByCategory("location"));
 		assertEquals(Practitioner.class, fhirClientHelper.resolveClassByCategory("practitioner"));
 		assertEquals(Practitioner.class, fhirClientHelper.resolveClassByCategory("provider"));
+		assertEquals(Person.class, fhirClientHelper.resolveClassByCategory("person"));
 	}
 }
