@@ -29,11 +29,12 @@ import org.openmrs.module.fhir.providers.RestfulDiagnosticReportResourceProvider
 import org.openmrs.module.fhir.providers.RestfulEncounterResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulFamilyMemberHistoryResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulLocationResourceProvider;
-import org.openmrs.module.fhir.providers.RestfulMedicationRequestProvider;
+import org.openmrs.module.fhir.providers.RestfulMedicationRequestResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulObservationResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulPatientResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulPersonResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulPractitionerResourceProvider;
+import org.openmrs.module.fhir.providers.RestfulProcedureRequestResourceProvider;
 import org.openmrs.module.fhir.server.ConformanceProvider;
 import org.openmrs.module.fhir.swagger.SwaggerSpecificationCreator;
 import org.openmrs.module.fhir.swagger.codegen.SwaggerCodeGenerator;
@@ -73,7 +74,8 @@ public class SwaggerSDKGenerationTestCase extends RestfulServer {
 		resourceProviders.add(new RestfulPractitionerResourceProvider());
 		resourceProviders.add(new RestfulConditionResourceProvider());
 		resourceProviders.add(new RestfulDiagnosticReportResourceProvider());
-		resourceProviders.add(new RestfulMedicationRequestProvider());
+		resourceProviders.add(new RestfulMedicationRequestResourceProvider());
+		resourceProviders.add(new RestfulProcedureRequestResourceProvider());
 		//Removing composition since we now not support for it
 		//resourceProviders.add(new RestfulCompositionResourceProvider());
 		resourceProviders.add(new RestfulPersonResourceProvider());

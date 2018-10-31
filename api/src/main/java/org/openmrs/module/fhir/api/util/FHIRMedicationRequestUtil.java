@@ -40,6 +40,11 @@ import java.util.List;
 
 public class FHIRMedicationRequestUtil {
 
+	public static boolean areMedicationRequestsEquals(Object o1, Object o2) {
+		//TODO
+		return false;
+	}
+
 	/**
 	 * Generate medication request from drug order
 	 *

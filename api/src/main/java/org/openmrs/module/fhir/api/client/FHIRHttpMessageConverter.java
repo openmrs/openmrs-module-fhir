@@ -6,9 +6,11 @@ import org.hl7.fhir.dstu3.model.AllergyIntolerance;
 import org.hl7.fhir.dstu3.model.Encounter;
 import org.hl7.fhir.dstu3.model.Group;
 import org.hl7.fhir.dstu3.model.Location;
+import org.hl7.fhir.dstu3.model.MedicationRequest;
 import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.Practitioner;
+import org.hl7.fhir.dstu3.model.ProcedureRequest;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
@@ -49,6 +51,8 @@ public class FHIRHttpMessageConverter extends AbstractHttpMessageConverter<IBase
 		SUPPORTED_CLASSES.add(Practitioner.class);
 		SUPPORTED_CLASSES.add(AllergyIntolerance.class);
 		SUPPORTED_CLASSES.add(Group.class);
+		SUPPORTED_CLASSES.add(MedicationRequest.class);
+		SUPPORTED_CLASSES.add(ProcedureRequest.class);
 	}
 
 	private IParser parser = FhirContext.forDstu3().newJsonParser();

@@ -14,6 +14,7 @@
 package org.openmrs.module.fhir.providers;
 
 import ca.uhn.fhir.rest.annotation.Create;
+import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
@@ -32,15 +33,13 @@ import org.openmrs.module.fhir.util.MethodOutcomeBuilder;
 
 import java.util.List;
 
-public class RestfulMedicationRequestProvider implements IResourceProvider {
+public class RestfulMedicationRequestResourceProvider implements IResourceProvider {
 
-	private static final String ERROR_MESSAGE = "No Person is associated with the given UUID to update. Please"
-			+ " make sure you have set at lease one non-delete name, Gender and birthday to create a new "
-			+ "Person with the given Id";
+	private static final String ERROR_MESSAGE = "No Medication Resource is associated with the given UUID to update";
 
 	private FHIRMedicationRequestResource fhirMedicationRequestResource;
 
-	public RestfulMedicationRequestProvider() {
+	public RestfulMedicationRequestResourceProvider() {
 		this.fhirMedicationRequestResource = new FHIRMedicationRequestResource();
 	}
 
@@ -104,10 +103,15 @@ public class RestfulMedicationRequestProvider implements IResourceProvider {
 	public MethodOutcome updateMedicationRequest(@ResourceParam MedicationRequest medicationRequest, @IdParam IdType theId) {
 		try {
 			return MethodOutcomeBuilder.buildUpdate(
-					fhirMedicationRequestResource.updateFHIRMedicationRequest(medicationRequest, medicationRequest.getId()));
+					fhirMedicationRequestResource.updateFHIRMedicationRequest(medicationRequest, theId.getIdPart()));
 		}
 		catch (Exception e) {
 			return MethodOutcomeBuilder.buildCustom(ERROR_MESSAGE);
 		}
+	}
+
+	@Delete
+	public void deleteMedicationRequest(@IdParam IdType theId) {
+		fhirMedicationRequestResource.deleteMedicationRequest(theId.getIdPart());
 	}
 }
