@@ -89,6 +89,14 @@ public class FHIRUtils {
 		return Context.getAdministrationService().getGlobalProperty("fhir.medication.strategy");
 	}
 
+	public static String getMedicationRequestStrategy() {
+		return Context.getAdministrationService().getGlobalProperty("fhir.medicationRequest.strategy");
+	}
+
+	public static String getProcedureRequestStrategy() {
+		return Context.getAdministrationService().getGlobalProperty("fhir.procedureRequest.strategy");
+	}
+
 	public static String getAllergyStrategy() {
 		return Context.getAdministrationService().getGlobalProperty("fhir.allergy.strategy");
 	}

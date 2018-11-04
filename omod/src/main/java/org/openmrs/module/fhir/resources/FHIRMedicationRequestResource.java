@@ -58,4 +58,10 @@ public class FHIRMedicationRequestResource extends Resource {
 				.getService(MedicationRequestService.class);
 		return medicationRequestService.updateFHIRMedicationRequest(medicationRequest, theId);
 	}
+
+	public void deleteMedicationRequest(String theId) {
+		MedicationRequestService medicationRequestService = Context
+				.getService(MedicationRequestService.class);
+		medicationRequestService.deleteMedicationRequest(theId);
+	}
 }
