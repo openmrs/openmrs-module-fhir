@@ -33,6 +33,8 @@ public final class ExtensionsUtil {
     private static final String RETIRED_BY_URL = "retiredBy";
     private static final String RETIRE_REASON_URL = "retireReason";
 
+    public static final String DESCRIPTION_URL = "description";
+
     private ExtensionsUtil() { }
 
     public static void setBaseOpenMRSData(BaseOpenmrsData openMRSData, Extension extension) {
@@ -157,6 +159,10 @@ public final class ExtensionsUtil {
 
     public static Extension createRetireReasonExtension(String reason) {
         return createExtension(RETIRE_REASON_URL, new StringType(reason));
+    }
+
+    public static Extension createDescriptionExtension(String description) {
+        return createExtension(DESCRIPTION_URL, new StringType(description));
     }
     //endregion
 
