@@ -13,28 +13,14 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.MedicationRequest;
-import org.openmrs.CareSetting;
-import org.openmrs.Drug;
-import org.openmrs.DrugOrder;
-import org.openmrs.Order;
-import org.openmrs.Patient;
-import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.MedicationRequestService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.strategies.medicationrequest.MedicationRequestStrategyUtil;
-import org.openmrs.module.fhir.api.util.ErrorUtil;
-import org.openmrs.module.fhir.api.util.FHIRConstants;
-import org.openmrs.module.fhir.api.util.FHIRMedicationRequestUtil;
-import org.openmrs.module.fhir.api.util.FHIRUtils;
-import org.openmrs.module.fhir.api.util.StrategyUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MedicationRequestServiceImpl extends BaseOpenmrsService implements MedicationRequestService {
@@ -64,12 +50,12 @@ public class MedicationRequestServiceImpl extends BaseOpenmrsService implements 
 
 	@Override
 	public List<MedicationRequest> searchMedicationRequestById(String uuid) {
-		return MedicationRequestStrategyUtil.getMedicationRequestStrategy().searchMedicationRequestById(uuid);
+		return MedicationRequestStrategyUtil.getMedicationRequestStrategy().searchMedicationRequestByUuid(uuid);
 	}
 
 	@Override
 	public List<MedicationRequest> searchMedicationRequestByPatientId(String patientUuid) {
-		return MedicationRequestStrategyUtil.getMedicationRequestStrategy().searchMedicationRequestByPatientId(patientUuid);
+		return MedicationRequestStrategyUtil.getMedicationRequestStrategy().searchMedicationRequestByPatientUuid(patientUuid);
 	}
 
 	@Override

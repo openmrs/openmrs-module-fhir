@@ -30,6 +30,7 @@ import org.hl7.fhir.dstu3.model.Resource;
 import org.hl7.fhir.dstu3.model.StringType;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
+import org.openmrs.Drug;
 import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
 import org.openmrs.PersonName;
@@ -39,6 +40,8 @@ import org.openmrs.module.fhir.api.manager.FHIRContextFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.openmrs.module.fhir.api.util.FHIRConstants.REQUEST_ISSUE_LIST;
 
 public class FHIRUtils {
 
@@ -294,47 +297,17 @@ public class FHIRUtils {
 		return providerDt;
 	}
 
-	public static Coding getCodingDtByConceptMappings(ConceptMap conceptMap) {
-		//Set concept source concept name as the display value and set concept uuid if name is empty
-		String display = conceptMap.getConceptReferenceTerm().getName();
-		//Get concept source name and uri pair if it available
-		ConceptSourceNameURIPair sourceNameURIPair = FHIRConstants.conceptSourceMap.get(conceptMap
-				.getConceptReferenceTerm().getConceptSource().getName().toLowerCase());
-		if (sourceNameURIPair != null) {
-			return new Coding().setCode(conceptMap.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem
-					(sourceNameURIPair.getConceptSourceURI());
-		}
-		if (display != null && !display.isEmpty()) {
-			return new Coding().setCode(conceptMap.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-					conceptMap
-							.getConceptReferenceTerm().getConceptSource().getName());
-		} else {
-			return new Coding().setCode(conceptMap.getConceptReferenceTerm().getCode()).setSystem(
-					conceptMap.getConceptReferenceTerm().getConceptSource().getName());
-		}
+	public static Reference buildMedicationReference(Drug drug) {
+		Reference drugReference = new Reference();
+		drugReference.setDisplay(drug.getDisplayName());
+		drugReference.setReference(FHIRConstants.MEDICATION + "/" + drug.getUuid());
+		return drugReference;
 	}
 
 	public static CodeableConcept getCodeableConceptConceptMappings(ConceptMap conceptMap) {
-		//Set concept source concept name as the display value and set concept uuid if name is empty
-		String display = conceptMap.getConceptReferenceTerm().getName();
 		CodeableConcept codeableConcept = new CodeableConcept();
-		//Get concept source name and uri pair if it available
-		ConceptSourceNameURIPair sourceNameURIPair = FHIRConstants.conceptSourceMap.get(conceptMap
-				.getConceptReferenceTerm().getConceptSource().getName().toLowerCase());
-		if (sourceNameURIPair != null) {
-			return codeableConcept.addCoding(
-					new Coding().setCode(conceptMap.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem
-							(sourceNameURIPair.getConceptSourceURI()));
-		}
-		if (display != null && !display.isEmpty()) {
-			return codeableConcept.addCoding(
-					new Coding().setCode(conceptMap.getConceptReferenceTerm().getCode()).setDisplay(display).setSystem(
-							conceptMap
-									.getConceptReferenceTerm().getConceptSource().getName()));
-		} else {
-			return codeableConcept.addCoding(new Coding().setCode(conceptMap.getConceptReferenceTerm().getCode()).setSystem(
-					conceptMap.getConceptReferenceTerm().getConceptSource().getName()));
-		}
+		codeableConcept.addCoding(createCoding(conceptMap));
+		return codeableConcept;
 	}
 
 	public static AllergyIntolerance.AllergyIntoleranceReactionComponent getAllergyReactionComponent(ConceptMap conceptMap
@@ -459,6 +432,24 @@ public class FHIRUtils {
 		return identifier;
 	}
 
+	public static Coding createCoding(ConceptMap conceptMap) {
+		Coding code = new Coding();
+		String display = conceptMap.getConceptReferenceTerm().getName();
+		String conceptSource = conceptMap.getConceptReferenceTerm().getConceptSource().getName().toLowerCase();
+		ConceptSourceNameURIPair sourceNameURIPair = FHIRConstants.conceptSourceMap.get(conceptSource);
+
+		if (StringUtils.isNotBlank(display)) {
+			code.setDisplay(display);
+		}
+		if (sourceNameURIPair != null) {
+			code.setSystem(sourceNameURIPair.getConceptSourceURI());
+		} else {
+			code.setSystem(conceptSource);
+		}
+		code.setCode(conceptMap.getConceptReferenceTerm().getCode());
+		return code;
+	}
+
 	public static CodeableConcept createCodeableConcept(Concept concept) {
 		if (concept == null) {
 			return null;
@@ -467,16 +458,10 @@ public class FHIRUtils {
 		CodeableConcept codeableConcept = new CodeableConcept();
 
 		for (ConceptMap conceptMap : concept.getConceptMappings()) {
-			Coding code = new Coding();
-			String display = conceptMap.getConceptReferenceTerm().getName();
-			ConceptSourceNameURIPair sourceNameURIPair = FHIRConstants.conceptSourceMap.get(conceptMap
-					.getConceptReferenceTerm().getConceptSource().getName().toLowerCase());
-
-			code.setSystem(sourceNameURIPair.getConceptSourceURI());
-			code.setCode(conceptMap.getConceptReferenceTerm().getCode());
-			code.setDisplay(display);
-			codeableConcept.addCoding(code);
+			codeableConcept.addCoding(createCoding(conceptMap));
 		}
+
+		codeableConcept.addCoding(getCodingDtByOpenMRSConcept(concept));
 
 		codeableConcept.setText(concept.getDisplayString());
 		return codeableConcept;
@@ -537,14 +522,9 @@ public class FHIRUtils {
 
 	public static void checkGeneratorErrorList(List<String> errors) {
 		if (!errors.isEmpty()) {
-			StringBuilder errorMessage = new StringBuilder("The request cannot be processed due to the following issues \n");
-			for (int i = 0; i < errors.size(); i++) {
-				errorMessage.append(i + 1)
-						.append(" : ")
-						.append(errors.get(i))
-						.append("\n");
-			}
-			throw new UnprocessableEntityException(errorMessage.toString());
+			String errorMessage = ErrorUtil
+					.generateErrorMessage(errors, REQUEST_ISSUE_LIST);
+			throw new UnprocessableEntityException(errorMessage);
 		}
 	}
 
