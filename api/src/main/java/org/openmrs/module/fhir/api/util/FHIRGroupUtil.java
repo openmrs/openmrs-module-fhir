@@ -1,5 +1,6 @@
 package org.openmrs.module.fhir.api.util;
 
+import org.hl7.fhir.dstu3.model.Extension;
 import org.hl7.fhir.dstu3.model.Group;
 import org.hl7.fhir.dstu3.model.Reference;
 import org.openmrs.Cohort;
@@ -29,6 +30,7 @@ public class FHIRGroupUtil {
 		group.setId(cohort.getUuid());
 		group.setName(cohort.getName());
 		group.setType(Group.GroupType.PERSON);
+		group.addExtension(ExtensionsUtil.createDescriptionExtension(cohort.getDescription()));
 
 		Set<Integer> memberIds = cohort.getMemberIds();
 
@@ -61,7 +63,7 @@ public class FHIRGroupUtil {
 			ids[i] = patient.getPatientId();
 		}
 
-		Cohort cohort = new Cohort(group.getName(), group.getName(), ids);
+		Cohort cohort = new Cohort(group.getName(), getDescription(group), ids);
 
 		BaseOpenMRSDataUtil.readBaseExtensionFields(cohort, group);
 
@@ -84,6 +86,11 @@ public class FHIRGroupUtil {
 		cohortToUpdate.setName(newCohort.getName());
 
 		return cohortToUpdate;
+	}
+
+	public static String getDescription(Group group) {
+		Extension extension = group.getExtensionsByUrl(ExtensionsUtil.DESCRIPTION_URL).get(0);
+		return extension.getValue().toString();
 	}
 
 	private static Group.GroupMemberComponent generateGroupMemberComponent(Patient patient) {
