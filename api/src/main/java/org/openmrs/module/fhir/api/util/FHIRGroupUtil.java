@@ -15,6 +15,8 @@ import java.util.Set;
 
 public class FHIRGroupUtil {
 
+	private static final int FIRST = 0;
+
 	public static boolean areGroupsEquals(Object ob1, Object ob2) {
 		return new GroupComparator().areCustomPropsEquals((Group) ob1, (Group) ob2);
 	}
@@ -89,7 +91,7 @@ public class FHIRGroupUtil {
 	}
 
 	public static String getDescription(Group group) {
-		Extension extension = group.getExtensionsByUrl(ExtensionsUtil.DESCRIPTION_URL).get(0);
+		Extension extension = group.getExtensionsByUrl(ExtensionsUtil.DESCRIPTION_URL).get(FIRST);
 		return extension.getValue().toString();
 	}
 
