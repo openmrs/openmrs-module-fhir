@@ -6,9 +6,9 @@ public interface GenericProcedureRequestStrategy {
 
 	ProcedureRequest getProcedureRequestByUuid(String uuid);
 
-	void delete(String uuid);
+	void deleteProcedureRequest(String uuid);
 
-	ProcedureRequest createFHIRProcedureRequest(ProcedureRequest procedureRequest);
+	ProcedureRequest createProcedureRequest(ProcedureRequest procedureRequest);
 
-	ProcedureRequest updateFHIRProcedureRequest(ProcedureRequest procedureRequest, String uuid);
+	ProcedureRequest updateProcedureRequest(ProcedureRequest procedureRequest, String uuid);
 }

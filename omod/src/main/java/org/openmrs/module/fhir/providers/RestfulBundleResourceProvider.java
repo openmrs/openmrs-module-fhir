@@ -93,7 +93,7 @@ public class RestfulBundleResourceProvider implements IResourceProvider {
 				resource.createFHIRMedicationRequest((MedicationRequest) next);
 			} else if (next instanceof ProcedureRequest) {
 				FHIRProcedureRequestResource resource = new FHIRProcedureRequestResource();
-				resource.createFHIRProcedureRequest((ProcedureRequest) next);
+				resource.createProcedureRequest((ProcedureRequest) next);
 			}
 		}
 

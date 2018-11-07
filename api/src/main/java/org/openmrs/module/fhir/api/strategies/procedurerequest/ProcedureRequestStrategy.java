@@ -22,18 +22,18 @@ public class ProcedureRequestStrategy implements GenericProcedureRequestStrategy
 	}
 
 	@Override
-	public void delete(String uuid) {
+	public void deleteProcedureRequest(String uuid) {
 		//TODO
 	}
 
 	@Override
-	public ProcedureRequest createFHIRProcedureRequest(ProcedureRequest procedureRequest) {
+	public ProcedureRequest createProcedureRequest(ProcedureRequest procedureRequest) {
 		//TODO
 		return new ProcedureRequest();
 	}
 
 	@Override
-	public ProcedureRequest updateFHIRProcedureRequest(ProcedureRequest procedureRequest, String uuid) {
+	public ProcedureRequest updateProcedureRequest(ProcedureRequest procedureRequest, String uuid) {
 		//TODO
 		return new ProcedureRequest();
 	}

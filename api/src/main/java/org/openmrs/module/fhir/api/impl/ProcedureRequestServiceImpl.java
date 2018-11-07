@@ -26,18 +26,18 @@ public class ProcedureRequestServiceImpl extends BaseOpenmrsService implements P
 	}
 
 	@Override
-	public void delete(String uuid) {
-		ProcedureRequestStrategyUtil.getProcedureRequestStrategy().delete(uuid);
+	public void deleteProcedureRequest(String uuid) {
+		ProcedureRequestStrategyUtil.getProcedureRequestStrategy().deleteProcedureRequest(uuid);
 	}
 
 	@Override
-	public ProcedureRequest createFHIRProcedureRequest(ProcedureRequest procedureRequest) {
-		return ProcedureRequestStrategyUtil.getProcedureRequestStrategy().createFHIRProcedureRequest(procedureRequest);
+	public ProcedureRequest createProcedureRequest(ProcedureRequest procedureRequest) {
+		return ProcedureRequestStrategyUtil.getProcedureRequestStrategy().createProcedureRequest(procedureRequest);
 	}
 
 	@Override
-	public ProcedureRequest updateFHIRProcedureRequest(ProcedureRequest procedureRequest, String uuid) {
+	public ProcedureRequest updateProcedureRequest(ProcedureRequest procedureRequest, String uuid) {
 		return ProcedureRequestStrategyUtil.getProcedureRequestStrategy()
-				.updateFHIRProcedureRequest(procedureRequest, uuid);
+				.updateProcedureRequest(procedureRequest, uuid);
 	}
 }
