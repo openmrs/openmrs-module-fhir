@@ -21,11 +21,13 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.openmrs.module.fhir.api.util.FHIRUtils.createIdentifier;
 
 public class MedicationRequestTest extends BaseModuleContextSensitiveTest {
 
@@ -86,6 +88,7 @@ public class MedicationRequestTest extends BaseModuleContextSensitiveTest {
 		String medicationRequestUuid = "56b9196c-bcac-4c2f-b3a2-123464a96439";
 		MedicationRequest medicationRequest = getService().getMedicationRequestById(medicationRequestUuid);
 		assertNotNull(medicationRequest);
+		medicationRequest.setIdentifier(Collections.singletonList(createIdentifier("56b9196c-bcac-4c2f-b3a2-123464a96431")));
 		MedicationRequest createdMedicationRequest = getService().createFHIRMedicationRequest(medicationRequest);
 		assertNotNull(createdMedicationRequest);
 		assertEquals(medicationRequest.getSubject().getReference(), createdMedicationRequest.getSubject().getReference());
