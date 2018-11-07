@@ -83,10 +83,11 @@ public class MedicationRequestStrategy implements GenericMedicationRequestStrate
 		DrugOrder incomingDrugOrder = FHIRMedicationRequestUtil.generateDrugOrder(medicationRequest, errors);
 		DrugOrder existingDrugOrder = (DrugOrder) Context.getOrderService().getOrderByUuid(uuid);
 
-		//TODO Openmrs API throw "Order.cannot.edit.existing" while updating the existing order
 		if (existingDrugOrder != null) {
-			FHIRMedicationRequestUtil.copyObsAttributes(incomingDrugOrder, existingDrugOrder);
-			incomingDrugOrder = (DrugOrder) Context.getOrderService().saveOrder(existingDrugOrder, null);
+			incomingDrugOrder.setUuid(null);
+			incomingDrugOrder.setAction(Order.Action.REVISE);
+			incomingDrugOrder.setPreviousOrder(existingDrugOrder);
+			incomingDrugOrder = (DrugOrder) Context.getOrderService().saveOrder(incomingDrugOrder, null);
 			return FHIRMedicationRequestUtil.generateMedicationRequest(incomingDrugOrder);
 		} else {
 			StrategyUtil.setIdIfNeeded(medicationRequest, uuid);

@@ -141,30 +141,6 @@ public class FHIRMedicationRequestUtil {
 		return drugOrder;
 	}
 
-	/**
-	 * Update drug order
-	 *
-	 * @param requestOrder   drug order coming in request
-	 * @param retrievedOrder drug order saved in database
-	 * @return updated DrugOrder
-	 */
-	public static DrugOrder copyObsAttributes(DrugOrder requestOrder, DrugOrder retrievedOrder) {
-		retrievedOrder.setDose(requestOrder.getDose());
-		retrievedOrder.setDoseUnits(requestOrder.getDoseUnits());
-		retrievedOrder.setQuantityUnits(requestOrder.getQuantityUnits());
-		retrievedOrder.setQuantity(requestOrder.getQuantity());
-		retrievedOrder.setDrug(requestOrder.getDrug());
-		retrievedOrder.setDosingInstructions(requestOrder.getDosingInstructions());
-		retrievedOrder.setDurationUnits(requestOrder.getDurationUnits());
-		retrievedOrder.setDuration(requestOrder.getDuration());
-		retrievedOrder.setRoute(requestOrder.getRoute());
-		retrievedOrder.setPatient(requestOrder.getPatient());
-		retrievedOrder.setEncounter(requestOrder.getEncounter());
-		retrievedOrder.setOrderer(requestOrder.getOrderer());
-		retrievedOrder.setUuid(requestOrder.getUuid());
-		return retrievedOrder;
-	}
-
 	private static Dosage getFirstDosage(MedicationRequest fhirMedicationRequest) {
 		List<Dosage> dosages = fhirMedicationRequest.getDosageInstruction();
 		if (dosages.size() > 0) {
