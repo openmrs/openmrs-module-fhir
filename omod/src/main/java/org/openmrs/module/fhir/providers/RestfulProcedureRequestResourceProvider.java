@@ -44,7 +44,7 @@ public class RestfulProcedureRequestResourceProvider implements IResourceProvide
 
 	@Read
 	public ProcedureRequest getResourceById(@IdParam IdType theId) {
-		return resource.getByUniqueId(theId);
+		return resource.getByUuid(theId);
 	}
 
 	@Create

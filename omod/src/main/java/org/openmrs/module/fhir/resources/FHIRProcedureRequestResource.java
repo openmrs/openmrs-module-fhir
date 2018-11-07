@@ -21,11 +21,11 @@ import org.openmrs.module.fhir.api.ProcedureRequestService;
 
 public class FHIRProcedureRequestResource extends Resource {
 
-	public ProcedureRequest getByUniqueId(IdType id) {
+	public ProcedureRequest getByUuid(IdType uuid) {
 		ProcedureRequestService service = Context.getService(ProcedureRequestService.class);
-		ProcedureRequest procedureRequest = service.getById(id.getIdPart());
+		ProcedureRequest procedureRequest = service.getProcedureRequestByUuid(uuid.getIdPart());
 		if (procedureRequest == null) {
-			throw new ResourceNotFoundException("Procedure request is not found for the given Id " + id.getIdPart());
+			throw new ResourceNotFoundException("Procedure request is not found for the given Id " + uuid.getIdPart());
 		}
 		return procedureRequest;
 	}

@@ -4,7 +4,7 @@ import org.hl7.fhir.dstu3.model.ProcedureRequest;
 
 public interface GenericProcedureRequestStrategy {
 
-	ProcedureRequest getById(String uuid);
+	ProcedureRequest getProcedureRequestByUuid(String uuid);
 
 	void delete(String uuid);
 

@@ -13,31 +13,16 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.ProcedureRequest;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.ProcedureRequestService;
-import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.strategies.procedurerequest.ProcedureRequestStrategyUtil;
 
 public class ProcedureRequestServiceImpl extends BaseOpenmrsService implements ProcedureRequestService {
 
-	protected final Log log = LogFactory.getLog(this.getClass());
-
-	private FHIRDAO dao;
-
-	public FHIRDAO getDao() {
-		return dao;
-	}
-
-	public void setDao(FHIRDAO dao) {
-		this.dao = dao;
-	}
-
 	@Override
-	public ProcedureRequest getById(String uuid) {
-		return ProcedureRequestStrategyUtil.getProcedureRequestStrategy().getById(uuid);
+	public ProcedureRequest getProcedureRequestByUuid(String uuid) {
+		return ProcedureRequestStrategyUtil.getProcedureRequestStrategy().getProcedureRequestByUuid(uuid);
 	}
 
 	@Override

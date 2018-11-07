@@ -1,15 +1,24 @@
 package org.openmrs.module.fhir.api.strategies.procedurerequest;
 
 import org.hl7.fhir.dstu3.model.ProcedureRequest;
+import org.openmrs.Order;
+import org.openmrs.TestOrder;
+import org.openmrs.api.OrderService;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.util.FHIRProcedureRequestUtil;
 import org.springframework.stereotype.Component;
 
 @Component("DefaultProcedureRequestStrategy")
 public class ProcedureRequestStrategy implements GenericProcedureRequestStrategy {
 
 	@Override
-	public ProcedureRequest getById(String uuid) {
-		//TODO
-		return new ProcedureRequest();
+	public ProcedureRequest getProcedureRequestByUuid(String uuid) {
+		Order order = getOrderService().getOrderByUuid(uuid);
+		if (order == null || !(order instanceof TestOrder) || order.getVoided()) {
+			return null;
+		}
+
+		return FHIRProcedureRequestUtil.generateProcedureRequest((TestOrder) order);
 	}
 
 	@Override
@@ -27,5 +36,9 @@ public class ProcedureRequestStrategy implements GenericProcedureRequestStrategy
 	public ProcedureRequest updateFHIRProcedureRequest(ProcedureRequest procedureRequest, String uuid) {
 		//TODO
 		return new ProcedureRequest();
+	}
+
+	private OrderService getOrderService() {
+		return Context.getOrderService();
 	}
 }

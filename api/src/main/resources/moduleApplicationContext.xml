@@ -314,6 +314,15 @@
 	<bean parent="serviceContext">
 		<property name="moduleService">
 			<list>
+				<value>${project.parent.groupId}.${project.parent.artifactId}.api.ProcedureRequestService</value>
+				<bean class="${project.parent.groupId}.${project.parent.artifactId}.api.impl.ProcedureRequestServiceImpl"/>
+			</list>
+		</property>
+	</bean>
+
+	<bean parent="serviceContext">
+		<property name="moduleService">
+			<list>
 				<value>${project.parent.groupId}.${project.parent.artifactId}.api.PersonService</value>
 				<bean
 						class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">

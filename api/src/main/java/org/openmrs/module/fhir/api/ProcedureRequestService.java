@@ -17,7 +17,7 @@ import org.hl7.fhir.dstu3.model.ProcedureRequest;
 
 public interface ProcedureRequestService {
 
-	ProcedureRequest getById(String uuid);
+	ProcedureRequest getProcedureRequestByUuid(String uuid);
 
 	void delete(String uuid);
 

@@ -9,6 +9,9 @@ import org.hl7.fhir.dstu3.model.PrimitiveType;
 import org.hl7.fhir.dstu3.model.StringType;
 import org.openmrs.BaseOpenmrsData;
 import org.openmrs.BaseOpenmrsMetadata;
+import org.openmrs.Concept;
+import org.openmrs.OrderFrequency;
+import org.openmrs.TestOrder;
 import org.openmrs.User;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.constants.ExtensionURL;
@@ -174,6 +177,23 @@ public final class ExtensionsUtil {
 	public static Extension createCareSettingExtension(String value) {
 		return createExtension(ExtensionURL.CARE_SETTING, new StringType(value));
 	}
+
+	public static Extension createOrderConceptExtension(Concept concept) {
+		return createExtension(ExtensionURL.ORDER_CONCEPT_URL, new StringType(concept.getUuid()));
+	}
+
+	public static Extension createLateralityExtension(TestOrder.Laterality laterality) {
+		return createExtension(ExtensionURL.LATERALITY_URL, new StringType(laterality.toString()));
+	}
+
+	public static Extension createClinicalHistoryExtension(String clinicalHistory) {
+		return createExtension(ExtensionURL.CLINICAL_HISTORY_URL, new StringType(clinicalHistory));
+	}
+
+	public static Extension createOrderFrequencyExtension(OrderFrequency frequency) {
+		return createExtension(ExtensionURL.ORDER_FREQUENCY_URL, new StringType(frequency.getUuid()));
+	}
+
 	//endregion
 
 	private static Extension createExtension(String url, PrimitiveType data) {

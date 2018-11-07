@@ -1,7 +1,7 @@
 package org.openmrs.module.fhir.api.constants;
 
 public final class ExtensionURL {
-    
+
     private ExtensionURL() { }
 
     /** https://simplifier.net/SRxProject/resource-date-created/~json */
@@ -31,4 +31,8 @@ public final class ExtensionURL {
     public static final String DISPENSE_AS_WRITTEN = "dispenseAsWritten";
     public static final String DRUG_NON_CODED = "drugNonCoded";
     public static final String CARE_SETTING = "careSetting";
+    public static final String ORDER_CONCEPT_URL = "orderConcept";
+    public static final String LATERALITY_URL = "laterality";
+    public static final String CLINICAL_HISTORY_URL = "clinicalHistory";
+    public static final String ORDER_FREQUENCY_URL = "orderFrequency";
 }
