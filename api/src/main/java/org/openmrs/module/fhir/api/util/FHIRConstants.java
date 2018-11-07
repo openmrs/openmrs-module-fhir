@@ -126,6 +126,10 @@ public final class FHIRConstants {
 
 	public static final String OBSERVATION = "Observation";
 
+	public static final String MEDICATION = "Medication";
+
+	public static final String MEDICATION_REQUEST = "MedicationRequest";
+
 	public static final String NUMERIC_CONCEPT_MEASURE_URI = "http://unitsofmeasure.org";
 
 	//HL47 Abbrevations

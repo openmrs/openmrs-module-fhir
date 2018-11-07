@@ -99,7 +99,7 @@ public class ObsConditionStrategy implements GenericConditionStrategy {
 			if (mappings != null && !mappings.isEmpty()) {
 				for (ConceptMap map : mappings) {
 					if (map.getConceptReferenceTerm() != null) {
-						dts.add(FHIRUtils.getCodingDtByConceptMappings(map));
+						dts.add(FHIRUtils.createCoding(map));
 					}
 				}
 			}

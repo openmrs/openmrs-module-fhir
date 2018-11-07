@@ -1,15 +1,12 @@
 package org.openmrs.module.fhir.api.strategies.medicationrequest;
 
-import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import org.apache.commons.lang.StringUtils;
 import org.hl7.fhir.dstu3.model.MedicationRequest;
-import org.openmrs.CareSetting;
 import org.openmrs.Drug;
 import org.openmrs.DrugOrder;
 import org.openmrs.Order;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.util.ErrorUtil;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRMedicationRequestUtil;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
@@ -32,7 +29,7 @@ public class MedicationRequestStrategy implements GenericMedicationRequestStrate
 	}
 
 	@Override
-	public List<MedicationRequest> searchMedicationRequestById(String uuid) {
+	public List<MedicationRequest> searchMedicationRequestByUuid(String uuid) {
 		DrugOrder drugOrder = (DrugOrder) Context.getOrderService().getOrderByUuid(uuid);
 		List<MedicationRequest> medicationRequests = new ArrayList<>();
 		if (drugOrder != null) {
@@ -42,7 +39,7 @@ public class MedicationRequestStrategy implements GenericMedicationRequestStrate
 	}
 
 	@Override
-	public List<MedicationRequest> searchMedicationRequestByPatientId(String patientUuid) {
+	public List<MedicationRequest> searchMedicationRequestByPatientUuid(String patientUuid) {
 		Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
 		List<MedicationRequest> medicationRequests = new ArrayList<>();
 		if (patient != null) {
@@ -68,8 +65,6 @@ public class MedicationRequestStrategy implements GenericMedicationRequestStrate
 		List<String> errors = new ArrayList<>();
 		DrugOrder drugOrder = FHIRMedicationRequestUtil.generateDrugOrder(medicationRequest, errors);
 		FHIRUtils.checkGeneratorErrorList(errors);
-		CareSetting careSetting = Context.getOrderService().getCareSetting(2);
-		drugOrder.setCareSetting(careSetting);
 
 		if (!StringUtils.isEmpty(drugOrder.getDrug().getUuid())) {
 			Drug drug = Context.getConceptService().getDrugByUuid(drugOrder.getDrug().getUuid());
@@ -86,15 +81,13 @@ public class MedicationRequestStrategy implements GenericMedicationRequestStrate
 	public MedicationRequest updateFHIRMedicationRequest(MedicationRequest medicationRequest, String uuid) {
 		List<String> errors = new ArrayList<>();
 		DrugOrder incomingDrugOrder = FHIRMedicationRequestUtil.generateDrugOrder(medicationRequest, errors);
-		DrugOrder generatedDrugOrder = (DrugOrder) Context.getOrderService().getOrderByUuid(uuid);
-		FHIRMedicationRequestUtil.copyObsAttributes(incomingDrugOrder, generatedDrugOrder, errors);
-		if (generatedDrugOrder != null) { //medication request update
-			if (!errors.isEmpty()) {
-				String errorMessage = ErrorUtil.generateErrorMessage(errors, FHIRConstants.REQUEST_ISSUE_LIST);
-				throw new UnprocessableEntityException(errorMessage);
-			}
+		DrugOrder existingDrugOrder = (DrugOrder) Context.getOrderService().getOrderByUuid(uuid);
 
-			incomingDrugOrder = (DrugOrder) Context.getOrderService().saveOrder(generatedDrugOrder, null);
+		if (existingDrugOrder != null) {
+			incomingDrugOrder.setUuid(null);
+			incomingDrugOrder.setAction(Order.Action.REVISE);
+			incomingDrugOrder.setPreviousOrder(existingDrugOrder);
+			incomingDrugOrder = (DrugOrder) Context.getOrderService().saveOrder(incomingDrugOrder, null);
 			return FHIRMedicationRequestUtil.generateMedicationRequest(incomingDrugOrder);
 		} else {
 			StrategyUtil.setIdIfNeeded(medicationRequest, uuid);

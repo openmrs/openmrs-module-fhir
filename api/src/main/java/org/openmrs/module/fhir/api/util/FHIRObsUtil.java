@@ -94,7 +94,7 @@ public class FHIRObsUtil {
 
 		//Set codings from openmrs concept mappings
 		for (ConceptMap map : mappings) {
-			dts.add(FHIRUtils.getCodingDtByConceptMappings(map));
+			dts.add(FHIRUtils.createCoding(map));
 		}
 		//Set openmrs concept
 		dts.add(FHIRUtils.getCodingDtByOpenMRSConcept(obs.getConcept()));
@@ -164,7 +164,7 @@ public class FHIRObsUtil {
 				//Set codings from openmrs concept mappings
 				for (ConceptMap map : valueMappings) {
 					if (map.getConceptReferenceTerm() != null) {
-						values.add(FHIRUtils.getCodingDtByConceptMappings(map));
+						values.add(FHIRUtils.createCoding(map));
 					}
 				}
 				//Set openmrs concept

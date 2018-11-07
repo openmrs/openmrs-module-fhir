@@ -8,9 +8,9 @@ public interface GenericMedicationRequestStrategy {
 
 	MedicationRequest getMedicationRequestById(String uuid);
 
-	List<MedicationRequest> searchMedicationRequestById(String uuid);
+	List<MedicationRequest> searchMedicationRequestByUuid(String uuid);
 
-	List<MedicationRequest> searchMedicationRequestByPatientId(String patientUuid);
+	List<MedicationRequest> searchMedicationRequestByPatientUuid(String patientUuid);
 
 	void deleteMedicationRequest(String uuid);
 
