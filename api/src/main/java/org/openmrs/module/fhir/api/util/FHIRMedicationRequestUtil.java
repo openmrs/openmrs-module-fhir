@@ -35,17 +35,11 @@ import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.comparator.MedicationRequestComparator;
+import org.openmrs.module.fhir.api.constants.ExtensionURL;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.AS_NEEDED_CONDITION;
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.BRAND_NAME;
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.CARE_SETTING;
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.DISPENSE_AS_WRITTEN;
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.DOSING_TYPE;
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.DRUG_NON_CODED;
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.NUM_REFILLS;
 import static org.openmrs.module.fhir.api.util.ExtensionsUtil.createAsNeededConditionExtension;
 import static org.openmrs.module.fhir.api.util.ExtensionsUtil.createBrandNameExtension;
 import static org.openmrs.module.fhir.api.util.ExtensionsUtil.createCareSettingExtension;
@@ -150,7 +144,7 @@ public class FHIRMedicationRequestUtil {
 	}
 
 	private static String buildAsNeededCondition(MedicationRequest fhirMedicationRequest) {
-		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(AS_NEEDED_CONDITION);
+		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.AS_NEEDED_CONDITION);
 		if (extensions.size() > 0) {
 			return getStringFromExtension(extensions.get(FIRST));
 		}
@@ -165,7 +159,7 @@ public class FHIRMedicationRequestUtil {
 	}
 
 	private static void setDosingType(DrugOrder drugOrder, MedicationRequest fhirMedicationRequest, List<String> errors) {
-		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(DOSING_TYPE);
+		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.DOSING_TYPE);
 		try {
 			if (extensions.size() > 0) {
 				drugOrder.setDosingType(
@@ -186,7 +180,7 @@ public class FHIRMedicationRequestUtil {
 	}
 
 	private static Integer buildNumRefills(MedicationRequest fhirMedicationRequest) {
-		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(NUM_REFILLS);
+		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.NUM_REFILLS);
 		if (extensions.size() > 0) {
 			return getIntegerFromExtension(extensions.get(FIRST));
 		}
@@ -194,7 +188,7 @@ public class FHIRMedicationRequestUtil {
 	}
 
 	private static String buildBrandName(MedicationRequest fhirMedicationRequest) {
-		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(BRAND_NAME);
+		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.BRAND_NAME);
 		if (extensions.size() > 0) {
 			return getStringFromExtension(extensions.get(FIRST));
 		}
@@ -202,7 +196,7 @@ public class FHIRMedicationRequestUtil {
 	}
 
 	private static Boolean buildDispenseAsWritten(MedicationRequest fhirMedicationRequest) {
-		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(DISPENSE_AS_WRITTEN);
+		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.DISPENSE_AS_WRITTEN);
 		if (extensions.size() > 0) {
 			return getBooleanFromExtension(extensions.get(FIRST));
 		}
@@ -210,7 +204,7 @@ public class FHIRMedicationRequestUtil {
 	}
 
 	private static String buildDrugNonCoded(MedicationRequest fhirMedicationRequest) {
-		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(DRUG_NON_CODED);
+		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.DRUG_NON_CODED);
 		if (extensions.size() > 0) {
 			return getStringFromExtension(extensions.get(FIRST));
 		}
@@ -227,7 +221,7 @@ public class FHIRMedicationRequestUtil {
 
 	private static CareSetting buildCareSetting(MedicationRequest fhirMedicationRequest) {
 		CareSetting careSetting = Context.getOrderService().getCareSetting(INPATIENT);
-		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(CARE_SETTING);
+		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.CARE_SETTING);
 		if (extensions.size() > 0) {
 			String careSettingUuid = getStringFromExtension(extensions.get(FIRST));
 			careSetting = Context.getOrderService().getCareSettingByUuid(careSettingUuid);
