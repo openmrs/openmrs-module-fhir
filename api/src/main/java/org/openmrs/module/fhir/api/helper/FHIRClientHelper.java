@@ -155,7 +155,7 @@ public class FHIRClientHelper implements ClientHelper {
 				result = FHIRMedicationRequestUtil.areMedicationRequestsEquals(dest, from);
 				break;
 			case CATEGORY_TEST_ORDER:
-				result = FHIRProcedureRequestUtil.areProcedureRequestsEquals(dest, from);
+				result = FHIRProcedureRequestUtil.areProcedureRequestsEqual(dest, from);
 				break;
 			default:
 				result = dest.equals(from);

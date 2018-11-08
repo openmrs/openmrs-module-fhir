@@ -24,6 +24,7 @@ import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.TestOrder;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.comparator.ProcedureRequestComparator;
 import org.openmrs.module.fhir.api.constants.ExtensionURL;
 
 import java.util.Collections;
@@ -40,9 +41,9 @@ public class FHIRProcedureRequestUtil {
 	private static final String CONCEPT_NOT_FOUND = "Concept with id: '%s' not found";
 	private static final String ORDER_FREQUENCY_NOT_FOUND = "OrderFrequency with id: '%s' not found";
 
-	public static boolean areProcedureRequestsEquals(Object o1, Object o2) {
-		//TODO
-		return false;
+	public static boolean areProcedureRequestsEqual(Object o1, Object o2) {
+		return o1 instanceof ProcedureRequest && o2 instanceof ProcedureRequest
+				&& new ProcedureRequestComparator().areEquals((ProcedureRequest) o1, (ProcedureRequest) o2);
 	}
 
 	public static ProcedureRequest generateProcedureRequest(TestOrder testOrder) {
