@@ -7,6 +7,7 @@ import org.openmrs.TestOrder;
 import org.openmrs.api.APIException;
 import org.openmrs.api.OrderService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRProcedureRequestUtil;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.springframework.stereotype.Component;
@@ -29,7 +30,8 @@ public class ProcedureRequestStrategy implements GenericProcedureRequestStrategy
 
 	@Override
 	public void deleteProcedureRequest(String uuid) {
-		//TODO
+		Order testOrder = getOrderService().getOrderByUuid(uuid);
+		getOrderService().voidOrder(testOrder, FHIRConstants.FHIR_VOIDED_MESSAGE);
 	}
 
 	@Override
