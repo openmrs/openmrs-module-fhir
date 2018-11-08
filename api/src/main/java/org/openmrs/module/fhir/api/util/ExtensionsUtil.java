@@ -3,6 +3,7 @@ package org.openmrs.module.fhir.api.util;
 import org.apache.commons.lang.StringUtils;
 import org.hl7.fhir.dstu3.model.BooleanType;
 import org.hl7.fhir.dstu3.model.DateTimeType;
+import org.hl7.fhir.dstu3.model.DomainResource;
 import org.hl7.fhir.dstu3.model.Extension;
 import org.hl7.fhir.dstu3.model.IntegerType;
 import org.hl7.fhir.dstu3.model.PrimitiveType;
@@ -17,8 +18,11 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.constants.ExtensionURL;
 
 import java.util.Date;
+import java.util.List;
 
 public final class ExtensionsUtil {
+
+	private static final int FIRST = 0;
 
 	private ExtensionsUtil() { }
 
@@ -82,6 +86,14 @@ public final class ExtensionsUtil {
 			default:
 				break;
 		}
+	}
+
+	public static Extension getExtension(final String url, final DomainResource domainResource) {
+		List<Extension> extensions = domainResource.getExtensionsByUrl(url);
+		if (!extensions.isEmpty()) {
+			return extensions.get(FIRST);
+		}
+		return new Extension();
 	}
 
 	//region create extensions
