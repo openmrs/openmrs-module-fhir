@@ -18,9 +18,9 @@ public abstract class MergeResult<T> {
 
 	protected final T orgForeign;
 
-	protected String message;
+	protected MergeMessageEnum message;
 
-	public MergeResult(Class<?> clazz, T orgLocal, T orgForeign, String message) {
+	public MergeResult(Class<?> clazz, T orgLocal, T orgForeign, MergeMessageEnum message) {
 		this.clazz = clazz;
 		this.orgLocal = orgLocal;
 		this.orgForeign = orgForeign;
@@ -39,9 +39,7 @@ public abstract class MergeResult<T> {
 		return orgForeign;
 	}
 
-	public String getMessage() {
+	public MergeMessageEnum getMessage() {
 		return message;
 	}
-
-	public abstract boolean isCompleted();
 }

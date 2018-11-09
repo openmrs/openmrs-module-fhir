@@ -9,13 +9,7 @@ package org.openmrs.module.fhir.api.merge;
  */
 public class MergeConflict<T> extends MergeResult<T> {
 
-	protected static final String CONFLICT = "Entities cannot be merged automatically!";
-
 	public MergeConflict(Class<?> clazz, T local, T foreign) {
-		super(clazz, local, foreign, CONFLICT);
-	}
-
-	public boolean isCompleted() {
-		return false;
+		super(clazz, local, foreign, MergeMessageEnum.CONFLICT);
 	}
 }

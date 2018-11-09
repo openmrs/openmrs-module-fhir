@@ -11,14 +11,6 @@ import java.net.URI;
  */
 public class MergeSuccess<T> extends MergeResult<T> {
 
-	protected static final String NO_SAVE_MESSAGE = "Entities are equal";
-
-	protected static final String FOREIGN_SAVE_MESSAGE = "Foreign entity should be updated";
-
-	protected static final String LOCAL_SAVE_MESSAGE = "Local entity should be updated";
-
-	protected static final String SAVE_BOTH_MESSAGES = "Entities were merged and should be updated";
-
 	protected URI foreignAddress;
 
 	protected T merged;
@@ -26,6 +18,16 @@ public class MergeSuccess<T> extends MergeResult<T> {
 	protected boolean updateLocal;
 
 	protected boolean updateForeign;
+
+	public MergeSuccess(MergeConflict<T> conflict, URI foreignAddress, T merged, boolean updateLocal,
+			boolean updateForeign) {
+		super(conflict.getClazz(), conflict.getOrgLocal(), conflict.getOrgForeign(), null);
+		this.foreignAddress = foreignAddress;
+		this.merged = merged;
+		this.updateLocal = updateLocal;
+		this.updateForeign = updateForeign;
+		resolveMessage();
+	}
 
 	public MergeSuccess(Class<?> clazz, T orgLocal, T orgForeign,
 			URI foreignAddress, T merged, boolean updateLocal, boolean updateForeign) {
@@ -38,7 +40,7 @@ public class MergeSuccess<T> extends MergeResult<T> {
 	}
 
 	public MergeSuccess(Class<?> clazz, T orgLocal, T orgForeign, URI foreignAddress) {
-		super(clazz, orgLocal, orgForeign, NO_SAVE_MESSAGE);
+		super(clazz, orgLocal, orgForeign, MergeMessageEnum.NO_SAVE_MESSAGE);
 		this.foreignAddress = foreignAddress;
 		this.merged = null;
 		this.updateLocal = false;
@@ -46,15 +48,12 @@ public class MergeSuccess<T> extends MergeResult<T> {
 	}
 
 	public MergeSuccess(MergeConflict<T> conflict, URI foreignAddress) {
-		super(conflict.getClazz(), conflict.getOrgLocal(), conflict.getOrgForeign(), NO_SAVE_MESSAGE);
+		super(conflict.getClazz(), conflict.getOrgLocal(), conflict.getOrgForeign(),
+				MergeMessageEnum.NO_SAVE_MESSAGE);
 		this.foreignAddress = foreignAddress;
 		this.merged = null;
 		this.updateLocal = false;
 		this.updateForeign = false;
-	}
-
-	public boolean isCompleted() {
-		return true;
 	}
 
 	public boolean shouldUpdateForeign() {
@@ -79,13 +78,13 @@ public class MergeSuccess<T> extends MergeResult<T> {
 
 	private void resolveMessage() {
 		if (updateLocal && updateForeign) {
-			this.message = SAVE_BOTH_MESSAGES;
+			this.message = MergeMessageEnum.SAVE_BOTH_MESSAGES;
 		} else if (updateLocal) {
-			this.message = LOCAL_SAVE_MESSAGE;
+			this.message = MergeMessageEnum.LOCAL_SAVE_MESSAGE;
 		} else if (updateForeign) {
-			this.message = FOREIGN_SAVE_MESSAGE;
+			this.message = MergeMessageEnum.FOREIGN_SAVE_MESSAGE;
 		} else {
-			this.message = NO_SAVE_MESSAGE;
+			this.message = MergeMessageEnum.NO_SAVE_MESSAGE;
 		}
 	}
 }

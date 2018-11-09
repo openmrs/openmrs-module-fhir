@@ -15,7 +15,8 @@ public interface MergeBehaviour<T> {
 	 *
 	 * @param local represents local version of an entity
 	 * @param foreign represents foreign version of an entity
+	 * @param clazz represents specific class which extends T
 	 * @return returns a result which depends on implemented merging behaviour
 	 */
-	MergeResult<T> resolveDiff(T local, T foreign);
+	MergeResult<T> resolveDiff(T local, T foreign, Class<? extends T> clazz);
 }
