@@ -44,20 +44,20 @@ public class RestfulProcedureRequestResourceProvider implements IResourceProvide
 
 	@Read
 	public ProcedureRequest getResourceById(@IdParam IdType theId) {
-		return resource.getByUniqueId(theId);
+		return resource.getByUuid(theId);
 	}
 
 	@Create
-	public MethodOutcome createFHIRMedicationRequest(@ResourceParam ProcedureRequest procedureRequest) {
+	public MethodOutcome createProcedureRequest(@ResourceParam ProcedureRequest procedureRequest) {
 		return MethodOutcomeBuilder
-				.buildCreate(resource.createFHIRProcedureRequest(procedureRequest));
+				.buildCreate(resource.createProcedureRequest(procedureRequest));
 	}
 
 	@Update
-	public MethodOutcome updateMedicationRequest(@ResourceParam ProcedureRequest procedureRequest, @IdParam IdType theId) {
+	public MethodOutcome updateProcedureRequest(@ResourceParam ProcedureRequest procedureRequest, @IdParam IdType theId) {
 		try {
 			return MethodOutcomeBuilder.buildUpdate(
-					resource.updateFHIRProcedureRequest(procedureRequest, theId.getIdPart()));
+					resource.updateProcedureRequest(procedureRequest, theId.getIdPart()));
 		}
 		catch (Exception e) {
 			return MethodOutcomeBuilder.buildCustom(ERROR_MESSAGE);
@@ -65,7 +65,7 @@ public class RestfulProcedureRequestResourceProvider implements IResourceProvide
 	}
 
 	@Delete
-	public void deleteMedicationRequest(@IdParam IdType theId) {
+	public void deleteProcedureRequest(@IdParam IdType theId) {
 		resource.deleteProcedureRequest(theId.getIdPart());
 	}
 }

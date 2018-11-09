@@ -21,27 +21,27 @@ import org.openmrs.module.fhir.api.ProcedureRequestService;
 
 public class FHIRProcedureRequestResource extends Resource {
 
-	public ProcedureRequest getByUniqueId(IdType id) {
+	public ProcedureRequest getByUuid(IdType uuid) {
 		ProcedureRequestService service = Context.getService(ProcedureRequestService.class);
-		ProcedureRequest procedureRequest = service.getById(id.getIdPart());
+		ProcedureRequest procedureRequest = service.getProcedureRequestByUuid(uuid.getIdPart());
 		if (procedureRequest == null) {
-			throw new ResourceNotFoundException("Procedure request is not found for the given Id " + id.getIdPart());
+			throw new ResourceNotFoundException("Procedure request is not found for the given Id " + uuid.getIdPart());
 		}
 		return procedureRequest;
 	}
 
-	public ProcedureRequest createFHIRProcedureRequest(ProcedureRequest procedureRequest) {
+	public ProcedureRequest createProcedureRequest(ProcedureRequest procedureRequest) {
 		ProcedureRequestService service = Context.getService(ProcedureRequestService.class);
-		return service.createFHIRProcedureRequest(procedureRequest);
+		return service.createProcedureRequest(procedureRequest);
 	}
 
-	public ProcedureRequest updateFHIRProcedureRequest(ProcedureRequest procedureRequest, String theId) {
+	public ProcedureRequest updateProcedureRequest(ProcedureRequest procedureRequest, String theId) {
 		ProcedureRequestService service = Context.getService(ProcedureRequestService.class);
-		return service.updateFHIRProcedureRequest(procedureRequest, theId);
+		return service.updateProcedureRequest(procedureRequest, theId);
 	}
 
 	public void deleteProcedureRequest(String theId) {
 		ProcedureRequestService service = Context.getService(ProcedureRequestService.class);
-		service.delete(theId);
+		service.deleteProcedureRequest(theId);
 	}
 }

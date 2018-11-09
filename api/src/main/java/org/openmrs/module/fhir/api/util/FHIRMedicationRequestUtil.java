@@ -23,7 +23,6 @@ import org.hl7.fhir.dstu3.model.Reference;
 import org.hl7.fhir.dstu3.model.SimpleQuantity;
 import org.hl7.fhir.dstu3.model.Timing;
 import org.hl7.fhir.exceptions.FHIRException;
-import org.openmrs.CareSetting;
 import org.openmrs.Concept;
 import org.openmrs.DosingInstructions;
 import org.openmrs.Drug;
@@ -31,37 +30,14 @@ import org.openmrs.DrugOrder;
 import org.openmrs.Encounter;
 import org.openmrs.Order;
 import org.openmrs.OrderFrequency;
-import org.openmrs.Patient;
-import org.openmrs.Provider;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.comparator.MedicationRequestComparator;
+import org.openmrs.module.fhir.api.constants.ExtensionURL;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.AS_NEEDED_CONDITION;
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.BRAND_NAME;
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.CARE_SETTING;
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.DISPENSE_AS_WRITTEN;
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.DOSING_TYPE;
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.DRUG_NON_CODED;
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.NUM_REFILLS;
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.createAsNeededConditionExtension;
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.createBrandNameExtension;
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.createCareSettingExtension;
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.createDispenseAsWrittenExtension;
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.createDosingTypeExtension;
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.createDrugNonCodedExtension;
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.createNumRefillsExtension;
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.getBooleanFromExtension;
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.getIntegerFromExtension;
-import static org.openmrs.module.fhir.api.util.ExtensionsUtil.getStringFromExtension;
-import static org.openmrs.module.fhir.api.util.FHIRUtils.createIdentifier;
-import static org.openmrs.module.fhir.api.util.FHIRUtils.getObjectUuidByIdentifier;
-
 public class FHIRMedicationRequestUtil {
-
-	private static final int INPATIENT = 2;
 
 	private static final int FIRST = 0;
 
@@ -82,24 +58,24 @@ public class FHIRMedicationRequestUtil {
 		BaseOpenMRSDataUtil.setBaseExtensionFields(medicationRequest, omrsDrugOrder);
 
 		medicationRequest.setId(omrsDrugOrder.getUuid());
-		medicationRequest.addIdentifier(createIdentifier(omrsDrugOrder.getUuid()));
+		medicationRequest.addIdentifier(FHIRUtils.createIdentifier(omrsDrugOrder.getUuid()));
 		medicationRequest.setStatus(buildStatus(omrsDrugOrder));
 		medicationRequest.setIntent(MedicationRequest.MedicationRequestIntent.ORDER);
 		medicationRequest.setPriority(buildPriority(omrsDrugOrder));
-		medicationRequest.setSubject(buildSubject(omrsDrugOrder));
-		medicationRequest.setContext(buildContext(omrsDrugOrder));
+		medicationRequest.setSubject(FHIRRequestUtil.buildSubject(omrsDrugOrder));
+		medicationRequest.setContext(FHIRRequestUtil.buildContext(omrsDrugOrder));
 		medicationRequest.setRequester(buildRequester(omrsDrugOrder));
-		medicationRequest.setRecorder(buildPractitionerReference(omrsDrugOrder));
+		medicationRequest.setRecorder(FHIRRequestUtil.buildPractitionerReference(omrsDrugOrder));
 		medicationRequest.setDosageInstruction(buildDosageInstructions(omrsDrugOrder));
 		medicationRequest.setDispenseRequest(buildDispenseRequest(omrsDrugOrder));
 		medicationRequest.setMedication(buildMedication(omrsDrugOrder));
-		medicationRequest.addExtension(createAsNeededConditionExtension(omrsDrugOrder.getAsNeededCondition()));
+		medicationRequest.addExtension(ExtensionsUtil.createAsNeededConditionExtension(omrsDrugOrder.getAsNeededCondition()));
 		medicationRequest.addExtension(buildDosingType(omrsDrugOrder));
 		medicationRequest.addExtension(buildNumRefills(omrsDrugOrder));
-		medicationRequest.addExtension(createBrandNameExtension(omrsDrugOrder.getBrandName()));
-		medicationRequest.addExtension(createDispenseAsWrittenExtension(omrsDrugOrder.getDispenseAsWritten()));
-		medicationRequest.addExtension(createDrugNonCodedExtension(omrsDrugOrder.getDrugNonCoded()));
-		medicationRequest.addExtension(buildCareSetting(omrsDrugOrder));
+		medicationRequest.addExtension(ExtensionsUtil.createBrandNameExtension(omrsDrugOrder.getBrandName()));
+		medicationRequest.addExtension(ExtensionsUtil.createDispenseAsWrittenExtension(omrsDrugOrder.getDispenseAsWritten()));
+		medicationRequest.addExtension(ExtensionsUtil.createDrugNonCodedExtension(omrsDrugOrder.getDrugNonCoded()));
+		medicationRequest.addExtension(FHIRRequestUtil.buildCareSettingExtension(omrsDrugOrder));
 
 		return medicationRequest;
 	}
@@ -116,12 +92,12 @@ public class FHIRMedicationRequestUtil {
 
 		BaseOpenMRSDataUtil.readBaseExtensionFields(drugOrder, fhirMedicationRequest);
 
-		drugOrder.setUuid(getObjectUuidByIdentifier(fhirMedicationRequest.getIdentifierFirstRep()));
+		drugOrder.setUuid(FHIRUtils.getObjectUuidByIdentifier(fhirMedicationRequest.getIdentifierFirstRep()));
 		drugOrder.setAction(buildAction(fhirMedicationRequest));
 		drugOrder.setUrgency(buildUrgency(fhirMedicationRequest));
-		drugOrder.setPatient(buildPatient(fhirMedicationRequest, errors));
+		drugOrder.setPatient(FHIRRequestUtil.buildPatient(fhirMedicationRequest, errors));
 		drugOrder.setEncounter(buildEncounter(fhirMedicationRequest, errors));
-		drugOrder.setOrderer(buildOrderer(fhirMedicationRequest, errors));
+		drugOrder.setOrderer(FHIRRequestUtil.buildOrderer(fhirMedicationRequest, errors));
 		setDoseAndDoseUnit(drugOrder, fhirMedicationRequest);
 		drugOrder.setFrequency(buildFrequency(fhirMedicationRequest, errors));
 		drugOrder.setAsNeeded(buildAsNeeded(fhirMedicationRequest));
@@ -136,7 +112,7 @@ public class FHIRMedicationRequestUtil {
 		drugOrder.setBrandName(buildBrandName(fhirMedicationRequest));
 		drugOrder.setDispenseAsWritten(buildDispenseAsWritten(fhirMedicationRequest));
 		drugOrder.setDrugNonCoded(buildDrugNonCoded(fhirMedicationRequest));
-		drugOrder.setCareSetting(buildCareSetting(fhirMedicationRequest));
+		drugOrder.setCareSetting(FHIRRequestUtil.buildCareSetting(fhirMedicationRequest, errors));
 
 		return drugOrder;
 	}
@@ -150,26 +126,27 @@ public class FHIRMedicationRequestUtil {
 	}
 
 	private static String buildAsNeededCondition(MedicationRequest fhirMedicationRequest) {
-		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(AS_NEEDED_CONDITION);
+		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.AS_NEEDED_CONDITION);
 		if (extensions.size() > 0) {
-			return getStringFromExtension(extensions.get(FIRST));
+			return ExtensionsUtil.getStringFromExtension(extensions.get(FIRST));
 		}
 		return null;
 	}
 
 	private static Extension buildDosingType(DrugOrder omrsDrugOrder) {
 		if (omrsDrugOrder.getDosingType() != null) {
-			return createDosingTypeExtension(omrsDrugOrder.getDosingType().getCanonicalName());
+			return ExtensionsUtil.createDosingTypeExtension(omrsDrugOrder.getDosingType().getCanonicalName());
 		}
 		return null;
 	}
 
 	private static void setDosingType(DrugOrder drugOrder, MedicationRequest fhirMedicationRequest, List<String> errors) {
-		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(DOSING_TYPE);
+		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.DOSING_TYPE);
 		try {
 			if (extensions.size() > 0) {
 				drugOrder.setDosingType(
-						(Class<? extends DosingInstructions>) Class.forName(getStringFromExtension(extensions.get(FIRST))));
+						(Class<? extends DosingInstructions>) Class.forName(
+								ExtensionsUtil.getStringFromExtension(extensions.get(FIRST))));
 			}
 		}
 		catch (ClassNotFoundException e) {
@@ -180,97 +157,48 @@ public class FHIRMedicationRequestUtil {
 	private static Extension buildNumRefills(DrugOrder omrsDrugOrder) {
 		Integer numRefills = omrsDrugOrder.getNumRefills();
 		if (numRefills != null) {
-			return createNumRefillsExtension(omrsDrugOrder.getNumRefills());
+			return ExtensionsUtil.createNumRefillsExtension(omrsDrugOrder.getNumRefills());
 		}
 		return null;
 	}
 
 	private static Integer buildNumRefills(MedicationRequest fhirMedicationRequest) {
-		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(NUM_REFILLS);
+		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.NUM_REFILLS);
 		if (extensions.size() > 0) {
-			return getIntegerFromExtension(extensions.get(FIRST));
+			return ExtensionsUtil.getIntegerFromExtension(extensions.get(FIRST));
 		}
 		return null;
 	}
 
 	private static String buildBrandName(MedicationRequest fhirMedicationRequest) {
-		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(BRAND_NAME);
+		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.BRAND_NAME);
 		if (extensions.size() > 0) {
-			return getStringFromExtension(extensions.get(FIRST));
+			return ExtensionsUtil.getStringFromExtension(extensions.get(FIRST));
 		}
 		return null;
 	}
 
 	private static Boolean buildDispenseAsWritten(MedicationRequest fhirMedicationRequest) {
-		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(DISPENSE_AS_WRITTEN);
+		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.DISPENSE_AS_WRITTEN);
 		if (extensions.size() > 0) {
-			return getBooleanFromExtension(extensions.get(FIRST));
+			return ExtensionsUtil.getBooleanFromExtension(extensions.get(FIRST));
 		}
 		return null;
 	}
 
 	private static String buildDrugNonCoded(MedicationRequest fhirMedicationRequest) {
-		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(DRUG_NON_CODED);
+		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.DRUG_NON_CODED);
 		if (extensions.size() > 0) {
-			return getStringFromExtension(extensions.get(FIRST));
+			return ExtensionsUtil.getStringFromExtension(extensions.get(FIRST));
 		}
 		return null;
 	}
 
-	private static Extension buildCareSetting(DrugOrder omrsDrugOrder) {
-		CareSetting careSetting = omrsDrugOrder.getCareSetting();
-		if (careSetting != null) {
-			return createCareSettingExtension(careSetting.getUuid());
-		}
-		return null;
-	}
-
-	private static CareSetting buildCareSetting(MedicationRequest fhirMedicationRequest) {
-		CareSetting careSetting = Context.getOrderService().getCareSetting(INPATIENT);
-		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(CARE_SETTING);
-		if (extensions.size() > 0) {
-			String careSettingUuid = getStringFromExtension(extensions.get(FIRST));
-			careSetting = Context.getOrderService().getCareSettingByUuid(careSettingUuid);
-		}
-		return careSetting;
-	}
-
-	private static MedicationRequest.MedicationRequestRequesterComponent buildRequester(DrugOrder omrsDrugOrder) {
+	private static MedicationRequest.MedicationRequestRequesterComponent buildRequester(DrugOrder drugOrder) {
 		MedicationRequest.MedicationRequestRequesterComponent reqComponent =
 				new MedicationRequest.MedicationRequestRequesterComponent();
-		reqComponent.setAgent(buildPractitionerReference(omrsDrugOrder));
+		reqComponent.setAgent(FHIRRequestUtil.buildPractitionerReference(drugOrder));
 		return reqComponent;
-	}
-
-	private static Provider buildOrderer(MedicationRequest fhirMedicationRequest, List<String> errors) {
-		MedicationRequest.MedicationRequestRequesterComponent medicationRequestRequesterComponent
-				= fhirMedicationRequest.getRequester();
-		if (medicationRequestRequesterComponent != null) {
-			Reference providerRef = medicationRequestRequesterComponent.getAgent();
-			String providerUuid =  FHIRUtils.getObjectUuidByReference(providerRef);
-			return Context.getProviderService().getProviderByUuid(providerUuid);
-		} else {
-			errors.add("Requester cannot be empty");
-		}
-		return null;
-	}
-
-	private static Reference buildPractitionerReference(DrugOrder omrsDrugOrder) {
-		Provider provider = omrsDrugOrder.getOrderer();
-		if (provider != null) {
-			return FHIRPractitionerUtil.buildPractionaerReference(provider);
-		}
-		return null;
-	}
-
-	private static Reference buildContext(DrugOrder omrsDrugOrder) {
-		Encounter encounter = omrsDrugOrder.getEncounter();
-		if (encounter != null) {
-			Reference encounterRef = FHIRObsUtil.getFHIREncounterReference(encounter);
-			encounterRef.setId(encounter.getUuid());
-			return encounterRef;
-		}
-		return null;
 	}
 
 	private static Encounter buildEncounter(MedicationRequest fhirMedicationRequest, List<String> errors) {
@@ -286,26 +214,6 @@ public class FHIRMedicationRequestUtil {
 			errors.add("Context cannot be empty");
 		}
 		return encounter;
-	}
-
-	private static Reference buildSubject(DrugOrder omrsDrugOrder) {
-		Patient patient = omrsDrugOrder.getPatient();
-		return FHIRPatientUtil.buildPatientReference(patient);
-	}
-
-	private static Patient buildPatient(MedicationRequest fhirMedicationRequest, List<String> errors) {
-		Patient patient = null;
-		Reference patientRef = fhirMedicationRequest.getSubject();
-		if (patientRef != null) {
-			String patientUuid = FHIRUtils.getObjectUuidByReference(patientRef);
-			patient = Context.getPatientService().getPatientByUuid(patientUuid);
-			if (patient == null) {
-				errors.add("There is no patient for the given uuid");
-			}
-		} else {
-			errors.add("Subject cannot be empty");
-		}
-		return patient;
 	}
 
 	private static MedicationRequest.MedicationRequestStatus buildStatus(DrugOrder omrsDrugOrder) {

@@ -8,6 +8,7 @@ import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.comparator.GroupComparator;
+import org.openmrs.module.fhir.api.constants.ExtensionURL;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +92,7 @@ public class FHIRGroupUtil {
 	}
 
 	public static String getDescription(Group group) {
-		Extension extension = group.getExtensionsByUrl(ExtensionsUtil.DESCRIPTION_URL).get(FIRST);
+		Extension extension = group.getExtensionsByUrl(ExtensionURL.DESCRIPTION_URL).get(FIRST);
 		return extension.getValue().toString();
 	}
 

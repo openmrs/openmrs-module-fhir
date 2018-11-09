@@ -3,73 +3,53 @@ package org.openmrs.module.fhir.api.util;
 import org.apache.commons.lang.StringUtils;
 import org.hl7.fhir.dstu3.model.BooleanType;
 import org.hl7.fhir.dstu3.model.DateTimeType;
+import org.hl7.fhir.dstu3.model.DomainResource;
 import org.hl7.fhir.dstu3.model.Extension;
 import org.hl7.fhir.dstu3.model.IntegerType;
 import org.hl7.fhir.dstu3.model.PrimitiveType;
 import org.hl7.fhir.dstu3.model.StringType;
 import org.openmrs.BaseOpenmrsData;
 import org.openmrs.BaseOpenmrsMetadata;
+import org.openmrs.Concept;
+import org.openmrs.OrderFrequency;
+import org.openmrs.TestOrder;
 import org.openmrs.User;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.constants.ExtensionURL;
 
 import java.util.Date;
+import java.util.List;
 
 public final class ExtensionsUtil {
 
-	/** https://simplifier.net/SRxProject/resource-date-created/~json */
-	private static final String DATE_CREATED_URL = "http://fhir-es.transcendinsights.com/stu3/StructureDefinition/resource-date-created";
-
-	/** https://simplifier.net/eLabTest/Creator-crew-version1/~json */
-	private static final String CREATOR_URL = "https://purl.org/elab/fhir/StructureDefinition/Creator-crew-version1";
-
-	// Local extensions
-	private static final String CHANGED_BY_URL = "changedBy";
-	private static final String DATE_CHANGED_URL = "dateChanged";
-	private static final String VOIDED_URL = "voided";
-	private static final String DATE_VOIDED_URL = "dateVoided";
-	private static final String VOIDED_BY_URL = "voidedBy";
-	private static final String VOID_REASON_URL = "voidReason";
-	private static final String RETIRED_URL = "retired";
-	private static final String DATE_RETIRED_URL = "dateRetired";
-	private static final String RETIRED_BY_URL = "retiredBy";
-	private static final String RETIRE_REASON_URL = "retireReason";
-
-	public static final String DESCRIPTION_URL = "description";
-
-	public static final String AS_NEEDED_CONDITION = "asNeededCondition";
-	public static final String DOSING_TYPE = "dosingType";
-	public static final String NUM_REFILLS = "numRefills";
-	public static final String BRAND_NAME = "brandName";
-	public static final String DISPENSE_AS_WRITTEN = "dispenseAsWritten";
-	public static final String DRUG_NON_CODED = "drugNonCoded";
-	public static final String CARE_SETTING = "careSetting";
+	private static final int FIRST = 0;
 
 	private ExtensionsUtil() { }
 
 	public static void setBaseOpenMRSData(BaseOpenmrsData openMRSData, Extension extension) {
 		switch (extension.getUrl()) {
-			case DATE_CREATED_URL:
+			case ExtensionURL.DATE_CREATED_URL:
 				openMRSData.setDateCreated(getDateValueFromExtension(extension));
 				break;
-			case CREATOR_URL:
+			case ExtensionURL.CREATOR_URL:
 				openMRSData.setCreator(getUserFromExtension(extension));
 				break;
-			case CHANGED_BY_URL:
+			case ExtensionURL.CHANGED_BY_URL:
 				openMRSData.setChangedBy(getUserFromExtension(extension));
 				break;
-			case DATE_CHANGED_URL:
+			case ExtensionURL.DATE_CHANGED_URL:
 				openMRSData.setDateChanged(getDateValueFromExtension(extension));
 				break;
-			case VOIDED_URL:
+			case ExtensionURL.VOIDED_URL:
 				openMRSData.setVoided(getBooleanFromExtension(extension));
 				break;
-			case DATE_VOIDED_URL:
+			case ExtensionURL.DATE_VOIDED_URL:
 				openMRSData.setDateVoided(getDateValueFromExtension(extension));
 				break;
-			case VOIDED_BY_URL:
+			case ExtensionURL.VOIDED_BY_URL:
 				openMRSData.setVoidedBy(getUserFromExtension(extension));
 				break;
-			case VOID_REASON_URL:
+			case ExtensionURL.VOID_REASON_URL:
 				openMRSData.setVoidReason(getStringFromExtension(extension));
 				break;
 			default:
@@ -79,33 +59,41 @@ public final class ExtensionsUtil {
 
 	public static void setBaseOpenMRSMetadata(BaseOpenmrsMetadata openmrsMetadata, Extension extension) {
 		switch (extension.getUrl()) {
-			case DATE_CREATED_URL:
+			case ExtensionURL.DATE_CREATED_URL:
 				openmrsMetadata.setDateCreated(getDateValueFromExtension(extension));
 				break;
-			case CREATOR_URL:
+			case ExtensionURL.CREATOR_URL:
 				openmrsMetadata.setCreator(getUserFromExtension(extension));
 				break;
-			case CHANGED_BY_URL:
+			case ExtensionURL.CHANGED_BY_URL:
 				openmrsMetadata.setChangedBy(getUserFromExtension(extension));
 				break;
-			case DATE_CHANGED_URL:
+			case ExtensionURL.DATE_CHANGED_URL:
 				openmrsMetadata.setDateChanged(getDateValueFromExtension(extension));
 				break;
-			case RETIRED_URL:
+			case ExtensionURL.RETIRED_URL:
 				openmrsMetadata.setRetired(getBooleanFromExtension(extension));
 				break;
-			case DATE_RETIRED_URL:
+			case ExtensionURL.DATE_RETIRED_URL:
 				openmrsMetadata.setDateRetired(getDateValueFromExtension(extension));
 				break;
-			case RETIRED_BY_URL:
+			case ExtensionURL.RETIRED_BY_URL:
 				openmrsMetadata.setRetiredBy(getUserFromExtension(extension));
 				break;
-			case RETIRE_REASON_URL:
+			case ExtensionURL.RETIRE_REASON_URL:
 				openmrsMetadata.setRetireReason(getStringFromExtension(extension));
 				break;
 			default:
 				break;
 		}
+	}
+
+	public static Extension getExtension(final String url, final DomainResource domainResource) {
+		List<Extension> extensions = domainResource.getExtensionsByUrl(url);
+		if (!extensions.isEmpty()) {
+			return extensions.get(FIRST);
+		}
+		return new Extension();
 	}
 
 	//region create extensions
@@ -114,93 +102,110 @@ public final class ExtensionsUtil {
 		if (creator == null) {
 			return null;
 		}
-		return createExtension(CREATOR_URL, new StringType(creator.getUsername()));
+		return createExtension(ExtensionURL.CREATOR_URL, new StringType(creator.getUsername()));
 	}
 
 	public static Extension createDateCreatedExtension(Date dateCreated) {
-		return createExtension(DATE_CREATED_URL, new DateTimeType(dateCreated));
+		return createExtension(ExtensionURL.DATE_CREATED_URL, new DateTimeType(dateCreated));
 	}
 
 	public static Extension createDateChangedExtension(Date dateChanged) {
-		return createExtension(DATE_CHANGED_URL, new DateTimeType(dateChanged));
+		return createExtension(ExtensionURL.DATE_CHANGED_URL, new DateTimeType(dateChanged));
 	}
 
 	public static Extension createChangedByExtension(User user) {
 		if (user == null) {
 			return null;
 		}
-		return createExtension(CHANGED_BY_URL, new StringType(user.getUsername()));
+		return createExtension(ExtensionURL.CHANGED_BY_URL, new StringType(user.getUsername()));
 	}
 
 	public static Extension createVoidedExtension(boolean voided) {
-		return createExtension(VOIDED_URL, new BooleanType(voided));
+		return createExtension(ExtensionURL.VOIDED_URL, new BooleanType(voided));
 	}
 
 	public static Extension createVoidedByExtension(User user) {
 		if (user == null) {
 			return null;
 		}
-		return createExtension(VOIDED_BY_URL, new StringType(user.getUsername()));
+		return createExtension(ExtensionURL.VOIDED_BY_URL, new StringType(user.getUsername()));
 	}
 
 	public static Extension createDateVoidedExtension(Date dateVoided) {
-		return createExtension(DATE_VOIDED_URL, new DateTimeType(dateVoided));
+		return createExtension(ExtensionURL.DATE_VOIDED_URL, new DateTimeType(dateVoided));
 	}
 
 	public static Extension createVoidReasonExtension(String reason) {
-		return createExtension(VOID_REASON_URL, new StringType(reason));
+		return createExtension(ExtensionURL.VOID_REASON_URL, new StringType(reason));
 	}
 
 	public static Extension createRetiredExtension(boolean retired) {
-		return createExtension(RETIRED_URL, new BooleanType(retired));
+		return createExtension(ExtensionURL.RETIRED_URL, new BooleanType(retired));
 	}
 
 	public static Extension createRetiredByExtension(User user) {
 		if (user == null) {
 			return null;
 		}
-		return createExtension(RETIRED_BY_URL, new StringType(user.getUsername()));
+		return createExtension(ExtensionURL.RETIRED_BY_URL, new StringType(user.getUsername()));
 	}
 
 	public static Extension createDateRetiredExtension(Date dateRetired) {
-		return createExtension(DATE_RETIRED_URL, new DateTimeType(dateRetired));
+		return createExtension(ExtensionURL.DATE_RETIRED_URL, new DateTimeType(dateRetired));
 	}
 
 	public static Extension createRetireReasonExtension(String reason) {
-		return createExtension(RETIRE_REASON_URL, new StringType(reason));
+		return createExtension(ExtensionURL.RETIRE_REASON_URL, new StringType(reason));
 	}
 
 	public static Extension createDescriptionExtension(String description) {
-		return createExtension(DESCRIPTION_URL, new StringType(description));
+		return createExtension(ExtensionURL.DESCRIPTION_URL, new StringType(description));
 	}
 
 	public static Extension createAsNeededConditionExtension(String value) {
-		return createExtension(AS_NEEDED_CONDITION, new StringType(value));
+		return createExtension(ExtensionURL.AS_NEEDED_CONDITION, new StringType(value));
 	}
 
 	public static Extension createDosingTypeExtension(String value) {
-		return createExtension(DOSING_TYPE, new StringType(value));
+		return createExtension(ExtensionURL.DOSING_TYPE, new StringType(value));
 	}
 
 	public static Extension createNumRefillsExtension(Integer value) {
-		return createExtension(NUM_REFILLS, new IntegerType(value));
+		return createExtension(ExtensionURL.NUM_REFILLS, new IntegerType(value));
 	}
 
 	public static Extension createBrandNameExtension(String value) {
-		return createExtension(BRAND_NAME, new StringType(value));
+		return createExtension(ExtensionURL.BRAND_NAME, new StringType(value));
 	}
 
 	public static Extension createDispenseAsWrittenExtension(Boolean value) {
-		return createExtension(DISPENSE_AS_WRITTEN, new BooleanType(value));
+		return createExtension(ExtensionURL.DISPENSE_AS_WRITTEN, new BooleanType(value));
 	}
 
 	public static Extension createDrugNonCodedExtension(String value) {
-		return createExtension(DRUG_NON_CODED, new StringType(value));
+		return createExtension(ExtensionURL.DRUG_NON_CODED, new StringType(value));
 	}
 
 	public static Extension createCareSettingExtension(String value) {
-		return createExtension(CARE_SETTING, new StringType(value));
+		return createExtension(ExtensionURL.CARE_SETTING, new StringType(value));
 	}
+
+	public static Extension createOrderConceptExtension(Concept concept) {
+		return createExtension(ExtensionURL.ORDER_CONCEPT_URL, new StringType(concept.getUuid()));
+	}
+
+	public static Extension createLateralityExtension(TestOrder.Laterality laterality) {
+		return createExtension(ExtensionURL.LATERALITY_URL, new StringType(laterality.toString()));
+	}
+
+	public static Extension createClinicalHistoryExtension(String clinicalHistory) {
+		return createExtension(ExtensionURL.CLINICAL_HISTORY_URL, new StringType(clinicalHistory));
+	}
+
+	public static Extension createOrderFrequencyExtension(OrderFrequency frequency) {
+		return createExtension(ExtensionURL.ORDER_FREQUENCY_URL, new StringType(frequency.getUuid()));
+	}
+
 	//endregion
 
 	private static Extension createExtension(String url, PrimitiveType data) {

@@ -13,46 +13,31 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.ProcedureRequest;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.fhir.api.ProcedureRequestService;
-import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.strategies.procedurerequest.ProcedureRequestStrategyUtil;
 
 public class ProcedureRequestServiceImpl extends BaseOpenmrsService implements ProcedureRequestService {
 
-	protected final Log log = LogFactory.getLog(this.getClass());
-
-	private FHIRDAO dao;
-
-	public FHIRDAO getDao() {
-		return dao;
-	}
-
-	public void setDao(FHIRDAO dao) {
-		this.dao = dao;
+	@Override
+	public ProcedureRequest getProcedureRequestByUuid(String uuid) {
+		return ProcedureRequestStrategyUtil.getProcedureRequestStrategy().getProcedureRequestByUuid(uuid);
 	}
 
 	@Override
-	public ProcedureRequest getById(String uuid) {
-		return ProcedureRequestStrategyUtil.getProcedureRequestStrategy().getById(uuid);
+	public void deleteProcedureRequest(String uuid) {
+		ProcedureRequestStrategyUtil.getProcedureRequestStrategy().deleteProcedureRequest(uuid);
 	}
 
 	@Override
-	public void delete(String uuid) {
-		ProcedureRequestStrategyUtil.getProcedureRequestStrategy().delete(uuid);
+	public ProcedureRequest createProcedureRequest(ProcedureRequest procedureRequest) {
+		return ProcedureRequestStrategyUtil.getProcedureRequestStrategy().createProcedureRequest(procedureRequest);
 	}
 
 	@Override
-	public ProcedureRequest createFHIRProcedureRequest(ProcedureRequest procedureRequest) {
-		return ProcedureRequestStrategyUtil.getProcedureRequestStrategy().createFHIRProcedureRequest(procedureRequest);
-	}
-
-	@Override
-	public ProcedureRequest updateFHIRProcedureRequest(ProcedureRequest procedureRequest, String uuid) {
+	public ProcedureRequest updateProcedureRequest(ProcedureRequest procedureRequest, String uuid) {
 		return ProcedureRequestStrategyUtil.getProcedureRequestStrategy()
-				.updateFHIRProcedureRequest(procedureRequest, uuid);
+				.updateProcedureRequest(procedureRequest, uuid);
 	}
 }
