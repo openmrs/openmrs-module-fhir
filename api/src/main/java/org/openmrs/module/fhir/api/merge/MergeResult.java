@@ -1,0 +1,47 @@
+package org.openmrs.module.fhir.api.merge;
+
+/**
+ * <h1>MergeResult</h1>
+ * Represents result of merging behaviour
+ *
+ * @see MergeBehaviour
+ * @since 1.15.0
+ */
+public abstract class MergeResult<T> {
+
+	/**
+	 * T type may describe generic class so we need to specify target class
+	 */
+	protected Class<?> clazz;
+
+	protected final T orgLocal;
+
+	protected final T orgForeign;
+
+	protected String message;
+
+	public MergeResult(Class<?> clazz, T orgLocal, T orgForeign, String message) {
+		this.clazz = clazz;
+		this.orgLocal = orgLocal;
+		this.orgForeign = orgForeign;
+		this.message = message;
+	}
+
+	public Class<?> getClazz() {
+		return clazz;
+	}
+
+	public T getOrgLocal() {
+		return orgLocal;
+	}
+
+	public T getOrgForeign() {
+		return orgForeign;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public abstract boolean isCompleted();
+}
