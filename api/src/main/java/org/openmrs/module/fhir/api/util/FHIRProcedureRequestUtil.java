@@ -146,8 +146,8 @@ public class FHIRProcedureRequestUtil {
 		switch (procedureRequest.getPriority()) {
 			case STAT:
 				return Order.Urgency.STAT;
-			default:
 			case ROUTINE:
+			default:
 				return Order.Urgency.ROUTINE;
 		}
 	}
@@ -208,7 +208,6 @@ public class FHIRProcedureRequestUtil {
 	}
 
 	private static Order.Action buildAction(ProcedureRequest procedureRequest) {
-		//Can't set other status to order it check data for all orders
 		ProcedureRequest.ProcedureRequestStatus status = procedureRequest.getStatus();
 		if (status != null) {
 			if (ProcedureRequest.ProcedureRequestStatus.CANCELLED.toCode().
