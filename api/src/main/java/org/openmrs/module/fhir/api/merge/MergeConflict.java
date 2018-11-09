@@ -9,7 +9,7 @@ package org.openmrs.module.fhir.api.merge;
  */
 public class MergeConflict<T> extends MergeResult<T> {
 
-	public MergeConflict(Class<?> clazz, T local, T foreign) {
+	public MergeConflict(Class<? extends T> clazz, T local, T foreign) {
 		super(clazz, local, foreign, MergeMessageEnum.CONFLICT);
 	}
 }

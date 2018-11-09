@@ -18,5 +18,5 @@ public interface MergeBehaviour<T> {
 	 * @param clazz represents specific class which extends T
 	 * @return returns a result which depends on implemented merging behaviour
 	 */
-	MergeResult<T> resolveDiff(T local, T foreign, Class<? extends T> clazz);
+	MergeResult<T> resolveDiff(Class<? extends T> clazz, T local, T foreign);
 }

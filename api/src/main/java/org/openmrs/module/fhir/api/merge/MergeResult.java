@@ -12,7 +12,7 @@ public abstract class MergeResult<T> {
 	/**
 	 * T type may describe generic class so we need to specify target class
 	 */
-	protected Class<?> clazz;
+	protected Class<? extends T> clazz;
 
 	protected final T orgLocal;
 
@@ -20,14 +20,14 @@ public abstract class MergeResult<T> {
 
 	protected MergeMessageEnum message;
 
-	public MergeResult(Class<?> clazz, T orgLocal, T orgForeign, MergeMessageEnum message) {
+	public MergeResult(Class<? extends T> clazz, T orgLocal, T orgForeign, MergeMessageEnum message) {
 		this.clazz = clazz;
 		this.orgLocal = orgLocal;
 		this.orgForeign = orgForeign;
 		this.message = message;
 	}
 
-	public Class<?> getClazz() {
+	public Class<? extends T> getClazz() {
 		return clazz;
 	}
 

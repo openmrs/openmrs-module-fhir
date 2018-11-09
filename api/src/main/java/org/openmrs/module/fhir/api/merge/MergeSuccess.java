@@ -29,7 +29,7 @@ public class MergeSuccess<T> extends MergeResult<T> {
 		resolveMessage();
 	}
 
-	public MergeSuccess(Class<?> clazz, T orgLocal, T orgForeign,
+	public MergeSuccess(Class<? extends T> clazz, T orgLocal, T orgForeign,
 			URI foreignAddress, T merged, boolean updateLocal, boolean updateForeign) {
 		super(clazz, orgLocal, orgForeign, null);
 		this.foreignAddress = foreignAddress;
@@ -39,17 +39,17 @@ public class MergeSuccess<T> extends MergeResult<T> {
 		resolveMessage();
 	}
 
-	public MergeSuccess(Class<?> clazz, T orgLocal, T orgForeign, URI foreignAddress) {
-		super(clazz, orgLocal, orgForeign, MergeMessageEnum.NO_SAVE_MESSAGE);
+	public MergeSuccess(MergeConflict<T> conflict, URI foreignAddress) {
+		super(conflict.getClazz(), conflict.getOrgLocal(), conflict.getOrgForeign(),
+				MergeMessageEnum.NO_SAVE_MESSAGE);
 		this.foreignAddress = foreignAddress;
 		this.merged = null;
 		this.updateLocal = false;
 		this.updateForeign = false;
 	}
 
-	public MergeSuccess(MergeConflict<T> conflict, URI foreignAddress) {
-		super(conflict.getClazz(), conflict.getOrgLocal(), conflict.getOrgForeign(),
-				MergeMessageEnum.NO_SAVE_MESSAGE);
+	public MergeSuccess(Class<? extends T> clazz, T orgLocal, T orgForeign, URI foreignAddress) {
+		super(clazz, orgLocal, orgForeign, MergeMessageEnum.NO_SAVE_MESSAGE);
 		this.foreignAddress = foreignAddress;
 		this.merged = null;
 		this.updateLocal = false;
