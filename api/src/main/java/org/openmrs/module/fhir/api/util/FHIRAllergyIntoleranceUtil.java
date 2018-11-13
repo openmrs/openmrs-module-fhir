@@ -245,11 +245,11 @@ public class FHIRAllergyIntoleranceUtil {
 			if (allergy.getSeverity().equals(FHIRUtils.getMildSeverityConcept())) {
 				return AllergyIntoleranceCriticality.LOW;
 			} else if (allergy.getSeverity().equals(FHIRUtils.getModerateSeverityConcept())) {
-				return AllergyIntoleranceCriticality.LOW;
+				return AllergyIntoleranceCriticality.UNABLETOASSESS;
 			} else if (allergy.getSeverity().equals(FHIRUtils.getSevereSeverityConcept())) {
 				return AllergyIntoleranceCriticality.HIGH;
 			} else {
-				return AllergyIntoleranceCriticality.UNABLETOASSESS;
+				return AllergyIntoleranceCriticality.NULL;
 			}
 		}
 		return null;
@@ -260,6 +260,8 @@ public class FHIRAllergyIntoleranceUtil {
 		if (criticality != null) {
 			switch (criticality) {
 				case LOW:
+					return FHIRUtils.getMildSeverityConcept();
+				case UNABLETOASSESS:
 					return FHIRUtils.getModerateSeverityConcept();
 				case HIGH:
 					return FHIRUtils.getSevereSeverityConcept();
