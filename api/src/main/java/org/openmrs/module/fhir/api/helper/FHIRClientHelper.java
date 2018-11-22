@@ -180,7 +180,6 @@ public class FHIRClientHelper implements ClientHelper {
 		return parser.encodeResourceToString((IBaseResource) object);
 	}
 
-	@Override
 	public Object convertToOpenMrsObject(Object object, String category) throws NotSupportedException {
 		List<String> errors = new ArrayList<>();
 		Object result;

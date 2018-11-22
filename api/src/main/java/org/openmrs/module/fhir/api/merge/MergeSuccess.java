@@ -1,7 +1,5 @@
 package org.openmrs.module.fhir.api.merge;
 
-import java.net.URI;
-
 /**
  * <h1>MergeSuccess</h1>
  * Describes success of two entities.
@@ -11,46 +9,39 @@ import java.net.URI;
  */
 public class MergeSuccess<T> extends MergeResult<T> {
 
-	protected URI foreignAddress;
-
 	protected T merged;
 
 	protected boolean updateLocal;
 
 	protected boolean updateForeign;
 
-	public MergeSuccess(MergeConflict<T> conflict, URI foreignAddress, T merged, boolean updateLocal,
-			boolean updateForeign) {
+	public MergeSuccess(MergeConflict<T> conflict, T merged, boolean updateLocal, boolean updateForeign) {
 		super(conflict.getClazz(), conflict.getOrgLocal(), conflict.getOrgForeign(), null);
-		this.foreignAddress = foreignAddress;
 		this.merged = merged;
 		this.updateLocal = updateLocal;
 		this.updateForeign = updateForeign;
 		resolveMessage();
 	}
 
-	public MergeSuccess(Class<? extends T> clazz, T orgLocal, T orgForeign,
-			URI foreignAddress, T merged, boolean updateLocal, boolean updateForeign) {
+	public MergeSuccess(Class<? extends T> clazz, T orgLocal, T orgForeign, T merged,
+			boolean updateLocal, boolean updateForeign) {
 		super(clazz, orgLocal, orgForeign, null);
-		this.foreignAddress = foreignAddress;
 		this.merged = merged;
 		this.updateLocal = updateLocal;
 		this.updateForeign = updateForeign;
 		resolveMessage();
 	}
 
-	public MergeSuccess(MergeConflict<T> conflict, URI foreignAddress) {
+	public MergeSuccess(MergeConflict<T> conflict) {
 		super(conflict.getClazz(), conflict.getOrgLocal(), conflict.getOrgForeign(),
 				MergeMessageEnum.NO_SAVE_MESSAGE);
-		this.foreignAddress = foreignAddress;
 		this.merged = null;
 		this.updateLocal = false;
 		this.updateForeign = false;
 	}
 
-	public MergeSuccess(Class<? extends T> clazz, T orgLocal, T orgForeign, URI foreignAddress) {
+	public MergeSuccess(Class<? extends T> clazz, T orgLocal, T orgForeign) {
 		super(clazz, orgLocal, orgForeign, MergeMessageEnum.NO_SAVE_MESSAGE);
-		this.foreignAddress = foreignAddress;
 		this.merged = null;
 		this.updateLocal = false;
 		this.updateForeign = false;
@@ -62,10 +53,6 @@ public class MergeSuccess<T> extends MergeResult<T> {
 
 	public boolean shouldUpdateLocal() {
 		return updateLocal;
-	}
-
-	public URI getForeignAddress() {
-		return foreignAddress;
 	}
 
 	public T getMerged() {
