@@ -19,8 +19,7 @@ public class TestMergeBehaviour implements MergeBehaviour<BaseOpenmrsData> {
 
 		if (local.getDateChanged().after(foreign.getDateChanged())) {
 			merged = deepClone(foreign);
-			result = new MergeSuccess<>(clazz, local, foreign, URI.create("www.example.com/api/object"), merged,
-					true, false);
+			result = new MergeSuccess<>(clazz, local, foreign, merged,true, false);
 		} else {
 			result = new MergeConflict<>(clazz, local, foreign);
 		}

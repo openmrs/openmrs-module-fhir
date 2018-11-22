@@ -29,6 +29,4 @@ public interface ClientHelper {
 	Object convertToObject(String formattedData, Class<?> clazz);
 
 	String convertToFormattedData(Object object);
-
-	Object convertToOpenMrsObject(Object object, String category) throws NotSupportedException;
 }
