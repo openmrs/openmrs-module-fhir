@@ -4,6 +4,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.converter.HttpMessageConverter;
 
+import javax.transaction.NotSupportedException;
 import java.net.URISyntaxException;
 import java.util.List;
 
@@ -25,7 +26,9 @@ public interface ClientHelper {
 
 	boolean compareResourceObjects(String category, Object from, Object dest);
 
-    Object convertToObject(String formattedData, Class<?> clazz);
+	Object convertToObject(String formattedData, Class<?> clazz);
 
-    String convertToFormattedData(Object object);
+	String convertToFormattedData(Object object);
+
+	Object convertToOpenMrsObject(Object object, String category) throws NotSupportedException;
 }
