@@ -2,6 +2,8 @@ package org.openmrs.module.fhir.api.helper;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.AllergyIntolerance;
@@ -18,13 +20,16 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.openmrs.module.fhir.api.client.BasicAuthInterceptor;
 import org.openmrs.module.fhir.api.client.FHIRHttpMessageConverter;
 import org.openmrs.module.fhir.api.client.HeaderClientHttpRequestInterceptor;
+import org.openmrs.module.fhir.api.util.ErrorUtil;
 import org.openmrs.module.fhir.api.util.FHIRAllergyIntoleranceUtil;
 import org.openmrs.module.fhir.api.util.FHIREncounterUtil;
 import org.openmrs.module.fhir.api.util.FHIRGroupUtil;
+import org.openmrs.module.fhir.api.util.FHIRLocationUtil;
 import org.openmrs.module.fhir.api.util.FHIRMedicationRequestUtil;
 import org.openmrs.module.fhir.api.util.FHIRObsUtil;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
+import org.openmrs.module.fhir.api.util.FHIRVisitUtil;
 import org.springframework.http.HttpHeaders;
 import org.openmrs.module.fhir.api.util.FHIRProcedureRequestUtil;
 import org.springframework.http.HttpMethod;
@@ -34,8 +39,10 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 
+import javax.transaction.NotSupportedException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -79,8 +86,8 @@ public class FHIRClientHelper implements ClientHelper {
 	protected final Log log = LogFactory.getLog(this.getClass());
 
 	public FHIRClientHelper() {
-        parser = FhirContext.forDstu3().newJsonParser();
-    }
+		parser = FhirContext.forDstu3().newJsonParser();
+	}
 
 	@Override
 	public RequestEntity retrieveRequest(String url) throws URISyntaxException {
@@ -90,7 +97,7 @@ public class FHIRClientHelper implements ClientHelper {
 	@Override
 	public RequestEntity createRequest(String url, Object object) throws URISyntaxException {
 		url = createUrl(url, (IBaseResource) object);
-		return new RequestEntity(parser.encodeResourceToString((IBaseResource)object), HttpMethod.PUT, new URI(url));
+		return new RequestEntity(parser.encodeResourceToString((IBaseResource) object), HttpMethod.PUT, new URI(url));
 	}
 
 	@Override
@@ -102,7 +109,7 @@ public class FHIRClientHelper implements ClientHelper {
 	@Override
 	public RequestEntity updateRequest(String url, Object object) throws URISyntaxException {
 		url = createUrl(url, (IBaseResource) object);
-		return new RequestEntity(parser.encodeResourceToString((IBaseResource)object), HttpMethod.PUT, new URI(url));
+		return new RequestEntity(parser.encodeResourceToString((IBaseResource) object), HttpMethod.PUT, new URI(url));
 	}
 
 	@Override
@@ -147,7 +154,7 @@ public class FHIRClientHelper implements ClientHelper {
 				break;
 			case CATEGORY_PERSON:
 				result = FHIRPersonUtil.arePersonsEquals(dest, from);
-                break;
+				break;
 			case CATEGORY_COHORT:
 				result = FHIRGroupUtil.areGroupsEquals(dest, from);
 				break;
@@ -163,17 +170,69 @@ public class FHIRClientHelper implements ClientHelper {
 		return result;
 	}
 
-    @Override
-    public Object convertToObject(String formattedData, Class<?> clazz) {
-        return parser.parseResource(formattedData);
-    }
+	@Override
+	public Object convertToObject(String formattedData, Class<?> clazz) {
+		return parser.parseResource(formattedData);
+	}
 
-    @Override
-    public String convertToFormattedData(Object object) {
-        return parser.encodeResourceToString((IBaseResource) object);
-    }
+	@Override
+	public String convertToFormattedData(Object object) {
+		return parser.encodeResourceToString((IBaseResource) object);
+	}
 
-    private String createUrl(String url, IBaseResource object) {
+	@Override
+	public Object convertToOpenMrsObject(Object object, String category) throws NotSupportedException {
+		List<String> errors = new ArrayList<>();
+		Object result;
+		switch (category) {
+			case CATEGORY_LOCATION:
+				result = FHIRLocationUtil.generateOpenMRSLocation((Location) object, errors);
+				break;
+			case CATEGORY_OBSERVATION:
+				result = FHIRObsUtil.generateOpenMRSObs((Observation) object, errors);
+				break;
+			case CATEGORY_ENCOUNTER:
+				result = FHIREncounterUtil.generateOMRSEncounter((Encounter) object, errors);
+				break;
+			case CATEGORY_VISIT:
+				result = FHIRVisitUtil.generateOMRSVisit((Encounter) object, errors);
+				break;
+			case CATEGORY_DRUG_ORDER:
+				result = FHIRMedicationRequestUtil.generateDrugOrder((MedicationRequest) object,
+						errors);
+				break;
+			case CATEGORY_TEST_ORDER:
+				result = FHIRProcedureRequestUtil.generateTestOrder((ProcedureRequest) object,
+						errors);
+				break;
+			case CATEGORY_PERSON:
+				result = FHIRPersonUtil.generateOpenMRSPerson((Person) object, errors);
+				break;
+			case CATEGORY_PATIENT:
+				result = FHIRPatientUtil.generateOmrsPatient((Patient) object, errors);
+				break;
+			case CATEGORY_COHORT:
+				result = FHIRGroupUtil.generateCohort((Group) object);
+				break;
+			case CATEGORY_ALLERGY:
+				result = FHIRAllergyIntoleranceUtil.generateAllergy((AllergyIntolerance) object);
+				break;
+			default:
+				throw new NotSupportedException(String.format("Category %s not supported.", category));
+		}
+		checkErrors(errors);
+		return result;
+	}
+
+	private void checkErrors(List<String> errors) {
+		if (CollectionUtils.isNotEmpty(errors)) {
+			String errorMessage = ErrorUtil.generateErrorMessage(errors,
+					"The request cannot be processed due to the following issues\n");
+			throw new UnprocessableEntityException(errorMessage);
+		}
+	}
+
+	private String createUrl(String url, IBaseResource object) {
 		return url + "/" + object.getIdElement().getIdPart();
 	}
 }
