@@ -1,7 +1,5 @@
 package org.openmrs.module.fhir.api.merge;
 
-import java.net.URI;
-
 public class MockedMergeBehaviour implements MergeBehaviour<Object> {
 
 	@Override
