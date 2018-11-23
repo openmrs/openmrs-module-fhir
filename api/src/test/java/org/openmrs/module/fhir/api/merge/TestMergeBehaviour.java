@@ -7,7 +7,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.URI;
 
 public class TestMergeBehaviour implements MergeBehaviour<BaseOpenmrsData> {
 
@@ -19,8 +18,7 @@ public class TestMergeBehaviour implements MergeBehaviour<BaseOpenmrsData> {
 
 		if (local.getDateChanged().after(foreign.getDateChanged())) {
 			merged = deepClone(foreign);
-			result = new MergeSuccess<>(clazz, local, foreign, URI.create("www.example.com/api/object"), merged,
-					true, false);
+			result = new MergeSuccess<>(clazz, local, foreign, merged, true, false);
 		} else {
 			result = new MergeConflict<>(clazz, local, foreign);
 		}

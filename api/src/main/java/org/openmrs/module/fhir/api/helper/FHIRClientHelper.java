@@ -2,8 +2,6 @@ package org.openmrs.module.fhir.api.helper;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
-import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.AllergyIntolerance;
@@ -220,16 +218,8 @@ public class FHIRClientHelper implements ClientHelper {
 			default:
 				throw new NotSupportedException(String.format("Category %s not supported.", category));
 		}
-		checkErrors(errors);
+		ErrorUtil.checkErrors(errors);
 		return result;
-	}
-
-	private void checkErrors(List<String> errors) {
-		if (CollectionUtils.isNotEmpty(errors)) {
-			String errorMessage = ErrorUtil.generateErrorMessage(errors,
-					"The request cannot be processed due to the following issues\n");
-			throw new UnprocessableEntityException(errorMessage);
-		}
 	}
 
 	private String createUrl(String url, IBaseResource object) {
