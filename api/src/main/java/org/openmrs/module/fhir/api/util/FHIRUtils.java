@@ -222,6 +222,7 @@ public class FHIRUtils {
 
 	public static HumanName buildHumanName(org.openmrs.PersonName personName) {
 		HumanName fhirName = new HumanName();
+		fhirName.setId(personName.getUuid());
 		fhirName.setFamily(personName.getFamilyName());
 		StringType givenName = new StringType();
 		givenName.setValue(personName.getGivenName());
@@ -257,6 +258,7 @@ public class FHIRUtils {
 
 	public static Address buildAddress(org.openmrs.PersonAddress personAddress) {
 		Address fhirAddress = new Address();
+		fhirAddress.setId(personAddress.getUuid());
 		fhirAddress.setCity(personAddress.getCityVillage());
 		fhirAddress.setCountry(personAddress.getCountry());
 		fhirAddress.setState(personAddress.getStateProvince());
