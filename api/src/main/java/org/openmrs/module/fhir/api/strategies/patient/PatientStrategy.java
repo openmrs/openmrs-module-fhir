@@ -274,7 +274,7 @@ public class PatientStrategy implements GenericPatientStrategy {
 
 		retrievedPatient = FHIRPatientUtil.updatePatientAttributes(omrsPatient, retrievedPatient);
 		try {
-			Context.getPatientService().savePatient(retrievedPatient);
+			retrievedPatient = Context.getPatientService().savePatient(retrievedPatient);
 		}
 		catch (Exception e) {
 			throw new UnprocessableEntityException(
