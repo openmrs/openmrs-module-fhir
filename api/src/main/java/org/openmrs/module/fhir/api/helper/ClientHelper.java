@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * <h1>ClientHelper</h1>
- * Describes required methods for alternative node-to-node communication clients.
+ * <p>Adapts specific Client to be used by pull & push business logic.</p>
  *
  * @see <a href="https://issues.openmrs.org/browse/SYNCT-274">SYNCT-274</a>
  * @since 1.14.0
@@ -18,7 +18,7 @@ import java.util.List;
 public interface ClientHelper {
 
 	/**
-	 * <p>Returns new 'retrieve' request - in means of HTTP protocol it refers to GET request.</p>
+	 * <p>Implements creation of retrieve request appropriate for specific Client.</p>
 	 *
 	 * @param url represents URL of resource to be retrieved
 	 * @return returns new RequestEntity with 'retrieve' request
@@ -27,7 +27,7 @@ public interface ClientHelper {
 	RequestEntity retrieveRequest(String url) throws URISyntaxException;
 
 	/**
-	 * <p>Returns new 'create' request - in means of HTTP protocol it refers to POST request.</p>
+	 * <p>Implements creation of create request appropriate for specific Client.</p>
 	 *
 	 * @param url represents URL of resource category, where an object will be created
 	 * @param object represents an object that will be sent
@@ -37,7 +37,7 @@ public interface ClientHelper {
 	RequestEntity createRequest(String url, Object object) throws URISyntaxException;
 
 	/**
-	 * <p>Returns new 'delete' request - in means of HTTP protocol it refers to DELETE request.</p>
+	 * <p>Implements creation of delete request appropriate for specific Client.</p>
 	 *
 	 * @param url represents URL of resource category, from where an object will be deleted
 	 * @param uuid represents UUID of the object, that will be deleted
@@ -47,7 +47,7 @@ public interface ClientHelper {
 	RequestEntity deleteRequest(String url, String uuid) throws URISyntaxException;
 
 	/**
-	 * <p>Returns new 'update' request - in means of HTTP protocol it refers to PUT request.</p>
+	 * <p>Implements creation of update request appropriate for specific Client.</p>
 	 *
 	 * @param url represents URL of resource, that will be updated
 	 * @param object represents an updated object
@@ -65,7 +65,7 @@ public interface ClientHelper {
 	Class resolveClassByCategory(String category);
 
 	/**
-	 * <p>Returns a list of HTTP interceptors used in communication between nodes, including authentication of a user.</p>
+	 * <p>Returns a list of HTTP interceptors used in communication between nodes.</p>
 	 *
 	 * @param username represents username of a user
 	 * @param password represents password of a user
