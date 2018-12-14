@@ -7,10 +7,9 @@ import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.Person;
 import org.hl7.fhir.dstu3.model.Practitioner;
-import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.junit.Test;
+import org.openmrs.module.fhir.api.client.ClientHttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.RequestEntity;
 
 import java.net.URI;
 
@@ -25,7 +24,7 @@ public class FHIRClientHelperTest {
 
 	@Test
 	public void retrieveRequest() throws Exception {
-		RequestEntity expected = new RequestEntity(HttpMethod.GET, URI.create(TEST_URI));
+		ClientHttpEntity expected = new ClientHttpEntity(HttpMethod.GET, URI.create(TEST_URI));
 
 		FHIRClientHelper fhirClientHelper = new FHIRClientHelper();
 		assertEquals(expected, fhirClientHelper.retrieveRequest(TEST_URI));
@@ -36,7 +35,8 @@ public class FHIRClientHelperTest {
 		Patient patient = new Patient();
 		patient.setId(TEST_PATIENT_UUID);
 		String expectedBody = FhirContext.forDstu3().newJsonParser().encodeResourceToString(patient);
-		RequestEntity expected = new RequestEntity(expectedBody, HttpMethod.PUT, URI.create(TEST_URI + "/" + TEST_PATIENT_UUID));
+		ClientHttpEntity expected = new ClientHttpEntity<String>(expectedBody, HttpMethod.PUT,
+				URI.create(TEST_URI + "/" + TEST_PATIENT_UUID));
 
 		FHIRClientHelper fhirClientHelper = new FHIRClientHelper();
 		assertEquals(expected, fhirClientHelper.createRequest(TEST_URI, patient));
@@ -46,7 +46,7 @@ public class FHIRClientHelperTest {
 	public void deleteRequest() throws Exception {
 		Patient patient = new Patient();
 		patient.setId(TEST_PATIENT_UUID);
-		RequestEntity expected = new RequestEntity(TEST_PATIENT_UUID, HttpMethod.DELETE,
+		ClientHttpEntity expected = new ClientHttpEntity<String>(TEST_PATIENT_UUID, HttpMethod.DELETE,
 				URI.create(TEST_URI + "/" + TEST_PATIENT_UUID));
 
 		FHIRClientHelper fhirClientHelper = new FHIRClientHelper();
@@ -58,7 +58,8 @@ public class FHIRClientHelperTest {
 		Patient patient = new Patient();
 		patient.setId(TEST_PATIENT_UUID);
 		String expectedBody = FhirContext.forDstu3().newJsonParser().encodeResourceToString(patient);
-		RequestEntity expected = new RequestEntity(expectedBody, HttpMethod.PUT, URI.create(TEST_URI + "/" + TEST_PATIENT_UUID));
+		ClientHttpEntity expected = new ClientHttpEntity<String>(expectedBody, HttpMethod.PUT,
+				URI.create(TEST_URI + "/" + TEST_PATIENT_UUID));
 
 		FHIRClientHelper fhirClientHelper = new FHIRClientHelper();
 		assertEquals(expected, fhirClientHelper.updateRequest(TEST_URI, patient));
