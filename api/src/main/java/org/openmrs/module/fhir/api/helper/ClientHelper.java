@@ -1,6 +1,6 @@
 package org.openmrs.module.fhir.api.helper;
 
-import org.openmrs.module.fhir.api.client.SyncClientHttpRequestInterceptor;
+import org.openmrs.module.fhir.api.client.ClientHttpRequestInterceptor;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.converter.HttpMessageConverter;
 
@@ -71,7 +71,7 @@ public interface ClientHelper {
 	 * @param password represents password of a user
 	 * @return return a list of custom interceptors
 	 */
-	List<SyncClientHttpRequestInterceptor> getCustomInterceptors(String username, String password);
+	List<ClientHttpRequestInterceptor> getCustomInterceptors(String username, String password);
 
 	/**
 	 * <p>Returns a list of custom converters, that will be used to convert messages between formats.</p>

@@ -5,7 +5,7 @@ import org.springframework.http.HttpHeaders;
 
 import java.nio.charset.Charset;
 
-public class BasicAuthInterceptor implements SyncClientHttpRequestInterceptor {
+public class BasicAuthInterceptor implements ClientHttpRequestInterceptor {
 
 	private String username;
 

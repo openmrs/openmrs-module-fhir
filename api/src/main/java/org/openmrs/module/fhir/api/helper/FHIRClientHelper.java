@@ -17,8 +17,8 @@ import org.hl7.fhir.dstu3.model.Person;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.openmrs.module.fhir.api.client.BasicAuthInterceptor;
 import org.openmrs.module.fhir.api.client.FHIRHttpMessageConverter;
-import org.openmrs.module.fhir.api.client.SyncHttpRequestInterceptor;
-import org.openmrs.module.fhir.api.client.SyncClientHttpRequestInterceptor;
+import org.openmrs.module.fhir.api.client.BasicHttpRequestInterceptor;
+import org.openmrs.module.fhir.api.client.ClientHttpRequestInterceptor;
 import org.openmrs.module.fhir.api.util.ErrorUtil;
 import org.openmrs.module.fhir.api.util.FHIRAllergyIntoleranceUtil;
 import org.openmrs.module.fhir.api.util.FHIREncounterUtil;
@@ -118,9 +118,9 @@ public class FHIRClientHelper implements ClientHelper {
 	}
 
 	@Override
-	public List<SyncClientHttpRequestInterceptor> getCustomInterceptors(String username, String password) {
+	public List<ClientHttpRequestInterceptor> getCustomInterceptors(String username, String password) {
 		return Arrays.asList(new BasicAuthInterceptor(username, password),
-				new SyncHttpRequestInterceptor("Accept", "application/json"));
+				new BasicHttpRequestInterceptor("Accept", "application/json"));
 	}
 
 	@Override
