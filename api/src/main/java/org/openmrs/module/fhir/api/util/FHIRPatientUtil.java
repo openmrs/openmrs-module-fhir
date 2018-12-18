@@ -26,9 +26,6 @@ import org.hl7.fhir.dstu3.model.Reference;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PersonAddress;
 import org.openmrs.PersonName;
-import org.openmrs.api.PatientService;
-import org.openmrs.api.PersonService;
-import org.openmrs.api.context.Context;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -57,11 +57,12 @@
 
 	<modules>
 		<module>api</module>
+		<module>api-2.0</module>
 		<module>omod</module>
 	</modules>
 
 	<properties>
-		<openMRSVersion>2.1.0</openMRSVersion>
+		<openMRSVersion>1.9.10</openMRSVersion>
 		<pholocCommonsVersion>4.3.5</pholocCommonsVersion>
 		<slf4jApiVersion>1.6.0</slf4jApiVersion>
 		<slf4jLog4j12Version>1.6.0</slf4jLog4j12Version>
@@ -114,8 +115,8 @@
 			</dependency>
 
 			<dependency>
-				<groupId>org.openmrs.api</groupId>
-				<artifactId>openmrs-api</artifactId>
+				<groupId>org.openmrs.web</groupId>
+				<artifactId>openmrs-web</artifactId>
 				<version>${openMRSVersion}</version>
 				<type>jar</type>
 				<scope>provided</scope>
@@ -125,33 +126,8 @@
 				<groupId>org.openmrs.web</groupId>
 				<artifactId>openmrs-web</artifactId>
 				<version>${openMRSVersion}</version>
-				<type>jar</type>
-				<scope>provided</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>org.openmrs.api</groupId>
-				<artifactId>openmrs-api</artifactId>
-				<version>${openMRSVersion}</version>
 				<classifier>tests</classifier>
 				<type>jar</type>
-				<scope>test</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>org.openmrs.web</groupId>
-				<artifactId>openmrs-web</artifactId>
-				<version>${openMRSVersion}</version>
-				<classifier>tests</classifier>
-				<type>jar</type>
-				<scope>test</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>org.openmrs.test</groupId>
-				<artifactId>openmrs-test</artifactId>
-				<version>${openMRSVersion}</version>
-				<type>pom</type>
 				<scope>test</scope>
 			</dependency>
 

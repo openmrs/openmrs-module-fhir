@@ -14,7 +14,6 @@
 package org.openmrs.module.fhir.api.strategies.allergy;
 
 import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 
 public class AllergyStrategyUtil {

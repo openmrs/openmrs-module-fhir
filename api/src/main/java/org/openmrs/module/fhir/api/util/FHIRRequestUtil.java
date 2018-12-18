@@ -6,19 +6,17 @@ import org.hl7.fhir.dstu3.model.Extension;
 import org.hl7.fhir.dstu3.model.MedicationRequest;
 import org.hl7.fhir.dstu3.model.ProcedureRequest;
 import org.hl7.fhir.dstu3.model.Reference;
-import org.openmrs.CareSetting;
 import org.openmrs.Encounter;
 import org.openmrs.Order;
 import org.openmrs.Patient;
-import org.openmrs.Provider;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.constants.ExtensionURL;
+import org.openmrs.module.fhir.api.strategies.procedurerequest.ProcedureRequestStrategy;
 
 import java.util.List;
 
 public final class FHIRRequestUtil {
 
-    private static final int INPATIENT = 2;
     private static final int FIRST = 0;
 
     private static final String REQUEST_INSTANCE_ERROR_MSG = "FHIR Resource should be instance of MedicationRequest or ProcedureRequest";
@@ -29,9 +27,9 @@ public final class FHIRRequestUtil {
     //region FHIR methods
 
     public static Extension buildCareSettingExtension(Order omrsOrder) {
-        CareSetting careSetting = omrsOrder.getCareSetting();
+        String careSetting = ContextUtil.getOrderHelper().careSettingToString(omrsOrder);
         if (careSetting != null) {
-            return ExtensionsUtil.createCareSettingExtension(careSetting.getUuid());
+            return ExtensionsUtil.createCareSettingExtension(careSetting);
         }
         return null;
     }
@@ -41,7 +39,7 @@ public final class FHIRRequestUtil {
         return FHIRPatientUtil.buildPatientReference(patient);
     }
 
-    public static Provider buildOrderer(DomainResource fhirRequest, List<String> errors) {
+    public static String getOrdererUuid(DomainResource fhirRequest, List<String> errors) {
         if (!validateInstanceType(fhirRequest, errors)) {
             return null;
         }
@@ -50,8 +48,7 @@ public final class FHIRRequestUtil {
         if (providerRef == null) {
             return null;
         }
-        String providerUuid =  FHIRUtils.getObjectUuidByReference(providerRef);
-        return Context.getProviderService().getProviderByUuid(providerUuid);
+        return FHIRUtils.getObjectUuidByReference(providerRef);
     }
 
     private static Reference getRequesterRef(DomainResource fhirRequest, List<String> errors) {
@@ -78,19 +75,16 @@ public final class FHIRRequestUtil {
 
     //region OpenMRS methods
 
-    public static CareSetting buildCareSetting(DomainResource fhirRequest, List<String> errors) {
+    public static String getCareSetting(DomainResource fhirRequest, List<String> errors) {
+        String careSettingUuid = null;
         if (!validateInstanceType(fhirRequest, errors)) {
             return null;
         }
         List<Extension> extensions = fhirRequest.getExtensionsByUrl(ExtensionURL.CARE_SETTING);
         if (extensions.size() > 0) {
-            String careSettingUuid = ExtensionsUtil.getStringFromExtension(extensions.get(FIRST));
-            CareSetting careSetting = Context.getOrderService().getCareSettingByUuid(careSettingUuid);
-            if (careSetting != null) {
-                return careSetting;
-            }
+            careSettingUuid = ExtensionsUtil.getStringFromExtension(extensions.get(FIRST));
         }
-        return Context.getOrderService().getCareSetting(INPATIENT);
+        return careSettingUuid;
     }
 
     public static Patient buildPatient(DomainResource fhirRequest, List<String> errors) {
@@ -120,11 +114,7 @@ public final class FHIRRequestUtil {
     }
 
     public static Reference buildPractitionerReference(Order omrsOrder) {
-        Provider provider = omrsOrder.getOrderer();
-        if (provider != null) {
-            return FHIRPractitionerUtil.buildPractionaerReference(provider);
-        }
-        return null;
+        return ContextUtil.getOrderHelper().buildPartitionerReference(omrsOrder);
     }
 
     public static Reference buildContext(Order omrsOrder) {

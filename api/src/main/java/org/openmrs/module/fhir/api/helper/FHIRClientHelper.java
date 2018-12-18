@@ -20,6 +20,7 @@ import org.openmrs.module.fhir.api.client.BasicHttpRequestInterceptor;
 import org.openmrs.module.fhir.api.client.ClientHttpRequestInterceptor;
 import org.openmrs.module.fhir.api.client.FHIRHttpMessageConverter;
 import org.openmrs.module.fhir.api.client.ClientHttpEntity;
+import org.openmrs.module.fhir.api.util.ContextUtil;
 import org.openmrs.module.fhir.api.util.ErrorUtil;
 import org.openmrs.module.fhir.api.util.FHIRAllergyIntoleranceUtil;
 import org.openmrs.module.fhir.api.util.FHIREncounterUtil;
@@ -211,7 +212,7 @@ public class FHIRClientHelper implements ClientHelper {
 				result = FHIRGroupUtil.generateCohort((Group) object);
 				break;
 			case CATEGORY_ALLERGY:
-				result = FHIRAllergyIntoleranceUtil.generateAllergy((AllergyIntolerance) object);
+				result = ContextUtil.getAllergyHelper().generateAllergy(object);
 				break;
 			default:
 				throw new NotSupportedException(String.format("Category %s not supported.", category));

@@ -13,7 +13,6 @@
  */
 package org.openmrs.module.fhir.api.util;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.Attachment;
@@ -32,9 +31,8 @@ import org.openmrs.ConceptNumeric;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterProvider;
 import org.openmrs.Obs;
-import org.openmrs.Obs.Interpretation;
-import org.openmrs.Obs.Status;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.helper.ObsHelper;
 import org.openmrs.obs.ComplexData;
 
 import java.math.BigDecimal;
@@ -187,16 +185,17 @@ public class FHIRObsUtil {
 		CodeableConcept interpretation = null;
 		Observation.ObservationStatus status = Observation.ObservationStatus.FINAL;
 		try {
-			Status stat = obs.getStatus();
-			if (stat != null) {
-				status = Observation.ObservationStatus.valueOf(stat.name());
-			}
-
-			Interpretation interpret = obs.getInterpretation();
-			if (interpret != null) {
-				interpretation = new CodeableConcept();
-				interpretation.setText(interpret.name());
-			}
+			//TODO-Arek the following functionality is available since OpenMRS 2.1.0 we need to create a helper for this version of the software
+//			Status stat = obs.getStatus();
+//			if (stat != null) {
+//				status = Observation.ObservationStatus.valueOf(stat.name());
+//			}
+//
+//			Interpretation interpret = obs.getInterpretation();
+//			if (interpret != null) {
+//				interpretation = new CodeableConcept();
+//				interpretation.setText(interpret.name());
+//			}
 		}
 		catch (NoSuchMethodError ex) {
 			//must be running below platform 2.1
@@ -363,13 +362,14 @@ public class FHIRObsUtil {
 		Observation.ObservationStatus status = observation.getStatus();
 
 		try {
-			if (status != null) {
-				obs.setStatus(Status.valueOf(status.name()));
-			}
-
-			if (interpretation != null && StringUtils.isNotBlank(interpretation.getText())) {
-				obs.setInterpretation(Interpretation.valueOf(interpretation.getText()));
-			}
+			//TODO-Arek the following functionality is available since OpenMRS 2.1.0 we need to create a helper for this version of the software
+//			if (status != null) {
+//				obs.setStatus(Status.valueOf(status.name()));
+//			}
+//
+//			if (interpretation != null && StringUtils.isNotBlank(interpretation.getText())) {
+//				obs.setInterpretation(Interpretation.valueOf(interpretation.getText()));
+//			}
 		}
 		catch (NoSuchMethodError ex) {
 			//must be running below platform 2.1

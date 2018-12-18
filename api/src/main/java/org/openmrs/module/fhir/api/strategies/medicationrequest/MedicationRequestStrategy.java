@@ -7,6 +7,7 @@ import org.openmrs.DrugOrder;
 import org.openmrs.Order;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.util.ContextUtil;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRMedicationRequestUtil;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
@@ -43,7 +44,7 @@ public class MedicationRequestStrategy implements GenericMedicationRequestStrate
 		Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
 		List<MedicationRequest> medicationRequests = new ArrayList<>();
 		if (patient != null) {
-			List<Order> orders = Context.getOrderService().getAllOrdersByPatient(patient);
+			List<Order> orders = ContextUtil.getOrderHelper().getAllOrdersByPatient(patient);
 			for (Order order : orders) {
 				if (order instanceof DrugOrder) {
 					DrugOrder drugOrder = (DrugOrder) order;
@@ -73,7 +74,7 @@ public class MedicationRequestStrategy implements GenericMedicationRequestStrate
 			}
 		}
 
-		drugOrder = (DrugOrder) Context.getOrderService().saveOrder(drugOrder, null);
+		drugOrder = (DrugOrder) ContextUtil.getOrderHelper().saveOrder(drugOrder);
 		return FHIRMedicationRequestUtil.generateMedicationRequest(drugOrder);
 	}
 
@@ -85,9 +86,9 @@ public class MedicationRequestStrategy implements GenericMedicationRequestStrate
 
 		if (existingDrugOrder != null) {
 			incomingDrugOrder.setUuid(null);
-			incomingDrugOrder.setAction(Order.Action.REVISE);
-			incomingDrugOrder.setPreviousOrder(existingDrugOrder);
-			incomingDrugOrder = (DrugOrder) Context.getOrderService().saveOrder(incomingDrugOrder, null);
+			ContextUtil.getOrderHelper().reviseOrder(incomingDrugOrder);
+			ContextUtil.getOrderHelper().setPreviousOrder(incomingDrugOrder, existingDrugOrder);
+			incomingDrugOrder = (DrugOrder) ContextUtil.getOrderHelper().saveOrder(incomingDrugOrder);
 			return FHIRMedicationRequestUtil.generateMedicationRequest(incomingDrugOrder);
 		} else {
 			StrategyUtil.setIdIfNeeded(medicationRequest, uuid);

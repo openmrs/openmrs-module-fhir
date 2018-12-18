@@ -6,7 +6,7 @@ import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
 import org.openmrs.Drug;
 import org.openmrs.DrugIngredient;
-import org.openmrs.DrugReferenceMap;
+import org.openmrs.module.fhir.api.helper.DrugHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,7 +34,7 @@ public final class FHIRMedicationUtil {
 			medication.setCode(FHIRUtils.getCodeableConceptConceptMappings(map));
 		}
 
-		medication.setIngredient(generateIngredient(drug.getIngredients()));
+		medication.setIngredient(generateIngredient(ContextUtil.getDrugHelper().getIngredients(drug)));
 
 		return medication;
 	}
@@ -55,7 +55,7 @@ public final class FHIRMedicationUtil {
 		drug.setConcept(FHIRUtils.getConceptFromCode(medication.getCode(), errors));
 
 		try {
-			drug.setIngredients(generateOpenMRSIngredient(medication.getIngredient(), errors));
+			ContextUtil.getDrugHelper().setIngredients(drug, generateOpenMRSIngredient(medication.getIngredient(), errors));
 		}
 		catch (FHIRException e) {
 			errors.add(e.getMessage());
@@ -66,18 +66,7 @@ public final class FHIRMedicationUtil {
 	}
 
 	public static Drug updateDrug(Drug newDrug, Drug drugToUpdate) {
-		for (DrugReferenceMap drugReferenceMap : newDrug.getDrugReferenceMaps()) {
-			drugToUpdate.addDrugReferenceMap(drugReferenceMap);
-		}
-		drugToUpdate.setIngredients(newDrug.getIngredients());
-		drugToUpdate.setConcept(newDrug.getConcept());
-		drugToUpdate.setDosageForm(newDrug.getDosageForm());
-		drugToUpdate.setMaximumDailyDose(newDrug.getMaximumDailyDose());
-		drugToUpdate.setMinimumDailyDose(newDrug.getMinimumDailyDose());
-		drugToUpdate.setCombination(newDrug.getCombination());
-		drugToUpdate.setStrength(newDrug.getStrength());
-		drugToUpdate.setName(newDrug.getName());
-
+		ContextUtil.getDrugHelper().updateDrug(newDrug, drugToUpdate);
 		return drugToUpdate;
 	}
 
@@ -88,7 +77,8 @@ public final class FHIRMedicationUtil {
 
 		for (Medication.MedicationIngredientComponent component : ingredient) {
 			DrugIngredient drugIngredient = new DrugIngredient();
-			Concept ingredientConcept = FHIRUtils.getConceptFromCode(component.getItemCodeableConcept(), errors);
+			Concept ingredientConcept = FHIRUtils
+					.getConceptFromCode(component.getItemCodeableConcept(), errors);
 			drugIngredient.setIngredient(ingredientConcept);
 			drugIngredients.add(drugIngredient);
 		}

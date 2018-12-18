@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static org.openmrs.module.fhir.api.util.FHIRUtils.extractUuid;
-
 @Component("DefaultPersonStrategy")
 public class PersonStrategy implements GenericPersonStrategy {
 

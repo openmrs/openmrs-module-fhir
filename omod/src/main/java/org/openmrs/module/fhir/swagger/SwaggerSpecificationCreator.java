@@ -682,8 +682,6 @@ public class SwaggerSpecificationCreator {
 			examples.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.OBSERVATION_PAYLOAD);
 		} else if (SwaggerDocConstants.LOCATION_RESOURCE.equalsIgnoreCase(resourceName)) {
 			examples.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.LOCATION_PAYLOAD);
-		} else if (SwaggerDocConstants.PLAN_DEFINITION_RESOURCE.equalsIgnoreCase(resourceName)) {
-			examples.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.PLAN_DEFINITION_PAYLOAD);
 		} else {
 			examples.put(SwaggerDocConstants.CONSUMES_JSON, SwaggerDocConstants.EMPTY);
 		}
