@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 
 @Component(value = "fhir.DrugHelper")
+@OpenmrsProfile(openmrsPlatformVersion = "2.0.* - 2.1.*")
 public class DrugHelperImpl2_0 implements DrugHelper {
 
 	@Override

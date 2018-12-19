@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Component(value = "fhir.AllergyHelper")
-@OpenmrsProfile(openmrsPlatformVersion = "2.0.*")
+@OpenmrsProfile(openmrsPlatformVersion = "2.0.* - 2.1.*")
 public class AllergyHelperImpl2_0 implements AllergyHelper {
 
 	@Autowired

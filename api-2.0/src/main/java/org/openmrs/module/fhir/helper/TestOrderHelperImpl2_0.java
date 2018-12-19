@@ -10,7 +10,7 @@ import org.openmrs.module.fhir.api.helper.TestOrderHelper;
 import org.springframework.stereotype.Component;
 
 @Component(value = "fhir.TestOrderHelper")
-@OpenmrsProfile(openmrsPlatformVersion = "2.0.*")
+@OpenmrsProfile(openmrsPlatformVersion = "2.0.* - 2.1.*")
 public class TestOrderHelperImpl2_0 extends OrderHelperImpl2_0 implements TestOrderHelper {
 
 	@Override

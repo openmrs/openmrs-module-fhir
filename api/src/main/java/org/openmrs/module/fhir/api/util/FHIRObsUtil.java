@@ -182,26 +182,9 @@ public class FHIRObsUtil {
 			observation.setValue(value);
 		}
 
-		CodeableConcept interpretation = null;
-		Observation.ObservationStatus status = Observation.ObservationStatus.FINAL;
-		try {
-			//TODO-Arek the following functionality is available since OpenMRS 2.1.0 we need to create a helper for this version of the software
-//			Status stat = obs.getStatus();
-//			if (stat != null) {
-//				status = Observation.ObservationStatus.valueOf(stat.name());
-//			}
-//
-//			Interpretation interpret = obs.getInterpretation();
-//			if (interpret != null) {
-//				interpretation = new CodeableConcept();
-//				interpretation.setText(interpret.name());
-//			}
-		}
-		catch (NoSuchMethodError ex) {
-			//must be running below platform 2.1
-		}
-
+		Observation.ObservationStatus status = ContextUtil.getObsHelper().getObsStatus(obs);
 		observation.setStatus(status);
+		CodeableConcept interpretation = ContextUtil.getObsHelper().getInterpretation(obs);
 		observation.setInterpretation(interpretation);
 		observation.setIssued(obs.getObsDatetime());
 
@@ -359,21 +342,9 @@ public class FHIRObsUtil {
 		}
 
 		CodeableConcept interpretation = observation.getInterpretation();
+		ContextUtil.getObsHelper().setInterpretation(obs, interpretation);
 		Observation.ObservationStatus status = observation.getStatus();
-
-		try {
-			//TODO-Arek the following functionality is available since OpenMRS 2.1.0 we need to create a helper for this version of the software
-//			if (status != null) {
-//				obs.setStatus(Status.valueOf(status.name()));
-//			}
-//
-//			if (interpretation != null && StringUtils.isNotBlank(interpretation.getText())) {
-//				obs.setInterpretation(Interpretation.valueOf(interpretation.getText()));
-//			}
-		}
-		catch (NoSuchMethodError ex) {
-			//must be running below platform 2.1
-		}
+		ContextUtil.getObsHelper().setStatus(obs, status);
 
 		return obs;
 	}

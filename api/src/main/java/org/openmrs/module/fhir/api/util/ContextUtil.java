@@ -11,7 +11,7 @@ import org.openmrs.module.fhir.api.helper.TestOrderHelper;
 public class ContextUtil {
 
 	public static ObsHelper getObsHelper() {
-		return Context.getRegisteredComponent("", ObsHelper.class); //TODO-Arek missing implementation
+		return Context.getRegisteredComponent("fhir.ObsHelper", ObsHelper.class);
 	}
 
 	public static DrugHelper getDrugHelper() {

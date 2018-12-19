@@ -18,7 +18,7 @@ import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.springframework.stereotype.Component;
 
 @Component(value = "fhir.DrugOrderHelper")
-@OpenmrsProfile(openmrsPlatformVersion = "2.0.*")
+@OpenmrsProfile(openmrsPlatformVersion = "2.0.* - 2.1.*")
 public class DrugOrderHelperImpl2_0 extends OrderHelperImpl2_0 implements DrugOrderHelper {
 
 	@Override

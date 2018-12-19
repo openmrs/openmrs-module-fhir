@@ -15,7 +15,7 @@
     <description>API project for FHIR</description>
 
     <properties>
-        <openMRSVersion>2.0.5</openMRSVersion>
+        <openMRSVersion>2.1.0</openMRSVersion>
     </properties>
 
     <dependencies>

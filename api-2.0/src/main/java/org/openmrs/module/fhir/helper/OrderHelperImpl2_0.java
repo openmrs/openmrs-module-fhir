@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component(value = "fhir.OrderHelper")
-@OpenmrsProfile(openmrsPlatformVersion = "2.0.*")
+@OpenmrsProfile(openmrsPlatformVersion = "2.0.* - 2.1.*")
 public class OrderHelperImpl2_0 implements OrderHelper {
 
 	private static final int INPATIENT = 2;
