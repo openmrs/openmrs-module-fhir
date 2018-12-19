@@ -24,7 +24,6 @@ import org.openmrs.TestOrder;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.comparator.ProcedureRequestComparator;
 import org.openmrs.module.fhir.api.constants.ExtensionURL;
-import org.openmrs.module.fhir.api.strategies.procedurerequest.ProcedureRequestStrategy;
 
 import java.util.Collections;
 import java.util.List;
@@ -78,18 +77,19 @@ public class FHIRProcedureRequestUtil {
             testOrder.setUuid(FHIRUtils.extractUuid(procedureRequest.getId()));
         }
 		testOrder.setSpecimenSource(getSpecimenSource(procedureRequest.getSpecimenFirstRep()));
-		ContextUtil.getOrderHelper().setTestOrderFrequencyByString(testOrder, getOrderFrequencyFromExtension(procedureRequest, errors));
+		ContextUtil.getTestOrderHelper()
+				.setFrequencyByString(testOrder, getOrderFrequencyFromExtension(procedureRequest, errors));
 		testOrder.setPatient(getOpenMRSPatient(procedureRequest.getSubject(), errors));
-		ContextUtil.getOrderHelper().setOrderer(testOrder, FHIRRequestUtil
+		ContextUtil.getTestOrderHelper().setOrderer(testOrder, FHIRRequestUtil
 				.getOrdererUuid(procedureRequest, errors));
 		testOrder.setUrgency(getUrgency(procedureRequest));
 		testOrder.setEncounter(getEncounter(procedureRequest.getContext(), errors));
-		ContextUtil.getOrderHelper().setCareSettingByString(testOrder, FHIRRequestUtil
+		ContextUtil.getTestOrderHelper().setCareSettingByString(testOrder, FHIRRequestUtil
 				.getCareSetting(procedureRequest, errors));
 		testOrder.setConcept(getConceptFromExtension(procedureRequest, errors));
 		testOrder.setLaterality(getLateralityFromExtension(procedureRequest, errors));
 		testOrder.setClinicalHistory(getClinicalHistoryFromExtension(procedureRequest));
-		ContextUtil.getOrderHelper().setTestOrderAction(testOrder, procedureRequest.getStatus());
+		ContextUtil.getTestOrderHelper().setAction(testOrder, procedureRequest.getStatus());
 
 		return testOrder;
 	}
@@ -216,7 +216,7 @@ public class FHIRProcedureRequestUtil {
 	}
 
 	private static ProcedureRequest.ProcedureRequestStatus buildStatus(TestOrder testOrder) {
-		if (ContextUtil.getOrderHelper().isActive(testOrder)) {
+		if (ContextUtil.getTestOrderHelper().isActive(testOrder)) {
 			return ProcedureRequest.ProcedureRequestStatus.ACTIVE;
 		} else if (testOrder.isDiscontinuedRightNow()) {
 			return ProcedureRequest.ProcedureRequestStatus.CANCELLED;

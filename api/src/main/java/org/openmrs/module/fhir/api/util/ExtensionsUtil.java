@@ -15,7 +15,6 @@ import org.openmrs.TestOrder;
 import org.openmrs.User;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.constants.ExtensionURL;
-import org.openmrs.module.fhir.api.strategies.procedurerequest.ProcedureRequestStrategy;
 
 import java.util.Date;
 import java.util.List;
@@ -203,7 +202,8 @@ public final class ExtensionsUtil {
 	}
 
 	public static Extension createOrderFrequencyExtension(TestOrder order) {
-		return createExtension(ExtensionURL.ORDER_FREQUENCY_URL, new StringType(ContextUtil.getOrderHelper().testOrderFrequencyToString(order)));
+		return createExtension(ExtensionURL.ORDER_FREQUENCY_URL, new StringType(
+				ContextUtil.getTestOrderHelper().frequencyToString(order)));
 	}
 
 	//endregion
