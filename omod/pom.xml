@@ -84,6 +84,12 @@
 
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
+			<artifactId>fhir-api-1.9</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
 			<artifactId>fhir-api-2.0</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>

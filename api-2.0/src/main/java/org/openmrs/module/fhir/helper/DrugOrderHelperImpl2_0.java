@@ -52,7 +52,7 @@ public class DrugOrderHelperImpl2_0 extends OrderHelperImpl2_0 implements DrugOr
 	}
 
 	@Override
-	public String getNonCoded(DrugOrder drugOrder) {
+	public String getDrugNonCoded(DrugOrder drugOrder) {
 		return drugOrder.getDrugNonCoded();
 	}
 

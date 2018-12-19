@@ -77,7 +77,7 @@ public class FHIRMedicationRequestUtil {
 		medicationRequest.addExtension(ExtensionsUtil.createDispenseAsWrittenExtension(
 				ContextUtil.getDrugOrderHelper().getDispenseAsWritten(omrsDrugOrder)));
 		medicationRequest.addExtension(ExtensionsUtil.createDrugNonCodedExtension(
-				ContextUtil.getDrugOrderHelper().getNonCoded(omrsDrugOrder)));
+				ContextUtil.getDrugOrderHelper().getDrugNonCoded(omrsDrugOrder)));
 		medicationRequest.addExtension(FHIRRequestUtil.buildCareSettingExtension(omrsDrugOrder));
 
 		return medicationRequest;

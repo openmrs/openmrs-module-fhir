@@ -57,9 +57,10 @@
 
 	<modules>
 		<module>api</module>
+		<module>api-1.9</module>
 		<module>api-2.0</module>
 		<module>omod</module>
-	</modules>
+    </modules>
 
 	<properties>
 		<openMRSVersion>1.9.10</openMRSVersion>

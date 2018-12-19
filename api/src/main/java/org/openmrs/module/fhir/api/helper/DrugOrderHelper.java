@@ -17,35 +17,35 @@ public interface DrugOrderHelper extends OrderHelper {
 
 	String getBrandName(DrugOrder drugOrder);
 
+	void setBrandName(DrugOrder drugOrder, String brandName);
+
 	Boolean getDispenseAsWritten(DrugOrder drugOrder);
 
 	void setDispenseAsWritten(DrugOrder drugOrder, Boolean dispenseAsWritten);
 
-	String getNonCoded(DrugOrder drugOrder);
-
-	void setAsNeeded(DrugOrder drugOrder, Boolean asNeeded);
-
-	void setDosingInstructions(DrugOrder drugOrder, String dosingInstructions);
-
-	void setRoute(DrugOrder drugOrder, Concept route);
-
-	Concept getRoute(DrugOrder omrsDrugOrder);
-
-	void setNumRefills(DrugOrder drugOrder, Integer numRefills);
-
-	void setBrandName(DrugOrder drugOrder, String brandName);
+	String getDrugNonCoded(DrugOrder drugOrder);
 
 	void setDrugNonCoded(DrugOrder drugOrder, String drugNonCoded);
 
 	boolean getAsNeeded(DrugOrder drugOrder);
 
+	void setAsNeeded(DrugOrder drugOrder, Boolean asNeeded);
+
 	String getDosingInstructions(DrugOrder omrsDrugOrder);
+
+	void setDosingInstructions(DrugOrder drugOrder, String dosingInstructions);
+
+	Concept getRoute(DrugOrder omrsDrugOrder);
+
+	void setRoute(DrugOrder drugOrder, Concept route);
+
+	Integer getNumRefills(DrugOrder omrsDrugOrder);
+
+	void setNumRefills(DrugOrder drugOrder, Integer numRefills);
 
 	String getDosingType(DrugOrder drugOrder);
 
 	void setDosingType(DrugOrder drugOrder, String classCanonicalName);
-
-	Integer getNumRefills(DrugOrder omrsDrugOrder);
 
 	void setFrequency(DrugOrder drugOrder, Timing timing);
 

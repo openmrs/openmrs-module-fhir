@@ -3,8 +3,8 @@ package org.openmrs.module.fhir.helper;
 import ca.uhn.fhir.rest.server.exceptions.MethodNotAllowedException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.hl7.fhir.dstu3.model.AllergyIntolerance;
-import org.openmrs.Allergy;
 import org.openmrs.Patient;
+import org.openmrs.activelist.Allergy;
 import org.openmrs.annotation.OpenmrsProfile;
 import org.openmrs.api.APIException;
 import org.openmrs.api.PatientService;
@@ -20,18 +20,18 @@ import java.util.Collection;
 import java.util.List;
 
 @Component(value = "fhir.AllergyHelper")
-@OpenmrsProfile(openmrsPlatformVersion = "2.0.* - 2.1.*")
-public class AllergyHelperImpl2_0 implements AllergyHelper {
+@OpenmrsProfile(openmrsPlatformVersion = "1.9.*")
+public class AllergyHelperImpl1_9 implements AllergyHelper {
 
 	@Autowired
 	private PatientService patientService;
 
+
 	@Override
 	public AllergyIntolerance getAllergyIntolerance(String uuid) {
-		Allergy openMRSAllergy = patientService.getAllergyByUuid(uuid);
-
-		return openMRSAllergy != null ?
-				FHIRAllergyIntoleranceUtil.generateAllergyIntolerance(openMRSAllergy)
+		Allergy allergy = (Allergy) Context.getActiveListService().getActiveListItemByUuid(uuid);
+		return allergy != null ?
+				FHIRAllergyIntoleranceUtil.generateAllergyIntolerance(allergy)
 				: null;
 	}
 
@@ -55,7 +55,7 @@ public class AllergyHelperImpl2_0 implements AllergyHelper {
 	public AllergyIntolerance updateAllergy(AllergyIntolerance allergyIntolerance, String uuid) {
 		Allergy newAllergy = FHIRAllergyIntoleranceUtil.generateAllergy(allergyIntolerance);
 
-		Allergy allergy = patientService.getAllergyByUuid(uuid);
+		Allergy allergy = (Allergy) Context.getActiveListService().getActiveListItemByUuid(uuid);
 		if (allergy != null) {
 			allergy = FHIRAllergyIntoleranceUtil.updateAllergyAttributes(allergy, newAllergy);
 			allergy = saveAllergy(allergy);
@@ -69,7 +69,7 @@ public class AllergyHelperImpl2_0 implements AllergyHelper {
 
 	@Override
 	public void deleteAllergy(String uuid) {
-		Allergy allergy = patientService.getAllergyByUuid(uuid);
+		Allergy allergy = (Allergy) Context.getActiveListService().getActiveListItemByUuid(uuid);
 
 		if (allergy == null) {
 			throw new ResourceNotFoundException(String.format("Allergy with id '%s' not found", uuid));
@@ -91,6 +91,6 @@ public class AllergyHelperImpl2_0 implements AllergyHelper {
 	private Allergy saveAllergy(Allergy allergy) {
 		patientService.saveAllergy(allergy);
 		//retrieve is necessary as saveAllergy(...) returns no value
-		return patientService.getAllergyByUuid(allergy.getUuid());
+		return (Allergy) Context.getActiveListService().getActiveListItemByUuid(allergy.getUuid());
 	}
 }
