@@ -37,7 +37,7 @@ import static org.hl7.fhir.dstu3.model.AllergyIntolerance.AllergyIntoleranceCate
 import static org.hl7.fhir.dstu3.model.AllergyIntolerance.AllergyIntoleranceCriticality;
 import static org.hl7.fhir.dstu3.model.AllergyIntolerance.AllergyIntoleranceReactionComponent;
 
-public class FHIRAllergyIntoleranceUtil {
+public class FHIRAllergyIntoleranceUtil2_0 {
 
 	public static AllergyIntolerance generateAllergyIntolerance(Allergy allergy) {
 		AllergyIntolerance allergyIntolerance = new AllergyIntolerance();
@@ -64,7 +64,7 @@ public class FHIRAllergyIntoleranceUtil {
 		return allergyIntolerance;
 	}
 
-	public static Allergy generateAllergy(AllergyIntolerance allergyIntolerance) {
+	public static Allergy generateAllergy(AllergyIntolerance allergyIntolerance, List<String> errors) {
 		Allergy allergy = new Allergy();
 		allergy.setUuid(allergyIntolerance.getId());
 		allergy.setPatient(buildPatient(allergyIntolerance));
@@ -73,7 +73,7 @@ public class FHIRAllergyIntoleranceUtil {
 		if (allergy.getAllergen() != null) {
 			allergy.setAllergenType(buildAllergenType(allergyIntolerance));
 		}
-		for (AllergyReaction reaction : buildReactions(allergyIntolerance)) {
+		for (AllergyReaction reaction : buildReactions(allergyIntolerance, errors)) {
 			allergy.addReaction(reaction);
 		}
 		allergy.setComment(buildComment(allergyIntolerance));
@@ -124,18 +124,20 @@ public class FHIRAllergyIntoleranceUtil {
 		return new ArrayList<>();
 	}
 
-	private static List<AllergyReaction> buildReactions(AllergyIntolerance allergyIntolerance) {
+	private static List<AllergyReaction> buildReactions(AllergyIntolerance allergyIntolerance, List<String> errors) {
 		List<AllergyReaction> result = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(allergyIntolerance.getReaction())) {
 			for (AllergyIntoleranceReactionComponent reaction : allergyIntolerance.getReaction()) {
-				result.addAll(buildReactionsFromManifestation(reaction));
+				result.addAll(buildReactionsFromManifestation(reaction, errors));
 			}
+		} else {
+			errors.add("The allergy intolerance reaction can't be empty.");
 		}
 		return result;
 	}
 
 	private static List<AllergyReaction> buildReactionsFromManifestation(
-			AllergyIntoleranceReactionComponent reactionComponent) {
+			AllergyIntoleranceReactionComponent reactionComponent, List<String> errors) {
 		List<AllergyReaction> result = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(reactionComponent.getManifestation())) {
 			for (CodeableConcept codeableConcept : reactionComponent.getManifestation()) {
@@ -143,10 +145,16 @@ public class FHIRAllergyIntoleranceUtil {
 				if (codeableConcept.getCoding().isEmpty()) {
 					allergyReaction.setReactionNonCoded(codeableConcept.getText());
 				} else {
-					allergyReaction.setReaction(FHIRUtils.getConceptByCodeableConcept(codeableConcept));
+					Concept concept = FHIRUtils.getConceptByCodeableConcept(codeableConcept);
+					if (concept == null) {
+						errors.add(String.format("Couldn't find concept %s", codeableConcept.getText()));
+					}
+					allergyReaction.setReaction(concept);
 				}
 				result.add(allergyReaction);
 			}
+		} else {
+			errors.add("The allergy intolerance reaction manifestation can't be empty.");
 		}
 		return result;
 	}

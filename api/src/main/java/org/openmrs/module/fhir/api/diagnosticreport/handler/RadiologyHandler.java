@@ -1,5 +1,8 @@
 package org.openmrs.module.fhir.api.diagnosticreport.handler;
 
+import ca.uhn.fhir.model.api.Bundle;
+import ca.uhn.fhir.model.api.BundleEntry;
+import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.rest.gclient.ICriterion;
 import ca.uhn.fhir.rest.gclient.ReferenceClientParam;
 import ca.uhn.fhir.rest.gclient.TokenClientParam;
@@ -8,7 +11,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.Attachment;
-import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.DiagnosticReport;
 import org.hl7.fhir.dstu3.model.IdType;
@@ -16,7 +18,6 @@ import org.hl7.fhir.dstu3.model.ImagingStudy;
 import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.Reference;
-import org.hl7.fhir.dstu3.model.Resource;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.api.EncounterService;
@@ -77,15 +78,15 @@ public class RadiologyHandler extends AbstractHandler implements DiagnosticRepor
 				diagnosticReportBySubject,
 				diagnosticReportByService);
 		if (log.isDebugEnabled()) {
-			log.debug("Bundle size : " + bundle.getTotal());
+			log.debug("Bundle size : " + bundle.size());
 		}
 
-		for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
-			Resource resource = entry.getResource();
+		for (BundleEntry entry : bundle.getEntries()) {
+			IResource resource = entry.getResource();
 			if (log.isDebugEnabled()) {
-				log.debug("Resource Type : " + resource.getResourceType().name());
+				log.debug("Resource Type : " + resource.getResourceName());
 			}
-			if (FHIRConstants.DIAGNOSTIC_REPORT.equals(resource.getResourceType().name())) {
+			if (FHIRConstants.DIAGNOSTIC_REPORT.equals(resource.getResourceName())) {
 				DiagnosticReport diagnosticReport = (DiagnosticReport) resource;
 				diagnosticReport = this.saveFHIRDiagnosticReport(diagnosticReport);
 				diagnosticReport = this.getFHIRDiagnosticReportById(diagnosticReport.getId());

@@ -11,7 +11,8 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.helper.AllergyHelper;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
-import org.openmrs.module.fhir.util.FHIRAllergyIntoleranceUtil;
+import org.openmrs.module.fhir.api.util.FHIRUtils;
+import org.openmrs.module.fhir.util.FHIRAllergyIntoleranceUtil2_0;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +32,7 @@ public class AllergyHelperImpl2_0 implements AllergyHelper {
 		Allergy openMRSAllergy = patientService.getAllergyByUuid(uuid);
 
 		return openMRSAllergy != null ?
-				FHIRAllergyIntoleranceUtil.generateAllergyIntolerance(openMRSAllergy)
+				FHIRAllergyIntoleranceUtil2_0.generateAllergyIntolerance(openMRSAllergy)
 				: null;
 	}
 
@@ -40,31 +41,36 @@ public class AllergyHelperImpl2_0 implements AllergyHelper {
 		List<AllergyIntolerance> allergies = new ArrayList<>();
 		PatientService allergyService = Context.getService(PatientService.class);
 		for (Allergy allergy : allergyService.getAllergies(patient)) {
-			allergies.add(FHIRAllergyIntoleranceUtil.generateAllergyIntolerance(allergy));
+			allergies.add(FHIRAllergyIntoleranceUtil2_0.generateAllergyIntolerance(allergy));
 		}
 		return allergies;
 	}
 
 	@Override
 	public AllergyIntolerance createAllergy(AllergyIntolerance allergyIntolerance) {
-		Allergy allergy = FHIRAllergyIntoleranceUtil.generateAllergy(allergyIntolerance);
-		return FHIRAllergyIntoleranceUtil.generateAllergyIntolerance(saveAllergy(allergy));
+		List<String> errors = new ArrayList<String>();
+		Allergy allergy = FHIRAllergyIntoleranceUtil2_0.generateAllergy(allergyIntolerance, errors);
+		FHIRUtils.checkGeneratorErrorList(errors);
+		return FHIRAllergyIntoleranceUtil2_0.generateAllergyIntolerance(saveAllergy(allergy));
 	}
 
 	@Override
 	public AllergyIntolerance updateAllergy(AllergyIntolerance allergyIntolerance, String uuid) {
-		Allergy newAllergy = FHIRAllergyIntoleranceUtil.generateAllergy(allergyIntolerance);
+		List<String> errors = new ArrayList<String>();
+		Allergy newAllergy = FHIRAllergyIntoleranceUtil2_0.generateAllergy(allergyIntolerance, errors);
+		FHIRUtils.checkGeneratorErrorList(errors);
+
 
 		Allergy allergy = patientService.getAllergyByUuid(uuid);
 		if (allergy != null) {
-			allergy = FHIRAllergyIntoleranceUtil.updateAllergyAttributes(allergy, newAllergy);
+			allergy = FHIRAllergyIntoleranceUtil2_0.updateAllergyAttributes(allergy, newAllergy);
 			allergy = saveAllergy(allergy);
 		} else {
 			newAllergy.setUuid(uuid);
 			allergy = saveAllergy(newAllergy);
 		}
 
-		return FHIRAllergyIntoleranceUtil.generateAllergyIntolerance(allergy);
+		return FHIRAllergyIntoleranceUtil2_0.generateAllergyIntolerance(allergy);
 	}
 
 	@Override
@@ -85,7 +91,10 @@ public class AllergyHelperImpl2_0 implements AllergyHelper {
 
 	@Override
 	public Object generateAllergy(Object object) {
-		return FHIRAllergyIntoleranceUtil.generateAllergy((AllergyIntolerance) object);
+		List<String> errors = new ArrayList<String>();
+		Object allergy = FHIRAllergyIntoleranceUtil2_0.generateAllergy((AllergyIntolerance) object, errors);
+		FHIRUtils.checkGeneratorErrorList(errors);
+		return allergy;
 	}
 
 	private Allergy saveAllergy(Allergy allergy) {

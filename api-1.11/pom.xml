@@ -9,13 +9,13 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>fhir-api-1.9</artifactId>
+    <artifactId>fhir-api-1.11</artifactId>
     <packaging>jar</packaging>
-    <name>FHIR Module API 1.9</name>
+    <name>FHIR Module API 1.11</name>
     <description>API project for FHIR</description>
 
     <properties>
-        <openMRSVersion>1.9.10</openMRSVersion>
+        <openMRSVersion>1.11.0</openMRSVersion>
     </properties>
 
     <dependencies>
@@ -138,7 +138,7 @@
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>serialization.xstream-api-1.9</artifactId>
+            <artifactId>serialization.xstream-api-1.10</artifactId>
             <version>${serializationModuleApiVersion}</version>
             <scope>provided</scope>
         </dependency>
@@ -172,4 +172,6 @@
             </testResource>
         </testResources>
     </build>
+
+
 </project>

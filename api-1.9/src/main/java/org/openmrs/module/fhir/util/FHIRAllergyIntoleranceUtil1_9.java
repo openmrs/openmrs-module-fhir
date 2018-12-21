@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class FHIRAllergyIntoleranceUtil {
+public class FHIRAllergyIntoleranceUtil1_9 {
 
 	public static final int FIRST = 0;
 
@@ -46,7 +46,7 @@ public class FHIRAllergyIntoleranceUtil {
 		return allergyIntolerance;
 	}
 
-	public static Allergy generateAllergy(AllergyIntolerance allergyIntolerance) {
+	public static Allergy generateAllergy(AllergyIntolerance allergyIntolerance, List<String> errors) {
 		Allergy allergy = new Allergy();
 		allergy.setUuid(allergyIntolerance.getId());
 		allergy.setPerson(buildPerson(allergyIntolerance));
@@ -55,7 +55,7 @@ public class FHIRAllergyIntoleranceUtil {
 		if (allergy.getAllergen() != null) {
 			allergy.setAllergyType(buildAllergenType(allergyIntolerance));
 		}
-		allergy.setReaction(buildReaction(allergyIntolerance));
+		allergy.setReaction(buildReaction(allergyIntolerance, errors));
 		allergy.setComments(buildComment(allergyIntolerance));
 		return allergy;
 	}
@@ -102,20 +102,27 @@ public class FHIRAllergyIntoleranceUtil {
 		return null;
 	}
 
-	private static Concept buildReaction(AllergyIntolerance allergyIntolerance) {
+	private static Concept buildReaction(AllergyIntolerance allergyIntolerance, List<String> errors) {
 		if (CollectionUtils.isNotEmpty(allergyIntolerance.getReaction())) {
 			AllergyIntolerance.AllergyIntoleranceReactionComponent reaction = allergyIntolerance.getReaction().get(FIRST);
-			return buildReactionsFromManifestation(reaction);
+			return buildReactionsFromManifestation(reaction, errors);
+		} else {
+			errors.add("The allergy intolerance reaction can't be empty.");
 		}
 		return null;
 	}
 
 	private static Concept buildReactionsFromManifestation(
-			AllergyIntolerance.AllergyIntoleranceReactionComponent reactionComponent) {
-
+			AllergyIntolerance.AllergyIntoleranceReactionComponent reactionComponent, List<String> errors) {
 		if (CollectionUtils.isNotEmpty(reactionComponent.getManifestation())) {
 			CodeableConcept codeableConcept = reactionComponent.getManifestation().get(FIRST);
-			return FHIRUtils.getConceptByCodeableConcept(codeableConcept);
+			Concept concept = FHIRUtils.getConceptByCodeableConcept(codeableConcept);
+			if (concept == null) {
+				errors.add(String.format("Couldn't find concept %s", codeableConcept.getText()));
+			}
+			return concept;
+		} else {
+			errors.add("The allergy intolerance reaction manifestation can't be empty.");
 		}
 		return null;
 	}

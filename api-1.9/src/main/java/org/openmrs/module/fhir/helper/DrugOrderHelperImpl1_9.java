@@ -56,13 +56,13 @@ public class DrugOrderHelperImpl1_9 extends OrderHelperImpl1_9 implements DrugOr
 
 	@Override
 	public String getDrugNonCoded(DrugOrder drugOrder) {
-		//The drug non coded was introduced in the OpenMRS 1.10
+		//The drug non coded was introduced in the OpenMRS 1.12
 		return null;
 	}
 
 	@Override
 	public void setDrugNonCoded(DrugOrder drugOrder, String drugNonCoded) {
-		//The drug non coded was introduced in the OpenMRS 1.10
+		//The drug non coded was introduced in the OpenMRS 1.12
 	}
 
 	@Override

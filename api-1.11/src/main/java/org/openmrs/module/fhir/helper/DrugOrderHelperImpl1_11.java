@@ -18,8 +18,8 @@ import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.springframework.stereotype.Component;
 
 @Component(value = "fhir.DrugOrderHelper")
-@OpenmrsProfile(openmrsPlatformVersion = "2.0.* - 2.1.*")
-public class DrugOrderHelperImpl2_0 extends OrderHelperImpl2_0 implements DrugOrderHelper {
+@OpenmrsProfile(openmrsVersion = "1.11.*")
+public class DrugOrderHelperImpl1_11 extends OrderHelperImpl1_11 implements DrugOrderHelper {
 
 	@Override
 	public void setAction(DrugOrder drugOrder, MedicationRequest.MedicationRequestStatus status) {
@@ -58,12 +58,13 @@ public class DrugOrderHelperImpl2_0 extends OrderHelperImpl2_0 implements DrugOr
 
 	@Override
 	public String getDrugNonCoded(DrugOrder drugOrder) {
-		return drugOrder.getDrugNonCoded();
+		//The drug non coded was introduced in the OpenMRS 1.12
+		return null;
 	}
 
 	@Override
 	public void setDrugNonCoded(DrugOrder drugOrder, String drugNonCoded) {
-		drugOrder.setDrugNonCoded(drugNonCoded);
+		//The drug non coded was introduced in the OpenMRS 1.12
 	}
 
 	@Override

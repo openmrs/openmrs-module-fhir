@@ -60,7 +60,8 @@
 		<module>api-1.9</module>
 		<module>api-2.0</module>
 		<module>omod</module>
-    </modules>
+		<module>api-1.11</module>
+	</modules>
 
 	<properties>
 		<openMRSVersion>1.9.10</openMRSVersion>
@@ -69,9 +70,9 @@
 		<slf4jLog4j12Version>1.6.0</slf4jLog4j12Version>
 		<xmlStreamVersion>1.0-2</xmlStreamVersion>
 		<SaxonHEVersion>9.4</SaxonHEVersion>
-		<hapiFhirBaseVersion>3.3.0</hapiFhirBaseVersion>
-		<hapiFhirStructuresDstuVersion>3.3.0</hapiFhirStructuresDstuVersion>
-		<hapiValidationResources>3.3.0</hapiValidationResources>
+		<hapiFhirBaseVersion>2.5</hapiFhirBaseVersion>
+		<hapiFhirStructuresDstuVersion>2.5</hapiFhirStructuresDstuVersion>
+		<hapiValidationResources>2.5</hapiValidationResources>
 		<thymeleafVersion>2.1.4.RELEASE</thymeleafVersion>
 		<phlocSchematronVersion>2.7.1</phlocSchematronVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -82,6 +83,7 @@
 		<emrApiConditionModuleApiVersion>1.16</emrApiConditionModuleApiVersion>
 		<jacksonDataBindVersion>2.5.4</jacksonDataBindVersion>
 		<swaggerCondeGenVersion>2.3.1</swaggerCondeGenVersion>
+		<reportingcompatibilityVersion>1.5.13</reportingcompatibilityVersion>
 	</properties>
 
 	<dependencyManagement>
