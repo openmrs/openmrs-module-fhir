@@ -107,10 +107,8 @@ public class FHIRAllergyIntoleranceUtil2_0 {
 	}
 
 	private static String buildComment(AllergyIntolerance allergyIntolerance) {
-		if (CollectionUtils.isNotEmpty(allergyIntolerance.getNote())) {
-			return allergyIntolerance.getNoteFirstRep().getText();
-		}
-		return null;
+		return (CollectionUtils.isNotEmpty(allergyIntolerance.getNote())) ?
+				allergyIntolerance.getNoteFirstRep().getText() : null;
 	}
 
 	private static List<AllergyIntoleranceReactionComponent> buildReaction(Allergy allergy) {

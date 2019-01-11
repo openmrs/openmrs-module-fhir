@@ -11,7 +11,7 @@ import org.openmrs.Order;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.constants.ExtensionURL;
-import org.openmrs.module.fhir.api.strategies.procedurerequest.ProcedureRequestStrategy;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -81,7 +81,7 @@ public final class FHIRRequestUtil {
             return null;
         }
         List<Extension> extensions = fhirRequest.getExtensionsByUrl(ExtensionURL.CARE_SETTING);
-        if (extensions.size() > 0) {
+        if (!CollectionUtils.isEmpty(extensions)) {
             careSettingUuid = ExtensionsUtil.getStringFromExtension(extensions.get(FIRST));
         }
         return careSettingUuid;

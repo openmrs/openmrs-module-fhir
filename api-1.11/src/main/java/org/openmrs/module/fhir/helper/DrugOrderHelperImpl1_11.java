@@ -109,11 +109,7 @@ public class DrugOrderHelperImpl1_11 extends OrderHelperImpl1_11 implements Drug
 
 	@Override
 	public String getDosingType(DrugOrder drugOrder) {
-		String dosingType = null;
-		if (drugOrder.getDosingType() != null) {
-			dosingType = drugOrder.getDosingType().getCanonicalName();
-		}
-		return dosingType;
+		return (drugOrder.getDosingType() != null) ? drugOrder.getDosingType().getCanonicalName() : null;
 	}
 
 	@Override
@@ -240,12 +236,7 @@ public class DrugOrderHelperImpl1_11 extends OrderHelperImpl1_11 implements Drug
 
 	private static Order.Action buildDrugOrderAction(MedicationRequest.MedicationRequestStatus status) {
 		//Cant set other status to order it check data for all orders
-		if (status != null) {
-			if (MedicationRequest.MedicationRequestStatus.STOPPED.toCode().
-					equalsIgnoreCase(status.toCode())) {
-				return Order.Action.DISCONTINUE;
-			}
-		}
-		return Order.Action.NEW;
+		return (status != null && MedicationRequest.MedicationRequestStatus.STOPPED.toCode().
+				equalsIgnoreCase(status.toCode())) ? Order.Action.DISCONTINUE : Order.Action.NEW;
 	}
 }

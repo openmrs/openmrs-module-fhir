@@ -85,10 +85,8 @@ public class FHIRAllergyIntoleranceUtil1_9 {
 	}
 
 	private static String buildComment(AllergyIntolerance allergyIntolerance) {
-		if (CollectionUtils.isNotEmpty(allergyIntolerance.getNote())) {
-			return allergyIntolerance.getNoteFirstRep().getText();
-		}
-		return null;
+		return (CollectionUtils.isNotEmpty(allergyIntolerance.getNote())) ?
+				allergyIntolerance.getNoteFirstRep().getText() : null;
 	}
 
 	private static AllergyIntolerance.AllergyIntoleranceReactionComponent buildReaction(Allergy allergy) {
@@ -132,17 +130,12 @@ public class FHIRAllergyIntoleranceUtil1_9 {
 	}
 
 	private static CodeableConcept buildCode(Allergy allergy) {
-		if (allergy.getAllergen() != null) {
-			return FHIRUtils.createCodeableConcept(allergy.getAllergen());
-		}
-		return null;
+		return (allergy.getAllergen() != null) ? FHIRUtils.createCodeableConcept(allergy.getAllergen()) : null;
 	}
 
 	private static Concept buildAllergen(AllergyIntolerance allergyIntolerance) {
-		if (allergyIntolerance.getCode() != null) {
-			return FHIRUtils.getConceptByCodeableConcept(allergyIntolerance.getCode());
-		}
-		return null;
+		return (allergyIntolerance.getCode() != null) ?
+				FHIRUtils.getConceptByCodeableConcept(allergyIntolerance.getCode()) : null;
 	}
 
 	private static List<Enumeration<AllergyIntolerance.AllergyIntoleranceCategory>> buildCategory(Allergy allergy) {
@@ -195,14 +188,15 @@ public class FHIRAllergyIntoleranceUtil1_9 {
 
 	private static AllergyIntolerance.AllergyIntoleranceCriticality buildCriticality(Allergy allergy) {
 		if (allergy.getSeverity() != null) {
-			if (allergy.getSeverity().equals(AllergySeverity.MILD)) {
-				return AllergyIntolerance.AllergyIntoleranceCriticality.LOW;
-			} else if (allergy.getSeverity().equals(AllergySeverity.MODERATE)) {
-				return AllergyIntolerance.AllergyIntoleranceCriticality.UNABLETOASSESS;
-			} else if (allergy.getSeverity().equals(AllergySeverity.SEVERE)) {
-				return AllergyIntolerance.AllergyIntoleranceCriticality.HIGH;
-			} else {
-				return AllergyIntolerance.AllergyIntoleranceCriticality.NULL;
+			switch (allergy.getSeverity()) {
+				case MILD:
+					return AllergyIntolerance.AllergyIntoleranceCriticality.LOW;
+				case MODERATE:
+					return AllergyIntolerance.AllergyIntoleranceCriticality.UNABLETOASSESS;
+				case SEVERE:
+					return AllergyIntolerance.AllergyIntoleranceCriticality.HIGH;
+				default:
+					return AllergyIntolerance.AllergyIntoleranceCriticality.NULL;
 			}
 		}
 		return null;

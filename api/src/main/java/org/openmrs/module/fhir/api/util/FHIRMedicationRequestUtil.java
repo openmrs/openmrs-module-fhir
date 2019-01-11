@@ -32,6 +32,7 @@ import org.openmrs.Order;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.comparator.MedicationRequestComparator;
 import org.openmrs.module.fhir.api.constants.ExtensionURL;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -132,7 +133,7 @@ public class FHIRMedicationRequestUtil {
 
 	private static String buildAsNeededCondition(MedicationRequest fhirMedicationRequest) {
 		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.AS_NEEDED_CONDITION);
-		if (extensions.size() > 0) {
+		if (!CollectionUtils.isEmpty(extensions)) {
 			return ExtensionsUtil.getStringFromExtension(extensions.get(FIRST));
 		}
 		return null;
@@ -148,7 +149,7 @@ public class FHIRMedicationRequestUtil {
 
 	private static void setDosingType(DrugOrder drugOrder, MedicationRequest fhirMedicationRequest) {
 		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.DOSING_TYPE);
-		if (extensions.size() > 0) {
+		if (!CollectionUtils.isEmpty(extensions)) {
 			ContextUtil.getDrugOrderHelper().setDosingType(drugOrder, ExtensionsUtil.getStringFromExtension(extensions.get(FIRST)));
 		}
 	}
@@ -163,7 +164,7 @@ public class FHIRMedicationRequestUtil {
 
 	private static Integer buildNumRefills(MedicationRequest fhirMedicationRequest) {
 		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.NUM_REFILLS);
-		if (extensions.size() > 0) {
+		if (!CollectionUtils.isEmpty(extensions)) {
 			return ExtensionsUtil.getIntegerFromExtension(extensions.get(FIRST));
 		}
 		return null;
@@ -171,7 +172,7 @@ public class FHIRMedicationRequestUtil {
 
 	private static String buildBrandName(MedicationRequest fhirMedicationRequest) {
 		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.BRAND_NAME);
-		if (extensions.size() > 0) {
+		if (!CollectionUtils.isEmpty(extensions)) {
 			return ExtensionsUtil.getStringFromExtension(extensions.get(FIRST));
 		}
 		return null;
@@ -179,7 +180,7 @@ public class FHIRMedicationRequestUtil {
 
 	private static Boolean buildDispenseAsWritten(MedicationRequest fhirMedicationRequest) {
 		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.DISPENSE_AS_WRITTEN);
-		if (extensions.size() > 0) {
+		if (!CollectionUtils.isEmpty(extensions)) {
 			return ExtensionsUtil.getBooleanFromExtension(extensions.get(FIRST));
 		}
 		return null;
@@ -187,7 +188,7 @@ public class FHIRMedicationRequestUtil {
 
 	private static String buildDrugNonCoded(MedicationRequest fhirMedicationRequest) {
 		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.DRUG_NON_CODED);
-		if (extensions.size() > 0) {
+		if (!CollectionUtils.isEmpty(extensions)) {
 			return ExtensionsUtil.getStringFromExtension(extensions.get(FIRST));
 		}
 		return null;

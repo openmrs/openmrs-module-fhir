@@ -30,12 +30,7 @@ public class TestOrderHelperImpl2_0 extends OrderHelperImpl2_0 implements TestOr
 	}
 
 	private static Order.Action buildTestOrderAction(ProcedureRequest.ProcedureRequestStatus status) {
-		if (status != null) {
-			if (ProcedureRequest.ProcedureRequestStatus.CANCELLED.toCode().
-					equalsIgnoreCase(status.toCode())) {
-				return Order.Action.DISCONTINUE;
-			}
-		}
-		return Order.Action.NEW;
+		return (status != null && ProcedureRequest.ProcedureRequestStatus.CANCELLED.toCode().
+				equalsIgnoreCase(status.toCode())) ? Order.Action.DISCONTINUE : Order.Action.NEW;
 	}
 }

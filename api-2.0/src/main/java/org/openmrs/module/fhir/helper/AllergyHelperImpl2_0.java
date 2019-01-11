@@ -13,7 +13,6 @@ import org.openmrs.module.fhir.api.helper.AllergyHelper;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.openmrs.module.fhir.util.FHIRAllergyIntoleranceUtil2_0;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -24,12 +23,9 @@ import java.util.List;
 @OpenmrsProfile(openmrsPlatformVersion = "2.0.* - 2.1.*")
 public class AllergyHelperImpl2_0 implements AllergyHelper {
 
-	@Autowired
-	private PatientService patientService;
-
 	@Override
 	public AllergyIntolerance getAllergyIntolerance(String uuid) {
-		Allergy openMRSAllergy = patientService.getAllergyByUuid(uuid);
+		Allergy openMRSAllergy = Context.getPatientService().getAllergyByUuid(uuid);
 
 		return openMRSAllergy != null ?
 				FHIRAllergyIntoleranceUtil2_0.generateAllergyIntolerance(openMRSAllergy)
@@ -61,7 +57,7 @@ public class AllergyHelperImpl2_0 implements AllergyHelper {
 		FHIRUtils.checkGeneratorErrorList(errors);
 
 
-		Allergy allergy = patientService.getAllergyByUuid(uuid);
+		Allergy allergy = Context.getPatientService().getAllergyByUuid(uuid);
 		if (allergy != null) {
 			allergy = FHIRAllergyIntoleranceUtil2_0.updateAllergyAttributes(allergy, newAllergy);
 			allergy = saveAllergy(allergy);
@@ -75,13 +71,13 @@ public class AllergyHelperImpl2_0 implements AllergyHelper {
 
 	@Override
 	public void deleteAllergy(String uuid) {
-		Allergy allergy = patientService.getAllergyByUuid(uuid);
+		Allergy allergy = Context.getPatientService().getAllergyByUuid(uuid);
 
 		if (allergy == null) {
 			throw new ResourceNotFoundException(String.format("Allergy with id '%s' not found", uuid));
 		} else {
 			try {
-				patientService.removeAllergy(allergy, FHIRConstants.FHIR_RETIRED_MESSAGE);
+				Context.getPatientService().removeAllergy(allergy, FHIRConstants.FHIR_RETIRED_MESSAGE);
 			} catch (APIException apie) {
 				throw new MethodNotAllowedException(String.format("OpenMRS has failed to retire allergy'%s': %s", uuid,
 						apie.getMessage()));
@@ -98,8 +94,8 @@ public class AllergyHelperImpl2_0 implements AllergyHelper {
 	}
 
 	private Allergy saveAllergy(Allergy allergy) {
-		patientService.saveAllergy(allergy);
+		Context.getPatientService().saveAllergy(allergy);
 		//retrieve is necessary as saveAllergy(...) returns no value
-		return patientService.getAllergyByUuid(allergy.getUuid());
+		return Context.getPatientService().getAllergyByUuid(allergy.getUuid());
 	}
 }

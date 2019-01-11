@@ -13,8 +13,7 @@ public class ObsHelperImpl1_11 implements ObsHelper {
 
 	@Override
 	public Observation.ObservationStatus getObsStatus(Obs obs) {
-		Observation.ObservationStatus status = Observation.ObservationStatus.FINAL;
-		return status;
+		return Observation.ObservationStatus.FINAL;
 	}
 
 	@Override
