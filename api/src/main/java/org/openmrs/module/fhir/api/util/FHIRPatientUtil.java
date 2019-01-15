@@ -26,9 +26,6 @@ import org.hl7.fhir.dstu3.model.Reference;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PersonAddress;
 import org.openmrs.PersonName;
-import org.openmrs.api.PatientService;
-import org.openmrs.api.PersonService;
-import org.openmrs.api.context.Context;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,20 +49,7 @@ public class FHIRPatientUtil {
 
 		//Set patient identifiers to fhir patient
 		for (PatientIdentifier identifier : omrsPatient.getActiveIdentifiers()) {
-			String urn = FHIRUtils.buildURN(FHIRConstants.UUID, identifier.getIdentifierType().getUuid());
-			if (identifier.isPreferred()) {
-				patient.addIdentifier()
-						.setUse(Identifier.IdentifierUse.USUAL)
-						.setSystem(identifier.getIdentifierType().getName())
-						.setValue(identifier.getIdentifier())
-						.setId(identifier.getUuid());
-			} else {
-				patient.addIdentifier()
-						.setUse(Identifier.IdentifierUse.SECONDARY)
-						.setSystem(identifier.getIdentifierType()
-						.getName()).setValue(identifier.getIdentifier())
-						.setId(identifier.getUuid());
-			}
+			patient.addIdentifier(FHIRIdentifierUtil.generateIdentifier(identifier));
 		}
 
 		//Set patient name to fhir patient
@@ -135,6 +119,7 @@ public class FHIRPatientUtil {
 
 		for (Identifier fhirIdentifier : fhirIdList) {
 			PatientIdentifier identifier = FHIRIdentifierUtil.generateOpenmrsIdentifier(fhirIdentifier, errors);
+			FHIRUtils.checkGeneratorErrorList(errors);
 			idList.add(identifier);
 		}
 		omrsPatient.setIdentifiers(idList);

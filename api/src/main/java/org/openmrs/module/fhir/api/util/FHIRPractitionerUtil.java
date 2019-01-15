@@ -21,7 +21,6 @@ import org.hl7.fhir.dstu3.model.Enumerations;
 import org.hl7.fhir.dstu3.model.HumanName;
 import org.hl7.fhir.dstu3.model.Identifier;
 import org.hl7.fhir.dstu3.model.Practitioner;
-import org.hl7.fhir.dstu3.model.Reference;
 import org.hl7.fhir.dstu3.model.StringType;
 import org.openmrs.Person;
 import org.openmrs.PersonAddress;
@@ -422,30 +421,4 @@ public class FHIRPractitionerUtil {
 		return retrievedProvider;
 	}
 
-	/**
-	 * Build FhIRe reference from provider
-	 *
-	 * @param provider provider resource
-	 * @return FHIR Reference
-	 */
-	public static Reference buildPractionaerReference(org.openmrs.Provider provider) {
-		//Build and set patient reference
-		Reference practitionerRef = new Reference();
-		PersonName name = provider.getPerson().getPersonName();
-		StringBuilder nameDisplay = new StringBuilder();
-		nameDisplay.append(name.getGivenName());
-		nameDisplay.append(" ");
-		nameDisplay.append(name.getFamilyName());
-		String patientUri;
-		nameDisplay.append("(");
-		nameDisplay.append(FHIRConstants.IDENTIFIER);
-		nameDisplay.append(":");
-		nameDisplay.append(provider.getIdentifier());
-		nameDisplay.append(")");
-		patientUri = FHIRConstants.PRACTITIONER + "/" + provider.getUuid();
-		practitionerRef.setReference(patientUri);
-		practitionerRef.setDisplay(nameDisplay.toString());
-		practitionerRef.setId(provider.getUuid());
-		return practitionerRef;
-	}
 }

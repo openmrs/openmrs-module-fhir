@@ -7,6 +7,7 @@ import org.openmrs.TestOrder;
 import org.openmrs.api.APIException;
 import org.openmrs.api.OrderService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.util.ContextUtil;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRProcedureRequestUtil;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
@@ -43,7 +44,7 @@ public class ProcedureRequestStrategy implements GenericProcedureRequestStrategy
 
 		if (testOrder != null) {
 			try {
-				testOrder = (TestOrder) getOrderService().saveOrder(testOrder, null);
+				testOrder = (TestOrder) ContextUtil.getOrderHelper().saveOrder(testOrder);
 			} catch (APIException e) {
 				throw new UnprocessableEntityException(
 						"The request cannot be processed due to the following issues \n" + e.getMessage());
@@ -61,9 +62,9 @@ public class ProcedureRequestStrategy implements GenericProcedureRequestStrategy
 
 		if (existingTestOrder != null) {
 			incomingTestOrder.setUuid(null);
-			incomingTestOrder.setAction(Order.Action.REVISE);
-			incomingTestOrder.setPreviousOrder(existingTestOrder);
-			incomingTestOrder = (TestOrder) Context.getOrderService().saveOrder(incomingTestOrder, null);
+			ContextUtil.getOrderHelper().reviseOrder(incomingTestOrder);
+			ContextUtil.getOrderHelper().setPreviousOrder(incomingTestOrder, existingTestOrder);
+			incomingTestOrder = (TestOrder) ContextUtil.getOrderHelper().saveOrder(incomingTestOrder);
 			return FHIRProcedureRequestUtil.generateProcedureRequest(incomingTestOrder);
 		} else {
 			StrategyUtil.setIdIfNeeded(procedureRequest, uuid);

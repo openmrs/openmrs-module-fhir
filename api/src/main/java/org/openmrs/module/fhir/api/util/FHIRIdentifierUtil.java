@@ -10,6 +10,24 @@ import java.util.List;
 
 public class FHIRIdentifierUtil {
 
+	public static Identifier generateIdentifier(PatientIdentifier identifier) {
+		Identifier patientIdentifier = new Identifier();
+		if (identifier.isPreferred()) {
+			patientIdentifier
+					.setUse(Identifier.IdentifierUse.USUAL)
+					.setSystem(identifier.getIdentifierType().getName())
+					.setValue(identifier.getIdentifier())
+					.setId(identifier.getUuid());
+		} else {
+			patientIdentifier
+					.setUse(Identifier.IdentifierUse.SECONDARY)
+					.setSystem(identifier.getIdentifierType()
+							.getName()).setValue(identifier.getIdentifier())
+					.setId(identifier.getUuid());
+		}
+		return patientIdentifier;
+	}
+
 	public static PatientIdentifier generateOpenmrsIdentifier(Identifier fhirIdentifier, List<String> errors) {
 		PatientIdentifier patientIdentifier = new PatientIdentifier();
 		patientIdentifier.setIdentifier(fhirIdentifier.getValue());
@@ -18,10 +36,10 @@ public class FHIRIdentifierUtil {
 		} else {
 			patientIdentifier.setPreferred(false);
 		}
-		String identifierTypeName = fhirIdentifier.getSystem();
-		PatientIdentifierType type = Context.getPatientService().getPatientIdentifierTypeByName(identifierTypeName);
+		PatientIdentifierType type = getPatientIdentifierType(fhirIdentifier);
 		if (type == null) {
-			errors.add("No PatientIdentifierType exists for the given PatientIdentifierTypeName");
+			errors.add(String.format("Missing the PatientIdentifierType with the name '%s' and the UUID '%s'",
+					fhirIdentifier.getSystem(), fhirIdentifier.getId()));
 		}
 		patientIdentifier.setIdentifierType(type);
 
@@ -42,6 +60,16 @@ public class FHIRIdentifierUtil {
 		oldIdentifier.setIdentifierType(newIdentifier.getIdentifierType());
 		oldIdentifier.setLocation(newIdentifier.getLocation());
 		return oldIdentifier;
+	}
+
+	private static PatientIdentifierType getPatientIdentifierType(Identifier fhirIdentifier) {
+		String identifierTypeName = fhirIdentifier.getSystem();
+		PatientIdentifierType patientIdentifierType =  Context.getPatientService().getPatientIdentifierTypeByName(identifierTypeName);
+		if (patientIdentifierType == null) {
+			String identifierTypeUuid = fhirIdentifier.getId();
+			patientIdentifierType =  Context.getPatientService().getPatientIdentifierTypeByUuid(identifierTypeUuid);
+		}
+		return patientIdentifierType;
 	}
 
 	private FHIRIdentifierUtil() { }

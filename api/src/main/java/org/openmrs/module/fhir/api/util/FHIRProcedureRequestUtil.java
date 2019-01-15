@@ -19,9 +19,7 @@ import org.hl7.fhir.dstu3.model.Reference;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Order;
-import org.openmrs.OrderFrequency;
 import org.openmrs.Patient;
-import org.openmrs.Provider;
 import org.openmrs.TestOrder;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.comparator.ProcedureRequestComparator;
@@ -65,7 +63,7 @@ public class FHIRProcedureRequestUtil {
 		procedureRequest.addExtension(ExtensionsUtil.createOrderConceptExtension(testOrder.getConcept()));
 		procedureRequest.addExtension(ExtensionsUtil.createLateralityExtension(testOrder.getLaterality()));
 		procedureRequest.addExtension(ExtensionsUtil.createClinicalHistoryExtension(testOrder.getClinicalHistory()));
-		procedureRequest.addExtension(ExtensionsUtil.createOrderFrequencyExtension(testOrder.getFrequency()));
+		procedureRequest.addExtension(ExtensionsUtil.createOrderFrequencyExtension(testOrder));
 
 		return procedureRequest;
 	}
@@ -79,16 +77,19 @@ public class FHIRProcedureRequestUtil {
             testOrder.setUuid(FHIRUtils.extractUuid(procedureRequest.getId()));
         }
 		testOrder.setSpecimenSource(getSpecimenSource(procedureRequest.getSpecimenFirstRep()));
-		testOrder.setFrequency(getOrderFrequencyFromExtension(procedureRequest, errors));
+		ContextUtil.getTestOrderHelper()
+				.setFrequencyByString(testOrder, getOrderFrequencyFromExtension(procedureRequest, errors));
 		testOrder.setPatient(getOpenMRSPatient(procedureRequest.getSubject(), errors));
-		testOrder.setOrderer(getOrderer(procedureRequest.getRequester(), errors));
+		ContextUtil.getTestOrderHelper().setOrderer(testOrder, FHIRRequestUtil
+				.getOrdererUuid(procedureRequest, errors));
 		testOrder.setUrgency(getUrgency(procedureRequest));
 		testOrder.setEncounter(getEncounter(procedureRequest.getContext(), errors));
-		testOrder.setCareSetting(FHIRRequestUtil.buildCareSetting(procedureRequest, errors));
+		ContextUtil.getTestOrderHelper().setCareSettingByString(testOrder, FHIRRequestUtil
+				.getCareSetting(procedureRequest, errors));
 		testOrder.setConcept(getConceptFromExtension(procedureRequest, errors));
 		testOrder.setLaterality(getLateralityFromExtension(procedureRequest, errors));
 		testOrder.setClinicalHistory(getClinicalHistoryFromExtension(procedureRequest));
-		testOrder.setAction(buildAction(procedureRequest));
+		ContextUtil.getTestOrderHelper().setAction(testOrder, procedureRequest.getStatus());
 
 		return testOrder;
 	}
@@ -152,20 +153,6 @@ public class FHIRProcedureRequestUtil {
 		}
 	}
 
-	private static Provider getOrderer(ProcedureRequest.ProcedureRequestRequesterComponent requester, List<String> errors) {
-		Reference ordererReference = requester.getAgent();
-		String uuid = FHIRUtils.extractUuid(ordererReference.getId());
-		if (StringUtils.isEmpty(uuid)) {
-			errors.add(EMPTY_UUID);
-			return null;
-		}
-		Provider provider = Context.getProviderService().getProviderByUuid(uuid);
-		if (provider == null) {
-			errors.add(String.format(REQUESTER_NOT_FOUND, uuid));
-		}
-		return provider;
-	}
-
 	private static Patient getOpenMRSPatient(Reference subject, List<String> errors) {
 		String uuid = FHIRUtils.extractUuid(subject.getId());
 		if (StringUtils.isEmpty(uuid)) {
@@ -187,35 +174,22 @@ public class FHIRProcedureRequestUtil {
 		return Context.getConceptService().getConceptByUuid(uuid);
 	}
 
-	private static OrderFrequency getOrderFrequencyFromExtension(ProcedureRequest procedureRequest, List<String> errors) {
+	private static String getOrderFrequencyFromExtension(ProcedureRequest procedureRequest, List<String> errors) {
 		String orderFrequencyUuid = ExtensionsUtil.getStringFromExtension(
-				ExtensionsUtil.getExtension(ExtensionURL.ORDER_FREQUENCY_URL, procedureRequest));
+				ExtensionsUtil
+						.getExtension(ExtensionURL.ORDER_FREQUENCY_URL, procedureRequest));
 		if (StringUtils.isEmpty(orderFrequencyUuid)) {
 			errors.add(EMPTY_UUID);
 			return null;
 		}
 
-		OrderFrequency orderFrequency = Context.getOrderService().getOrderFrequencyByUuid(orderFrequencyUuid);
-		if (orderFrequency == null) {
-			errors.add(String.format(ORDER_FREQUENCY_NOT_FOUND, orderFrequencyUuid));
-		}
-		return orderFrequency;
+		return orderFrequencyUuid;
 	}
 
 	private static String getClinicalHistoryFromExtension(ProcedureRequest procedureRequest) {
 		return ExtensionsUtil.getStringFromExtension(
-				ExtensionsUtil.getExtension(ExtensionURL.CLINICAL_HISTORY_URL, procedureRequest));
-	}
-
-	private static Order.Action buildAction(ProcedureRequest procedureRequest) {
-		ProcedureRequest.ProcedureRequestStatus status = procedureRequest.getStatus();
-		if (status != null) {
-			if (ProcedureRequest.ProcedureRequestStatus.CANCELLED.toCode().
-					equalsIgnoreCase(status.toCode())) {
-				return Order.Action.DISCONTINUE;
-			}
-		}
-		return Order.Action.NEW;
+				ExtensionsUtil
+						.getExtension(ExtensionURL.CLINICAL_HISTORY_URL, procedureRequest));
 	}
 
 	//endregion
@@ -242,7 +216,7 @@ public class FHIRProcedureRequestUtil {
 	}
 
 	private static ProcedureRequest.ProcedureRequestStatus buildStatus(TestOrder testOrder) {
-		if (testOrder.isActive()) {
+		if (ContextUtil.getTestOrderHelper().isActive(testOrder)) {
 			return ProcedureRequest.ProcedureRequestStatus.ACTIVE;
 		} else if (testOrder.isDiscontinuedRightNow()) {
 			return ProcedureRequest.ProcedureRequestStatus.CANCELLED;

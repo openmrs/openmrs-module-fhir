@@ -11,7 +11,6 @@ import org.hl7.fhir.dstu3.model.StringType;
 import org.openmrs.BaseOpenmrsData;
 import org.openmrs.BaseOpenmrsMetadata;
 import org.openmrs.Concept;
-import org.openmrs.OrderFrequency;
 import org.openmrs.TestOrder;
 import org.openmrs.User;
 import org.openmrs.api.context.Context;
@@ -202,8 +201,9 @@ public final class ExtensionsUtil {
 		return createExtension(ExtensionURL.CLINICAL_HISTORY_URL, new StringType(clinicalHistory));
 	}
 
-	public static Extension createOrderFrequencyExtension(OrderFrequency frequency) {
-		return createExtension(ExtensionURL.ORDER_FREQUENCY_URL, new StringType(frequency.getUuid()));
+	public static Extension createOrderFrequencyExtension(TestOrder order) {
+		return createExtension(ExtensionURL.ORDER_FREQUENCY_URL, new StringType(
+				ContextUtil.getTestOrderHelper().frequencyToString(order)));
 	}
 
 	//endregion

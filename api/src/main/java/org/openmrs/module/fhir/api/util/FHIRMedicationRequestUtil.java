@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.fhir.api.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.dstu3.model.BooleanType;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.Dosage;
@@ -24,15 +25,14 @@ import org.hl7.fhir.dstu3.model.SimpleQuantity;
 import org.hl7.fhir.dstu3.model.Timing;
 import org.hl7.fhir.exceptions.FHIRException;
 import org.openmrs.Concept;
-import org.openmrs.DosingInstructions;
 import org.openmrs.Drug;
 import org.openmrs.DrugOrder;
 import org.openmrs.Encounter;
 import org.openmrs.Order;
-import org.openmrs.OrderFrequency;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.comparator.MedicationRequestComparator;
 import org.openmrs.module.fhir.api.constants.ExtensionURL;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -69,12 +69,16 @@ public class FHIRMedicationRequestUtil {
 		medicationRequest.setDosageInstruction(buildDosageInstructions(omrsDrugOrder));
 		medicationRequest.setDispenseRequest(buildDispenseRequest(omrsDrugOrder));
 		medicationRequest.setMedication(buildMedication(omrsDrugOrder));
-		medicationRequest.addExtension(ExtensionsUtil.createAsNeededConditionExtension(omrsDrugOrder.getAsNeededCondition()));
+		medicationRequest.addExtension(ExtensionsUtil.createAsNeededConditionExtension(
+				ContextUtil.getDrugOrderHelper().getAsNeededCondition(omrsDrugOrder)));
 		medicationRequest.addExtension(buildDosingType(omrsDrugOrder));
 		medicationRequest.addExtension(buildNumRefills(omrsDrugOrder));
-		medicationRequest.addExtension(ExtensionsUtil.createBrandNameExtension(omrsDrugOrder.getBrandName()));
-		medicationRequest.addExtension(ExtensionsUtil.createDispenseAsWrittenExtension(omrsDrugOrder.getDispenseAsWritten()));
-		medicationRequest.addExtension(ExtensionsUtil.createDrugNonCodedExtension(omrsDrugOrder.getDrugNonCoded()));
+		medicationRequest.addExtension(ExtensionsUtil.createBrandNameExtension(
+				ContextUtil.getDrugOrderHelper().getBrandName(omrsDrugOrder)));
+		medicationRequest.addExtension(ExtensionsUtil.createDispenseAsWrittenExtension(
+				ContextUtil.getDrugOrderHelper().getDispenseAsWritten(omrsDrugOrder)));
+		medicationRequest.addExtension(ExtensionsUtil.createDrugNonCodedExtension(
+				ContextUtil.getDrugOrderHelper().getDrugNonCoded(omrsDrugOrder)));
 		medicationRequest.addExtension(FHIRRequestUtil.buildCareSettingExtension(omrsDrugOrder));
 
 		return medicationRequest;
@@ -93,26 +97,28 @@ public class FHIRMedicationRequestUtil {
 		BaseOpenMRSDataUtil.readBaseExtensionFields(drugOrder, fhirMedicationRequest);
 
 		drugOrder.setUuid(FHIRUtils.getObjectUuidByIdentifier(fhirMedicationRequest.getIdentifierFirstRep()));
-		drugOrder.setAction(buildAction(fhirMedicationRequest));
+		ContextUtil.getDrugOrderHelper().setAction(drugOrder, fhirMedicationRequest.getStatus());
 		drugOrder.setUrgency(buildUrgency(fhirMedicationRequest));
 		drugOrder.setPatient(FHIRRequestUtil.buildPatient(fhirMedicationRequest, errors));
 		drugOrder.setEncounter(buildEncounter(fhirMedicationRequest, errors));
-		drugOrder.setOrderer(FHIRRequestUtil.buildOrderer(fhirMedicationRequest, errors));
+		ContextUtil.getDrugOrderHelper().setOrderer(drugOrder, FHIRRequestUtil
+				.getOrdererUuid(fhirMedicationRequest, errors));
 		setDoseAndDoseUnit(drugOrder, fhirMedicationRequest);
-		drugOrder.setFrequency(buildFrequency(fhirMedicationRequest, errors));
-		drugOrder.setAsNeeded(buildAsNeeded(fhirMedicationRequest));
-		drugOrder.setDosingInstructions(buildDosingInstructions(fhirMedicationRequest));
-		drugOrder.setRoute(buildRoute(fhirMedicationRequest, errors));
+		ContextUtil.getDrugOrderHelper().setFrequency(drugOrder, getFirstDosage(fhirMedicationRequest).getTiming());
+		ContextUtil.getDrugOrderHelper().setAsNeeded(drugOrder, buildAsNeeded(fhirMedicationRequest));
+		ContextUtil.getDrugOrderHelper().setDosingInstructions(drugOrder, buildDosingInstructions(fhirMedicationRequest));
+		ContextUtil.getDrugOrderHelper().setRoute(drugOrder, buildRoute(fhirMedicationRequest, errors));
 		setQuantityAndQuantityUnit(drugOrder, fhirMedicationRequest);
 		setDurationAndDurationUnit(drugOrder, fhirMedicationRequest);
 		drugOrder.setDrug(buildDrug(fhirMedicationRequest, errors));
-		drugOrder.setAsNeededCondition(buildAsNeededCondition(fhirMedicationRequest));
-		setDosingType(drugOrder, fhirMedicationRequest, errors);
-		drugOrder.setNumRefills(buildNumRefills(fhirMedicationRequest));
-		drugOrder.setBrandName(buildBrandName(fhirMedicationRequest));
-		drugOrder.setDispenseAsWritten(buildDispenseAsWritten(fhirMedicationRequest));
-		drugOrder.setDrugNonCoded(buildDrugNonCoded(fhirMedicationRequest));
-		drugOrder.setCareSetting(FHIRRequestUtil.buildCareSetting(fhirMedicationRequest, errors));
+		ContextUtil.getDrugOrderHelper().setAsNeededCondition(drugOrder, buildAsNeededCondition(fhirMedicationRequest));
+		setDosingType(drugOrder, fhirMedicationRequest);
+		ContextUtil.getDrugOrderHelper().setNumRefills(drugOrder, buildNumRefills(fhirMedicationRequest));
+		ContextUtil.getDrugOrderHelper().setBrandName(drugOrder, buildBrandName(fhirMedicationRequest));
+		ContextUtil.getDrugOrderHelper().setDispenseAsWritten(drugOrder, buildDispenseAsWritten(fhirMedicationRequest));
+		ContextUtil.getDrugOrderHelper().setDrugNonCoded(drugOrder, buildDrugNonCoded(fhirMedicationRequest));
+		ContextUtil.getDrugOrderHelper().setCareSettingByString(drugOrder, FHIRRequestUtil
+				.getCareSetting(fhirMedicationRequest, errors));
 
 		return drugOrder;
 	}
@@ -127,44 +133,38 @@ public class FHIRMedicationRequestUtil {
 
 	private static String buildAsNeededCondition(MedicationRequest fhirMedicationRequest) {
 		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.AS_NEEDED_CONDITION);
-		if (extensions.size() > 0) {
+		if (!CollectionUtils.isEmpty(extensions)) {
 			return ExtensionsUtil.getStringFromExtension(extensions.get(FIRST));
 		}
 		return null;
 	}
 
 	private static Extension buildDosingType(DrugOrder omrsDrugOrder) {
-		if (omrsDrugOrder.getDosingType() != null) {
-			return ExtensionsUtil.createDosingTypeExtension(omrsDrugOrder.getDosingType().getCanonicalName());
+		String dosingType = ContextUtil.getDrugOrderHelper().getDosingType(omrsDrugOrder);
+		if (StringUtils.isNotBlank(dosingType)) {
+			return ExtensionsUtil.createDosingTypeExtension(dosingType);
 		}
 		return null;
 	}
 
-	private static void setDosingType(DrugOrder drugOrder, MedicationRequest fhirMedicationRequest, List<String> errors) {
+	private static void setDosingType(DrugOrder drugOrder, MedicationRequest fhirMedicationRequest) {
 		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.DOSING_TYPE);
-		try {
-			if (extensions.size() > 0) {
-				drugOrder.setDosingType(
-						(Class<? extends DosingInstructions>) Class.forName(
-								ExtensionsUtil.getStringFromExtension(extensions.get(FIRST))));
-			}
-		}
-		catch (ClassNotFoundException e) {
-			errors.add(e.getMessage());
+		if (!CollectionUtils.isEmpty(extensions)) {
+			ContextUtil.getDrugOrderHelper().setDosingType(drugOrder, ExtensionsUtil.getStringFromExtension(extensions.get(FIRST)));
 		}
 	}
 
 	private static Extension buildNumRefills(DrugOrder omrsDrugOrder) {
-		Integer numRefills = omrsDrugOrder.getNumRefills();
+		Integer numRefills = ContextUtil.getDrugOrderHelper().getNumRefills(omrsDrugOrder);
 		if (numRefills != null) {
-			return ExtensionsUtil.createNumRefillsExtension(omrsDrugOrder.getNumRefills());
+			return ExtensionsUtil.createNumRefillsExtension(numRefills);
 		}
 		return null;
 	}
 
 	private static Integer buildNumRefills(MedicationRequest fhirMedicationRequest) {
 		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.NUM_REFILLS);
-		if (extensions.size() > 0) {
+		if (!CollectionUtils.isEmpty(extensions)) {
 			return ExtensionsUtil.getIntegerFromExtension(extensions.get(FIRST));
 		}
 		return null;
@@ -172,7 +172,7 @@ public class FHIRMedicationRequestUtil {
 
 	private static String buildBrandName(MedicationRequest fhirMedicationRequest) {
 		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.BRAND_NAME);
-		if (extensions.size() > 0) {
+		if (!CollectionUtils.isEmpty(extensions)) {
 			return ExtensionsUtil.getStringFromExtension(extensions.get(FIRST));
 		}
 		return null;
@@ -180,7 +180,7 @@ public class FHIRMedicationRequestUtil {
 
 	private static Boolean buildDispenseAsWritten(MedicationRequest fhirMedicationRequest) {
 		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.DISPENSE_AS_WRITTEN);
-		if (extensions.size() > 0) {
+		if (!CollectionUtils.isEmpty(extensions)) {
 			return ExtensionsUtil.getBooleanFromExtension(extensions.get(FIRST));
 		}
 		return null;
@@ -188,7 +188,7 @@ public class FHIRMedicationRequestUtil {
 
 	private static String buildDrugNonCoded(MedicationRequest fhirMedicationRequest) {
 		List<Extension> extensions = fhirMedicationRequest.getExtensionsByUrl(ExtensionURL.DRUG_NON_CODED);
-		if (extensions.size() > 0) {
+		if (!CollectionUtils.isEmpty(extensions)) {
 			return ExtensionsUtil.getStringFromExtension(extensions.get(FIRST));
 		}
 		return null;
@@ -217,25 +217,13 @@ public class FHIRMedicationRequestUtil {
 	}
 
 	private static MedicationRequest.MedicationRequestStatus buildStatus(DrugOrder omrsDrugOrder) {
-		if (omrsDrugOrder.isActive()) {
+		if (ContextUtil.getOrderHelper().isActive(omrsDrugOrder)) {
 			return MedicationRequest.MedicationRequestStatus.ACTIVE;
 		} else if (omrsDrugOrder.isDiscontinuedRightNow()) {
 			return MedicationRequest.MedicationRequestStatus.STOPPED;
 		} else {
 			return MedicationRequest.MedicationRequestStatus.COMPLETED;
 		}
-	}
-
-	private static Order.Action buildAction(MedicationRequest fhirMedicationRequest) {
-		//Cant set other status to order it check data for all orders
-		MedicationRequest.MedicationRequestStatus medicationRequestStatus = fhirMedicationRequest.getStatus();
-		if (medicationRequestStatus != null) {
-			if (MedicationRequest.MedicationRequestStatus.STOPPED.toCode().
-					equalsIgnoreCase(medicationRequestStatus.toCode())) {
-				return Order.Action.DISCONTINUE;
-			}
-		}
-		return Order.Action.NEW;
 	}
 
 	private static MedicationRequest.MedicationRequestPriority buildPriority(DrugOrder omrsDrugOrder) {
@@ -292,8 +280,8 @@ public class FHIRMedicationRequestUtil {
 		Dosage dosage = new Dosage();
 		dosage.setDose(buildDose(omrsDrugOrder));
 		dosage.setTiming(buildTiming(omrsDrugOrder));
-		dosage.setAsNeeded(new BooleanType(omrsDrugOrder.getAsNeeded()));
-		dosage.setText(omrsDrugOrder.getDosingInstructions());
+		dosage.setAsNeeded(new BooleanType(ContextUtil.getDrugOrderHelper().getAsNeeded(omrsDrugOrder)));
+		dosage.setText(ContextUtil.getDrugOrderHelper().getDosingInstructions(omrsDrugOrder));
 		dosage.setRoute(buildRoute(omrsDrugOrder));
 		dosage.setSequence(1);
 		return Collections.singletonList(dosage);
@@ -309,58 +297,21 @@ public class FHIRMedicationRequestUtil {
 	}
 
 	private static SimpleQuantity buildDose(DrugOrder omrsDrugOrder) {
-		SimpleQuantity dose = new SimpleQuantity();
-		Concept doseUnit = omrsDrugOrder.getDoseUnits();
-		if (doseUnit != null) {
-			dose.setUnit(doseUnit.getDisplayString());
-			dose.setCode(doseUnit.getUuid());
-		}
-		if (omrsDrugOrder.getDose() != null) {
-			dose.setValue(omrsDrugOrder.getDose());
-			return dose;
-		}
-		return null;
+		return ContextUtil.getDrugOrderHelper().getDose(omrsDrugOrder);
 	}
 
 	private static void setDoseAndDoseUnit(DrugOrder order, MedicationRequest fhirMedicationRequest) {
 		SimpleQuantity dose = (SimpleQuantity) getFirstDosage(fhirMedicationRequest).getDose();
-		if (dose != null) {
-			order.setDose(dose.getValue().doubleValue());
-			Concept unitConcept = Context.getConceptService().getConceptByUuid(dose.getCode());
-			if (unitConcept == null) {
-				unitConcept = Context.getConceptService().getConceptByName(dose.getUnit());
-			}
-			order.setDoseUnits(unitConcept);
-		}
+		ContextUtil.getDrugOrderHelper().setDose(order, dose);
 	}
 
 	private static Timing buildTiming(DrugOrder omrsDrugOrder) {
-		Timing timing = new Timing();
-		OrderFrequency orderFrequency = omrsDrugOrder.getFrequency();
-		if (orderFrequency != null) {
-			CodeableConcept timingCode = FHIRUtils.createCodeableConcept(orderFrequency.getConcept());
-			timingCode.setText(orderFrequency.getName());
-			timing.setCode(timingCode);
-			timing.setId(orderFrequency.getUuid());
-		}
+		Timing timing = ContextUtil.getDrugOrderHelper().getTiming(omrsDrugOrder);
 		return timing;
 	}
 
-	private static OrderFrequency buildFrequency(MedicationRequest fhirMedicationRequest, List<String> errors) {
-		OrderFrequency orderFrequency = null;
-		Timing timing = getFirstDosage(fhirMedicationRequest).getTiming();
-		if (timing != null) {
-			String orderFrequencyUuid = timing.getId();
-			orderFrequency = Context.getOrderService().getOrderFrequencyByUuid(orderFrequencyUuid);
-			if (orderFrequency == null) {
-				errors.add(String.format("Missing OrderFrequency with uuid: %s", orderFrequencyUuid));
-			}
-		}
-		return orderFrequency;
-	}
-
 	private static CodeableConcept buildRoute(DrugOrder omrsDrugOrder) {
-		Concept routeConcept = omrsDrugOrder.getRoute();
+		Concept routeConcept = ContextUtil.getDrugOrderHelper().getRoute(omrsDrugOrder);
 		if (routeConcept != null) {
 			CodeableConcept route = FHIRUtils.createCodeableConcept(routeConcept);
 			route.setText(routeConcept.getDisplayString());
@@ -390,19 +341,7 @@ public class FHIRMedicationRequestUtil {
 	}
 
 	private static SimpleQuantity buildQuantity(DrugOrder omrsDrugOrder) {
-		SimpleQuantity quantity = new SimpleQuantity();
-		Concept quantityUnit = omrsDrugOrder.getQuantityUnits();
-
-		if (quantityUnit != null) {
-			quantity.setUnit(quantityUnit.getDisplayString());
-			quantity.setCode(quantityUnit.getUuid());
-		}
-		if (omrsDrugOrder.getQuantity() != null) {
-			quantity.setValue(omrsDrugOrder.getQuantity());
-			return quantity;
-		}
-
-		return null;
+		return ContextUtil.getDrugOrderHelper().getQuantity(omrsDrugOrder);
 	}
 
 	private static void setQuantityAndQuantityUnit(DrugOrder order, MedicationRequest fhirMedicationRequest) {
@@ -410,35 +349,12 @@ public class FHIRMedicationRequestUtil {
 				= fhirMedicationRequest.getDispenseRequest();
 		if (component != null) {
 			SimpleQuantity quantity = component.getQuantity();
-			if (quantity != null) {
-				if (quantity.getValue() != null) {
-					order.setQuantity(quantity.getValue().doubleValue());
-				}
-				if (quantity.getCode() != null) {
-					Concept unitConcept = Context.getConceptService().getConceptByUuid(quantity.getCode());
-					if (unitConcept == null && quantity.getUnit() != null) {
-						unitConcept = Context.getConceptService().getConceptByName(quantity.getUnit());
-					}
-					order.setQuantityUnits(unitConcept);
-				}
-			}
+			ContextUtil.getDrugOrderHelper().setQuantity(order, quantity);
 		}
 	}
 
 	private static Duration buildExpectedSupply(DrugOrder omrsDrugOrder) {
-		Concept durationUnit = omrsDrugOrder.getDurationUnits();
-		Duration duration = new Duration();
-
-		if (durationUnit != null) {
-			duration.setUnit(durationUnit.getDisplayString());
-			duration.setCode(durationUnit.getUuid());
-		}
-		if (omrsDrugOrder.getDuration() != null) {
-			duration.setValue(omrsDrugOrder.getDuration());
-			return duration;
-		}
-
-		return null;
+		return ContextUtil.getDrugOrderHelper().getDuration(omrsDrugOrder);
 	}
 
 	private static void setDurationAndDurationUnit(DrugOrder order, MedicationRequest fhirMedicationRequest) {
@@ -446,19 +362,7 @@ public class FHIRMedicationRequestUtil {
 				= fhirMedicationRequest.getDispenseRequest();
 		if (component != null) {
 			Duration duration = component.getExpectedSupplyDuration();
-			if (duration != null) {
-				if (duration.getValue() != null) {
-					order.setDuration(duration.getValue().intValue());
-				}
-
-				if (duration.getCode() != null) {
-					Concept unitConcept = Context.getConceptService().getConceptByUuid(duration.getCode());
-					if (unitConcept == null && duration.getUnit() != null) {
-						unitConcept = Context.getConceptService().getConceptByName(duration.getUnit());
-					}
-					order.setDurationUnits(unitConcept);
-				}
-			}
+			ContextUtil.getDrugOrderHelper().setDuration(order, duration);
 		}
 	}
 }

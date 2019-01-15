@@ -41,8 +41,6 @@ import org.openmrs.module.fhir.api.manager.FHIRContextFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.openmrs.module.fhir.api.util.FHIRConstants.REQUEST_ISSUE_LIST;
-
 public class FHIRUtils {
 
 	public static final String CONTENT_TYPE_APPLICATION_XML_FHIR = "application/xml+fhir";
@@ -140,12 +138,9 @@ public class FHIRUtils {
 		return Context.getAdministrationService().getGlobalProperty("fhir.practitioner.strategy");
 	}
 
-	public static String getPlanDefinitionStrategy() {
-		return Context.getAdministrationService().getGlobalProperty("fhir.planDefinition.strategy");
-	}
-
 	public static int[] getConceptIdsOfConditions() {
-		String conceptsAsConditions = Context.getAdministrationService().getGlobalProperty(FHIRConstants
+		String conceptsAsConditions = Context.getAdministrationService().getGlobalProperty(
+				FHIRConstants
 				.CONCEPTS_CONVERTABLE_TO_CONDITIONS_STORED_AS_OBS);
 		if (StringUtils.isNotBlank(conceptsAsConditions)) {
 			String[] concepts = conceptsAsConditions.split(",");
@@ -358,7 +353,8 @@ public class FHIRUtils {
 		}
 
 		if (display != null && !display.isEmpty()) {
-			return new Coding().setCode(concept.getUuid()).setDisplay(display).setSystem(FHIRConstants.OPENMRS_URI);
+			return new Coding().setCode(concept.getUuid()).setDisplay(display).setSystem(
+					FHIRConstants.OPENMRS_URI);
 		} else {
 			return new Coding().setCode(concept.getUuid()).setSystem(FHIRConstants.OPENMRS_URI);
 		}
@@ -525,7 +521,7 @@ public class FHIRUtils {
 	public static void checkGeneratorErrorList(List<String> errors) {
 		if (!errors.isEmpty()) {
 			String errorMessage = ErrorUtil
-					.generateErrorMessage(errors, REQUEST_ISSUE_LIST);
+					.generateErrorMessage(errors, FHIRConstants.REQUEST_ISSUE_LIST);
 			throw new UnprocessableEntityException(errorMessage);
 		}
 	}

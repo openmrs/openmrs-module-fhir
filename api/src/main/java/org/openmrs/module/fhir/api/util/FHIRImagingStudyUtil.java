@@ -100,8 +100,6 @@ public class FHIRImagingStudyUtil {
 	 *
 	 * @param uuid Uuid or FHIR Patient Id
 	 * @return Patient Resultant OpenMRS Patient
-	 * TODO: Current implementation is using Patient ID. But that may change from System to System as mentioned in
-	 * http://hl7.org/fhir/2015May/resource.html#identifiers. It's better to use Identifiers.
 	 */
 	private static org.openmrs.Patient getOpenMRSPatient(String uuid) {
 		//Check whether Patient is already exist

@@ -26,12 +26,27 @@
 		${project.parent.description}
 	</description>
 	<updateURL>https://modules.openmrs.org/modules/download/${project.parent.artifactId}/update.rdf</updateURL>
-	<require_version>2.0.0</require_version>
+	<require_version>2.0.5 - 2.0.*, 1.11.3, 1.9.10 - 1.9.*</require_version>
 	<!-- / Module Properties -->
 
 	<require_modules>
-		<!-- <require_module version="2.0">org.openmrs.module.webservices.rest</require_module> -->
+
 	</require_modules>
+
+	<conditionalResources>
+		<conditionalResource>
+			<path>/lib/fhir-api-2.0-${project.parent.version}.jar</path>
+			<openmrsVersion>2.0.* - 2.1.*</openmrsVersion>
+		</conditionalResource>
+		<conditionalResource>
+			<path>/lib/fhir-api-1.11-${project.parent.version}.jar</path>
+			<openmrsVersion>1.11.3 - 1.12.0</openmrsVersion>
+		</conditionalResource>
+		<conditionalResource>
+			<path>/lib/fhir-api-1.9-${project.parent.version}.jar</path>
+			<openmrsVersion>1.9.*</openmrsVersion>
+		</conditionalResource>
+	</conditionalResources>
 
 	<!-- Module Activator -->
 	<activator>${project.parent.groupId}.${project.parent.artifactId}.FHIRActivator</activator>
@@ -211,12 +226,6 @@
 		<property>${project.parent.artifactId}.observation.strategy</property>
 		<defaultValue>DefaultObservationStrategy</defaultValue>
 		<description>Set observation strategy.</description>
-	</globalProperty>
-
-	<globalProperty>
-		<property>${project.parent.artifactId}.planDefinition.strategy</property>
-		<defaultValue>DefaultPlanDefinitionStrategy</defaultValue>
-		<description>Set plan definition strategy.</description>
 	</globalProperty>
 
 	<globalProperty>

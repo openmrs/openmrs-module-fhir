@@ -11,13 +11,16 @@ import org.hl7.fhir.dstu3.model.Location;
 import org.hl7.fhir.dstu3.model.MedicationRequest;
 import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.Person;
 import org.hl7.fhir.dstu3.model.Practitioner;
 import org.hl7.fhir.dstu3.model.ProcedureRequest;
-import org.hl7.fhir.dstu3.model.Person;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.openmrs.module.fhir.api.client.BasicAuthInterceptor;
+import org.openmrs.module.fhir.api.client.BasicHttpRequestInterceptor;
+import org.openmrs.module.fhir.api.client.ClientHttpRequestInterceptor;
 import org.openmrs.module.fhir.api.client.FHIRHttpMessageConverter;
-import org.openmrs.module.fhir.api.client.HeaderClientHttpRequestInterceptor;
+import org.openmrs.module.fhir.api.client.ClientHttpEntity;
+import org.openmrs.module.fhir.api.util.ContextUtil;
 import org.openmrs.module.fhir.api.util.ErrorUtil;
 import org.openmrs.module.fhir.api.util.FHIRAllergyIntoleranceUtil;
 import org.openmrs.module.fhir.api.util.FHIREncounterUtil;
@@ -27,13 +30,9 @@ import org.openmrs.module.fhir.api.util.FHIRMedicationRequestUtil;
 import org.openmrs.module.fhir.api.util.FHIRObsUtil;
 import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
-import org.openmrs.module.fhir.api.util.FHIRVisitUtil;
-import org.springframework.http.HttpHeaders;
 import org.openmrs.module.fhir.api.util.FHIRProcedureRequestUtil;
+import org.openmrs.module.fhir.api.util.FHIRVisitUtil;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 
@@ -88,26 +87,26 @@ public class FHIRClientHelper implements ClientHelper {
 	}
 
 	@Override
-	public RequestEntity retrieveRequest(String url) throws URISyntaxException {
-		return new RequestEntity(HttpMethod.GET, new URI(url));
+	public ClientHttpEntity retrieveRequest(String url) throws URISyntaxException {
+		return new ClientHttpEntity(HttpMethod.GET, new URI(url));
 	}
 
 	@Override
-	public RequestEntity createRequest(String url, Object object) throws URISyntaxException {
+	public ClientHttpEntity createRequest(String url, Object object) throws URISyntaxException {
 		url = createUrl(url, (IBaseResource) object);
-		return new RequestEntity(parser.encodeResourceToString((IBaseResource) object), HttpMethod.PUT, new URI(url));
+		return new ClientHttpEntity<String>(parser.encodeResourceToString((IBaseResource) object), HttpMethod.PUT, new URI(url));
 	}
 
 	@Override
-	public RequestEntity deleteRequest(String url, String uuid) throws URISyntaxException {
+	public ClientHttpEntity deleteRequest(String url, String uuid) throws URISyntaxException {
 		url = url + "/" + uuid;
-		return new RequestEntity(uuid, HttpMethod.DELETE, new URI(url));
+		return new ClientHttpEntity<String>(uuid, HttpMethod.DELETE, new URI(url));
 	}
 
 	@Override
-	public RequestEntity updateRequest(String url, Object object) throws URISyntaxException {
+	public ClientHttpEntity updateRequest(String url, Object object) throws URISyntaxException {
 		url = createUrl(url, (IBaseResource) object);
-		return new RequestEntity(parser.encodeResourceToString((IBaseResource) object), HttpMethod.PUT, new URI(url));
+		return new ClientHttpEntity<String>(parser.encodeResourceToString((IBaseResource) object), HttpMethod.PUT, new URI(url));
 	}
 
 	@Override
@@ -122,7 +121,7 @@ public class FHIRClientHelper implements ClientHelper {
 	@Override
 	public List<ClientHttpRequestInterceptor> getCustomInterceptors(String username, String password) {
 		return Arrays.asList(new BasicAuthInterceptor(username, password),
-				new HeaderClientHttpRequestInterceptor(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE));
+				new BasicHttpRequestInterceptor("Accept", "application/json"));
 	}
 
 	@Override
@@ -213,7 +212,7 @@ public class FHIRClientHelper implements ClientHelper {
 				result = FHIRGroupUtil.generateCohort((Group) object);
 				break;
 			case CATEGORY_ALLERGY:
-				result = FHIRAllergyIntoleranceUtil.generateAllergy((AllergyIntolerance) object);
+				result = ContextUtil.getAllergyHelper().generateAllergy(object);
 				break;
 			default:
 				throw new NotSupportedException(String.format("Category %s not supported.", category));

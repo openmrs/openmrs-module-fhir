@@ -1,7 +1,7 @@
 package org.openmrs.module.fhir.api.helper;
 
-import org.springframework.http.RequestEntity;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.openmrs.module.fhir.api.client.ClientHttpRequestInterceptor;
+import org.openmrs.module.fhir.api.client.ClientHttpEntity;
 import org.springframework.http.converter.HttpMessageConverter;
 
 import javax.transaction.NotSupportedException;
@@ -21,40 +21,40 @@ public interface ClientHelper {
 	 * <p>Implements creation of retrieve request appropriate for specific Client.</p>
 	 *
 	 * @param url represents URL of resource to be retrieved
-	 * @return returns new RequestEntity with 'retrieve' request
+	 * @return returns new ClientHttpEntity with 'retrieve' request
 	 * @throws URISyntaxException
 	 */
-	RequestEntity retrieveRequest(String url) throws URISyntaxException;
+	ClientHttpEntity retrieveRequest(String url) throws URISyntaxException;
 
 	/**
 	 * <p>Implements creation of create request appropriate for specific Client.</p>
 	 *
 	 * @param url represents URL of resource category, where an object will be created
 	 * @param object represents an object that will be sent
-	 * @return returns new RequestEntity with 'create' request
+	 * @return returns new ClientHttpEntity with 'create' request
 	 * @throws URISyntaxException
 	 */
-	RequestEntity createRequest(String url, Object object) throws URISyntaxException;
+	ClientHttpEntity createRequest(String url, Object object) throws URISyntaxException;
 
 	/**
 	 * <p>Implements creation of delete request appropriate for specific Client.</p>
 	 *
 	 * @param url represents URL of resource category, from where an object will be deleted
 	 * @param uuid represents UUID of the object, that will be deleted
-	 * @return returns new RequestEntity with 'delete' request
+	 * @return returns new ClientHttpEntity with 'delete' request
 	 * @throws URISyntaxException
 	 */
-	RequestEntity deleteRequest(String url, String uuid) throws URISyntaxException;
+	ClientHttpEntity deleteRequest(String url, String uuid) throws URISyntaxException;
 
 	/**
 	 * <p>Implements creation of update request appropriate for specific Client.</p>
 	 *
 	 * @param url represents URL of resource, that will be updated
 	 * @param object represents an updated object
-	 * @return returns new RequestEntity with 'update' request
+	 * @return returns new ClientHttpEntity with 'update' request
 	 * @throws URISyntaxException
 	 */
-	RequestEntity updateRequest(String url, Object object) throws URISyntaxException;
+	ClientHttpEntity updateRequest(String url, Object object) throws URISyntaxException;
 
 	/**
 	 * <p>Returns Class object corresponding to category name.</p>
@@ -65,7 +65,7 @@ public interface ClientHelper {
 	Class resolveClassByCategory(String category);
 
 	/**
-	 * <p>Returns a list of HTTP interceptors used in communication between nodes.</p>
+	 * <p>Returns a list of ClientHttpRequestInterceptors used in communication between nodes.</p>
 	 *
 	 * @param username represents username of a user
 	 * @param password represents password of a user

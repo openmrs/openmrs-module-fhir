@@ -15,7 +15,7 @@ package org.openmrs.module.fhir.server;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
-import ca.uhn.fhir.rest.api.EncodingEnum;
+import ca.uhn.fhir.rest.server.EncodingEnum;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
@@ -35,7 +35,6 @@ import org.openmrs.module.fhir.providers.RestfulMedicationResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulObservationResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulPatientResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulPersonResourceProvider;
-import org.openmrs.module.fhir.providers.RestfulPlanDefinitionResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulPractitionerResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulProcedureRequestResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulRelatedPersonProvider;
@@ -71,7 +70,6 @@ public class FHIRRESTServer extends RestfulServer {
 		resourceProviders.add(new RestfulMedicationResourceProvider());
 		resourceProviders.add(new RestfulMedicationRequestResourceProvider());
 		resourceProviders.add(new RestfulProcedureRequestResourceProvider());
-		resourceProviders.add(new RestfulPlanDefinitionResourceProvider());
 		resourceProviders.add(new RestfulPersonResourceProvider());
 		resourceProviders.add(new RestfulRelatedPersonProvider());
 		resourceProviders.add(new RestfulGroupResourceProvider());
