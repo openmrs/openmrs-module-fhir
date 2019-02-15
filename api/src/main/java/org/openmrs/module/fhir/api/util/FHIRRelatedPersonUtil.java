@@ -1,16 +1,12 @@
 package org.openmrs.module.fhir.api.util;
 
 import org.apache.commons.lang.mutable.MutableBoolean;
-import org.hl7.fhir.dstu3.model.Address;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.ContactPoint;
-import org.hl7.fhir.dstu3.model.Enumerations;
-import org.hl7.fhir.dstu3.model.HumanName;
 import org.hl7.fhir.dstu3.model.Identifier;
 import org.hl7.fhir.dstu3.model.Period;
 import org.hl7.fhir.dstu3.model.RelatedPerson;
-import org.openmrs.PersonAddress;
 import org.openmrs.Relationship;
 import org.openmrs.RelationshipType;
 import org.openmrs.api.context.Context;
@@ -19,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 public class FHIRRelatedPersonUtil {
 
@@ -58,13 +53,7 @@ public class FHIRRelatedPersonUtil {
 		relationshipCode.setCoding(Collections.singletonList(omrsRelation));
 		relatedPerson.setRelationship(relationshipCode);
 
-		// name
-		List<HumanName> humanNameList = new ArrayList<HumanName>();
-		Set<org.openmrs.PersonName> personNamesSet = omrsRelatedPerson.getNames();
-		for (org.openmrs.PersonName personName : personNamesSet) {
-			humanNameList.add(FHIRUtils.buildHumanName(personName));
-		}
-		relatedPerson.setName(humanNameList);
+		relatedPerson.setName(FHIRHumanNameUtil.buildHumanNames(omrsRelatedPerson.getNames()));
 
 		// telecom
 		List<ContactPoint> contactPointList = new ArrayList<ContactPoint>();
@@ -76,25 +65,11 @@ public class FHIRRelatedPersonUtil {
 		}
 		relatedPerson.setTelecom(contactPointList);
 
-		// gender
-		if ("M".equals(omrsRelatedPerson.getGender())) {
-			relatedPerson.setGender(Enumerations.AdministrativeGender.MALE);
-		} else if ("F".equals(omrsRelatedPerson.getGender())) {
-			relatedPerson.setGender(Enumerations.AdministrativeGender.FEMALE);
-		} else {
-			relatedPerson.setGender(Enumerations.AdministrativeGender.UNKNOWN);
-		}
+		relatedPerson.setGender(FHIRPersonUtil.determineAdministrativeGender(omrsRelatedPerson));
 
 		// birthDate
 		relatedPerson.setBirthDate(omrsRelatedPerson.getBirthdate());
-
-		// address
-		List<Address> addressList = new ArrayList<Address>();
-		Set<PersonAddress> personAddressSet = omrsRelatedPerson.getAddresses();
-		for (PersonAddress personAddress : personAddressSet) {
-			addressList.add(FHIRUtils.buildAddress(personAddress));
-		}
-		relatedPerson.setAddress(addressList);
+		relatedPerson.setAddress(FHIRAddressUtil.buildAddresses(omrsRelatedPerson.getAddresses()));
 
 		// photo
 

@@ -14,6 +14,7 @@
 package org.openmrs.module.fhir.api;
 
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.dstu3.model.Address;
 import org.hl7.fhir.dstu3.model.Enumerations;
 import org.hl7.fhir.dstu3.model.HumanName;
@@ -22,6 +23,8 @@ import org.hl7.fhir.dstu3.model.Person;
 import org.hl7.fhir.dstu3.model.StringType;
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.PersonAddress;
+import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRPersonUtil;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
@@ -39,6 +42,12 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 
 	protected static final String PERSON_INITIAL_DATA_XML =
 			"org/openmrs/api/include/PersonServiceTest-createPersonPurgeVoidTest.xml";
+
+	private static final String PERSON_UUID = "f22b5d49-c2fe-4c66-b2e3-bffc9b63f3f5";
+
+	private static final String PERSON_NAME_UUID = "39gh3a7b-6482-487d-94ce-c07bb3ca3cc7";
+
+	private static final String PERSON_ADDRESS_UUID = "33ghd0b5-821c-4e5e-ad1d-a9bce331e118";
 
 	public PersonService getService() {
 		return Context.getService(PersonService.class);
@@ -61,7 +70,6 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 		Person fhirPerson = getService().getPerson(personUuid);
 		assertNotNull(fhirPerson);
 		assertEquals(fhirPerson.getId().toString(), personUuid);
-
 	}
 
 	@Test
@@ -99,20 +107,62 @@ public class PersonServiceTest extends BaseModuleContextSensitiveTest {
 	public void generateOpenMRSPerson_shouldGenerateOmrsPerson() throws Exception {
 		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
 		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);
-		person.setUuid(""); // remove the uuid value from the Person. This will let this
-		// resource to be persist on the db with random uuid
+		clearExitingUuid(person);
 		Person fhirPerson = FHIRPersonUtil.generatePerson(person);
 		fhirPerson = Context.getService(PersonService.class).createFHIRPerson(fhirPerson);
 		assertNotNull(fhirPerson);
+		assertTrue(StringUtils.isNotBlank(fhirPerson.getId()));
+	}
+
+	/**
+	 * Removes existing UUID for person object and sub-resources to avoid database constraint violation
+	 * @param person
+	 */
+	private void clearExitingUuid(org.openmrs.Person person) {
+		person.setUuid("");
+		for (PersonAddress address : person.getAddresses()) {
+			address.setUuid(null);
+		}
+		for (PersonName name : person.getNames()) {
+			name.setUuid(null);
+		}
+	}
+
+	@Test
+	public void generatePerson_shouldGeneratePersonWithSpecificUuid() {
+		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
+		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);
+		person.setUuid(PERSON_UUID);
+		Person fhirPerson = FHIRPersonUtil.generatePerson(person);
+		assertNotNull(fhirPerson);
+		assertEquals(PERSON_UUID, fhirPerson.getId());
+		assertEquals(PERSON_NAME_UUID, fhirPerson.getNameFirstRep().getId());
+		assertEquals(PERSON_ADDRESS_UUID, fhirPerson.getAddressFirstRep().getId());
+	}
+
+	@Test
+	public void generateOpenMRSPerson_shouldGenerateOpenMRSPersonWithSpecificUuid() {
+		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
+		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);
+		person.setUuid(PERSON_UUID);
+		Person fhirPerson = FHIRPersonUtil.generatePerson(person);
+		ArrayList<String> errors = new ArrayList<>();
+		person = FHIRPersonUtil.generateOpenMRSPerson(fhirPerson, errors);
+		assertNotNull(fhirPerson);
+		assertTrue(errors.isEmpty());
+		assertEquals(PERSON_UUID, person.getUuid());
+		assertEquals(PERSON_NAME_UUID, person.getPersonName().getUuid());
+		assertEquals(PERSON_ADDRESS_UUID, person.getPersonAddress().getUuid());
 	}
 
 	/**
 	 * @verifies update Person, where there is no person associates with the uuid
 	 */
 	@Test
-	public void updatePerson_shouldGenerateOmrsPerson() throws Exception {
+	public void updatePerson_shouldGenerateNewOmrsPerson() throws Exception {
 		String personUuid = "dagh524f-27ce-4bb2-86d6-6d1d05312bd5";
 		org.openmrs.Person person = Context.getPersonService().getPersonByUuid(personUuid);
+		clearExitingUuid(person);
 		Person fhirPerson = FHIRPersonUtil.generatePerson(person);
 		String requestUuid = "vvvv524f-27ce-4bb2-86d6-6d1d05312bd5";
 		IdType uuid = new IdType();

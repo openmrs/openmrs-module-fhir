@@ -83,13 +83,7 @@ public class FHIRPractitionerUtil {
 				}
 				practitioner.setName(names);
 			}
-			//Set address in FHIR patient
-			List<Address> addressList = new ArrayList<Address>();
-			Address fhirAddress;
-			for (PersonAddress address : provider.getPerson().getAddresses()) {
-				addressList.add(FHIRUtils.buildAddress(address));
-			}
-			practitioner.setAddress(addressList);
+			practitioner.setAddress(FHIRAddressUtil.buildAddresses(provider.getPerson().getAddresses()));
 			//Set gender in fhir practitioner object
 			if (provider.getPerson().getGender().equals("M")) {
 				practitioner.setGender(Enumerations.AdministrativeGender.MALE);
