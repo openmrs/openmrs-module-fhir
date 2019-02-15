@@ -17,9 +17,10 @@ import org.hl7.fhir.dstu3.model.ProcedureRequest;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.openmrs.module.fhir.api.client.BasicAuthInterceptor;
 import org.openmrs.module.fhir.api.client.BasicHttpRequestInterceptor;
+import org.openmrs.module.fhir.api.client.ClientHttpEntity;
 import org.openmrs.module.fhir.api.client.ClientHttpRequestInterceptor;
 import org.openmrs.module.fhir.api.client.FHIRHttpMessageConverter;
-import org.openmrs.module.fhir.api.client.ClientHttpEntity;
+import org.openmrs.module.fhir.api.exceptions.FHIRException;
 import org.openmrs.module.fhir.api.util.ContextUtil;
 import org.openmrs.module.fhir.api.util.ErrorUtil;
 import org.openmrs.module.fhir.api.util.FHIRAllergyIntoleranceUtil;
@@ -114,8 +115,7 @@ public class FHIRClientHelper implements ClientHelper {
 		if (CATEGORY_MAP.containsKey(category)) {
 			return CATEGORY_MAP.get(category);
 		}
-		log.warn(String.format("Category %s not recognized", category));
-		return null;
+		throw new FHIRException(String.format("Category %s not recognized", category));
 	}
 
 	@Override
