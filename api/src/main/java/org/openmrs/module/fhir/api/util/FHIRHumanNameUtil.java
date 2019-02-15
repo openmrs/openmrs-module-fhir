@@ -16,10 +16,6 @@ public class FHIRHumanNameUtil {
 
 	private static final String PREFIX = "PREFIX";
 
-	private static final String GIVEN_NAME = "GIVEN_NAME";
-
-	private static final String MIDDLE_NAME = "MIDDLE_NAME";
-
 	public static Set<PersonName> buildOpenmrsNames(List<HumanName> humanNames) {
 		Set<PersonName> names = new TreeSet<PersonName>();
 		for (HumanName humanNameDt : humanNames) {
@@ -66,19 +62,13 @@ public class FHIRHumanNameUtil {
 		if (!StringUtils.isEmpty(familyName)) {
 			personName.setFamilyName(familyName);
 		}
-		boolean givenNameWasSet = false;
-		for (StringType name : humanNameDt.getGiven()) {
-			if (StringUtils.isNotBlank(name.getId())) {
-				if (name.getId().equalsIgnoreCase(GIVEN_NAME)) {
-					personName.setGivenName(String.valueOf(name));
-					givenNameWasSet = true;
-				} else if (name.getId().equalsIgnoreCase(MIDDLE_NAME)) {
-					personName.setMiddleName(String.valueOf(name));
-				}
-			}
+
+		List<StringType> names = humanNameDt.getGiven();
+		if (names.size() > 0) {
+			personName.setGivenName(String.valueOf(names.get(0)));
 		}
-		if (!givenNameWasSet && !humanNameDt.getGiven().isEmpty()) {
-			personName.setGivenName(String.valueOf(humanNameDt.getGiven().get(0)));
+		if (names.size() > 1) {
+			personName.setMiddleName(String.valueOf(names.get(1)));
 		}
 	}
 
@@ -87,13 +77,11 @@ public class FHIRHumanNameUtil {
 		List<StringType> givenNames = new ArrayList<StringType>();
 
 		StringType givenName = new StringType();
-		givenName.setId(GIVEN_NAME);
 		givenName.setValue(personName.getGivenName());
 		givenNames.add(givenName);
 
 		if (StringUtils.isNotBlank(personName.getMiddleName())) {
 			StringType middleName = new StringType();
-			middleName.setId(MIDDLE_NAME);
 			middleName.setValue(personName.getMiddleName());
 			givenNames.add(middleName);
 		}
