@@ -496,4 +496,32 @@
 			</list>
 		</property>
 	</bean>
+
+	<bean id="fhir.FHIRHelperService"
+		  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<bean class="org.openmrs.module.fhir.api.impl.FHIRHelperServiceImpl">
+				<property name="sessionFactory" ref="dbSessionFactory" />
+			</bean>
+		</property>
+		<property name="preInterceptors">
+			<ref bean="serviceInterceptors" />
+		</property>
+		<property name="transactionAttributeSource">
+			<bean
+					class="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource" />
+		</property>
+	</bean>
+
+	<bean parent="serviceContext">
+		<property name="moduleService">
+			<list>
+				<value>org.openmrs.module.fhir.api.FHIRHelperService</value> <!-- service interface name -->
+				<ref bean="fhir.FHIRHelperService"/>
+			</list>
+		</property>
+	</bean>
 </beans>
