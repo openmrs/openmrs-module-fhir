@@ -547,7 +547,10 @@ public class FHIRUtils {
 			} else {
 				String systemName = FHIRConstants.conceptSourceURINameMap.get(system);
 				if (systemName != null && !systemName.isEmpty()) {
-					concept = Context.getConceptService().getConceptByMapping(conceptCode, systemName);
+					List<Concept> concepts = Context.getConceptService().getConceptsByMapping(conceptCode, systemName);
+					if (concepts.size() == 1) {
+						concept = concepts.get(FHIRConstants.FIRST);
+					}
 				}
 			}
 			if (concept != null) {
