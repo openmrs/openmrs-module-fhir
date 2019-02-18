@@ -13,10 +13,12 @@
  */
 package org.openmrs.module.fhir.api.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.Composition;
 import org.hl7.fhir.dstu3.model.Encounter;
+import org.hl7.fhir.dstu3.model.Extension;
 import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.Period;
 import org.hl7.fhir.dstu3.model.Reference;
@@ -25,21 +27,28 @@ import org.openmrs.Concept;
 import org.openmrs.EncounterProvider;
 import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
+import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PersonName;
 import org.openmrs.Provider;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.FHIRHelperService;
+import org.openmrs.module.fhir.api.constants.ExtensionURL;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import static org.openmrs.module.fhir.api.util.FHIRUtils.extractUuid;
 
 public class FHIREncounterUtil {
+
+	private static final int UNKNOWN_ROLE = 1;
 
 	public static Composition generateComposition(org.openmrs.Encounter omrsEncounter) throws FHIRException {
 
@@ -129,31 +138,7 @@ public class FHIREncounterUtil {
 		//Set patient reference
 		encounter.setSubject(buildPatientReference(omrsEncounter));
 
-		//Set participants
-		if (omrsEncounter.getEncounterProviders().size() > 0) {
-			List<Encounter.EncounterParticipantComponent> participants = new ArrayList<>();
-			Encounter.EncounterParticipantComponent participant;
-			for (EncounterProvider provider : omrsEncounter.getEncounterProviders()) {
-				participant = new Encounter.EncounterParticipantComponent();
-				Reference providerReference = new Reference();
-				StringBuilder providerNameDisplay = new StringBuilder();
-				if (provider.getProvider() != null) {
-					providerNameDisplay.append(provider.getProvider().getName());
-					providerNameDisplay.append("(");
-					providerNameDisplay.append(FHIRConstants.IDENTIFIER);
-					providerNameDisplay.append(":");
-					providerNameDisplay.append(provider.getProvider().getIdentifier());
-					providerNameDisplay.append(")");
-					providerReference.setDisplay(providerNameDisplay.toString());
-
-					String providerUri = FHIRConstants.PRACTITIONER + "/" + provider.getProvider().getUuid();
-					providerReference.setReference(providerUri);
-					participant.setIndividual(providerReference);
-					participants.add(participant);
-				}
-			}
-			encounter.setParticipant(participants);
-		}
+		encounter.setParticipant(buildParticipant(omrsEncounter));
 		//Set encounter period from omrs encounter
 		Period period = encounter.getPeriod();
 		period.setStart(omrsEncounter.getEncounterDatetime());
@@ -184,6 +169,8 @@ public class FHIREncounterUtil {
 			encounter.setPartOf(visitRef);
 		}
 
+		buildFormExtension(omrsEncounter, encounter);
+
 		String encounterType = omrsEncounter.getEncounterType().getName();
 		Coding dt = new Coding();
 		dt.setDisplay(encounterType);
@@ -193,6 +180,52 @@ public class FHIREncounterUtil {
 		//TODO uncomment the validation and check what's going wrong
 		//FHIRUtils.validate(encounter);
 		return encounter;
+	}
+
+	public static List<Encounter.EncounterParticipantComponent> buildParticipant(org.openmrs.Encounter omrsEncounter) {
+		List<Encounter.EncounterParticipantComponent> participants = new ArrayList<>();
+		if (omrsEncounter.getEncounterProviders().size() > 0) {
+			for (EncounterProvider provider : omrsEncounter.getEncounterProviders()) {
+				Encounter.EncounterParticipantComponent participant = new Encounter.EncounterParticipantComponent();
+				if (provider.getProvider() != null) {
+					BaseOpenMRSDataUtil.setBaseExtensionFields(participant, provider);
+					participant.setIndividual(buildProviderReference(provider));
+					participant.addExtension(buildEncounterProviderExtension(provider));
+					participant.addExtension(buildEncounterRoleExtension(provider.getEncounterRole()));
+					participants.add(participant);
+				}
+			}
+		}
+		return participants;
+	}
+
+	private static Extension buildEncounterProviderExtension(EncounterProvider encounterProvider) {
+		if (encounterProvider != null) {
+			return ExtensionsUtil.createEncounterProviderUuidExtension(encounterProvider);
+		}
+		return null;
+	}
+
+	private static Extension buildEncounterRoleExtension(EncounterRole encounterRole) {
+		if (encounterRole != null) {
+			return ExtensionsUtil.createEncounterRoleUuidExtension(encounterRole);
+		}
+		return null;
+	}
+
+	public static Reference buildProviderReference(EncounterProvider provider) {
+		Reference providerReference = new Reference();
+		StringBuilder providerNameDisplay = new StringBuilder();
+		providerNameDisplay.append(provider.getProvider().getName());
+		providerNameDisplay.append("(");
+		providerNameDisplay.append(FHIRConstants.IDENTIFIER);
+		providerNameDisplay.append(":");
+		providerNameDisplay.append(provider.getProvider().getIdentifier());
+		providerNameDisplay.append(")");
+		providerReference.setDisplay(providerNameDisplay.toString());
+		String providerUri = FHIRConstants.PRACTITIONER + "/" + provider.getProvider().getUuid();
+		providerReference.setReference(providerUri);
+		return providerReference;
 	}
 
 	private static Reference buildPatientReference(org.openmrs.Encounter omrsEncounter) {
@@ -267,17 +300,6 @@ public class FHIREncounterUtil {
 		Date start = period.getStart();
 		omrsEncounter.setEncounterDatetime(start);
 
-		List<Encounter.EncounterParticipantComponent> participants = encounter.getParticipant();
-		for (Encounter.EncounterParticipantComponent participant : participants) {
-			Reference participantsref = participant.getIndividual();
-			String participantUuid = FHIRUtils.getObjectUuidByReference(participantsref);
-
-			Provider provider = Context.getProviderService().getProviderByUuid(participantUuid);
-
-			//TODO: EncounterRole should nor be hard coded
-			EncounterRole role = Context.getEncounterService().getEncounterRole(1); // hard coded
-			omrsEncounter.setProvider(role, provider);
-		}
 		List<Encounter.EncounterLocationComponent> locationList = encounter.getLocation();
 		if (locationList != null && !locationList.isEmpty()) {
 			Encounter.EncounterLocationComponent location = locationList.get(0);
@@ -290,12 +312,118 @@ public class FHIREncounterUtil {
 			}
 		}
 
+		omrsEncounter.setForm(buildFormReferenceByExtension(encounter));
+
 		String encounterTypeName = encounter.getTypeFirstRep().getCodingFirstRep().getDisplay();
 		EncounterType encounterType = Context.getEncounterService().getEncounterType(encounterTypeName);
 		omrsEncounter.setEncounterType(encounterType);
+		buildProviders(encounter, omrsEncounter);
 
-		//TODO: When Form will be created, it needs to be set for Encounter
 		return omrsEncounter;
+	}
+
+	private static void buildProviders(Encounter encounter, org.openmrs.Encounter omrsEncounter) {
+		Set<EncounterProvider> encounterProviders = new HashSet<>();
+		for (Encounter.EncounterParticipantComponent participant : encounter.getParticipant()) {
+			EncounterProvider encounterProvider = buildEncounterProvider(omrsEncounter, participant);
+			encounterProviders.add(encounterProvider);
+		}
+		omrsEncounter.setEncounterProviders(encounterProviders);
+	}
+
+	private static EncounterProvider getEncounterProviderByUuid(String uniqueId) {
+		return Context.getService(FHIRHelperService.class).getObjectByUuid(EncounterProvider.class, uniqueId);
+	}
+
+	private static EncounterProvider buildEncounterProvider(org.openmrs.Encounter omrsEncounter,
+			Encounter.EncounterParticipantComponent participant) {
+		String encounterProviderUuid = getEncounterProviderUuidByExtension(participant);
+
+		EncounterProvider encounterProvider = getEncounterProviderByUuid(encounterProviderUuid);
+		if (encounterProvider == null) {
+			encounterProvider = createEncounterProvider(omrsEncounter, participant, encounterProviderUuid);
+		} else {
+			encounterProvider = updateEncounterProviderAttributes(encounterProvider, omrsEncounter, participant);
+		}
+
+		return encounterProvider;
+	}
+
+	private static EncounterProvider createEncounterProvider(org.openmrs.Encounter omrsEncounter,
+			Encounter.EncounterParticipantComponent participant, String encounterProviderUuid) {
+		String participantUuid = FHIRUtils.getObjectUuidByReference(participant.getIndividual());
+		Provider provider = Context.getProviderService().getProviderByUuid(participantUuid);
+		EncounterRole role = buildEncounterRole(participant);
+
+		EncounterProvider encounterProvider = new EncounterProvider();
+		BaseOpenMRSDataUtil.readBaseExtensionFields(encounterProvider, participant);
+		encounterProvider.setEncounter(omrsEncounter);
+		encounterProvider.setProvider(provider);
+		encounterProvider.setEncounterRole(role);
+		encounterProvider.setUuid(encounterProviderUuid);
+		return encounterProvider;
+	}
+
+	private static EncounterProvider updateEncounterProviderAttributes(EncounterProvider encounterProvider,
+			org.openmrs.Encounter omrsEncounter, Encounter.EncounterParticipantComponent participant) {
+		String participantUuid = FHIRUtils.getObjectUuidByReference(participant.getIndividual());
+		Provider provider = Context.getProviderService().getProviderByUuid(participantUuid);
+		EncounterRole role = buildEncounterRole(participant);
+		BaseOpenMRSDataUtil.readBaseExtensionFields(encounterProvider, participant);
+		encounterProvider.setProvider(provider);
+		encounterProvider.setEncounterRole(role);
+		return encounterProvider;
+	}
+
+	private static EncounterRole buildEncounterRole(Encounter.EncounterParticipantComponent participant) {
+		EncounterRole role = null;
+		String encounterRoleUuid = getEncounterRoleUuidByExtension(participant);
+		if (StringUtils.isNotBlank(encounterRoleUuid)) {
+			role = Context.getEncounterService().getEncounterRoleByUuid(encounterRoleUuid);
+		}
+		if (role == null) {
+			role = Context.getEncounterService().getEncounterRole(UNKNOWN_ROLE);
+		}
+
+		return role;
+	}
+
+	private static String getEncounterRoleUuidByExtension(Encounter.EncounterParticipantComponent participant) {
+		List<Extension> extensions = participant.getExtensionsByUrl(ExtensionURL.ENCOUNTER_ROLE_UUID_URL);
+		if (!CollectionUtils.isEmpty(extensions)) {
+			return ExtensionsUtil.getStringFromExtension(extensions.get(FHIRConstants.FIRST));
+		}
+		return null;
+	}
+
+	private static String getEncounterProviderUuidByExtension(Encounter.EncounterParticipantComponent participant) {
+		List<Extension> extensions = participant.getExtensionsByUrl(ExtensionURL.ENCOUNTER_PROVIDER_UUID_URL);
+		if (!CollectionUtils.isEmpty(extensions)) {
+			return ExtensionsUtil.getStringFromExtension(extensions.get(FHIRConstants.FIRST));
+		}
+		return null;
+	}
+
+	private static void buildFormExtension(org.openmrs.Encounter omrsEncounter, Encounter encounter) {
+		if (omrsEncounter.getForm() != null) {
+			encounter.addExtension(ExtensionsUtil.createFormUuidExtension(omrsEncounter.getForm()));
+		}
+	}
+
+	private static Form buildFormReferenceByExtension(Encounter encounter) {
+		String formUuid = getFormUuidFromExtension(encounter);
+		if (StringUtils.isNotBlank(formUuid)) {
+			return Context.getFormService().getFormByUuid(formUuid);
+		}
+		return null;
+	}
+
+	private static String getFormUuidFromExtension(Encounter encounter) {
+		List<Extension> extensions = encounter.getExtensionsByUrl(ExtensionURL.FORM_UUID_URL);
+		if (!CollectionUtils.isEmpty(extensions)) {
+			return ExtensionsUtil.getStringFromExtension(extensions.get(FHIRConstants.FIRST));
+		}
+		return null;
 	}
 
 	public static org.openmrs.Encounter updateEncounterAttributes(org.openmrs.Encounter omrsEncounter,

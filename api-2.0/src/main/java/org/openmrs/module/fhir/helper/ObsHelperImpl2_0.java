@@ -34,7 +34,7 @@ public class ObsHelperImpl2_0 implements ObsHelper {
 				obs.setStatus(Obs.Status.valueOf(status.name()));
 			}
 		}
-		catch (NoSuchMethodError ex) {
+		catch (NoSuchMethodError | NoClassDefFoundError ex) {
 			//must be running below platform 2.1
 		}
 	}

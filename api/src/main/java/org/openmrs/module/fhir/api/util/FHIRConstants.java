@@ -213,6 +213,9 @@ public final class FHIRConstants {
 
 	public static final String REQUEST_ISSUE_LIST = "The request cannot be processed due to following issues \n";
 
+	public static final String OBS_GROUP_MEMBER_TEXT_VALUE = "this will be grouping observation, "
+			+ "the value should be removed in the validation phase";
+
 	//Global Property Names
 	public static final String CONCEPTS_CONVERTABLE_TO_CONDITIONS_STORED_AS_OBS = "fhir.concepts.conditions";
 
@@ -256,6 +259,8 @@ public final class FHIRConstants {
 	public static final String CATEGORY_DRUG_ORDER = "drug_order";
 
 	public static final String CATEGORY_TEST_ORDER = "test_order";
+
+	public static final int FIRST = 0;
 
 	public static final String POST = "POST";
 

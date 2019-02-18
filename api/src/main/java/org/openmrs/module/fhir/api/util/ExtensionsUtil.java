@@ -11,6 +11,10 @@ import org.hl7.fhir.dstu3.model.StringType;
 import org.openmrs.BaseOpenmrsData;
 import org.openmrs.BaseOpenmrsMetadata;
 import org.openmrs.Concept;
+import org.openmrs.EncounterProvider;
+import org.openmrs.EncounterRole;
+import org.openmrs.Form;
+import org.openmrs.Location;
 import org.openmrs.TestOrder;
 import org.openmrs.User;
 import org.openmrs.api.context.Context;
@@ -204,6 +208,22 @@ public final class ExtensionsUtil {
 	public static Extension createOrderFrequencyExtension(TestOrder order) {
 		return createExtension(ExtensionURL.ORDER_FREQUENCY_URL, new StringType(
 				ContextUtil.getTestOrderHelper().frequencyToString(order)));
+	}
+
+	public static Extension createFormUuidExtension(Form form) {
+		return createExtension(ExtensionURL.FORM_UUID_URL, new StringType(form.getUuid()));
+	}
+
+	public static Extension createLocationUuidExtension(Location location) {
+		return createExtension(ExtensionURL.LOCATION_UUID_URL, new StringType(location.getUuid()));
+	}
+
+	public static Extension createEncounterProviderUuidExtension(EncounterProvider encounterProvider) {
+		return createExtension(ExtensionURL.ENCOUNTER_PROVIDER_UUID_URL, new StringType(encounterProvider.getUuid()));
+	}
+
+	public static Extension createEncounterRoleUuidExtension(EncounterRole encounterRole) {
+		return createExtension(ExtensionURL.ENCOUNTER_ROLE_UUID_URL, new StringType(encounterRole.getUuid()));
 	}
 
 	//endregion

@@ -11,6 +11,7 @@ public final class ExtensionURL {
     public static final String CREATOR_URL = "https://purl.org/elab/fhir/StructureDefinition/Creator-crew-version1";
 
     // Local extensions
+
     public static final String CHANGED_BY_URL = "changedBy";
     public static final String DATE_CHANGED_URL = "dateChanged";
     public static final String VOIDED_URL = "voided";
@@ -21,10 +22,10 @@ public final class ExtensionURL {
     public static final String DATE_RETIRED_URL = "dateRetired";
     public static final String RETIRED_BY_URL = "retiredBy";
     public static final String RETIRE_REASON_URL = "retireReason";
-
     public static final String DESCRIPTION_URL = "description";
 
     public static final String AS_NEEDED_CONDITION = "asNeededCondition";
+
     public static final String DOSING_TYPE = "dosingType";
     public static final String NUM_REFILLS = "numRefills";
     public static final String BRAND_NAME = "brandName";
@@ -35,4 +36,8 @@ public final class ExtensionURL {
     public static final String LATERALITY_URL = "laterality";
     public static final String CLINICAL_HISTORY_URL = "clinicalHistory";
     public static final String ORDER_FREQUENCY_URL = "orderFrequency";
+    public static final String FORM_UUID_URL = "formUuid";
+    public static final String LOCATION_UUID_URL = "locationUuid";
+    public static final String ENCOUNTER_PROVIDER_UUID_URL = "encounterProviderUuid";
+    public static final String ENCOUNTER_ROLE_UUID_URL = "encounterRoleUuid";
 }
