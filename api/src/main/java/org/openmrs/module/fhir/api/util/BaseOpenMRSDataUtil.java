@@ -1,6 +1,7 @@
 package org.openmrs.module.fhir.api.util;
 
 import org.hl7.fhir.dstu3.model.DomainResource;
+import org.hl7.fhir.dstu3.model.Element;
 import org.hl7.fhir.dstu3.model.Extension;
 import org.openmrs.BaseOpenmrsData;
 import org.openmrs.BaseOpenmrsMetadata;
@@ -24,6 +25,22 @@ public final class BaseOpenMRSDataUtil {
             fhirResource.addExtension(ExtensionsUtil.createVoidReasonExtension(openmrsData.getVoidReason()));
         }
     }
+
+    public static void setBaseExtensionFields(Element element, BaseOpenmrsData openmrsData) {
+        element.addExtension(ExtensionsUtil.createDateCreatedExtension(openmrsData.getDateCreated()));
+        element.addExtension(ExtensionsUtil.createCreatorExtension(openmrsData.getCreator()));
+
+        if (openmrsData.getDateChanged() != null) {
+            element.addExtension(ExtensionsUtil.createDateChangedExtension(openmrsData.getDateChanged()));
+            element.addExtension(ExtensionsUtil.createChangedByExtension(openmrsData.getChangedBy()));
+        }
+        if (openmrsData.getVoided()) {
+            element.addExtension(ExtensionsUtil.createVoidedExtension(openmrsData.getVoided()));
+            element.addExtension(ExtensionsUtil.createDateVoidedExtension(openmrsData.getDateVoided()));
+            element.addExtension(ExtensionsUtil.createVoidedByExtension(openmrsData.getVoidedBy()));
+            element.addExtension(ExtensionsUtil.createVoidReasonExtension(openmrsData.getVoidReason()));
+        }
+    }
     
     public static void setBaseExtensionFields(DomainResource fhirResource, BaseOpenmrsMetadata openmrsMetadata) {
         fhirResource.addExtension(ExtensionsUtil.createDateCreatedExtension(openmrsMetadata.getDateCreated()));
@@ -42,6 +59,12 @@ public final class BaseOpenMRSDataUtil {
     }
 
     public static void readBaseExtensionFields(BaseOpenmrsData openmrsData, DomainResource fhirResource) {
+        for (Extension extension : fhirResource.getExtension()) {
+            ExtensionsUtil.setBaseOpenMRSData(openmrsData, extension);
+        }
+    }
+
+    public static void readBaseExtensionFields(BaseOpenmrsData openmrsData, Element fhirResource) {
         for (Extension extension : fhirResource.getExtension()) {
             ExtensionsUtil.setBaseOpenMRSData(openmrsData, extension);
         }
