@@ -14,11 +14,8 @@
 package org.openmrs.module.fhir.api.util;
 
 import org.apache.commons.lang.StringUtils;
-import org.hl7.fhir.dstu3.model.Address;
 import org.hl7.fhir.dstu3.model.BooleanType;
 import org.hl7.fhir.dstu3.model.ContactPoint;
-import org.hl7.fhir.dstu3.model.Enumerations;
-import org.hl7.fhir.dstu3.model.HumanName;
 import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.Identifier;
 import org.hl7.fhir.dstu3.model.Patient;
@@ -52,27 +49,9 @@ public class FHIRPatientUtil {
 			patient.addIdentifier(FHIRIdentifierUtil.generateIdentifier(identifier));
 		}
 
-		//Set patient name to fhir patient
-		List<HumanName> humanNameDts = new ArrayList<HumanName>();
-		for (PersonName name : omrsPatient.getNames()) {
-			humanNameDts.add(FHIRUtils.buildHumanName(name));
-		}
-		patient.setName(humanNameDts);
-
-		//Set gender in fhir patient object
-		if ("M".equals(omrsPatient.getGender())) {
-			patient.setGender(Enumerations.AdministrativeGender.MALE);
-		} else if ("F".equals(omrsPatient.getGender())) {
-			patient.setGender(Enumerations.AdministrativeGender.FEMALE);
-		} else {
-			patient.setGender(Enumerations.AdministrativeGender.UNKNOWN);
-		}
-
-		List<Address> fhirAddresses = patient.getAddress();
-		for (PersonAddress address : omrsPatient.getAddresses()) {
-			fhirAddresses.add(FHIRUtils.buildAddress(address));
-		}
-		patient.setAddress(fhirAddresses);
+		patient.setName(FHIRHumanNameUtil.buildHumanNames(omrsPatient.getNames()));
+		patient.setGender(FHIRPersonUtil.determineAdministrativeGender(omrsPatient));
+		patient.setAddress(FHIRAddressUtil.buildAddresses(omrsPatient.getAddresses()));
 
 		if (omrsPatient.getBirthdate() != null) {
 			patient.setBirthDate(omrsPatient.getBirthdate());
@@ -124,33 +103,19 @@ public class FHIRPatientUtil {
 		}
 		omrsPatient.setIdentifiers(idList);
 
-		Set<PersonName> names = new TreeSet<PersonName>();
 		if (patient.getName().size() == 0) {
 			errors.add("Name cannot be empty");
 		}
-		for (HumanName humanNameDt : patient.getName()) {
-			PersonName name = FHIRHumanNameUtil.generatePersonName(humanNameDt);
-			names.add(name);
-		}
-		omrsPatient.setNames(names);
-		if (!validateNames(omrsPatient.getNames())) {
+		omrsPatient.setNames(FHIRHumanNameUtil.buildOpenmrsNames(patient.getName()));
+		if (!FHIRHumanNameUtil.validateOpenmrsNames(omrsPatient.getNames())) {
 			errors.add("Person should have at least one name with family name and given name");
 		}
 
-		Set<PersonAddress> addresses = new TreeSet<PersonAddress>();
-		for (Address fhirAddress : patient.getAddress()) {
-			PersonAddress address = FHIRAddressUtil.generatePersonAddress(fhirAddress);
-			addresses.add(address);
-		}
-		omrsPatient.setAddresses(addresses);
+		omrsPatient.setAddresses(FHIRAddressUtil.buildPersonAddresses(patient.getAddress()));
 
-		if (patient.getGender() != null) {
-			if (patient.getGender().toCode().equalsIgnoreCase(Enumerations.AdministrativeGender.MALE.toCode())) {
-				omrsPatient.setGender(FHIRConstants.MALE);
-			} else if (patient.getGender().toCode()
-					.equalsIgnoreCase(String.valueOf(Enumerations.AdministrativeGender.FEMALE))) {
-				omrsPatient.setGender(FHIRConstants.FEMALE);
-			}
+		String gender = FHIRPersonUtil.determineOpenmrsGender(patient.getGender());
+		if (StringUtils.isNotBlank(gender)) {
+			omrsPatient.setGender(gender);
 		} else {
 			errors.add("Gender cannot be empty");
 		}
@@ -170,46 +135,10 @@ public class FHIRPatientUtil {
 
 	public static org.openmrs.Patient updatePatientAttributes(org.openmrs.Patient omrsPatient,
 			org.openmrs.Patient retrievedPatient) {
-		Set<PersonName> all = retrievedPatient.getNames();
-		for (PersonName newName : omrsPatient.getNames()) {
-			boolean exist = false;
-			for (PersonName existingName : all) {
-				if (existingName.getUuid().equals(newName.getUuid())) {
-					FHIRHumanNameUtil.updatePersonName(existingName, newName);
-					exist = true;
-				}
-			}
-			if (!exist) {
-				retrievedPatient.addName(newName);
-			}
-		}
-		Set<PersonAddress> allAddress = retrievedPatient.getAddresses();
-		for (PersonAddress newAddress : omrsPatient.getAddresses()) {
-			boolean exist = false;
-			for (PersonAddress existingAddress : allAddress) {
-				if (existingAddress.getUuid().equals(newAddress.getUuid())) {
-					FHIRAddressUtil.updatePersonAddress(existingAddress, newAddress);
-					exist = true;
-				}
-			}
-			if (!exist) {
-				retrievedPatient.addAddress(newAddress);
-			}
-		}
-		Set<PatientIdentifier> allIdentifiers = retrievedPatient.getIdentifiers();
+		updateNames(omrsPatient, retrievedPatient);
+		updateAddresses(omrsPatient, retrievedPatient);
+		updateIdentifiers(omrsPatient, retrievedPatient);
 		retrievedPatient.setPersonVoided(omrsPatient.getVoided());
-		for (PatientIdentifier newIdentifier : omrsPatient.getIdentifiers()) {
-			boolean exist = false;
-			for (PatientIdentifier existingIdentifier : allIdentifiers) {
-				if (existingIdentifier.getUuid().equals(newIdentifier.getUuid())) {
-					FHIRIdentifierUtil.updatePatientIdentifier(existingIdentifier, newIdentifier);
-					exist = true;
-				}
-			}
-			if (!exist) {
-				retrievedPatient.addIdentifier(newIdentifier);
-			}
-		}
 		if (omrsPatient.getVoided()) {
 			retrievedPatient.setPersonVoidReason(FHIRConstants.FHIR_VOIDED_MESSAGE); // deleted reason is compulsory
 		}
@@ -218,16 +147,70 @@ public class FHIRPatientUtil {
 		return retrievedPatient;
 	}
 
-	private static boolean validateNames(Set<PersonName> names) {
-		boolean valid = false;
-		for (PersonName name : names) {
-			if (StringUtils.isNotBlank(name.getGivenName())
-					&& StringUtils.isNotBlank(name.getFamilyName())) {
-				valid = true;
-				break;
+	public static void updateIdentifiers(org.openmrs.Patient omrsPatient, org.openmrs.Patient retrievedPatient) {
+		Set<PatientIdentifier> allIdentifiers = retrievedPatient.getIdentifiers();
+		for (PatientIdentifier newIdentifier : omrsPatient.getIdentifiers()) {
+			boolean exist = false;
+			for (PatientIdentifier existingIdentifier : allIdentifiers) {
+				if (existingIdentifier.getUuid().equals(newIdentifier.getUuid())) {
+					FHIRIdentifierUtil.updatePatientIdentifier(existingIdentifier, newIdentifier);
+					exist = true;
+					break;
+				}
+			}
+			if (!exist) {
+				if (newIdentifier.isPreferred()) {
+					for (PatientIdentifier existingIdentifier : allIdentifiers) {
+						existingIdentifier.setPreferred(false);
+					}
+				}
+				retrievedPatient.addIdentifier(newIdentifier);
 			}
 		}
-		return valid;
+	}
+
+	public static void updateAddresses(org.openmrs.Patient omrsPatient, org.openmrs.Patient retrievedPatient) {
+		Set<PersonAddress> allAddress = retrievedPatient.getAddresses();
+		for (PersonAddress newAddress : omrsPatient.getAddresses()) {
+			boolean exist = false;
+			for (PersonAddress existingAddress : allAddress) {
+				if (existingAddress.getUuid().equals(newAddress.getUuid())) {
+					FHIRAddressUtil.updatePersonAddress(existingAddress, newAddress);
+					exist = true;
+					break;
+				}
+			}
+			if (!exist) {
+				if (newAddress.isPreferred()) {
+					for (PersonAddress existingAddress : allAddress) {
+						existingAddress.setPreferred(false);
+					}
+				}
+				retrievedPatient.addAddress(newAddress);
+			}
+		}
+	}
+
+	public static void updateNames(org.openmrs.Patient omrsPatient, org.openmrs.Patient retrievedPatient) {
+		Set<PersonName> all = retrievedPatient.getNames();
+		for (PersonName newName : omrsPatient.getNames()) {
+			boolean exist = false;
+			for (PersonName existingName : all) {
+				if (existingName.getUuid().equals(newName.getUuid())) {
+					FHIRHumanNameUtil.updatePersonName(existingName, newName);
+					exist = true;
+					break;
+				}
+			}
+			if (!exist) {
+				if (newName.isPreferred()) {
+					for (PersonName existingName : all) {
+						existingName.setPreferred(false);
+					}
+				}
+				retrievedPatient.addName(newName);
+			}
+		}
 	}
 
 	/**
