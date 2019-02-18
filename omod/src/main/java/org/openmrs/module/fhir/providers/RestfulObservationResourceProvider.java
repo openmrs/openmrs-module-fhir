@@ -27,6 +27,8 @@ import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenOrListParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Patient;
@@ -165,7 +167,8 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 			return MethodOutcomeBuilder.buildUpdate(provider.updateFHIRObservation(observation, theId.getIdPart()));
 		}
 		catch (Exception e) {
-			return MethodOutcomeBuilder.buildCustom("Following exception occured " + e.getMessage());
+			throw new InvalidRequestException("Following exception occured: " + e.getMessage() + " " +
+					ExceptionUtils.getStackTrace(e));
 		}
 	}
 }
