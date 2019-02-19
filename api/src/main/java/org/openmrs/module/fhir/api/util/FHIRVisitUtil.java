@@ -127,6 +127,9 @@ public class FHIRVisitUtil {
 				String typeCode = code.getCode();
 				int typeId = Integer.parseInt(typeCode);
 				visitType = Context.getVisitService().getVisitType(typeId);
+				if (visitType == null) {
+					visitType = Context.getVisitService().getVisitTypeByUuid(code.getSystem());
+				}
 			}
 
 			if (visitType == null) {
