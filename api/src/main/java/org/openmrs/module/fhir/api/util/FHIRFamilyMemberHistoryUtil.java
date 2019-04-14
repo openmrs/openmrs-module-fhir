@@ -28,7 +28,7 @@ import java.util.List;
 
 public class FHIRFamilyMemberHistoryUtil {
 
-	public static FamilyMemberHistory generateFamilyHistory(Relationship relationship, Person person) {
+	public static FamilyMemberHistory generateFamilyMemberHistory(Relationship relationship, Person person) {
 		FamilyMemberHistory familyMemberHistory = new FamilyMemberHistory();
 
 		BaseOpenMRSDataUtil.setBaseExtensionFields(familyMemberHistory, relationship);
