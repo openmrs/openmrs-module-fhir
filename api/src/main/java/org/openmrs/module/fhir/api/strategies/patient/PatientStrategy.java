@@ -187,7 +187,7 @@ public class PatientStrategy implements GenericPatientStrategy {
 	@Override
 	public Bundle getPatientOperationsById(String patientId) {
 		EncounterService encounterService = Context.getService(EncounterService.class);
-		FamilyMemberHistoryService familyHistoryService = Context.getService(FamilyMemberHistoryService.class);
+		FamilyMemberHistoryService familyMemberHistoryService = Context.getService(FamilyMemberHistoryService.class);
 		org.openmrs.Patient omsrPatient = Context.getPatientService().getPatientByUuid(patientId);
 
 		Bundle bundle = new Bundle();
@@ -201,9 +201,9 @@ public class PatientStrategy implements GenericPatientStrategy {
 			}
 
 			//Set patients' relationships
-			for (FamilyMemberHistory familyHistory : familyHistoryService.searchFamilyHistoryByPersonId(omsrPatient
+			for (FamilyMemberHistory familyMemberHistory : familyMemberHistoryService.searchFamilyMemberHistoryByPersonId(omsrPatient
 					.getUuid())) {
-				bundle.addEntry().setResource(familyHistory);
+				bundle.addEntry().setResource(familyMemberHistory);
 			}
 
 			//Set visits

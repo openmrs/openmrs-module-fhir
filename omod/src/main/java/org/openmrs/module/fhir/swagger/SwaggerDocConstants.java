@@ -410,7 +410,7 @@ public class SwaggerDocConstants {
 			"}";
 
 	public static final String FAMILY_HISTORY_PAYLOAD = "{\n" +
-			"  \"resourceType\": \"FamilyHistory\",\n" +
+			"  \"resourceType\": \"FamilyMemberHistory\",\n" +
 			"  \"id\": \"dda12af7-1691-11df-97a5-7038c432aabf\",\n" +
 			"  \"patient\": {\n" +
 			"    \"reference\": \"Patient/example\",\n" +

@@ -26,21 +26,21 @@ import java.util.List;
 public class FHIRFamilyMemberHistoryResource extends Resource {
 
 	public FamilyMemberHistory getByUniqueId(IdType id) {
-		FamilyMemberHistoryService familyHistoryService = Context.getService(FamilyMemberHistoryService.class);
-		FamilyMemberHistory familyHistory = familyHistoryService.getRelationshipById(id.getIdPart());
-		if (familyHistory == null) {
+		FamilyMemberHistoryService familyMemberHistoryService = Context.getService(FamilyMemberHistoryService.class);
+		FamilyMemberHistory familyMemberHistory = familyMemberHistoryService.getRelationshipById(id.getIdPart());
+		if (familyMemberHistory == null) {
 			throw new ResourceNotFoundException("Family history is not found for the given Id " + id.getIdPart());
 		}
-		return familyHistory;
+		return familyMemberHistory;
 	}
 
-	public List<FamilyMemberHistory> searchFamilyHistoryByUniqueId(TokenParam id) {
-		FamilyMemberHistoryService familyHistoryService = Context.getService(FamilyMemberHistoryService.class);
-		return familyHistoryService.searchRelationshipsById(id.getValue());
+	public List<FamilyMemberHistory> searchFamilyMemberHistoryByUniqueId(TokenParam id) {
+		FamilyMemberHistoryService familyMemberHistoryService = Context.getService(FamilyMemberHistoryService.class);
+		return familyMemberHistoryService.searchRelationshipsById(id.getValue());
 	}
 
-	public List<FamilyMemberHistory> searchFamilyHistoryByPerson(ReferenceParam id) {
-		FamilyMemberHistoryService familyHistoryService = Context.getService(FamilyMemberHistoryService.class);
-		return familyHistoryService.searchFamilyHistoryByPersonId(id.getIdPart());
+	public List<FamilyMemberHistory> searchFamilyMemberHistoryByPerson(ReferenceParam id) {
+		FamilyMemberHistoryService familyMemberHistoryService = Context.getService(FamilyMemberHistoryService.class);
+		return familyMemberHistoryService.searchFamilyMemberHistoryByPersonId(id.getIdPart());
 	}
 }

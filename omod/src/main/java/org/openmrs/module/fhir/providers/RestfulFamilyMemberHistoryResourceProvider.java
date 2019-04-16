@@ -29,10 +29,10 @@ import java.util.List;
 
 public class RestfulFamilyMemberHistoryResourceProvider implements IResourceProvider {
 
-	private FHIRFamilyMemberHistoryResource familyHistoryResource;
+	private FHIRFamilyMemberHistoryResource familyMemberHistoryResource;
 
 	public RestfulFamilyMemberHistoryResourceProvider() {
-		this.familyHistoryResource = new FHIRFamilyMemberHistoryResource();
+		this.familyMemberHistoryResource = new FHIRFamilyMemberHistoryResource();
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class RestfulFamilyMemberHistoryResourceProvider implements IResourceProv
 	 */
 	@Read
 	public FamilyMemberHistory getResourceById(@IdParam IdType theId) {
-		return familyHistoryResource.getByUniqueId(theId);
+		return familyMemberHistoryResource.getByUniqueId(theId);
 	}
 
 	/**
@@ -60,9 +60,9 @@ public class RestfulFamilyMemberHistoryResourceProvider implements IResourceProv
 	 * @param id object containing the requested id
 	 */
 	@Search
-	public List<FamilyMemberHistory> findFamilyHistoryByUniqueId(
+	public List<FamilyMemberHistory> findFamilyMemberHistoryByUniqueId(
 			@RequiredParam(name = FamilyMemberHistory.SP_RES_ID) TokenParam id) {
-		return familyHistoryResource.searchFamilyHistoryByUniqueId(id);
+		return familyMemberHistoryResource.searchFamilyMemberHistoryByUniqueId(id);
 	}
 
 	/**
@@ -71,8 +71,8 @@ public class RestfulFamilyMemberHistoryResourceProvider implements IResourceProv
 	 * @param person object containing the requested patient id
 	 */
 	@Search
-	public List<FamilyMemberHistory> findFamilyHistoryByPerson(
+	public List<FamilyMemberHistory> findFamilyMemberHistoryByPerson(
 			@RequiredParam(name = FamilyMemberHistory.SP_PATIENT) ReferenceParam person) {
-		return familyHistoryResource.searchFamilyHistoryByPerson(person);
+		return familyMemberHistoryResource.searchFamilyMemberHistoryByPerson(person);
 	}
 }
