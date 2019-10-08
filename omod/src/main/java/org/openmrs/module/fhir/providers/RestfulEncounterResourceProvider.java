@@ -79,7 +79,7 @@ public class RestfulEncounterResourceProvider implements IResourceProvider {
 	 */
 	@Search
 	public List<Encounter> findEncountersByPatientIdentifier(
-			@RequiredParam(name = Patient.SP_IDENTIFIER) ReferenceParam identifier) {
+			@RequiredParam(name = Encounter.SP_PATIENT + "." + Patient.SP_IDENTIFIER) ReferenceParam identifier) {
 		return encounterResource.searchEncountersByPatientIdentifier(identifier);
 	}
 
