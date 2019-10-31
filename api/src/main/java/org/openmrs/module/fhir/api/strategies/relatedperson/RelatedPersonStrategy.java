@@ -5,8 +5,11 @@ import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.RelatedPerson;
+import org.openmrs.Patient;
 import org.openmrs.Relationship;
 import org.openmrs.api.APIException;
+import org.openmrs.api.PatientService;
+import org.openmrs.api.PersonService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRRelatedPersonUtil;
@@ -25,6 +28,33 @@ public class RelatedPersonStrategy implements GenericRelatedPersonStrategy {
 			return null;
 		}
 		return FHIRRelatedPersonUtil.generateRelationshipObject(omrsRelationship);
+	}
+
+	/**
+	 * @see org.openmrs.module.fhir.api.strategies.relatedperson.GenericRelatedPersonStrategy#searchRelatedPersonByIdentifier(String)
+	 */
+	@Override
+	public List<RelatedPerson> searchRelatedPersonByIdentifier(String identifier) {
+		List<RelatedPerson> relatedPersonList = new ArrayList<>();
+		List<Relationship> relationships = new ArrayList<>();
+		PatientService patientService = Context.getPatientService();
+		List<org.openmrs.Patient> patientList = patientService.getPatients(null,
+				identifier, null, true);
+		PersonService personService = Context.getPersonService();
+
+		if (patientList != null && !patientList.isEmpty()) {
+			for (Patient patient : patientList) {
+				relationships.addAll(personService.getRelationshipsByPerson(patient));
+			}
+		}
+
+		if (!relationships.isEmpty()) {
+			for (Relationship relationship : relationships) {
+				relatedPersonList.add(FHIRRelatedPersonUtil.generateRelationshipObject(relationship));
+			}
+		}
+
+		return relatedPersonList;
 	}
 
 	@Override

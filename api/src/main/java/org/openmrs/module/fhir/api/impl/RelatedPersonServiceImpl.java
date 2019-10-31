@@ -8,6 +8,8 @@ import org.openmrs.module.fhir.api.RelatedPersonService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.strategies.relatedperson.RelatedPersonStrageryUtil;
 
+import java.util.List;
+
 public class RelatedPersonServiceImpl extends BaseOpenmrsService implements RelatedPersonService {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
@@ -31,6 +33,14 @@ public class RelatedPersonServiceImpl extends BaseOpenmrsService implements Rela
 	@Override
 	public RelatedPerson getRelatedPerson(String uuid) {
 		return RelatedPersonStrageryUtil.getPersonStrategy().getRelatedPerson(uuid);
+	}
+
+	/**
+	 * @see org.openmrs.module.fhir.api.RelatedPersonService#searchRelatedPersonByIdentifier(String)
+	 */
+	@Override
+	public List<RelatedPerson> searchRelatedPersonByIdentifier(String identifier) {
+		return RelatedPersonStrageryUtil.getPersonStrategy().searchRelatedPersonByIdentifier(identifier);
 	}
 
 	@Override

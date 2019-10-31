@@ -20,17 +20,36 @@ public class RelatedPersonServiceTest extends BaseModuleContextSensitiveTest {
 
 	private static final String LOC_INITIAL_DATA_XML = "RelatedPersonServiceTest_additionalTestData.xml";
 
+	private static final String PATIENT_SEARCH_DATA_XML = "org/openmrs/api/include/PatientServiceTest-findPatients.xml";
+
+	private static final String CREATE_PATIENT_XML = "org/openmrs/api/include/PatientServiceTest-createPatient.xml";
+
+	private static final String CREATE_RELATIONSHIP_XML = "org/openmrs/api/include/PersonServiceTest-createRelationship.xml";
+
 	private static final String UUID = "ee232368-cf80-4a22-9d75-5d0d9dce";
 
 	private static final String INCORRECT_UUID = "XXXXXXXX-XXXX-XXXX-XXXXXXXXXXXXXX";
+
+	private static final String PATIENT_IDENTIFIER = "1234";
+
+	private static final String DOES_NOT_EXIST_PATIENT_IDENTIFIER = "XXXXX34";
 
 	public RelatedPersonService getService() {
 		return Context.getService(RelatedPersonService.class);
 	}
 
+	@Test
+	public void shouldSetupContext() {
+		assertNotNull(getService());
+	}
+
 	@Before
 	public void runBeforeEachTest() throws Exception {
 		executeDataSet(LOC_INITIAL_DATA_XML);
+		executeDataSet(PATIENT_SEARCH_DATA_XML);
+		executeDataSet(CREATE_PATIENT_XML);
+		executeDataSet(CREATE_RELATIONSHIP_XML);
+		updateSearchIndex();
 	}
 
 	@Test
@@ -119,5 +138,22 @@ public class RelatedPersonServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals(0, errors.size());
 		assertEquals(relationship.getPersonA(), updatedRelationship.getPersonA());
 		assertEquals(relationship.getPersonB(), updatedRelationship.getPersonB());
+	}
+
+	@Test
+	public void searchRelatedPersonByIdentifier_shouldReturnResourceIfExists() {
+		List<RelatedPerson> relatedPersonList = getService().searchRelatedPersonByIdentifier(PATIENT_IDENTIFIER);
+
+		assertEquals(relatedPersonList.size(), 3);
+		assertEquals(relatedPersonList.get(0).getGender().getDisplay(), "Male");
+		assertEquals(relatedPersonList.get(0).getId(), "b70cb368-cf80-4a22-9d75-5d0d1f9b75dc");
+		assertEquals(relatedPersonList.get(0).getPatient().getReference(), "person/ba1b19c2-3ed6-4f63-b8c0-f762dc8d7562");
+	}
+
+	@Test
+	public void searchRelatedPersonByIdentifier_shouldReturnEmptyListOfRelatedPersonResourceIfIdentifierDoes_not_exits() {
+		List<RelatedPerson> relatedPersonList = getService().searchRelatedPersonByIdentifier(DOES_NOT_EXIST_PATIENT_IDENTIFIER);
+
+		assertTrue(relatedPersonList.isEmpty());
 	}
 }
