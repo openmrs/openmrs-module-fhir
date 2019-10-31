@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
+	<global_property property="patient.identifierRegex" property_value="^0*@SEARCH@([A-Z]+-[0-9])?$" uuid="c92cce6d-7e7d-4c53-a3c9-faaac17f8f8b"/>
 	<relationship_type relationship_type_id="3" a_is_to_b="Doctor" b_is_to_a="Patient" preferred="0" weight="0"
 					   description="Relationship from a primary care provider to the patient" creator="1"
 					   date_created="2007-01-01 00:00:00.0" retired="false" uuid="21275268-89df-42f9-b0e3-b1996a25eed5"/>
@@ -50,6 +51,19 @@
 
 	<person person_id="999" gender="M" birthdate="1975-04-08 00:00:00.0" dead="false" creator="1"
 			date_created="2005-09-22 00:00:00.0" voided="false" void_reason="" uuid="daghgh4f-27ce-4bb2-86d6-6d1d05312bd5"/>
+	<patient patient_id="999" creator="1" date_created="2019-01-01 00:00:00.0" voided="false"/>
+	<patient patient_id="2" creator="1" date_created="2019-01-01 00:00:00.0" voided="false"/>
+	<location location_id="1" name="Test Location" creator="1" date_created="2005-01-01 00:00:00.0" retired="false"
+			  uuid="92ab9667-4686-49af-8be8-65a4b58fc49c"/>
+	<patient_identifier_type patient_identifier_type_id="1" name="Test Identifier Type" description="Test description"
+							 creator="1" date_created="2005-01-01 00:00:00.0" required="true" retired="true"
+							 uuid="c5576187-9a67-43a7-9b7c-04db22851211"/>
+	<patient_identifier patient_identifier_id="2" patient_id="2" identifier="WQ231" identifier_type="1" preferred="1"
+						location_id="1" creator="1" date_created="2019-01-01 00:00:00.0" voided="false"
+						uuid="e887ac86-4d8a-40f3-bedb-da84d35917b8"/>
+	<patient_identifier patient_identifier_id="1" patient_id="999" identifier="1234" identifier_type="1" preferred="1"
+						location_id="1" creator="1" date_created="2019-01-01 00:00:00.0" voided="false"
+						uuid="e997ac86-4d8a-40f3-bedb-da84d35917b8"/>
 	<person_address person_address_id="1005" person_id="999" preferred="true" address1="1050 Wishard Blvd." address2="RG5"
 					city_village="Indianapolis" state_province="IN" postal_code="46202" country="USA" latitude=""
 					longitude="" creator="1" date_created="2005-09-22 00:00:00.0" voided="false" void_reason=""

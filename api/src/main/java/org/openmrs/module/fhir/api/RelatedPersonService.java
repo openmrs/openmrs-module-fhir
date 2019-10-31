@@ -17,6 +17,8 @@ import org.hl7.fhir.dstu3.model.RelatedPerson;
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Transactional
 public interface RelatedPersonService extends OpenmrsService {
 
@@ -27,6 +29,15 @@ public interface RelatedPersonService extends OpenmrsService {
 	 * @return RelatedPerson fhir resource
 	 */
 	RelatedPerson getRelatedPerson(String uuid);
+
+	/**
+	 * Search related person by identifier
+	 *
+	 * @param identifier The identifier of the patient
+	 * @return a List RelatedPerson FHIR resource
+	 * @since 1.20.0
+	 */
+	List<RelatedPerson> searchRelatedPersonByIdentifier(String identifier);
 
 	/**
 	 * Delete related person by id
