@@ -71,6 +71,7 @@ public class AuthorizationFilter implements Filter {
 			if (httpRequest.getRequestedSessionId() != null && !httpRequest.isRequestedSessionIdValid()) {
 				HttpServletResponse httpResponse = (HttpServletResponse) response;
 				httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "Session timed out");
+				return;
 			}
 
 			if (!Context.isAuthenticated()) {
@@ -90,6 +91,11 @@ public class AuthorizationFilter implements Filter {
 						// This filter never stops execution. If the user failed to
 						// authenticate, that will be caught later.
 					}
+				} else {
+					// This sends 401 error if not authenticated
+					HttpServletResponse httpResponse = (HttpServletResponse) response;
+					httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Not authenticated");
+					return;
 				}
 			}
 		}
