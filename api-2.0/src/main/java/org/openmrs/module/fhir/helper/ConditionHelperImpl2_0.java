@@ -11,17 +11,15 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.fhir.api.strategies.condition;
+package org.openmrs.module.fhir.helper;
 
-import org.openmrs.api.context.Context;
-import org.openmrs.module.fhir.api.util.FHIRUtils;
+import org.openmrs.annotation.OpenmrsProfile;
+import org.openmrs.module.fhir.api.helper.ConditionHelper;
+import org.openmrs.module.fhir.api.impl.base.BaseConditionHelperImpl;
+import org.springframework.stereotype.Component;
 
-public class ConditionStrategyUtil {
+@Component(value = "fhir.ConditionHelper")
+@OpenmrsProfile(openmrsPlatformVersion = "2.0.* - 2.1.*")
+public class ConditionHelperImpl2_0 extends BaseConditionHelperImpl implements ConditionHelper{
 
-	public static GenericConditionStrategy getConditionStrategy() {
-		String strategy = FHIRUtils.getConditionStrategy();
-
-		return strategy == null ? new ConditionStrategy() :
-				Context.getRegisteredComponent(strategy, GenericConditionStrategy.class);
-	}
 }

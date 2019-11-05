@@ -2,6 +2,7 @@ package org.openmrs.module.fhir.api.util;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.helper.AllergyHelper;
+import org.openmrs.module.fhir.api.helper.ConditionHelper;
 import org.openmrs.module.fhir.api.helper.DrugHelper;
 import org.openmrs.module.fhir.api.helper.DrugOrderHelper;
 import org.openmrs.module.fhir.api.helper.ObsHelper;
@@ -24,6 +25,10 @@ public class ContextUtil {
 
 	public static OrderHelper getOrderHelper() {
 		return Context.getRegisteredComponent("fhir.OrderHelper", OrderHelper.class);
+	}
+
+	public static ConditionHelper getConditionHelper() {
+		return Context.getRegisteredComponent("fhir.ConditionHelper", ConditionHelper.class);
 	}
 
 	public static TestOrderHelper getTestOrderHelper() {

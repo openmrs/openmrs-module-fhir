@@ -26,7 +26,7 @@
 		${project.parent.description}
 	</description>
 	<updateURL>https://modules.openmrs.org/modules/download/${project.parent.artifactId}/update.rdf</updateURL>
-	<require_version>2.0.5 - 2.0.*, 1.11.3, 1.9.10 - 1.9.*</require_version>
+	<require_version>2.4.*, 2.3.*, 2.2.*, 2.0.5 - 2.0.*, 1.11.3, 1.9.10 - 1.9.*</require_version>
 	<!-- / Module Properties -->
 
 	<require_modules>
@@ -34,6 +34,10 @@
 	</require_modules>
 
 	<conditionalResources>
+		<conditionalResource>
+			<path>/lib/fhir-api-2.2-${project.parent.version}.jar</path>
+			<openmrsVersion>2.2.* - 2.4.*</openmrsVersion>
+		</conditionalResource>
 		<conditionalResource>
 			<path>/lib/fhir-api-2.0-${project.parent.version}.jar</path>
 			<openmrsVersion>2.0.* - 2.1.*</openmrsVersion>
@@ -226,6 +230,12 @@
 		<property>${project.parent.artifactId}.observation.strategy</property>
 		<defaultValue>DefaultObservationStrategy</defaultValue>
 		<description>Set observation strategy.</description>
+	</globalProperty>
+
+	<globalProperty>
+		<property>${project.parent.artifactId}.condition.strategy</property>
+		<defaultValue>DefaultConditionStrategy</defaultValue>
+		<description>Set condition strategy.</description>
 	</globalProperty>
 
 	<globalProperty>

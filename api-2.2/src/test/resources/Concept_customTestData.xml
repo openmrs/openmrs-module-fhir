@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+	<concept_reference_source concept_source_id="999" name="LOINC" description="Tets LOINC" hl7_code="I10" creator="1"
+							  date_created="2009-06-03 13:41:25.0" retired="false"
+							  uuid="75f5b373-5065-11de-80cb-001e378eb67e"/>
+	<concept_reference_term concept_reference_term_id="558" concept_source_id="999" code="3143-9" name="weight term"
+							description="A person's weight in kilograms" retired="0" creator="1"
+							date_created="2004-08-12 00:00:00.0" uuid="75f5c37  3-5065-11de-80cb-001e378eb67e"/>
+</dataset>

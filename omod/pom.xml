@@ -84,6 +84,13 @@
 			<artifactId>fhir-api-2.0</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>fhir-api-2.2</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
 		<!-- Needed for JEE/Servlet support -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
