@@ -98,6 +98,10 @@ public class FHIRUtils {
 		return Context.getAdministrationService().getGlobalProperty("fhir.allergy.strategy");
 	}
 
+	public static String getConditionStrategy() {
+		return Context.getAdministrationService().getGlobalProperty("fhir.condition.strategy");
+	}
+
 	public static String getPersonStrategy() {
 		return Context.getAdministrationService().getGlobalProperty("fhir.person.strategy");
 	}

@@ -27,34 +27,29 @@ public class FHIRConditionResource extends Resource {
 
 	public Condition getByUniqueId(IdType id) {
 		ConditionService conditionService = Context.getService(ConditionService.class);
-		Condition condition = conditionService.getCondition(id.getIdPart());
+		Condition condition = conditionService.getConditionByUuid(id.getIdPart());
 		if (condition == null) {
 			throw new ResourceNotFoundException("Condition is not found for the given Id " + id.getIdPart());
 		}
 		return condition;
 	}
 
-	/**
-	 * Gets the FHIR Condition for the OpenMRs Obs which has the id
-	 *
-	 * @param id id of the OpenMrs Obs
-	 * @return
-	 */
-	public Condition getConditionByObsUniqueId(IdType id) {
-		ConditionService conditionService = Context.getService(ConditionService.class);
-		Condition condition = conditionService.getConditionByObsId(id.getIdPart());
-		if (condition == null) {
-			throw new ResourceNotFoundException("Condition is not found for the given Observation Id " + id.getIdPart
-					());
-		}
-		return condition;
-	}
-
 	public List<Condition> searchConditionsById(TokenParam id) {
-		return Context.getService(ConditionService.class).searchConditionById(id.getValue());
+		return Context.getService(ConditionService.class).searchConditionByUuid(id.getValue());
 	}
 
 	public List<Condition> searchConditionsByPatient(ReferenceParam patient) {
 		return Context.getService(ConditionService.class).searchConditionsByPatient(patient.getValue());
+	}
+
+	/**
+	 * Create Condition
+	 *
+	 * @param condition FHIR Location
+	 * @return Method outcome object which contains the identity of the created resource.
+	 */
+	public Condition createFHIRCondition (Condition condition) {
+		ConditionService conditionService = Context.getService(ConditionService.class);
+		return conditionService.createFHIRCondition(condition);
 	}
 }

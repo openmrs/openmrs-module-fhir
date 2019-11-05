@@ -260,6 +260,8 @@ public final class FHIRConstants {
 
 	public static final String CATEGORY_TEST_ORDER = "test_order";
 
+	public static final String CATEGORY_CONDITION = "condition";
+
 	public static final int FIRST = 0;
 
 	public static final String POST = "POST";

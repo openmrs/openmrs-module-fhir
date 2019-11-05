@@ -13,10 +13,13 @@
  */
 package org.openmrs.module.fhir.providers;
 
+import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
+import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
@@ -24,6 +27,7 @@ import org.hl7.fhir.dstu3.model.Condition;
 import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.Resource;
 import org.openmrs.module.fhir.resources.FHIRConditionResource;
+import org.openmrs.module.fhir.util.MethodOutcomeBuilder;
 
 import java.util.List;
 
@@ -55,19 +59,6 @@ public class RestfulConditionResourceProvider implements IResourceProvider {
 	}
 
 	/**
-	 * The "@Read" annotation indicates that this method supports the
-	 * read operation. Read operations should return a single resource
-	 * instance.
-	 *
-	 * @param theId id of the OpenMrs Obs
-	 * @return Returns a resource matching to the OpenMrs Obs which has the identifier theId, or null if none exists.
-	 */
-	@Read
-	public Condition getResourceByObsUID(@IdParam IdType theId) {
-		return conditionResource.getConditionByObsUniqueId(theId);
-	}
-
-	/**
 	 * Search appointments by unique id
 	 *
 	 * @param id object containing the requested id
@@ -84,8 +75,16 @@ public class RestfulConditionResourceProvider implements IResourceProvider {
 	 * @param patient object containing the patient details
 	 */
 	@Search
-	public List<Condition> findConditionssByPatient(
+	public List<Condition> findConditionsByPatient(
 			@RequiredParam(name = Condition.SP_PATIENT) ReferenceParam patient) {
 		return conditionResource.searchConditionsByPatient(patient);
+	}
+
+	/**
+	 * @see org.openmrs.module.fhir.resources.FHIRConditionResource#createFHIRCondition(Condition)
+	 */
+	@Create
+	public MethodOutcome createFHIRCondition(@ResourceParam Condition condition) {
+		return MethodOutcomeBuilder.buildCreate(conditionResource.createFHIRCondition(condition));
 	}
 }

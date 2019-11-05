@@ -11,13 +11,18 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.fhir.api.strategies.condition;
+package org.openmrs.module.fhir.api.helper;
 
 import org.hl7.fhir.dstu3.model.Condition;
 
-import java.util.List;
+/**
+ * <h1>Condition Helper</h1>
+ * <p>Adapts specific Condition to be used by business logic in different Openmrs versions.</p>
+ *
+ * @since 1.20.0
+ */
 
-public interface GenericConditionStrategy {
+public interface ConditionHelper {
 
 	/**
 	 * Get condition by uuid
@@ -25,29 +30,30 @@ public interface GenericConditionStrategy {
 	 * @param uuid condition uuid
 	 * @return Condition Return fhir condition resource and will return null if condition is not found for the given uuid
 	 */
-	Condition getConditionById(String uuid);
+	Condition getCondition(String uuid);
 
 	/**
-	 * Search condition by uuid
-	 *
-	 * @param uuid condition uuid
-	 * @return Condition Return a List of FHIR condition resource and will return Empty list if condition is not found for the given uuid
-	 */
-	List<Condition> searchConditionById(String uuid);
-
-	/**
-	 * Search condition by name
-	 *
-	 * @param name condition name
-	 * @return Condition Return a List of FHIR condition resource and will return Empty list if condition is not found for the given name
-	 */
-	List<Condition> searchConditionByName(String name);
-
-	/**
-	 * Create FHIRCondition
+	 * Create Condition
 	 *
 	 * @param condition FHIR condition
-	 * @return Created FHIRCondition
+	 * @return  FHIR Condition
 	 */
-	Condition createFHIRCondition(Condition condition);
+	Condition createCondition(Condition condition);
+
+	/**
+	 * Generates openmrs condition from FHIR condition
+	 *
+	 * @param condition FHIR condition
+	 * @return Openmrs condition
+	 */
+	org.openmrs.Condition generateOpenMrsCondition(Condition condition);
+
+	/**
+	 * Generate FHIR condition from openmrs condition
+	 *
+	 * @param condition Openmrs condition
+	 * @return FHIR condition
+	 */
+	Condition generateFHIRCondition(org.openmrs.Condition condition);
+
 }

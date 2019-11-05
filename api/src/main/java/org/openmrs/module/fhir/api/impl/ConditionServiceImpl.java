@@ -18,15 +18,16 @@ import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.Condition;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.ConditionService;
 import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.strategies.condition.ConditionStrategyUtil;
-import org.openmrs.module.fhir.api.util.FHIRConditionUtil;
+import org.openmrs.module.fhir.api.util.ContextUtil;
+import org.springframework.transaction.annotation.Transactional;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.ArrayList;
 import java.util.List;
 
+@Transactional
 public class ConditionServiceImpl implements ConditionService {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
@@ -47,48 +48,43 @@ public class ConditionServiceImpl implements ConditionService {
 		this.dao = dao;
 	}
 
+	/**
+	 * @see org.openmrs.module.fhir.api.ConditionService#getConditionByUuid(java.lang.String)
+	 */
 	@Override
-	public Condition getCondition(String id) {
-		org.openmrs.Condition condition = Context.getService(org.openmrs.api.ConditionService.class).getConditionByUuid(id);
-		if (condition == null || condition.isVoided()) {
-			return null;
-		}
-		return FHIRConditionUtil.generateFHIRCondition(condition);
+	public Condition getConditionByUuid(String id) {
+		return ContextUtil.getConditionHelper().getCondition(id);
 	}
 
+	/**
+	 * @see org.openmrs.module.fhir.api.ConditionService#searchConditionByUuid(java.lang.String)
+	 */
 	@Override
-	public Condition getConditionByObsId(String id) {
-		return ConditionStrategyUtil.getConditionStrategy().getConditionById(id);
-	}
-
-	@Override
-	public List<Condition> searchConditionById(String id) {
-		org.openmrs.Condition condition = Context.getService(org.openmrs.api.ConditionService.class)
-				.getConditionByUuid(id);
-		List<Condition> conditionList = new ArrayList<Condition>();
-		if (condition != null) {
-			conditionList.add(FHIRConditionUtil.generateFHIRCondition(condition));
-		}
-		return conditionList;
+	public List<Condition> searchConditionByUuid(String id) {
+		throw new NotImplementedException();
 	}
 
 	@Override
 	public List<Condition> searchConditionsByPatient(String patientUuid) {
-		return null;
+		throw new NotImplementedException();
 	}
 
+	/**
+	 * @see org.openmrs.module.fhir.api.ConditionService#createFHIRCondition(org.hl7.fhir.dstu3.model.Condition)
+	 */
 	@Override
 	public Condition createFHIRCondition(Condition condition) {
-		return null;
+		return ConditionStrategyUtil.getConditionStrategy().createFHIRCondition(condition);
 	}
 
 	@Override
 	public Condition updateFHIRCondition(Condition condition, String theId) {
-		return null;
+		throw new NotImplementedException();
 	}
 
 	@Override
 	public void retireCondition(String theId) throws ResourceNotFoundException, NotModifiedException {
 
 	}
+
 }

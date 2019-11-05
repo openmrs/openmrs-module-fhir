@@ -5,6 +5,7 @@ import ca.uhn.fhir.parser.IParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.AllergyIntolerance;
+import org.hl7.fhir.dstu3.model.Condition;
 import org.hl7.fhir.dstu3.model.Encounter;
 import org.hl7.fhir.dstu3.model.Group;
 import org.hl7.fhir.dstu3.model.Location;
@@ -48,6 +49,7 @@ import java.util.Map;
 
 import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_ALLERGY;
 import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_COHORT;
+import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_CONDITION;
 import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_DRUG_ORDER;
 import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_ENCOUNTER;
 import static org.openmrs.module.fhir.api.util.FHIRConstants.CATEGORY_LOCATION;
@@ -77,6 +79,7 @@ public class FHIRClientHelper implements ClientHelper {
 		CATEGORY_MAP.put(CATEGORY_COHORT, Group.class);
 		CATEGORY_MAP.put(CATEGORY_DRUG_ORDER, MedicationRequest.class);
 		CATEGORY_MAP.put(CATEGORY_TEST_ORDER, ProcedureRequest.class);
+		CATEGORY_MAP.put(CATEGORY_CONDITION, Condition.class);
 	}
 
 	private final IParser parser;
@@ -213,6 +216,9 @@ public class FHIRClientHelper implements ClientHelper {
 				break;
 			case CATEGORY_ALLERGY:
 				result = ContextUtil.getAllergyHelper().generateAllergy(object);
+				break;
+			case CATEGORY_CONDITION:
+				result = ContextUtil.getConditionHelper().generateOpenMrsCondition((Condition) object);
 				break;
 			default:
 				throw new NotSupportedException(String.format("Category %s not supported.", category));

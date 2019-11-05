@@ -24,40 +24,32 @@ public interface ConditionService {
 	/**
 	 * Get fhir condtion resource by uuid
 	 *
-	 * @param id uuid of the patient
+	 * @param uuid uuid of the patient
 	 * @return fhir condition resource and will return null if condition not found for the given id
 	 */
-	Condition getCondition(String id);
-
-	/**
-	 * Get the fhir condition resource by the uuid of Openmrs Observation
-	 *
-	 * @param id uuid of the Openmrs Obs
-	 * @return fhir condition resource and will return null if condition is not found for the given id
-	 */
-	Condition getConditionByObsId(String id);
+	Condition getConditionByUuid(String uuid);
 
 	/**
 	 * Search condition by uuid
 	 *
-	 * @param id the uuid to be search
+	 * @param uuid the uuid to be search
 	 * @return fhir condition resource list
 	 */
-	List<Condition> searchConditionById(String id);
+	List<Condition> searchConditionByUuid(String uuid);
 
 	/**
 	 * Search conditions by name
 	 *
 	 * @param patientUuid the name to be search
-	 * @return fhir contion resource list
+	 * @return fhir condition resource list
 	 */
 	List<Condition> searchConditionsByPatient(String patientUuid);
 
 	/**
-	 * creates a oms Condition from FHIR personn
+	 * creates openmrs condition from FHIR condition
 	 *
-	 * @param condition
-	 * @return
+	 * @param condition FHIR condition object
+	 * @return FHIR Condition which was created if successful or null if not successful
 	 */
 	Condition createFHIRCondition(Condition condition);
 
