@@ -15,6 +15,8 @@ package org.openmrs.module.fhir.api.helper;
 
 import org.hl7.fhir.dstu3.model.Condition;
 
+import java.util.List;
+
 /**
  * <h1>Condition Helper</h1>
  * <p>Adapts specific Condition to be used by business logic in different Openmrs versions.</p>
@@ -30,15 +32,23 @@ public interface ConditionHelper {
 	 * @param uuid condition uuid
 	 * @return Condition Return fhir condition resource and will return null if condition is not found for the given uuid
 	 */
-	Condition getCondition(String uuid);
+	Condition getConditionByUuid(String uuid);
 
 	/**
 	 * Create Condition
 	 *
 	 * @param condition FHIR condition
-	 * @return  FHIR Condition
+	 * @return FHIR Condition
 	 */
 	Condition createCondition(Condition condition);
+
+	/**
+	 * Gets conditions by patient uuid
+	 *
+	 * @param patientUuid patient uuid
+	 * @return FHIR condition resource list and will return empty list if patient with given UUID has no active conditions
+	 */
+	List<Condition> getConditionsByPatientUuid(String patientUuid);
 
 	/**
 	 * Generates openmrs condition from FHIR condition

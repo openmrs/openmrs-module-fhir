@@ -17,7 +17,6 @@ package org.openmrs.module.fhir.api.strategies.condition;
 import org.hl7.fhir.dstu3.model.Condition;
 import org.openmrs.module.fhir.api.util.ContextUtil;
 import org.springframework.stereotype.Component;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
 
@@ -25,27 +24,19 @@ import java.util.List;
 public class ConditionStrategy implements GenericConditionStrategy {
 
 	/**
-	 * @see org.openmrs.module.fhir.api.strategies.condition.GenericConditionStrategy#getConditionById(java.lang.String)
+	 * @see org.openmrs.module.fhir.api.strategies.condition.GenericConditionStrategy#getConditionByUuid(java.lang.String)
 	 */
 	@Override
-	public Condition getConditionById(String uuid) {
-		return ContextUtil.getConditionHelper().getCondition(uuid);
+	public Condition getConditionByUuid(String uuid) {
+		return ContextUtil.getConditionHelper().getConditionByUuid(uuid);
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.strategies.condition.GenericConditionStrategy#searchConditionById(java.lang.String)
+	 * @see org.openmrs.module.fhir.api.strategies.condition.GenericConditionStrategy#getConditionsByPatientUuid(java.lang.String)
 	 */
 	@Override
-	public List<Condition> searchConditionById(String uuid) {
-		throw new NotImplementedException();
-	}
-
-	/**
-	 * @see org.openmrs.module.fhir.api.strategies.condition.GenericConditionStrategy#searchConditionByName(java.lang.String)
-	 */
-	@Override
-	public List<Condition> searchConditionByName(String name) {
-		throw new NotImplementedException();
+	public List<Condition> getConditionsByPatientUuid(String patientUuid) {
+		return ContextUtil.getConditionHelper().getConditionsByPatientUuid(patientUuid);
 	}
 
 	/**

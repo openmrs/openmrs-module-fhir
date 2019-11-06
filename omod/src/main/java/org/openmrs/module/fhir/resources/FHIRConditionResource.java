@@ -25,21 +25,27 @@ import java.util.List;
 
 public class FHIRConditionResource extends Resource {
 
-	public Condition getByUniqueId(IdType id) {
+	public Condition getConditionByUuid(IdType uuid) {
 		ConditionService conditionService = Context.getService(ConditionService.class);
-		Condition condition = conditionService.getConditionByUuid(id.getIdPart());
+		Condition condition = conditionService.getConditionByUuid(uuid.getIdPart());
 		if (condition == null) {
-			throw new ResourceNotFoundException("Condition is not found for the given Id " + id.getIdPart());
+			throw new ResourceNotFoundException("Condition is not found for the given Id " + uuid.getIdPart());
 		}
 		return condition;
 	}
 
-	public List<Condition> searchConditionsById(TokenParam id) {
-		return Context.getService(ConditionService.class).searchConditionByUuid(id.getValue());
+	/**
+	 * @see org.openmrs.module.fhir.api.ConditionService#getConditionsByPatientUuid(String) (java.lang.String)
+	 */
+	public List<Condition> getConditionsByPatientUuid(ReferenceParam patient) {
+		return Context.getService(ConditionService.class).getConditionsByPatientUuid(patient.getValue());
 	}
 
-	public List<Condition> searchConditionsByPatient(ReferenceParam patient) {
-		return Context.getService(ConditionService.class).searchConditionsByPatient(patient.getValue());
+	/**
+	 * @see org.openmrs.module.fhir.api.ConditionService#getConditionByUuid(java.lang.String)
+	 */
+	public Condition getConditionByUuid(TokenParam uuid) {
+		return Context.getService(ConditionService.class).getConditionByUuid(uuid.getValue());
 	}
 
 	/**
@@ -48,7 +54,7 @@ public class FHIRConditionResource extends Resource {
 	 * @param condition FHIR Location
 	 * @return Method outcome object which contains the identity of the created resource.
 	 */
-	public Condition createFHIRCondition (Condition condition) {
+	public Condition createFHIRCondition(Condition condition) {
 		ConditionService conditionService = Context.getService(ConditionService.class);
 		return conditionService.createFHIRCondition(condition);
 	}

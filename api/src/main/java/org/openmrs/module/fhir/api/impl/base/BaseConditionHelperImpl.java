@@ -22,6 +22,8 @@ import org.openmrs.module.fhir.api.util.FHIRConditionUtil;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.util.List;
+
 /**
  * @see org.openmrs.module.fhir.api.helper.ConditionHelper
  * @since 1.20.0
@@ -30,9 +32,9 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 public class BaseConditionHelperImpl {
 
 	/**
-	 * @see org.openmrs.module.fhir.api.helper.ConditionHelper#getCondition(java.lang.String)
+	 * @see org.openmrs.module.fhir.api.helper.ConditionHelper#getConditionByUuid(java.lang.String)
 	 */
-	public Condition getCondition(String uuid) {
+	public Condition getConditionByUuid(String uuid) {
 		int[] conceptsAsConditions = FHIRUtils.getConceptIdsOfConditions();
 		Obs obs = Context.getObsService().getObsByUuid(uuid);
 		if (obs == null || obs.isVoided() || conceptsAsConditions == null || !ArrayUtils.contains
@@ -57,6 +59,13 @@ public class BaseConditionHelperImpl {
 				.saveObs(FHIRConditionUtil.generateOpenMrsObsFromFHIRCondition(condition), "");
 
 		return FHIRConditionUtil.generateFHIRConditionFromOpenMRSObs(obs);
+	}
+
+	/**
+	 * @see org.openmrs.module.fhir.api.helper.ConditionHelper#getConditionsByPatientUuid(java.lang.String)
+	 */
+	public List<Condition> getConditionsByPatientUuid(String patientUuid) {
+		throw new NotImplementedException();
 	}
 
 	/**

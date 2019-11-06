@@ -32,6 +32,7 @@ import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -83,9 +84,9 @@ public class ConditionServiceTest extends BaseModuleContextSensitiveTest {
 		IdType id = new IdType();
 		id.setValue(CONDITION_UUID);
 		condition.setId(id);
-		Patient patientRef = Context.getPatientService().getPatient(2);
-		Reference patient = FHIRUtils.buildPatientOrPersonResourceReference(patientRef);
-		condition.setSubject(patient);
+		Patient patient = Context.getPatientService().getPatient(2);
+		Reference patientReference = FHIRUtils.buildPatientOrPersonResourceReference(patient);
+		condition.setSubject(patientReference);
 		condition.setClinicalStatus(Condition.ConditionClinicalStatus.ACTIVE);
 		condition.setCode(new CodeableConcept().addCoding(
 				new Coding().setCode("999").setDisplay("NO").setSystem(FHIRConstants.OPENMRS_URI)).setText("NO"));
@@ -94,12 +95,12 @@ public class ConditionServiceTest extends BaseModuleContextSensitiveTest {
 
 		assertNotNull(resCondition);
 		assertEquals(resCondition.getId(), id.getValue());
-		assertEquals(resCondition.getSubject().getReference(), patient.getReference());
+		assertEquals(resCondition.getSubject().getReference(), patientReference.getReference());
 		assertEquals(resCondition.getCode().getCoding().get(0).getDisplay(), "NO");
 	}
 
 	@Test
-	public void getConditionById_shouldReturnSavedCondition() {
+	public void getConditionByUuid_shouldReturnSavedCondition() {
 		Context.getAdministrationService().saveGlobalProperty(
 				new GlobalProperty(CONDITION_CONCEPTS, CONDITION_MAPPING_CONCEPT_ID));
 

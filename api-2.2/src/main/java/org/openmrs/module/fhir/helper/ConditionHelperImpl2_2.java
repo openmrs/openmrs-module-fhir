@@ -14,6 +14,7 @@
 package org.openmrs.module.fhir.helper;
 
 import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
+import org.apache.commons.lang.StringUtils;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.Condition;
 import org.hl7.fhir.dstu3.model.IdType;
@@ -21,6 +22,7 @@ import org.hl7.fhir.dstu3.model.Reference;
 import org.openmrs.Patient;
 import org.openmrs.annotation.OpenmrsProfile;
 import org.openmrs.api.ConditionService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.helper.ConditionHelper;
 import org.openmrs.module.fhir.api.util.BaseOpenMRSDataUtil;
@@ -31,16 +33,17 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component(value = "fhir.ConditionHelper")
 @OpenmrsProfile(openmrsPlatformVersion = "2.2.* - 2.4.*")
 public class ConditionHelperImpl2_2 implements ConditionHelper {
 
 	/**
-	 * @see org.openmrs.module.fhir.api.helper.ConditionHelper#getCondition(java.lang.String)
+	 * @see org.openmrs.module.fhir.api.helper.ConditionHelper#getConditionByUuid(java.lang.String)
 	 */
 	@Override
-	public Condition getCondition(String uuid) {
+	public Condition getConditionByUuid(String uuid) {
 		org.openmrs.Condition condition = Context.getService(ConditionService.class).getConditionByUuid(uuid);
 		if (condition == null) {
 			return null;
@@ -63,6 +66,24 @@ public class ConditionHelperImpl2_2 implements ConditionHelper {
 				.saveCondition(generateOpenMrsCondition(condition));
 
 		return generateFHIRCondition(openMrsCondition);
+	}
+
+	/**
+	 * @see org.openmrs.module.fhir.api.helper.ConditionHelper#getConditionsByPatientUuid(java.lang.String)
+	 */
+	@Override
+	public List<Condition> getConditionsByPatientUuid(String patientUuid) {
+		List<Condition> fhirConditions = new ArrayList<>();
+		PatientService patientService = Context.getPatientService();
+		ConditionService conditionService = Context.getService(org.openmrs.api.ConditionService.class);
+
+		if (StringUtils.isNotBlank(patientUuid)) {
+			conditionService.getActiveConditions(
+					patientService.getPatientByUuid(patientUuid))
+					.forEach(condition -> fhirConditions.add(generateFHIRCondition(condition)));
+		}
+
+		return fhirConditions;
 	}
 
 	/**
