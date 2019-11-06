@@ -25,23 +25,15 @@ public interface GenericConditionStrategy {
 	 * @param uuid condition uuid
 	 * @return Condition Return fhir condition resource and will return null if condition is not found for the given uuid
 	 */
-	Condition getConditionById(String uuid);
+	Condition getConditionByUuid(String uuid);
 
 	/**
-	 * Search condition by uuid
+	 * Gets conditions by patient uuid
 	 *
-	 * @param uuid condition uuid
-	 * @return Condition Return a List of FHIR condition resource and will return Empty list if condition is not found for the given uuid
+	 * @param patientUuid patient UUID
+	 * @return Condition FHIR condition resource list and will return Empty list if the patient with given uuid has not active conditions
 	 */
-	List<Condition> searchConditionById(String uuid);
-
-	/**
-	 * Search condition by name
-	 *
-	 * @param name condition name
-	 * @return Condition Return a List of FHIR condition resource and will return Empty list if condition is not found for the given name
-	 */
-	List<Condition> searchConditionByName(String name);
+	List<Condition> getConditionsByPatientUuid(String patientUuid);
 
 	/**
 	 * Create FHIRCondition

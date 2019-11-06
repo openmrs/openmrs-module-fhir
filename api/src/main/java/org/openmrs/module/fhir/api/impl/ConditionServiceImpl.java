@@ -52,21 +52,16 @@ public class ConditionServiceImpl implements ConditionService {
 	 * @see org.openmrs.module.fhir.api.ConditionService#getConditionByUuid(java.lang.String)
 	 */
 	@Override
-	public Condition getConditionByUuid(String id) {
-		return ContextUtil.getConditionHelper().getCondition(id);
+	public Condition getConditionByUuid(String uuid) {
+		return ContextUtil.getConditionHelper().getConditionByUuid(uuid);
 	}
 
 	/**
-	 * @see org.openmrs.module.fhir.api.ConditionService#searchConditionByUuid(java.lang.String)
+	 * @see org.openmrs.module.fhir.api.ConditionService#getConditionsByPatientUuid(java.lang.String)
 	 */
 	@Override
-	public List<Condition> searchConditionByUuid(String id) {
-		throw new NotImplementedException();
-	}
-
-	@Override
-	public List<Condition> searchConditionsByPatient(String patientUuid) {
-		throw new NotImplementedException();
+	public List<Condition> getConditionsByPatientUuid(String name) {
+		return ConditionStrategyUtil.getConditionStrategy().getConditionsByPatientUuid(name);
 	}
 
 	/**

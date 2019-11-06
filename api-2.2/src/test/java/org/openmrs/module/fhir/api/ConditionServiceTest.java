@@ -27,8 +27,13 @@ import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ConditionServiceTest extends BaseModuleContextSensitiveTest {
 
@@ -36,12 +41,18 @@ public class ConditionServiceTest extends BaseModuleContextSensitiveTest {
 
 	private static final String CONDITION_UUID = "75f5b373-5065-11de-80cb-001e378eb67f";
 
+	private static final String PATIENT_SEARCH_DATA_XML = "org/openmrs/api/include/PatientServiceTest-findPatients.xml";
+
+	private static final String CREATE_PATIENT_XML = "org/openmrs/api/include/PatientServiceTest-createPatient.xml";
+
 	private ConditionService getService() {
 		return Context.getService(ConditionService.class);
 	}
 
 	@Before
 	public void runBeforeEachTest() {
+		executeDataSet(CREATE_PATIENT_XML);
+		executeDataSet(PATIENT_SEARCH_DATA_XML);
 		executeDataSet(CONCEPT_CUSTOM_INITIAL_DATA_XML);
 		updateSearchIndex();
 	}
@@ -52,15 +63,15 @@ public class ConditionServiceTest extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void getConditionById_shouldReturnSavedCondition() {
+	public void getConditionByUuid_shouldReturnSavedCondition() {
 		Condition condition = new Condition();
 
 		IdType id = new IdType();
 		id.setValue(CONDITION_UUID);
 		condition.setId(id);
-		Patient patientRef = Context.getPatientService().getPatient(2);
-		Reference patient = FHIRUtils.buildPatientOrPersonResourceReference(patientRef);
-		condition.setSubject(patient);
+		Patient patient = Context.getPatientService().getPatient(2);
+		Reference patientReference = FHIRUtils.buildPatientOrPersonResourceReference(patient);
+		condition.setSubject(patientReference);
 		condition.setClinicalStatus(Condition.ConditionClinicalStatus.ACTIVE);
 		condition.setCode(new CodeableConcept().addCoding(
 				new Coding().setCode("999").setDisplay("NO").setSystem(FHIRConstants.OPENMRS_URI)).setText("NO"));
@@ -82,9 +93,9 @@ public class ConditionServiceTest extends BaseModuleContextSensitiveTest {
 		IdType id = new IdType();
 		id.setValue(CONDITION_UUID);
 		condition.setId(id);
-		Patient patientRef = Context.getPatientService().getPatient(2);
-		Reference patient = FHIRUtils.buildPatientOrPersonResourceReference(patientRef);
-		condition.setSubject(patient);
+		Patient patient = Context.getPatientService().getPatient(2);
+		Reference patientReference = FHIRUtils.buildPatientOrPersonResourceReference(patient);
+		condition.setSubject(patientReference);
 		condition.setClinicalStatus(Condition.ConditionClinicalStatus.ACTIVE);
 		condition.setCode(new CodeableConcept().addCoding(
 				new Coding().setCode("999").setDisplay("NO").setSystem(FHIRConstants.OPENMRS_URI)).setText("NO"));
@@ -93,7 +104,7 @@ public class ConditionServiceTest extends BaseModuleContextSensitiveTest {
 		Condition getSavedCondition = getService().getConditionByUuid(justCreatedCondition.getId());
 
 		assertNotNull(justCreatedCondition);
-		assertEquals(justCreatedCondition.getSubject().getReference(), patient.getReference());
+		assertEquals(justCreatedCondition.getSubject().getReference(), patientReference.getReference());
 		assertEquals(justCreatedCondition.getClinicalStatus(), Condition.ConditionClinicalStatus.ACTIVE);
 		assertEquals(justCreatedCondition.getOnset(), condition.getOnset());
 
@@ -101,5 +112,30 @@ public class ConditionServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals(justCreatedCondition.getId(), getSavedCondition.getId());
 		assertEquals(justCreatedCondition.getClinicalStatus(), getSavedCondition.getClinicalStatus());
 		assertEquals(justCreatedCondition.getOnset(), getSavedCondition.getOnset());
+	}
+
+	@Test
+	public void getConditionsByPatientUuid_shouldReturnListOfActiveConditions() {
+		Condition condition = new Condition();
+		IdType id = new IdType();
+		id.setValue(CONDITION_UUID);
+		condition.setId(id);
+		Patient patient = Context.getPatientService().getPatient(2);
+		Reference patientReference = FHIRUtils.buildPatientOrPersonResourceReference(patient);
+		condition.setSubject(patientReference);
+		condition.setClinicalStatus(Condition.ConditionClinicalStatus.ACTIVE);
+		condition.setCode(new CodeableConcept().addCoding(
+				new Coding().setCode("999").setDisplay("NO").setSystem(FHIRConstants.OPENMRS_URI)).setText("NO"));
+
+		List<Condition> activeConditions = getService().getConditionsByPatientUuid(patient.getUuid());
+		assertTrue(activeConditions.isEmpty());
+
+		getService().createFHIRCondition(condition);
+
+		activeConditions = getService().getConditionsByPatientUuid(patient.getUuid());
+		assertNotNull(activeConditions);
+		assertFalse(activeConditions.isEmpty());
+		assertEquals(activeConditions.get(0).getClinicalStatus().getDisplay(), "Active");
+		assertEquals(activeConditions.get(0).getClinicalStatus().name(), "ACTIVE");
 	}
 }

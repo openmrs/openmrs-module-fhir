@@ -22,28 +22,20 @@ import java.util.List;
 public interface ConditionService {
 
 	/**
-	 * Get fhir condtion resource by uuid
+	 * Get condition by uuid
 	 *
-	 * @param uuid uuid of the patient
-	 * @return fhir condition resource and will return null if condition not found for the given id
+	 * @param uuid condition uuid
+	 * @return FHIR condition resource and will return null if condition not found for the given uuid
 	 */
 	Condition getConditionByUuid(String uuid);
 
 	/**
-	 * Search condition by uuid
+	 * Gets conditions by patient uuid
 	 *
-	 * @param uuid the uuid to be search
-	 * @return fhir condition resource list
+	 * @param patientUuid patient uuid
+	 * @return FHIR condition resource list and will return an empty list if patient with the given UUD has no active conditions
 	 */
-	List<Condition> searchConditionByUuid(String uuid);
-
-	/**
-	 * Search conditions by name
-	 *
-	 * @param patientUuid the name to be search
-	 * @return fhir condition resource list
-	 */
-	List<Condition> searchConditionsByPatient(String patientUuid);
+	List<Condition> getConditionsByPatientUuid(String patientUuid);
 
 	/**
 	 * creates openmrs condition from FHIR condition

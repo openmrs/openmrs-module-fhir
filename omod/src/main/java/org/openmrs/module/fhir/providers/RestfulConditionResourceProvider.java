@@ -25,6 +25,7 @@ import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.hl7.fhir.dstu3.model.Condition;
 import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.Resource;
 import org.openmrs.module.fhir.resources.FHIRConditionResource;
 import org.openmrs.module.fhir.util.MethodOutcomeBuilder;
@@ -55,29 +56,25 @@ public class RestfulConditionResourceProvider implements IResourceProvider {
 	 */
 	@Read
 	public Condition getResourceById(@IdParam IdType theId) {
-		return conditionResource.getByUniqueId(theId);
+		return conditionResource.getConditionByUuid(theId);
 	}
 
 	/**
-	 * Search appointments by unique id
-	 *
-	 * @param id object containing the requested id
+	 * @see org.openmrs.module.fhir.resources.FHIRConditionResource#getConditionsByPatientUuid(ca.uhn.fhir.rest.param.ReferenceParam)
 	 */
 	@Search
-	public List<Condition> findConditionsByUniqueId(
-			@RequiredParam(name = Condition.SP_RES_ID) TokenParam id) {
-		return conditionResource.searchConditionsById(id);
-	}
-
-	/**
-	 * Search appointments by unique id
-	 *
-	 * @param patient object containing the patient details
-	 */
-	@Search
-	public List<Condition> findConditionsByPatient(
+	public List<Condition> findConditionByPatient(
 			@RequiredParam(name = Condition.SP_PATIENT) ReferenceParam patient) {
-		return conditionResource.searchConditionsByPatient(patient);
+		return conditionResource.getConditionsByPatientUuid(patient);
+	}
+
+	/**
+	 * @see org.openmrs.module.fhir.resources.FHIRConditionResource#getConditionByUuid(ca.uhn.fhir.rest.param.TokenParam)
+	 */
+	@Search
+	public Condition findConditionByUuid(
+			@RequiredParam(name = Condition.SP_RES_ID) TokenParam uuid) {
+		return conditionResource.getConditionByUuid(uuid);
 	}
 
 	/**
