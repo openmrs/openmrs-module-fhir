@@ -23,7 +23,6 @@ import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.strategies.condition.ConditionStrategyUtil;
 import org.openmrs.module.fhir.api.util.ContextUtil;
 import org.springframework.transaction.annotation.Transactional;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
 
@@ -72,9 +71,12 @@ public class ConditionServiceImpl implements ConditionService {
 		return ConditionStrategyUtil.getConditionStrategy().createFHIRCondition(condition);
 	}
 
+	/**
+	 * @see org.openmrs.module.fhir.api.ConditionService#updateFHIRCondition(org.hl7.fhir.dstu3.model.Condition)
+	 */
 	@Override
-	public Condition updateFHIRCondition(Condition condition, String theId) {
-		throw new NotImplementedException();
+	public Condition updateFHIRCondition(Condition condition) {
+		return ConditionStrategyUtil.getConditionStrategy().updateFHIRCondition(condition);
 	}
 
 	@Override

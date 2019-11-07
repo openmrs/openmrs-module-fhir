@@ -49,10 +49,9 @@ public interface ConditionService {
 	 * update a OpenMRS Condition from FHIR Condition
 	 *
 	 * @param condition the FHIR representation of the {@link}Condition to be updated
-	 * @param theId     the uuid of the Condition to be updated
 	 * @return the updated FHIR {@link}Condition Resource
 	 */
-	Condition updateFHIRCondition(Condition condition, String theId);
+	Condition updateFHIRCondition(Condition condition);
 
 	/**
 	 * makes a Condition retired

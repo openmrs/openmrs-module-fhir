@@ -32,7 +32,6 @@ import org.openmrs.module.fhir.api.util.FHIRUtils;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import java.util.Date;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

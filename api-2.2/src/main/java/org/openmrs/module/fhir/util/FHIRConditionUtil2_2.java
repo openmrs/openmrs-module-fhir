@@ -13,14 +13,21 @@
  */
 package org.openmrs.module.fhir.util;
 
+import org.apache.commons.lang.StringUtils;
+import org.hl7.fhir.dstu3.model.Annotation;
 import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.Condition;
 import org.openmrs.CodedOrFreeText;
 import org.openmrs.ConditionClinicalStatus;
+import org.openmrs.ConditionVerificationStatus;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @since 1.20.0
@@ -93,5 +100,76 @@ public class FHIRConditionUtil2_2 {
 			default:
 				return Condition.ConditionClinicalStatus.NULL;
 		}
+	}
+
+	/**
+	 * Maps openmrs condition verification status to fhir condition verification status
+	 *
+	 * @param verificationStatus openmrs verification status
+	 * @return FHIR ConditionVerificationStatus
+	 */
+	public static Condition.ConditionVerificationStatus mapOpenmrsConditionVerificationStatusToFhirConditionVerificationStatus(
+			ConditionVerificationStatus verificationStatus) {
+		switch (verificationStatus) {
+			case CONFIRMED:
+				return Condition.ConditionVerificationStatus.CONFIRMED;
+			case PROVISIONAL:
+				return Condition.ConditionVerificationStatus.PROVISIONAL;
+			default:
+				return Condition.ConditionVerificationStatus.UNKNOWN;
+		}
+	}
+
+	/**
+	 * Maps FHIR Condition verification status to openmrs condition verification status
+	 *
+	 * @param verificationStatus FHIR ConditionVerificationStatus
+	 * @return Openmrs ConditionVerificationStatus
+	 */
+	public static ConditionVerificationStatus mapFhirConditionVerificationStatusToOpenmrsConditionVerificationStatus(
+			Condition.ConditionVerificationStatus verificationStatus) {
+		switch (verificationStatus) {
+			case CONFIRMED:
+				return ConditionVerificationStatus.CONFIRMED;
+			default:
+				return ConditionVerificationStatus.PROVISIONAL;
+		}
+	}
+
+	/**
+	 * Gets additional detail
+	 *
+	 * @param annotations List of annotation from FHIR condition
+	 * @return Notes String
+	 */
+	public static String getAdditionalDetail(List<Annotation> annotations) {
+		List<String> notes = new ArrayList<>();
+		annotations.forEach(annotation -> {
+			notes.add(annotation.getText());
+		});
+
+		return StringUtils.join(notes, ",");
+	}
+
+	/**
+	 * Gets a list of annotations from openmrsConditionAdditionalDetail
+	 *
+	 * @param additionalDetail Openmrs AdditionalDetail
+	 * @return Annotation list
+	 */
+	public static List<Annotation> getListOfAnnotations(String additionalDetail) {
+		return Stream.of(additionalDetail)
+				.map(FHIRConditionUtil2_2::setAnnotation)
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Set annotation
+	 *
+	 * @param text string text from openmrs additionalDetail
+	 * @return Annotation
+	 */
+	private static Annotation setAnnotation(String text) {
+		return new Annotation().setText(text).setTime(new Date());
 	}
 }

@@ -14,6 +14,7 @@
 
 package org.openmrs.module.fhir.api;
 
+import org.hl7.fhir.dstu3.model.Annotation;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.Condition;
@@ -25,9 +26,11 @@ import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
+import org.openmrs.module.fhir.util.FHIRConditionUtil2_2;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -137,5 +140,59 @@ public class ConditionServiceTest extends BaseModuleContextSensitiveTest {
 		assertFalse(activeConditions.isEmpty());
 		assertEquals(activeConditions.get(0).getClinicalStatus().getDisplay(), "Active");
 		assertEquals(activeConditions.get(0).getClinicalStatus().name(), "ACTIVE");
+	}
+
+	@Test
+	public void updateFHIRCondition_shouldReturnUpdatedCondition() {
+		Condition condition = new Condition();
+		IdType id = new IdType();
+		id.setValue(CONDITION_UUID);
+		condition.setId(id);
+		Patient patient = Context.getPatientService().getPatient(2);
+		Reference patientReference = FHIRUtils.buildPatientOrPersonResourceReference(patient);
+		condition.setSubject(patientReference);
+		condition.setClinicalStatus(Condition.ConditionClinicalStatus.ACTIVE);
+		condition.setVerificationStatus(Condition.ConditionVerificationStatus.PROVISIONAL);
+		List<Annotation> annotations = new ArrayList<>();
+		annotations.add(new Annotation().setText("test data"));
+		condition.setNote(annotations);
+		condition.setAssertedDate(new Date());
+		condition.setCode(new CodeableConcept().addCoding(
+				new Coding().setCode("999").setDisplay("NO").setSystem(FHIRConstants.OPENMRS_URI)).setText("NO"));
+
+		Condition savedCondition = getService().createFHIRCondition(condition);
+		assertNotNull(savedCondition);
+		assertEquals(savedCondition.getClinicalStatus(), Condition.ConditionClinicalStatus.ACTIVE);
+
+		savedCondition = getService().getConditionByUuid(savedCondition.getId());
+		assertNotNull(savedCondition);
+		assertEquals(savedCondition.getClinicalStatus(), Condition.ConditionClinicalStatus.ACTIVE);
+
+		Condition fhirCondition = new Condition();
+		fhirCondition.setId(savedCondition.getId());
+		fhirCondition.setSubject(patientReference);
+		fhirCondition.setClinicalStatus(Condition.ConditionClinicalStatus.INACTIVE);
+		fhirCondition.setCode(new CodeableConcept().addCoding(
+				new Coding().setCode("999").setDisplay("NO").setSystem(FHIRConstants.OPENMRS_URI)).setText("NO"));
+		fhirCondition.setVerificationStatus(Condition.ConditionVerificationStatus.CONFIRMED);
+		fhirCondition.setNote(FHIRConditionUtil2_2.getListOfAnnotations("test updated data"));
+		fhirCondition.setAssertedDate(new Date());
+
+		Condition updatedCondition = getService().updateFHIRCondition(fhirCondition);
+		assertNotNull(updatedCondition);
+		assertEquals(updatedCondition.getClinicalStatus(), Condition.ConditionClinicalStatus.INACTIVE);
+		assertEquals(updatedCondition.getAssertedDate(), fhirCondition.getAssertedDate());
+		assertEquals(updatedCondition.getNote().size(), fhirCondition.getNote().size());
+		assertEquals(updatedCondition.getVerificationStatus(), fhirCondition.getVerificationStatus());
+		assertEquals(updatedCondition.getNote().get(0).getText(), fhirCondition.getNote().get(0).getText());
+
+		updatedCondition = getService().getConditionByUuid(updatedCondition.getId());
+		assertNotNull(updatedCondition);
+		assertEquals(updatedCondition.getClinicalStatus(), Condition.ConditionClinicalStatus.INACTIVE);
+		assertEquals(updatedCondition.getAssertedDate(), fhirCondition.getAssertedDate());
+		assertEquals(updatedCondition.getNote().size(), fhirCondition.getNote().size());
+		assertEquals(updatedCondition.getVerificationStatus(), fhirCondition.getVerificationStatus());
+		assertEquals(updatedCondition.getNote().get(0).getText(), fhirCondition.getNote().get(0).getText());
+
 	}
 }

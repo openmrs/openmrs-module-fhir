@@ -33,7 +33,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component(value = "fhir.ConditionHelper")
 @OpenmrsProfile(openmrsPlatformVersion = "2.2.* - 2.4.*")
@@ -66,6 +65,50 @@ public class ConditionHelperImpl2_2 implements ConditionHelper {
 				.saveCondition(generateOpenMrsCondition(condition));
 
 		return generateFHIRCondition(openMrsCondition);
+	}
+
+	/**
+	 * @see org.openmrs.module.fhir.api.helper.ConditionHelper#updateFHIRCondition(org.hl7.fhir.dstu3.model.Condition)
+	 */
+	@Override
+	public Condition updateFHIRCondition(Condition fhirCondition) {
+		if (fhirCondition.getId() != null) {
+			ConditionService conditionService = Context.getService(ConditionService.class);
+			org.openmrs.Condition openmrsCondition = conditionService.getConditionByUuid(fhirCondition.getId());
+			return openmrsCondition != null ?
+					generateFHIRCondition(updateOpenmrsCondition(fhirCondition, openmrsCondition)) :
+					createCondition(fhirCondition);
+		} else {
+			throw new UnprocessableEntityException("condition Id cannot be null");
+		}
+
+	}
+
+	/**
+	 * Update openmrs condition
+	 *
+	 * @param fhirCondition    FHIR condition to be updated
+	 * @param openmrsCondition Openmrs condition to be updated
+	 * @return Updated Openmrs condition
+	 */
+	private org.openmrs.Condition updateOpenmrsCondition(Condition fhirCondition, org.openmrs.Condition openmrsCondition) {
+		ConditionService conditionService = Context.getService(ConditionService.class);
+		org.openmrs.Condition omrsCondition = this.generateOpenMrsCondition(fhirCondition);
+
+		if (omrsCondition.getClinicalStatus() != null) {
+			openmrsCondition.setClinicalStatus(omrsCondition.getClinicalStatus());
+		}
+		if (omrsCondition.getVerificationStatus() != null) {
+			openmrsCondition.setVerificationStatus(omrsCondition.getVerificationStatus());
+		}
+		if (omrsCondition.getAdditionalDetail() != null) {
+			openmrsCondition.setAdditionalDetail(omrsCondition.getAdditionalDetail());
+		}
+		if (omrsCondition.getOnsetDate() != null) {
+			openmrsCondition.setOnsetDate(omrsCondition.getOnsetDate());
+		}
+
+		return conditionService.saveCondition(openmrsCondition);
 	}
 
 	/**
@@ -114,7 +157,17 @@ public class ConditionHelperImpl2_2 implements ConditionHelper {
 		// set condition Uuid
 		openMrsCondition.setUuid(condition.getContext().getReference());
 
-		openMrsCondition.setAdditionalDetail(condition.getNoteFirstRep().getText());
+		// set additional details
+		if (!condition.getNote().isEmpty()) {
+			openMrsCondition.setAdditionalDetail(FHIRConditionUtil2_2.getAdditionalDetail(condition.getNote()));
+		}
+		// set verification status
+		if (condition.getVerificationStatus() != null) {
+			openMrsCondition.setVerificationStatus(FHIRConditionUtil2_2
+					.mapFhirConditionVerificationStatusToOpenmrsConditionVerificationStatus(
+							condition.getVerificationStatus()));
+		}
+
 		openMrsCondition.setDateChanged(condition.getAssertedDate());
 		openMrsCondition.setClinicalStatus(
 				FHIRConditionUtil2_2.generateConditionClinicalStatusFromFHIRCondition(condition));
@@ -154,9 +207,23 @@ public class ConditionHelperImpl2_2 implements ConditionHelper {
 					FHIRUtils.createCodeableConcept(condition.getCondition().getCoded()));
 		}
 
+		// set Note
+		if (condition.getAdditionalDetail() != null) {
+			fhirCondition.setNote(FHIRConditionUtil2_2.getListOfAnnotations(
+					condition.getAdditionalDetail()));
+		}
+
+		// set verification status
+		if (condition.getVerificationStatus() != null) {
+			fhirCondition.setVerificationStatus(FHIRConditionUtil2_2
+					.mapOpenmrsConditionVerificationStatusToFhirConditionVerificationStatus(
+							condition.getVerificationStatus()));
+		}
+
 		// set clinical status
 		fhirCondition.setClinicalStatus(
-				FHIRConditionUtil2_2.mapOpenmrsStatusToFHIRClinicalStatus(condition.getClinicalStatus()));
+				FHIRConditionUtil2_2.mapOpenmrsStatusToFHIRClinicalStatus(
+						condition.getClinicalStatus()));
 
 		return fhirCondition;
 

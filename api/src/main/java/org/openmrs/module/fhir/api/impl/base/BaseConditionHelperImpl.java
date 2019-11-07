@@ -62,6 +62,13 @@ public class BaseConditionHelperImpl {
 	}
 
 	/**
+	 * @see org.openmrs.module.fhir.api.helper.ConditionHelper#updateFHIRCondition(org.hl7.fhir.dstu3.model.Condition)
+	 */
+	public Condition updateFHIRCondition(Condition condition) {
+		throw new NotImplementedException();
+	}
+
+	/**
 	 * @see org.openmrs.module.fhir.api.helper.ConditionHelper#getConditionsByPatientUuid(java.lang.String)
 	 */
 	public List<Condition> getConditionsByPatientUuid(String patientUuid) {

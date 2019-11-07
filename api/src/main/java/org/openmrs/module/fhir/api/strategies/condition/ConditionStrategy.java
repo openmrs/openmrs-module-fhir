@@ -46,4 +46,12 @@ public class ConditionStrategy implements GenericConditionStrategy {
 	public Condition createFHIRCondition(Condition condition) {
 		return ContextUtil.getConditionHelper().createCondition(condition);
 	}
+
+	/**
+	 * @see org.openmrs.module.fhir.api.strategies.condition.GenericConditionStrategy#updateFHIRCondition(org.hl7.fhir.dstu3.model.Condition)
+	 */
+	@Override
+	public Condition updateFHIRCondition(Condition condition) {
+		return ContextUtil.getConditionHelper().updateFHIRCondition(condition);
+	}
 }
