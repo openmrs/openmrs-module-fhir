@@ -5,5 +5,5 @@ openmrs-module-fhir
 
 Implements REST and Java APIs to access OpenMRS via FHIR Specification.
 
-##Requirements:
+## Requirements:
 - Java 8 - required to build the module correctly. 
