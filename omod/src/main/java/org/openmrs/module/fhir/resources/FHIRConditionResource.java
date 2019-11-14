@@ -58,4 +58,12 @@ public class FHIRConditionResource extends Resource {
 		ConditionService conditionService = Context.getService(ConditionService.class);
 		return conditionService.createFHIRCondition(condition);
 	}
+
+	/**
+	 * @see org.openmrs.module.fhir.api.ConditionService#updateFHIRCondition(org.hl7.fhir.dstu3.model.Condition)
+	 */
+	public Condition updateFHIRCondition(Condition condition) {
+		ConditionService conditionService = Context.getService(ConditionService.class);
+		return conditionService.updateFHIRCondition(condition);
+	}
 }

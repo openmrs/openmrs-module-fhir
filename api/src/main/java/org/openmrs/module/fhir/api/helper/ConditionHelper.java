@@ -43,6 +43,14 @@ public interface ConditionHelper {
 	Condition createCondition(Condition condition);
 
 	/**
+	 * Update Condition
+	 *
+	 * @param condition FHIR representation of the {@link}Condition to be updated
+	 * @return Updated FHIR Condition resource
+	 */
+	Condition updateFHIRCondition(Condition condition);
+
+	/**
 	 * Gets conditions by patient uuid
 	 *
 	 * @param patientUuid patient uuid

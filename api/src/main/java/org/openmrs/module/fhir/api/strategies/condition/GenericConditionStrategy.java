@@ -42,4 +42,12 @@ public interface GenericConditionStrategy {
 	 * @return Created FHIRCondition
 	 */
 	Condition createFHIRCondition(Condition condition);
+
+	/**
+	 * Update Condition
+	 *
+	 * @param condition FHIR representation of the {@link}Condition to be updated
+	 * @return Updated FHIR Condition resource
+	 */
+	Condition updateFHIRCondition(Condition condition);
 }

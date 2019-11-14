@@ -19,13 +19,13 @@ import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.RequiredParam;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.ReferenceParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import org.hl7.fhir.dstu3.model.Condition;
 import org.hl7.fhir.dstu3.model.IdType;
-import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.Resource;
 import org.openmrs.module.fhir.resources.FHIRConditionResource;
 import org.openmrs.module.fhir.util.MethodOutcomeBuilder;
@@ -83,5 +83,14 @@ public class RestfulConditionResourceProvider implements IResourceProvider {
 	@Create
 	public MethodOutcome createFHIRCondition(@ResourceParam Condition condition) {
 		return MethodOutcomeBuilder.buildCreate(conditionResource.createFHIRCondition(condition));
+	}
+
+	/**
+	 * @see org.openmrs.module.fhir.resources.FHIRConditionResource#updateFHIRCondition(org.hl7.fhir.dstu3.model.Condition)
+	 */
+	@Update
+	public MethodOutcome updateFHIRCondition(@ResourceParam Condition condition, @IdParam IdType uuid) {
+			return MethodOutcomeBuilder.buildUpdate(conditionResource.updateFHIRCondition(condition));
+
 	}
 }
