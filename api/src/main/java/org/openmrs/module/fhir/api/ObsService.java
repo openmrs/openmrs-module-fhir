@@ -113,4 +113,12 @@ public interface ObsService extends OpenmrsService {
 	 */
 	Observation updateFHIRObservation(Observation observation, String theId);
 
+	/**
+	 * Search observations by patient and code
+	 *
+	 * @param patientUuid patient uuid
+	 * @param codeAndSystem code with the system uri
+	 * @return List of fhir observations
+	 */
+	List<Observation> searchObsByPatientAndCode(String patientUuid, Map<String, String> codeAndSystem);
 }

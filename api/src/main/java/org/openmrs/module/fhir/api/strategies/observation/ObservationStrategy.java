@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -216,6 +217,32 @@ public class ObservationStrategy implements GenericObservationStrategy {
 				createObservation(observation, uuid);
 	}
 
+	/**
+	 * @see org.openmrs.module.fhir.api.strategies.observation.GenericObservationStrategy#searchObservationByPatientAndCode(java.lang.String, java.util.Map)
+	 */
+	@Override
+	public List<Observation> searchObservationByPatientAndCode(String patientUuid, Map<String, String> codeAndSystem) {
+		String codingSystem = FHIRUtils.getConceptCodingSystem();
+		Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
+		List<Observation> obsList = new ArrayList<>();
+		Concept concept;
+
+		if (codingSystem == null || FHIRConstants.OPENMRS_CONCEPT_CODING_SYSTEM.equals(codingSystem)) {
+			concept = Context.getConceptService().getConcept(codeAndSystem.get(FHIRConstants.CODE));
+		} else {
+			String systemName = FHIRConstants.conceptSourceURINameMap.get(codeAndSystem.get(FHIRConstants.SYSTEM));
+			concept = Context.getConceptService().getConceptByMapping(codeAndSystem.get(FHIRConstants.CODE), systemName);
+		}
+		if (concept != null) {
+			List<Obs> obs = Context.getObsService().getObservationsByPersonAndConcept(patient, concept);
+			for (Obs ob : obs) {
+				obsList.add(FHIRObsUtil.generateObs(ob));
+			}
+		}
+
+		return obsList;
+	}
+
 	private Observation createObservation(Observation observation, String uuid) {
 		uuid = FHIRUtils.extractUuid(uuid);
 		StrategyUtil.setIdIfNeeded(observation, uuid);
@@ -232,7 +259,8 @@ public class ObservationStrategy implements GenericObservationStrategy {
 			if (FHIRObsUtil.hasGroupMembers(observation)) {
 				buildObsGroup(observation, retrievedObs);
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new UnprocessableEntityException(
 					"The request cannot be processed due to the following issues \n" + e.getMessage());
 		}

@@ -29,4 +29,12 @@ public interface GenericObservationStrategy {
 	Observation createFHIRObservation(Observation observation);
 
 	Observation updateFHITObservation(Observation observation, String uuid);
+
+	/**
+	 * Search observations by patient and code with system uri
+	 * @param patientUuid patient uuid
+	 * @param codeAndSystem code and system to search in.
+	 * @return List of fhir resources
+	 */
+	List<Observation> searchObservationByPatientAndCode(String patientUuid, Map<String, String> codeAndSystem);
 }

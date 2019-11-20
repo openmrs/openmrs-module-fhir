@@ -174,6 +174,10 @@ public final class FHIRConstants {
 
 	public static final String FEMALE = "F";
 
+	public static final String CODE = "code";
+
+	public static final String SYSTEM = "system";
+
 	public static final String OTHER_GENDER = "o";
 
 	public static final String ACTIVE_LIST_ALLERGY_STRATEGY = "ActiveListAllergyStrategy";

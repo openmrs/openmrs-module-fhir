@@ -89,6 +89,17 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	}
 
 	/**
+	 * @see org.openmrs.module.fhir.resources.FHIRObservationResource#searchObsByPatientAndCode(ca.uhn.fhir.rest.param.ReferenceParam, ca.uhn.fhir.rest.param.TokenParam)
+	 */
+	@Search
+	public List<Observation> findObsByPatientAndCode(@RequiredParam(name = Observation.SP_SUBJECT) ReferenceParam
+			person,
+			@RequiredParam(name = Observation.SP_CODE) TokenParam
+					code) {
+		return provider.searchObsByPatientAndCode(person, code);
+	}
+
+	/**
 	 * Search obsservation by observation code
 	 *
 	 * @param theCodings object containing the requested code

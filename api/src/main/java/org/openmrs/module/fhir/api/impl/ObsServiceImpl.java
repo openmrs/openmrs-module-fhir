@@ -128,4 +128,12 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	public Observation updateFHIRObservation(Observation observation, String theId) {
 		return ObservationStrategyUtil.getObservationStrategy().updateFHITObservation(observation, theId);
 	}
+
+	/**
+	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByPatientAndCode(java.lang.String, java.util.Map)
+	 */
+	@Override
+	public List<Observation> searchObsByPatientAndCode(String patientUuid, Map<String, String> codeAndSystem) {
+		return ObservationStrategyUtil.getObservationStrategy().searchObservationByPatientAndCode(patientUuid, codeAndSystem);
+	}
 }

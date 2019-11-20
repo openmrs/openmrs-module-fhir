@@ -24,6 +24,7 @@ import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.ObsService;
+import org.openmrs.module.fhir.api.util.FHIRConstants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -104,4 +105,14 @@ public class FHIRObservationResource extends Resource {
 		return obsService.updateFHIRObservation(observation, theId);
 	}
 
+	/**
+	 * @see org.openmrs.module.fhir.api.ObsService#searchObsByPatientAndCode(java.lang.String, java.util.Map)
+	 */
+	public List<Observation> searchObsByPatientAndCode(ReferenceParam person, TokenParam code) {
+		ObsService obsService = Context.getService(ObsService.class);
+		Map<String, String> codeAndSystem = new HashMap<>();
+		codeAndSystem.put(FHIRConstants.CODE, code.getValue());
+		codeAndSystem.put(FHIRConstants.SYSTEM, code.getSystem());
+		return obsService.searchObsByPatientAndCode(person.getIdPart(), codeAndSystem);
+	}
 }
