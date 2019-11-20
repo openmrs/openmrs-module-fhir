@@ -62,7 +62,7 @@ public class ConditionHelperImpl2_2 implements ConditionHelper {
 			throw new UnprocessableEntityException("condition subject cannot be null");
 		}
 		org.openmrs.Condition openMrsCondition = Context.getService(org.openmrs.api.ConditionService.class)
-				.saveCondition(generateOpenMrsCondition(condition));
+				.saveCondition((org.openmrs.Condition)generateOpenMrsCondition(condition));
 
 		return generateFHIRCondition(openMrsCondition);
 	}
@@ -93,7 +93,7 @@ public class ConditionHelperImpl2_2 implements ConditionHelper {
 	 */
 	private org.openmrs.Condition updateOpenmrsCondition(Condition fhirCondition, org.openmrs.Condition openmrsCondition) {
 		ConditionService conditionService = Context.getService(ConditionService.class);
-		org.openmrs.Condition omrsCondition = this.generateOpenMrsCondition(fhirCondition);
+		org.openmrs.Condition omrsCondition = (org.openmrs.Condition)this.generateOpenMrsCondition(fhirCondition);
 
 		if (omrsCondition.getClinicalStatus() != null) {
 			openmrsCondition.setClinicalStatus(omrsCondition.getClinicalStatus());
@@ -133,7 +133,7 @@ public class ConditionHelperImpl2_2 implements ConditionHelper {
 	 * @see org.openmrs.module.fhir.api.helper.ConditionHelper#generateOpenMrsCondition(org.hl7.fhir.dstu3.model.Condition)
 	 */
 	@Override
-	public org.openmrs.Condition generateOpenMrsCondition(Condition condition) {
+	public Object generateOpenMrsCondition(Condition condition) {
 		org.openmrs.Condition openMrsCondition;
 		List<String> errors = new ArrayList<>();
 
@@ -185,7 +185,6 @@ public class ConditionHelperImpl2_2 implements ConditionHelper {
 	/**
 	 * @see org.openmrs.module.fhir.api.helper.ConditionHelper#generateFHIRCondition(org.openmrs.Condition)
 	 */
-	@Override
 	public Condition generateFHIRCondition(org.openmrs.Condition condition) {
 		org.hl7.fhir.dstu3.model.Condition fhirCondition = new org.hl7.fhir.dstu3.model.Condition();
 		IdType id = new IdType();

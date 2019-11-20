@@ -78,14 +78,7 @@ public class BaseConditionHelperImpl {
 	/**
 	 * @see org.openmrs.module.fhir.api.helper.ConditionHelper#generateOpenMrsCondition(org.hl7.fhir.dstu3.model.Condition)
 	 */
-	public org.openmrs.Condition generateOpenMrsCondition(Condition condition) {
-		throw new NotImplementedException();
-	}
-
-	/**
-	 * @see org.openmrs.module.fhir.api.helper.ConditionHelper#generateFHIRCondition(org.openmrs.Condition)
-	 */
-	public Condition generateFHIRCondition(org.openmrs.Condition condition) {
+	public Object generateOpenMrsCondition(Condition condition) {
 		throw new NotImplementedException();
 	}
 }

@@ -64,14 +64,5 @@ public interface ConditionHelper {
 	 * @param condition FHIR condition
 	 * @return Openmrs condition
 	 */
-	org.openmrs.Condition generateOpenMrsCondition(Condition condition);
-
-	/**
-	 * Generate FHIR condition from openmrs condition
-	 *
-	 * @param condition Openmrs condition
-	 * @return FHIR condition
-	 */
-	Condition generateFHIRCondition(org.openmrs.Condition condition);
-
+	Object generateOpenMrsCondition(Condition condition);
 }
