@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
+import ca.uhn.fhir.rest.param.TokenParam;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.Observation;
@@ -127,5 +128,14 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	@Override
 	public Observation updateFHIRObservation(Observation observation, String theId) {
 		return ObservationStrategyUtil.getObservationStrategy().updateFHITObservation(observation, theId);
+	}
+
+	/**
+	 * @see ObsService#searchObsByPatientAndCode(java.lang.String, java.util.List)
+	 */
+	@Override
+	public List<Observation> searchObsByPatientAndCode(String patientUuid, List<TokenParam> codings) {
+		return ObservationStrategyUtil.getObservationStrategy().searchObservationByPatientAndCode(patientUuid,
+				codings);
 	}
 }

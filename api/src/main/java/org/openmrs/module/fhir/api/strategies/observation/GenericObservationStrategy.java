@@ -1,5 +1,6 @@
 package org.openmrs.module.fhir.api.strategies.observation;
 
+import ca.uhn.fhir.rest.param.TokenParam;
 import org.hl7.fhir.dstu3.model.Observation;
 
 import java.util.Date;
@@ -29,4 +30,13 @@ public interface GenericObservationStrategy {
 	Observation createFHIRObservation(Observation observation);
 
 	Observation updateFHITObservation(Observation observation, String uuid);
+
+	/**
+	 * Search observations by patient and codings (e.g. PIH|5089,CIEL|5086)
+	 *
+	 * @param patientUuid patient uuid
+	 * @param codings     List of TokenParam, for example PIH|5089,CIEL|5086
+	 * @return List of fhir observation resources
+	 */
+	List<Observation> searchObservationByPatientAndCode(String patientUuid, List<TokenParam> codings);
 }

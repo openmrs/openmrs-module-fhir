@@ -104,4 +104,17 @@ public class FHIRObservationResource extends Resource {
 		return obsService.updateFHIRObservation(observation, theId);
 	}
 
+	/**
+	 * Search observations by patient and code
+	 *
+	 * @param patient Patient reference
+	 * @param codes   TokenParam or a list of TokenParam codes
+	 * @return List of observation resources
+	 */
+	public List<Observation> searchObsByPatientAndCode(ReferenceParam patient, TokenOrListParam codes) {
+		ObsService obsService = Context.getService(ObsService.class);
+		List<TokenParam> codings = codes.getValuesAsQueryTokens();
+
+		return obsService.searchObsByPatientAndCode(patient.getIdPart(), codings);
+	}
 }
