@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.fhir.api;
 
+import ca.uhn.fhir.rest.param.TokenParam;
 import org.hl7.fhir.dstu3.model.Observation;
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
@@ -113,4 +114,12 @@ public interface ObsService extends OpenmrsService {
 	 */
 	Observation updateFHIRObservation(Observation observation, String theId);
 
+	/**
+	 * Search observations by patient and code
+	 *
+	 * @param patientUuid patient uuid
+	 * @param codings list of TokenParam (has code and system uri for example PIH|5086,CIEL|5089)
+	 * @return List of fhir observations
+	 */
+	List<Observation> searchObsByPatientAndCode(String patientUuid, List<TokenParam> codings);
 }

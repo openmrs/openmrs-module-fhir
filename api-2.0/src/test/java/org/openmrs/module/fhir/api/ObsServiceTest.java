@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.fhir.api;
 
+import ca.uhn.fhir.rest.param.TokenParam;
 import org.hl7.fhir.dstu3.model.CodeableConcept;
 import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.DateTimeType;
@@ -48,11 +49,13 @@ import static org.junit.Assert.assertTrue;
 
 public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 
-	protected static final String OBS_INITIAL_DATA_XML = "org/openmrs/api/include/ObsServiceTest-initial.xml";
+	private static final String OBS_INITIAL_DATA_XML = "org/openmrs/api/include/ObsServiceTest-initial.xml";
 
-	protected static final String CONCEPT_CUSTOM_INITIAL_DATA_XML = "Concept_customTestData.xml";
+	private static final String CONCEPT_CUSTOM_INITIAL_DATA_XML = "Concept_customTestData.xml";
 
-	protected static final String PERSOM_INITIAL_DATA_XML = "org/openmrs/api/include/PersonServiceTest-createPersonPurgeVoidTest.xml";
+	private static final String PERSON_INITIAL_DATA_XML = "org/openmrs/api/include/PersonServiceTest-createPersonPurgeVoidTest.xml";
+
+	private static final String PERSON_UUID = "da7f524f-27ce-4bb2-86d6-6d1d05312bd5";
 
 	public ObsService getService() {
 		return Context.getService(ObsService.class);
@@ -62,7 +65,7 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 	public void runBeforeEachTest() throws Exception {
 		executeDataSet(OBS_INITIAL_DATA_XML);
 		executeDataSet(CONCEPT_CUSTOM_INITIAL_DATA_XML);
-		executeDataSet(PERSOM_INITIAL_DATA_XML);
+		executeDataSet(PERSON_INITIAL_DATA_XML);
 		updateSearchIndex();
 	}
 
@@ -77,6 +80,30 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		Observation fhirObservation = getService().getObs(obsUuid);
 		assertNotNull(fhirObservation);
 		assertEquals(fhirObservation.getId().toString(), obsUuid);
+	}
+
+	@Test
+	public void searchObsByPatientAndCode_shouldReturnMatchingObservationList () {
+		ConceptService conceptService = Context.getConceptService();
+		Concept concept = conceptService.getConcept(1);
+		ConceptMap conceptMap = new ConceptMap();
+		conceptMap.setConcept(concept);
+		conceptMap.setConceptReferenceTerm(conceptService.getConceptReferenceTerm(558));
+		concept.addConceptMapping(conceptMap);
+		conceptService.saveConcept(concept);
+
+		List<TokenParam> tokenParams = new ArrayList<>();
+		assertEquals(tokenParams.size(), 0);
+
+		tokenParams.add(new TokenParam().setValue("3143-9").setSystem("LOINC"));
+		assertEquals(tokenParams.size(), 1);
+
+		List<Observation> obs = getService().searchObsByPatientAndCode(PERSON_UUID, tokenParams);
+		assertNotNull(obs);
+		assertEquals(3, obs.size());
+		assertNotNull(obs.get(0));
+		assertNotNull(obs.get(1));
+		assertNotNull(obs.get(2));
 	}
 
 	@Test

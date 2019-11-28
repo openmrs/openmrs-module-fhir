@@ -40,10 +40,10 @@ import java.util.List;
 
 public class RestfulObservationResourceProvider implements IResourceProvider {
 
-	private FHIRObservationResource provider;
+	private FHIRObservationResource fhirObservationResource;
 
 	public RestfulObservationResourceProvider() {
-		provider = new FHIRObservationResource();
+		fhirObservationResource = new FHIRObservationResource();
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 */
 	@Read
 	public Observation getResourceById(@IdParam IdType theId) {
-		return provider.getByUniqueId(theId);
+		return fhirObservationResource.getByUniqueId(theId);
 	}
 
 	/**
@@ -72,7 +72,18 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 */
 	@Search
 	public List<Observation> findObsById(@RequiredParam(name = Observation.SP_RES_ID) TokenParam id) {
-		return provider.searchObsById(id);
+		return fhirObservationResource.searchObsById(id);
+	}
+
+	/**
+	 * @see org.openmrs.module.fhir.resources.FHIRObservationResource#searchObsByPatientAndCode(ca.uhn.fhir.rest.param.ReferenceParam, ca.uhn.fhir.rest.param.TokenOrListParam)
+	 */
+	@Search
+	public List<Observation> findObsByPatientAndCode(@RequiredParam(name = Observation.SP_SUBJECT) ReferenceParam
+			patient,
+			@RequiredParam(name = Observation.SP_CODE) TokenOrListParam
+					codes) {
+		return fhirObservationResource.searchObsByPatientAndCode(patient, codes);
 	}
 
 	/**
@@ -85,7 +96,7 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 			person,
 			@RequiredParam(name = Observation.SP_CODE) TokenOrListParam
 					codes) {
-		return provider.searchObsByPatientAndConcept(person, codes);
+		return fhirObservationResource.searchObsByPatientAndConcept(person, codes);
 	}
 
 	/**
@@ -95,7 +106,7 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 */
 	@Search
 	public List<Observation> findObsByCode(@RequiredParam(name = Observation.SP_CODE) TokenOrListParam theCodings) {
-		return provider.searchObsByCode(theCodings);
+		return fhirObservationResource.searchObsByCode(theCodings);
 	}
 
 	/**
@@ -105,7 +116,7 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 */
 	@Search
 	public List<Observation> findObsByDate(@RequiredParam(name = Observation.SP_DATE) DateParam date) {
-		return provider.searchObsByDate(date);
+		return fhirObservationResource.searchObsByDate(date);
 	}
 
 	/**
@@ -115,7 +126,7 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 */
 	@Search
 	public List<Observation> findObsByPerson(@RequiredParam(name = Observation.SP_SUBJECT) ReferenceParam person) {
-		return provider.searchObsByPerson(person);
+		return fhirObservationResource.searchObsByPerson(person);
 	}
 
 	/**
@@ -126,7 +137,7 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	@Search
 	public List<Observation> findObsByValueConcept(@RequiredParam(name = Observation.SP_VALUE_CONCEPT) TokenParam
 			answerConceptName) {
-		return provider.searchObsByValueConcept(answerConceptName);
+		return fhirObservationResource.searchObsByValueConcept(answerConceptName);
 	}
 
 	/**
@@ -138,7 +149,7 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	public List<Observation> findEncountersByPatientIdentifier(
 			@RequiredParam(name = Observation.SP_PATIENT, chainWhitelist = {
 					Patient.SP_IDENTIFIER }) ReferenceParam identifier) {
-		return provider.searchObsByPatientIdentifier(identifier);
+		return fhirObservationResource.searchObsByPatientIdentifier(identifier);
 	}
 
 	/**
@@ -148,7 +159,7 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 */
 	@Delete
 	public void deleteObservation(@IdParam IdType theId) {
-		provider.deleteObservation(theId);
+		fhirObservationResource.deleteObservation(theId);
 	}
 
 	/**
@@ -158,13 +169,13 @@ public class RestfulObservationResourceProvider implements IResourceProvider {
 	 */
 	@Create
 	public MethodOutcome createFHIRObservation(@ResourceParam Observation observation) {
-		return MethodOutcomeBuilder.buildCreate(provider.createFHIRObservation(observation));
+		return MethodOutcomeBuilder.buildCreate(fhirObservationResource.createFHIRObservation(observation));
 	}
 
 	@Update
 	public MethodOutcome updateFHIRObservation(@ResourceParam Observation observation, @IdParam IdType theId) {
 		try {
-			return MethodOutcomeBuilder.buildUpdate(provider.updateFHIRObservation(observation, theId.getIdPart()));
+			return MethodOutcomeBuilder.buildUpdate(fhirObservationResource.updateFHIRObservation(observation, theId.getIdPart()));
 		}
 		catch (Exception e) {
 			throw new InvalidRequestException("Following exception occured: " + e.getMessage() + " " +

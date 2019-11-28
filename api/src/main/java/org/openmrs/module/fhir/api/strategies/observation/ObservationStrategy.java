@@ -1,5 +1,6 @@
 package org.openmrs.module.fhir.api.strategies.observation;
 
+import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import org.hl7.fhir.dstu3.model.Observation;
 import org.openmrs.Concept;
@@ -9,6 +10,7 @@ import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.fhir.api.util.ConceptSourceNameURIPair;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRObsUtil;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -216,6 +219,53 @@ public class ObservationStrategy implements GenericObservationStrategy {
 				createObservation(observation, uuid);
 	}
 
+	/**
+	 * @see GenericObservationStrategy#searchObservationByPatientAndCode(java.lang.String, java.util.List)
+	 */
+	@Override
+	public List<Observation> searchObservationByPatientAndCode(String patientUuid, List<TokenParam> codings) {
+		Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
+		List<Observation> obsList = new ArrayList<>();
+		if (codings.isEmpty()) {
+			return obsList;
+		} else {
+			for (TokenParam tokenParam : codings) {
+				obsList.addAll(getObservations(patient, getConcept(tokenParam)));
+			}
+		}
+		return obsList;
+	}
+
+	/**
+	 * Get observations by patient and concept
+	 *
+	 * @param patient openmrs patient
+	 * @param concept openmrs concept
+	 * @return List of fhir observations
+	 */
+	private List<Observation> getObservations(Patient patient, Concept concept) {
+		List<Observation> obsList = new ArrayList<>();
+		List<Obs> obs = Context.getObsService()
+				.getObservationsByPersonAndConcept(patient, concept);
+		for (Obs ob : obs) {
+			obsList.add(FHIRObsUtil.generateObs(ob));
+		}
+		return obsList;
+	}
+
+	/**
+	 * Get concept by TokenParam
+	 *
+	 * @param tokenParam FHIR TokenParam which has code, modifier,and system (for exampe PIH|5089)
+	 * @return Openmrs concept
+	 */
+	private Concept getConcept(TokenParam tokenParam) {
+		ConceptSourceNameURIPair conceptSourceNameURIPair = FHIRConstants.conceptSourceMap
+				.get(tokenParam.getSystem().toLowerCase());
+		return Context.getConceptService()
+				.getConceptByMapping(tokenParam.getValue(), conceptSourceNameURIPair.getConceptSourceName());
+	}
+
 	private Observation createObservation(Observation observation, String uuid) {
 		uuid = FHIRUtils.extractUuid(uuid);
 		StrategyUtil.setIdIfNeeded(observation, uuid);
@@ -232,7 +282,8 @@ public class ObservationStrategy implements GenericObservationStrategy {
 			if (FHIRObsUtil.hasGroupMembers(observation)) {
 				buildObsGroup(observation, retrievedObs);
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new UnprocessableEntityException(
 					"The request cannot be processed due to the following issues \n" + e.getMessage());
 		}
