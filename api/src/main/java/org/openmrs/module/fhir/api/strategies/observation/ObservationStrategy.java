@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -228,6 +227,11 @@ public class ObservationStrategy implements GenericObservationStrategy {
 		List<Observation> obsList = new ArrayList<>();
 		if (codings.isEmpty()) {
 			return obsList;
+		} else if (codings.size() == 1 && codings.get(0).getModifier() == null && codings.get(0).getSystem() == null) {
+			if (!codings.get(0).getValue().isEmpty()) {
+				Concept concept = Context.getConceptService().getConceptByUuid(codings.get(0).getValue());
+				obsList.addAll(getObservations(patient, concept));
+			}
 		} else {
 			for (TokenParam tokenParam : codings) {
 				obsList.addAll(getObservations(patient, getConcept(tokenParam)));
