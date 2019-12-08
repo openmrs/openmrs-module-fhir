@@ -13,11 +13,13 @@
  */
 package org.openmrs.module.fhir.api.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.DiagnosticReport;
 import org.openmrs.Encounter;
+import org.openmrs.Order;
 import org.openmrs.api.APIException;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
@@ -29,6 +31,7 @@ import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRDiagnosticReportUtil;
 import org.openmrs.util.OpenmrsClassLoader;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,11 +41,36 @@ import java.util.Map;
  */
 public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements DiagnosticReportService {
 
+	private static final String FHIR_DIAGNOSTICREPORT_ORDER_TYPE_TO_HANDLER_MAP = "fhir.diagnosticreport.orderTypeToHandlerMap";
+
+	private static final String DEFAULT_HANDLER = "DEFAULT";
+
 	private static Map<String, DiagnosticReportHandler> handlers = null;
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 
 	private FHIRDAO dao;
+
+	private Map<String, String> orderTypeToHandlerNameMap  = new HashMap<>();
+
+	public DiagnosticReportServiceImpl() {
+		orderTypeToHandlerNameMap.put("Test Order", "LAB");
+		orderTypeToHandlerNameMap.put("Default", DEFAULT_HANDLER);
+	}
+
+	//TODO: find a better way to do this!!
+	private void loadHandlerMap() {
+		String orderTypeHandlerMapText = Context.getAdministrationService().getGlobalProperty(FHIR_DIAGNOSTICREPORT_ORDER_TYPE_TO_HANDLER_MAP);
+		if (!StringUtils.isEmpty(orderTypeHandlerMapText)) {
+			String[] parts = orderTypeHandlerMapText.trim().split(",");
+			for (String part : parts) {
+				if (!StringUtils.isEmpty(part)) {
+					String[] handlerMap = part.trim().split("=");
+					orderTypeToHandlerNameMap.put(handlerMap[0].trim(), handlerMap[1].trim());
+				}
+			}
+		}
+	}
 
 	/**
 	 * Sets handlers using static method
@@ -68,15 +96,22 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 	}
 
 	@Override
-	public DiagnosticReport getDiagnosticReport(String id) {
-		// Find Diagnostic Report (Encounter) in OpenMRS database
-		EncounterService encounterService = Context.getEncounterService();
-		Encounter omrsDiagnosticReport = encounterService.getEncounterByUuid(id);
-		// Get corresponding Handler
-		String handlerName = omrsDiagnosticReport.getEncounterType().getName();
+	public DiagnosticReport getDiagnosticReport(final String accessionNumber) {
+		loadHandlerMap();
+		List<Order> orders = dao.getOrdersByAccessionNumber(accessionNumber);
+		if (!orders.isEmpty()) {
+			Order order = orders.get(0);
 
-		return FHIRDiagnosticReportUtil.getFHIRDiagnosticReport(id, getHandler(handlerName));
+			String handlerName = orderTypeToHandlerNameMap.get(order.getOrderType().getName());
+			if (StringUtils.isEmpty(handlerName)) {
+				handlerName = orderTypeToHandlerNameMap.get(DEFAULT_HANDLER);
+			}
+			return FHIRDiagnosticReportUtil.getFHIRDiagnosticReport(order.getUuid(), getHandler(handlerName));
+		} else {
+			throw new APIException("Can not identify order by accession number");
+		}
 	}
+
 
 	@Override
 	public DiagnosticReport createFHIRDiagnosticReport(DiagnosticReport diagnosticReport) {
@@ -139,7 +174,11 @@ public class DiagnosticReportServiceImpl extends BaseOpenmrsService implements D
 	 ***************************************************************/
 	@Override
 	public DiagnosticReportHandler getHandler(String key) {
-		return handlers.get(key);
+		try {
+			return handlers.get(key);
+		} catch (NullPointerException e) {
+			throw new APIException("Could not find handler for order type " + key, e);
+		}
 	}
 
 	@Override

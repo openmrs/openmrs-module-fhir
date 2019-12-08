@@ -443,7 +443,15 @@
 										<key>
 											<value>LaboratoryHandler</value>
 										</key>
-										<bean class="org.openmrs.module.fhir.api.diagnosticreport.handler.LaboratoryHandler"/>
+										<bean class="org.openmrs.module.fhir.api.diagnosticreport.handler.LaboratoryHandler">
+											<property name="dao">
+												<bean class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernateFHIRDAO">
+													<property name="sessionFactory">
+														<ref bean="sessionFactory"/>
+													</property>
+												</bean>
+											</property>
+										</bean>
 									</entry>
 									<entry>
 										<key>

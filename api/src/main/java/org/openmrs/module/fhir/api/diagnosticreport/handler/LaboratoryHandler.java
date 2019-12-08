@@ -11,19 +11,24 @@ import org.hl7.fhir.dstu3.model.IdType;
 import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Reference;
 import org.openmrs.Encounter;
+import org.openmrs.EncounterProvider;
 import org.openmrs.Obs;
+import org.openmrs.Order;
 import org.openmrs.Patient;
 import org.openmrs.api.APIException;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.fhir.api.ObsService;
+import org.openmrs.module.fhir.api.db.FHIRDAO;
 import org.openmrs.module.fhir.api.diagnosticreport.DiagnosticReportHandler;
 import org.openmrs.module.fhir.api.util.FHIRConstants;
 import org.openmrs.module.fhir.api.util.FHIRObsUtil;
+import org.openmrs.module.fhir.api.util.FHIRPatientUtil;
 import org.openmrs.module.fhir.api.util.FHIRUtils;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +42,20 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 
+	public Log getLog() {
+		return log;
+	}
+
+	public FHIRDAO getDao() {
+		return dao;
+	}
+
+	public void setDao(FHIRDAO dao) {
+		this.dao = dao;
+	}
+
+	private FHIRDAO dao;
+
 	public LaboratoryHandler() {
 		super();
 	}
@@ -47,7 +66,7 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 
 	@Override
 	public DiagnosticReport getFHIRDiagnosticReportById(String id) {
-		return getFHIRDiagnosticReport(Context.getEncounterService().getEncounterByUuid(id));
+		return getFHIRDiagnosticReport(id);
 	}
 
 	@Override
@@ -55,20 +74,90 @@ public class LaboratoryHandler extends AbstractHandler implements DiagnosticRepo
 		return null;
 	}
 
-	private DiagnosticReport getFHIRDiagnosticReport(Encounter omrsDiagnosticReport) {
+	private Map<String, Set<Obs>> populateObsForResult(Set<Obs> obsSet, boolean includeImagingStudy) {
+		Map<String, Set<Obs>> obsSetsMap = new HashMap<>();
+		if (includeImagingStudy) {
+			obsSetsMap.put(FHIRConstants.DIAGNOSTIC_REPORT_IMAGING_STUDY, new HashSet<Obs>());
+		}
+		obsSetsMap.put(FHIRConstants.DIAGNOSTIC_REPORT_RESULT, new HashSet<Obs>());
+
+		for (Obs obs : obsSet) {
+			obsSetsMap.get(FHIRConstants.DIAGNOSTIC_REPORT_RESULT).add(obs);
+		}
+		return obsSetsMap;
+	}
+
+	private DiagnosticReport getFHIRDiagnosticReport(String orderUuid) {
 		log.debug("Laboratory Handler : GetFHIRDiagnosticReport");
+		Order orderByUuid = Context.getOrderService().getOrderByUuid(orderUuid);
+		Integer encounterIdForObsOrder = dao.getEncounterIdForObsOrder(orderByUuid.getOrderId());
+		String orderClass = getOrderClass(orderByUuid);
+
+		Encounter encounter = Context.getEncounterService().getEncounter(encounterIdForObsOrder);
+		Set<Obs> obsAtTopLevel = encounter.getObsAtTopLevel(false);
+
+		Set<Obs> resultObs = new HashSet<>();
+		for (Obs obs : obsAtTopLevel) {
+			if (obs.getOrder().getUuid().equals(orderUuid)) {
+				resultObs.add(obs);
+			}
+		}
+		Map<String, Set<Obs>> obsSetsMap = populateObsForResult(resultObs, false);
+		return createDiagnosticReport(orderByUuid, encounter, obsSetsMap);
+	}
+
+	private String getOrderClass(Order orderByUuid) {
+		return orderByUuid.getConcept().getConceptClass().getName();
+	}
+
+	private DiagnosticReport createDiagnosticReport(Order order, Encounter omrsDiagnosticReportEncounter,
+														Map<String, Set<Obs>> obsSetsMap) {
 		DiagnosticReport diagnosticReport = new DiagnosticReport();
-
-		// Separate Obs into different field based on Concept Id
-		Map<String, Set<Obs>> obsSetsMap = separateObs(omrsDiagnosticReport.getObsAtTopLevel(false), false);
-
 		// Set ID
-		diagnosticReport.setId(new IdType(RESOURCE_TYPE, omrsDiagnosticReport.getUuid()));
+		diagnosticReport.setId(new IdType(RESOURCE_TYPE, order.getAccessionNumber()));
+		// @required: Get EncounterDateTime and set as `Issued` date
+		diagnosticReport.setIssued(omrsDiagnosticReportEncounter.getEncounterDatetime());
 
-		// Get Obs and set as `Name`
-		// Get Obs and set as `Status`
+		// @required: Get Encounter Patient and set as `Subject`
+		Patient omrsPatient = omrsDiagnosticReportEncounter.getPatient();
+		diagnosticReport.getSubject().setResource(FHIRPatientUtil.generatePatient(omrsPatient));
 
-		return generateDiagnosticReport(diagnosticReport, omrsDiagnosticReport, obsSetsMap);
+		// Get Encounter Provider and set as `Performer`
+		Set<EncounterProvider> encounterProviders = omrsDiagnosticReportEncounter.getEncounterProviders();
+		// If at least one provider is set (1..1 mapping in FHIR Diagnostic Report)
+		if (!encounterProviders.isEmpty()) {
+			//Role name to a getCodingList display. Is that correct?
+			for (EncounterProvider encounterProvider : encounterProviders) {
+				Reference practitionerReference = FHIRUtils.buildPractitionerReference(encounterProvider.getProvider());
+				DiagnosticReport.DiagnosticReportPerformerComponent performer = diagnosticReport.addPerformer();
+				performer.setActor(practitionerReference);
+			}
+		}
+
+		// Get EncounterType and Set `ServiceCategory`
+		String serviceCategory = omrsDiagnosticReportEncounter.getEncounterType().getName();
+		List<Coding> serviceCategoryList = new ArrayList<>();
+		serviceCategoryList.add(new Coding(FHIRConstants.CODING_0074, serviceCategory, serviceCategory));
+		diagnosticReport.getCategory().setCoding(serviceCategoryList);
+
+		// Get valueDateTime in Obs and Set `Diagnosis[x]->DateTime`
+		// Get valueDateTime in Obs and Set `Diagnosis[x]->Period`
+
+		// ObsSet set as `Result`
+		List<Reference> resultReferenceDtList = new ArrayList<>();
+		for (Obs resultObs : obsSetsMap.get(FHIRConstants.DIAGNOSTIC_REPORT_RESULT)) {
+			for (Obs obs : resultObs.getGroupMembers()) {
+				Observation observation = FHIRObsUtil.generateObs(obs);
+				// To make it contained in side Diagnostic Report
+				observation.setId(new IdType());
+				resultReferenceDtList.add(new Reference(observation));
+			}
+		}
+		if (!resultReferenceDtList.isEmpty()) {
+			diagnosticReport.setResult(resultReferenceDtList);
+		}
+
+		return diagnosticReport;
 	}
 
 	@Override
