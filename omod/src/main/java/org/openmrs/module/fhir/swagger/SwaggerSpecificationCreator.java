@@ -40,6 +40,7 @@ import org.openmrs.module.fhir.swagger.docs.SecurityDefinitions;
 import org.openmrs.module.fhir.swagger.docs.SwaggerSpecification;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,9 +60,9 @@ public class SwaggerSpecificationCreator {
 
 	private Map<String, Definition> definitionMap = new HashMap<String, Definition>();
 
-	public SwaggerSpecificationCreator(String baseUrl, String basePath, HttpServletRequest request) {
+	public SwaggerSpecificationCreator(String baseUrl, String basePath, HttpServletRequest request, HttpServletResponse response) {
 		this.swaggerSpecification = new SwaggerSpecification();
-		this.conformance = ConformanceProvider.getConformance(request);
+		this.conformance = ConformanceProvider.getConformance(request, response);
 		this.baseUrl = baseUrl;
 		this.basePath = basePath;
 	}

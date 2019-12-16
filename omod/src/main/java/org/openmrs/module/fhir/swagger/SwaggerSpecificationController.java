@@ -57,7 +57,7 @@ public class SwaggerSpecificationController extends HttpServlet {
 						.replace(SwaggerDocConstants.HTTPS_WITH_SLASHES, SwaggerDocConstants.STR_EMPTY);
 			}
 			urlWithoutScheme = urlWithoutScheme.replace(ForwardingFilter.getContextPath(), SwaggerDocConstants.STR_EMPTY);
-			SwaggerSpecificationCreator creator = new SwaggerSpecificationCreator(urlWithoutScheme, basePath, request);
+			SwaggerSpecificationCreator creator = new SwaggerSpecificationCreator(urlWithoutScheme, basePath, request, response);
 			swaggerSpecificationJSON = creator.buildJSON();
 			response.setContentType(SwaggerDocConstants.PRODUCES_JSON);
 			response.setCharacterEncoding(SwaggerDocConstants.UTF_8);

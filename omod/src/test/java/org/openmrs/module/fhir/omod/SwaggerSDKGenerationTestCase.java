@@ -14,14 +14,14 @@
 package org.openmrs.module.fhir.omod;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.rest.server.EncodingEnum;
+import ca.uhn.fhir.rest.api.EncodingEnum;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+import ca.uhn.fhir.rest.server.IServerAddressStrategy;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
 import org.hl7.fhir.dstu3.hapi.rest.server.ServerCapabilityStatementProvider;
 import org.junit.Test;
-import org.openmrs.module.fhir.addressstrategy.OpenMRSFHIRRequestAddressStrategy;
 import org.openmrs.module.fhir.exception.FHIRModuleOmodException;
 import org.openmrs.module.fhir.providers.RestfulAllergyIntoleranceResourceProvider;
 import org.openmrs.module.fhir.providers.RestfulConditionResourceProvider;
@@ -40,8 +40,11 @@ import org.openmrs.module.fhir.swagger.SwaggerSpecificationCreator;
 import org.openmrs.module.fhir.swagger.codegen.SwaggerCodeGenerator;
 import org.openmrs.module.fhir.util.FHIROmodConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,7 +66,12 @@ public class SwaggerSDKGenerationTestCase extends RestfulServer {
 	 */
 	@Override
 	protected void initialize() {
-		this.setServerAddressStrategy(new OpenMRSFHIRRequestAddressStrategy());
+		this.setServerAddressStrategy(new IServerAddressStrategy() {
+			@Override
+			public String determineServerBase(ServletContext theServletContext, HttpServletRequest theRequest) {
+				return "https://localhost:8080";
+			}
+		});
 		List<IResourceProvider> resourceProviders = new ArrayList<IResourceProvider>();
 		resourceProviders.add(new RestfulPatientResourceProvider());
 		resourceProviders.add(new RestfulAllergyIntoleranceResourceProvider());
@@ -111,7 +119,8 @@ public class SwaggerSDKGenerationTestCase extends RestfulServer {
 		String language = "java";
 		String basePath = "/ws/fhir";
 		HttpServletRequest request = new MockHttpServletRequest();
-		SwaggerSpecificationCreator creator = new SwaggerSpecificationCreator(urlWithoutScheme, basePath, request);
+		HttpServletResponse response = new MockHttpServletResponse();
+		SwaggerSpecificationCreator creator = new SwaggerSpecificationCreator(urlWithoutScheme, basePath, request, response);
 		String swaggerSpecificationJSON = creator.buildJSON();
 		assertNotNull(swaggerSpecificationJSON);
 		SwaggerCodeGenerator swaggerCodeGenerator = new SwaggerCodeGenerator();
@@ -125,7 +134,8 @@ public class SwaggerSDKGenerationTestCase extends RestfulServer {
 		String language = "non-exist";
 		String basePath = "/ws/fhir";
 		HttpServletRequest request = new MockHttpServletRequest();
-		SwaggerSpecificationCreator creator = new SwaggerSpecificationCreator(urlWithoutScheme, basePath, request);
+		HttpServletResponse response = new MockHttpServletResponse();
+		SwaggerSpecificationCreator creator = new SwaggerSpecificationCreator(urlWithoutScheme, basePath, request, response);
 		String swaggerSpecificationJSON = creator.buildJSON();
 		assertNotNull(swaggerSpecificationJSON);
 		SwaggerCodeGenerator swaggerCodeGenerator = new SwaggerCodeGenerator();
