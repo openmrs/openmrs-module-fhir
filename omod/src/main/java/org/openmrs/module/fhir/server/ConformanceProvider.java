@@ -14,10 +14,12 @@
 package org.openmrs.module.fhir.server;
 
 import ca.uhn.fhir.rest.server.RestfulServer;
+import ca.uhn.fhir.rest.server.servlet.ServletRequestDetails;
 import org.hl7.fhir.dstu3.hapi.rest.server.ServerCapabilityStatementProvider;
 import org.hl7.fhir.dstu3.model.CapabilityStatement;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class ConformanceProvider {
 
@@ -29,16 +31,19 @@ public class ConformanceProvider {
 		conformance = conformanceStatement;
 	}
 
-	public static CapabilityStatement getConformance(HttpServletRequest request) {
+	public static CapabilityStatement getConformance(HttpServletRequest request, HttpServletResponse response) {
 		if (conformance == null) {
 			//Get server conformance provider
 			ServerCapabilityStatementProvider confProvider = (ServerCapabilityStatementProvider) restfulServer
 					.getServerConformanceProvider();
-			conformance = confProvider.getServerConformance(request);
-			return conformance;
-		} else {
-			return conformance;
+			ServletRequestDetails theRequestDetails = new ServletRequestDetails(restfulServer.getInterceptorService());
+			theRequestDetails.setServer(restfulServer);
+			theRequestDetails.setServletRequest(request);
+			theRequestDetails.setServletResponse(response);
+			conformance = confProvider.getServerConformance(request, theRequestDetails);
 		}
+
+		return conformance;
 	}
 
 	public static RestfulServer getRestfulServer() {
