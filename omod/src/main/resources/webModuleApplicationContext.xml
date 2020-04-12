@@ -23,11 +23,6 @@
 
 	<!-- Add here beans related to the web context -->
 
-
-	<!-- Annotation based controllers -->
-	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
-
-
 	<context:component-scan base-package="org.openmrs.module.fhir.web.controller"/>
 
 	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
