@@ -57,6 +57,8 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 
 	private static final String PERSON_UUID = "da7f524f-27ce-4bb2-86d6-6d1d05312bd5";
 
+	private static final String CONCEPT_UUID = "4a5048b1-cf85-4c64-9339-7cab41e5e364";
+
 	public ObsService getService() {
 		return Context.getService(ObsService.class);
 	}
@@ -83,7 +85,7 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
-	public void searchObsByPatientAndCode_shouldReturnMatchingObservationList () {
+	public void searchObsByPatientAndCode_shouldReturnMatchingObservationList() {
 		ConceptService conceptService = Context.getConceptService();
 		Concept concept = conceptService.getConcept(1);
 		ConceptMap conceptMap = new ConceptMap();
@@ -104,6 +106,30 @@ public class ObsServiceTest extends BaseModuleContextSensitiveTest {
 		assertNotNull(obs.get(0));
 		assertNotNull(obs.get(1));
 		assertNotNull(obs.get(2));
+	}
+
+	@Test
+	public void searchObsByPatientAndConceptUuid_shouldReturnMatchingObservationList() {
+		ConceptService conceptService = Context.getConceptService();
+		Concept concept = conceptService.getConcept(1);
+		ConceptMap conceptMap = new ConceptMap();
+		conceptMap.setConcept(concept);
+		conceptMap.setConceptReferenceTerm(conceptService.getConceptReferenceTerm(558));
+		concept.addConceptMapping(conceptMap);
+		conceptService.saveConcept(concept);
+
+		List<TokenParam> tokenParamList = new ArrayList<>();
+		assertEquals(tokenParamList.size(), 0);
+
+		tokenParamList.add(new TokenParam().setValue(CONCEPT_UUID));
+		assertEquals(tokenParamList.size(), 1);
+
+		List<Observation> observationList = getService().searchObsByPatientAndCode(PERSON_UUID, tokenParamList);
+		assertNotNull(observationList);
+		assertEquals(3, observationList.size());
+		assertNotNull(observationList.get(0));
+		assertNotNull(observationList.get(1));
+		assertNotNull(observationList.get(2));
 	}
 
 	@Test
