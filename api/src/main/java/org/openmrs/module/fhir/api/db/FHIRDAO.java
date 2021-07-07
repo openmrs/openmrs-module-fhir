@@ -13,6 +13,12 @@
  */
 package org.openmrs.module.fhir.api.db;
 
+import org.hibernate.SessionFactory;
+import org.openmrs.Obs;
+import org.openmrs.Order;
+
+import java.util.List;
+
 /**
  * Database methods for FHIR Module
  */
@@ -21,4 +27,8 @@ public interface FHIRDAO {
 	/*
 	 * Add DAO methods here
 	 */
+
+	<Ord extends Order> List<Ord> getOrdersByAccessionNumber(String accessionNumber);
+
+	Integer getEncounterIdForObsOrder(int orderId);
 }
