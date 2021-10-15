@@ -16,6 +16,7 @@ package org.openmrs.module.fhir.server;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
 import ca.uhn.fhir.rest.api.EncodingEnum;
+import ca.uhn.fhir.rest.server.FifoMemoryPagingProvider;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
@@ -94,6 +95,10 @@ public class FHIRRESTServer extends RestfulServer {
 				.setMessageFormat("Source[${remoteAddr}] Operation[${operationType} ${idOrResourceName}] " +
 						"UA[${requestHeader.user-agent}] Params[${requestParameters}]");
 		ServerCapabilityStatementProvider sc = new ServerCapabilityStatementProvider(this);
+		FifoMemoryPagingProvider fifoMemoryPagingProvider = new FifoMemoryPagingProvider(1000);
+		fifoMemoryPagingProvider.setDefaultPageSize(10);
+		fifoMemoryPagingProvider.setMaximumPageSize(10);
+		setPagingProvider(fifoMemoryPagingProvider);
 		this.setServerConformanceProvider(sc);
 		ConformanceProvider provider = new ConformanceProvider();
 		provider.setRestfulServer(this);
